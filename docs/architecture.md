@@ -5,7 +5,7 @@
 		* window: Window - Текущее окно. При старте: WindowStart
 	* Методы:
 		1. init() - создание окна 1920x1080 в полноэкранном режиме
-		2. start() - запуск игрового цикла. Цикл вызывает методы on_event, calc и draw у self.window. Если функция calc возвращает Window, то текущее окно заменяется на него.
+		2. start() - запуск игрового цикла. Цикл вызывает методы on_event, calc и draw у window. Если функция calc возвращает Window, то текущее окно заменяется на него.
 ---
 2. Класс Settings
 	* Содержит все системные настройки игры
@@ -34,9 +34,9 @@
 	* Методы:
 		1. init(mainSurface: pygame.Surface, save: int = 1)
 	* Кнопки:
-		2. "Старт" - запуск игры, при нажатии метод calc возвращает WindowGame(self.mainSurface, self.save)
-		3. "Статистика" - при нажатии метод calc возвращает WindowStatistics(self.mainSurface, self.save)
-		4. Выбор ячейки сохранения - три кнопки: "1", "2" и "3". При нажатии на кнопки self.save меняется на соответствующее значение.
+		2. "Старт" - запуск игры, при нажатии метод calc возвращает WindowGame(mainSurface, save)
+		3. "Статистика" - при нажатии метод calc возвращает WindowStatistics(mainSurface, save)
+		4. Выбор ячейки сохранения - три кнопки: "1", "2" и "3". При нажатии на кнопки save меняется на соответствующее значение.
 		5. "Выйти" - при нажатии создаёт событие quit.
 		```python
 		pygame.event.post(pygame.event.Event(pygame.QUIT))
@@ -49,10 +49,10 @@
 	* Методы:
 		1. init(mainSurface: pygame.Surface, save: int)
 	* Кнопки:
-		2. "Назад" - при нажатии метод calc возвращает WindowStart(self.mainSurface, self.save)
+		2. "Назад" - при нажатии метод calc возвращает WindowStart(mainSurface, save)
 ---
 6. Класс WindowEnd(Window)
-	* Финальный экран. Возможно титры или просто благодарность за игру. Включается после победы над боссом. После показа титров или нажатия кнопки "Продолжить" метод calc возвращает WindowStatistics(self.mainSurface, self.save)
+	* Финальный экран. Возможно титры или просто благодарность за игру. Включается после победы над боссом. После показа титров или нажатия кнопки "Продолжить" метод calc возвращает WindowStatistics(mainSurface, save)
 	* Поля:
 		* save: int - ячейка сохранения
 	* Методы:
@@ -72,8 +72,8 @@
 		1. init(mainSurface: pygame.Surface, save: int) - загрузка сохранения и создание текущего мира и экрана
 		2. on_event(event: Event) - вызывает методы player.keyDown(key) и player.keyUp(key), при соответствующих событиях
 		3. calc() -> None | Window
-			* Вызывает screen.calc(self.player) если метод возвращает ScreenGoTo, то переключает эран на требуемый: если мир тот же, то создаётся следующий экран и ScreenMove, если мир другой, то создаётся новый мир и экран. Обновляет информацию в saveData
-			* Вызывает overlay.calc(), если метод возвращает True, то вызывает saveData.save() и возвращает WindowStart(self.mainSurface, self.save)
+			* Вызывает screen.calc(player) если метод возвращает ScreenGoTo, то переключает эран на требуемый: если мир тот же, то создаётся следующий экран и ScreenMove, если мир другой, то создаётся новый мир и экран. Обновляет информацию в saveData
+			* Вызывает overlay.calc(), если метод возвращает True, то вызывает saveData.save() и возвращает WindowStart(mainSurface, save)
 		4. draw() - Если screenMove None, то вызывет screen.draw() и выводит полученую картинку на экран, иначе выводит screenMove.next(). Выводит на экран overlay.draw()
 ---
 8. Класс SaveData
@@ -117,8 +117,8 @@
 		* entities: list\[Entity]
 	* Методы:
 		1. init(world: str, coords: tuple[int, int])
-		2. calc(player: SptitePlayer) -> None | ScreenGoTo - вызов calc у всех self.entities и у player
-		3. draw(player: SptitePlayer) -> pygame.Surface - вызов draw у всех self.entities и у player, возвращает итоговый кадр
+		2. calc(player: SptitePlayer) -> None | ScreenGoTo - вызов calc у всех entities и у player
+		3. draw(player: SptitePlayer) -> pygame.Surface - вызов draw у всех entities и у player, возвращает итоговый кадр
 ---
 10. Класс ScreenGoTo
 	* То куда необходимо переключить экран и его изображение
