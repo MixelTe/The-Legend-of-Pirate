@@ -63,7 +63,7 @@
 	* Поля:
 		* save: int - ячейка сохранения
 		* saveData: SaveData
-		* player: SptitePlayer
+		* player: EntityPlayer
 		* world: World
 		* screen: Screen
 		* screenMove: ScreenMove | None
@@ -81,10 +81,10 @@
 	* Поля:
 		* save: int - ячейка сохранения
 		* saveVersion: int - версия файла сохранения
-		* playerX: float
-		* playerY: float
-		* world: str - мир в котором находится игрок
-		* screen: tuple[int, int] - экран на котором находится игрок
+		* checkPointX: int
+		* checkPointY: int
+		* world: str - мир в котором находится точка сохранения
+		* screen: tuple[int, int] - экран на котором находится точка сохранения
 		* coins: int
 		* health: int
 		* tags: list\[str] - тэги. Например: "дверь1 открыта"
@@ -96,7 +96,7 @@
 		* Строка, которая начинается с //, пропускается при считывании данных
 		```
 		// координаты
-		playerX playerY
+		checkPointX checkPointY
 		world
 		screen[0] screen[1]
 		// состояние игрока
@@ -117,8 +117,8 @@
 		* entities: list\[Entity]
 	* Методы:
 		1. init(world: str, coords: tuple[int, int])
-		2. calc(player: SptitePlayer) -> None | ScreenGoTo - вызов calc у всех entities и у player
-		3. draw(player: SptitePlayer) -> pygame.Surface - вызов draw у всех entities и у player, возвращает итоговый кадр
+		2. calc(player: EntityPlayer) -> None | ScreenGoTo - вызов calc у всех entities и у player
+		3. draw(player: EntityPlayer) -> pygame.Surface - вызов draw у всех entities и у player, возвращает итоговый кадр
 ---
 10. Класс ScreenGoTo
 	* То куда необходимо переключить экран и его изображение
@@ -145,12 +145,12 @@
 		3. draw() -> pygame.Surface - возвращает кадр анимации сдвига
 ---
 12. Класс Overlay
-	* Вывод информации про количество жизней, инвентарь, кнопка? "Сохранить и выйти"
+	* Вывод информации про количество жизней, инвентарь, кнопка "Сохранить и выйти"
 	* Поля:
 		* surface: pygame.Surface
-		* player: SptitePlayer
+		* player: EntityPlayer
 	* Методы:
-		1. init(player: SptitePlayer)
+		1. init(player: EntityPlayer)
 		2. calc() -> bool - возвращает True, если игрок нажал "Выйти"
 		3. draw() -> pygame.Surface
 ---
