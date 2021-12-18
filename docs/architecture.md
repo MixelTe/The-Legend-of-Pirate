@@ -12,10 +12,12 @@
 	* Поля:
 		* width = 1920
 		* height = 1080
-		* heightOverlay: int
+		* overlay_height: int
 		* folder_data = "data"
 		* folder_save = "save"
 		* folder_images = "images"
+		* screen_width = 15
+		* screen_height = 7
 ---
 3. Класс Window
 	* Базовый класс окна
@@ -68,6 +70,7 @@
 		* screen: Screen
 		* screenMove: ScreenMove | None
 		* overlay: Overlay
+		* worlds: Dict[str, World] - Все миры
 	* Методы:
 		1. init(mainSurface: pygame.Surface, save: int) - загрузка сохранения и создание текущего мира и экрана
 		2. on_event(event: Event) - вызывает методы player.keyDown(key) и player.keyUp(key), при соответствующих событиях
@@ -110,13 +113,13 @@
 	> В разработке
 	* Логика и отрисовка одного экрана
 	* Поля:
-		* surface: pygame.Surface
+		* surface: pygame.Surface - размер: (Settings.width, Settings.height - Settings.overlay_height)
 		* saveData: SaveData
 		* world: str
 		* tiles: list\[list\[Tile]]
 		* entities: list\[Entity]
 	* Методы:
-		1. init(world: str, coords: tuple[int, int])
+		1. init(world: str, data: ScreenData, , saveData: SaveData)
 		2. calc(player: EntityPlayer) -> None | ScreenGoTo - вызов calc у всех entities и у player
 		3. draw(player: EntityPlayer) -> pygame.Surface - вызов draw у всех entities и у player, возвращает итоговый кадр
 ---
