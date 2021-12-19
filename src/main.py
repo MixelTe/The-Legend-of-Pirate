@@ -1,6 +1,6 @@
 class Main:
     def __init__(self):
-        pass
+        print('test')
 
     def start(self):
         pass
