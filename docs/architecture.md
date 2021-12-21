@@ -172,11 +172,14 @@
 		* speedY: float
 		* image: pygame.Surface
 		* hitbox: pygame.Rect - область для просчёта столкновений, относительно сущности.
+		* static entityDict: dict[str, class] - словарь всех Entity для метода Entity.fromData
 	* Методы:
 		1. init(screen: Screen)
-		2. calc()
-		3. draw(surface: pygame.Surface)
-		4. move() -> None | Entity - просчёт движения с учётом карты и сущностей. При столкновении с сущностью возвращает эту сущность
+		2. static fromData(data: dict) -> Entity - создаёт сущность из данных. И вызывает у него applyData(data)
+		3. applyData(data: dict) - установка значений полей из соответствующих полей данных
+		3. calc()
+		4. draw(surface: pygame.Surface)
+		5. move() -> None | Entity - просчёт движения с учётом карты и сущностей. При столкновении с сущностью возвращает эту сущность
 ---
 14. Класс World
 	* Хранит информацию о игровом мире
@@ -188,5 +191,28 @@
 		1. init(name: str) - загрузка ScreenData и size
 		2. screenExist(x, y) -> bool - проверка существует ли экран с такими координатами
 		3. createScreen(x, y) -> Screen
+	* Хранение мира:
+		В папке worlds файл worldName.txt:
+		```width height```
+		В папке worlds папка worldName с экранами этого мира
 ---
-15. Класс 
+15. Класс ScreenData
+	* Хранит информацию об одном экране
+	* Поля:
+		* tiles: list[list[str]] - строка - id Tile`а
+		* entity: list[dict] - словарь с информацией о сущности
+	* Формат хранения:
+		* В папке worldName файл x;y.json:
+		```
+		{
+			tiles: [["tileId"]],
+			entity: [{
+					class: "className",
+					x: number,
+					y: number
+				}
+			]
+		}
+		```
+		* У сущности могут быть любые дополнительные поля, необходимые для сущности.
+---
