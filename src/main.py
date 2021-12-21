@@ -1,14 +1,16 @@
 import pygame
 from settings import Settings
+
 screen = pygame.display.set_mode((Settings.width, Settings.height), pygame.FULLSCREEN)
 
-from temp_pirate import Pirate
+from window import Window
+
 
 
 class Main:
     def __init__(self):
         pygame.display.set_caption('The Legend of Pirate')
-        self.pirate = Pirate()
+        self.window = Window()
 
     def start(self):
         clock = pygame.time.Clock()
@@ -19,12 +21,8 @@ class Main:
                 if event.type == pygame.QUIT:
                     running = False
 
-            self.pirate.update()
+            self.window.draw(screen)
 
-            screen.fill((0, 0, 0))
-            self.pirate.draw(screen)
-
-            pygame.display.flip()
             clock.tick(60)
 
         pygame.quit()
