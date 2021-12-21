@@ -110,18 +110,18 @@
 		```
 ---
 9. Класс Screen
-	> В разработке
 	* Логика и отрисовка одного экрана
 	* Поля:
 		* surface: pygame.Surface - размер: (Settings.width, Settings.height - Settings.overlay_height)
 		* saveData: SaveData
-		* world: str
+		* world: World
 		* tiles: list\[list\[Tile]]
 		* entities: list\[Entity]
 	* Методы:
-		1. init(world: str, data: ScreenData, , saveData: SaveData)
+		1. init(world: World, data: ScreenData, saveData: SaveData)
 		2. calc(player: EntityPlayer) -> None | ScreenGoTo - вызов calc у всех entities и у player
 		3. draw(player: EntityPlayer) -> pygame.Surface - вызов draw у всех entities и у player, возвращает итоговый кадр
+		4. addEntity(entity: Entity) -> добавляет entity в их список
 ---
 10. Класс ScreenGoTo
 	* То куда необходимо переключить экран и его изображение
@@ -156,4 +156,23 @@
 		1. init(player: EntityPlayer)
 		2. calc() -> bool - возвращает True, если игрок нажал "Выйти"
 		3. draw() -> pygame.Surface
+---
+13. Класс Entity
+	* Базовый класс сущности
+	* Поля:
+		* screen: Screen - экран, для доступа к списку сущностей и к клеткам мира
+		* x: float
+		* y: float
+		* width: int
+		* height: int
+		* speed: float - скорость сущности
+		* speedX: float - текущая скорость
+		* speedY: float
+		* image: pygame.Surface
+		* hitbox: pygame.Rect - область для просчёта столкновений, относительно сущности.
+	* Методы:
+		1. init(screen: Screen)
+		2. calc()
+		3. draw(surface: pygame.Surface)
+		4. move() -> None | Entity - просчёт движения с учётом карты и сущностей. При столкновении с сущностью возвращает эту сущность
 ---
