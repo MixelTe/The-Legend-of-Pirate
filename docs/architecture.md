@@ -77,6 +77,7 @@
 		3. calc() -> None | Window
 			* Вызывает screen.calc(player) если метод возвращает ScreenGoTo, то переключает эран на требуемый: если мир тот же, то создаётся следующий экран и ScreenMove, если мир другой, то создаётся новый мир и экран. Обновляет информацию в saveData
 			* Вызывает overlay.calc(), если метод возвращает True, то вызывает saveData.save() и возвращает WindowStart(mainSurface, save)
+			* Проверяет кол-во жизней у игрока. Если их <= 0, то вызывает saveData.save() и возвращает WindowEnd(mainSurface, save)
 		4. draw() - Если screenMove None, то вызывет screen.draw() и выводит полученую картинку на экран, иначе выводит screenMove.next(). Выводит на экран overlay.draw()
 ---
 8. Класс SaveData
@@ -122,6 +123,7 @@
 		2. calc(player: EntityPlayer) -> None | ScreenGoTo - вызов calc у всех entities и у player
 		3. draw(player: EntityPlayer) -> pygame.Surface - вызов draw у всех entities и у player, возвращает итоговый кадр
 		4. addEntity(entity: Entity) -> добавляет entity в их список
+		5. removeEntity(entity: Entity) -> удаляет entity из списка
 ---
 10. Класс ScreenGoTo
 	* То куда необходимо переключить экран и его изображение
@@ -176,3 +178,15 @@
 		3. draw(surface: pygame.Surface)
 		4. move() -> None | Entity - просчёт движения с учётом карты и сущностей. При столкновении с сущностью возвращает эту сущность
 ---
+14. Класс World
+	* Хранит информацию о игровом мире
+	* Поля:
+		* name: str
+		* size: tuple[int, int]
+		* screens: dict[(int, int), ScreenData]
+	* Методы:
+		1. init(name: str) - загрузка ScreenData и size
+		2. screenExist(x, y) -> bool - проверка существует ли экран с такими координатами
+		3. createScreen(x, y) -> Screen
+---
+15. Класс 
