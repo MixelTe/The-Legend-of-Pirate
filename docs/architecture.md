@@ -5,7 +5,18 @@
 		* window: Window - Текущее окно. При старте: WindowStart
 	* Методы:
 		1. init() - создание окна 1920x1080 в полноэкранном режиме
-		2. start() - запуск игрового цикла. Цикл вызывает методы on_event, calc и draw у window. Если функция calc возвращает Window, то текущее окно заменяется на него.
+		2. start() - запуск игрового цикла.
+			* Цикл вызывает методы on_event, calc и draw у window. Если функция calc возвращает Window, то текущее окно заменяется на него.
+			* Для работы контроллеров (gamepad):
+				```python
+				pygame.joystick.init()
+				```
+				В игровом цикле (для (пере)подключения контроллера):
+				```python
+				for i in range(pygame.joystick.get_count()):
+        			pygame.joystick.Joystick(i).init()
+				```
+				События контроллера: JOYAXISMOTION, JOYBALLMOTION, JOYBUTTONDOWN, JOYBUTTONUP, JOYHATMOTION
 ---
 2. Класс Settings
 	* Содержит все системные настройки игры
@@ -69,17 +80,18 @@
 		* player: EntityPlayer
 		* world: World
 		* screen: Screen
-		* screenMove: ScreenMove | None
+		* screenAnim: ScreenAnimationMove | None
 		* overlay: Overlay
 		* worlds: Dict[str, World] - Все миры
 	* Методы:
 		1. init(mainSurface: pygame.Surface, save: int) - загрузка сохранения и создание текущего мира и экрана
 		2. on_event(event: Event) - вызывает методы player.keyDown(key) и player.keyUp(key), при соответствующих событиях
 		3. calc() -> None | Window
-			* Вызывает screen.calc(player) если метод возвращает ScreenGoTo, то переключает эран на требуемый: если мир тот же, то создаётся следующий экран и ScreenMove, если мир другой, то создаётся новый мир и экран. Обновляет информацию в saveData
+			* Если screenAnim не None, то (пропуская пункты ниже) вызывает screenAnim.calc(). Если метод возвращает True, то присваеваит None в screenAnim.
+			* Вызывает screen.calc() если метод возвращает ScreenGoTo, то переключает эран на требуемый: если мир тот же, то создаётся следующий экран и ScreenAnimationMove, если мир другой, то создаётся новый мир, экран и ScreenAnimationBlur. Обновляет информацию в saveData
 			* Вызывает overlay.calc(), если метод возвращает True, то вызывает saveData.save() и возвращает WindowStart(mainSurface, save)
 			* Проверяет кол-во жизней у игрока. Если их <= 0, то вызывает saveData.save() и возвращает WindowEnd(mainSurface, save)
-		4. draw() - Если screenMove None, то вызывет screen.draw() и выводит полученую картинку на экран, иначе выводит screenMove.next(). Выводит на экран overlay.draw()
+		4. draw() - Если screenAnim None, то вызывет screen.draw() и выводит полученую картинку на экран, иначе выводит screenAnim.next(). Выводит на экран overlay.draw()
 ---
 8. Класс SaveData
 	* Все данные, необходимые для сохранения прогресса игрока
@@ -119,12 +131,14 @@
 		* world: World
 		* tiles: list\[list\[Tile]]
 		* entities: list\[Entity]
+		* goTo: ScreenGoTo | None
 	* Методы:
-		1. init(world: World, data: ScreenData, saveData: SaveData)
-		2. calc(player: EntityPlayer) -> None | ScreenGoTo - вызов calc у всех entities и у player
-		3. draw(player: EntityPlayer) -> pygame.Surface - вызов draw у всех entities и у player, возвращает итоговый кадр
+		1. init(world: World, data: ScreenData, saveData: SaveData, player: EntityPlayer) - добавляет player в список entities
+		2. calc() -> None | ScreenGoTo - вызов calc у всех entities. Возвращает goTo.
+		3. draw() -> pygame.Surface - вызов draw у всех entities, возвращает итоговый кадр
 		4. addEntity(entity: Entity) -> добавляет entity в их список
 		5. removeEntity(entity: Entity) -> удаляет entity из списка
+		6. goTo(world: str, screen: tuple[int, int]) - создаёт ScreenGoTo и присваивает в goTo
 ---
 10. Класс ScreenGoTo
 	* То куда необходимо переключить экран и его изображение
@@ -135,10 +149,16 @@
 	* Методы:
 		1. init(world: str, screen: tuple[int, int], image: pygame.Surface)
 ---
-11. Класс ScreenMove
-	* Хранит информацию для плавной смены экранов
-	* Поля:
+11. Класс ScreenAnimation
+	* Анимация для плавной смены экранов
 		* surface: pygame.Surface - холст для отрисовки кадра
+	* Методы:
+		2. calc() -> bool - возвращает флаг закончилась ли анимация
+		3. draw() -> pygame.Surface - возвращает кадр анимации сдвига
+---
+12. Класс ScreenAnimationMove(ScreenAnimation)
+	* Анимация сдвига экрана
+	* Поля:
 		* imageOld: pygame.Surface - предыдущий экран
 		* imageNew: pygame.Surface - новый экран
 		* dx: float - сдвиг экранов
@@ -147,10 +167,20 @@
 		* speedY: float
 	* Методы:
 		1. init(imageOld: pygame.Surface, imageNew: pygame.Surface, direction: tuple\[int, int]) - direction - значения 1, 0 или -1 сдвиг по x или y. На основе direction установка dx, dy и скорости
-		2. calc() -> bool - возвращает флаг закончилась ли анимация
-		3. draw() -> pygame.Surface - возвращает кадр анимации сдвига
 ---
-12. Класс Overlay
+13. Класс ScreenAnimationBlur(ScreenAnimation)
+	* Анимация смены экрана
+	* Поля:
+		* imageOld: pygame.Surface - предыдущий экран
+		* imageNew: pygame.Surface - новый экран
+		* dx: float - сдвиг экранов
+		* dy: float
+		* speedX: float - скорость сдвига
+		* speedY: float
+	* Методы:
+		1. init(imageOld: pygame.Surface, imageNew: pygame.Surface, direction: tuple\[int, int]) - direction - значения 1, 0 или -1 сдвиг по x или y. На основе direction установка dx, dy и скорости
+---
+14. Класс Overlay
 	* Вывод информации про количество жизней, инвентарь, кнопка "Сохранить и выйти"
 	* Поля:
 		* surface: pygame.Surface
@@ -160,7 +190,7 @@
 		2. calc() -> bool - возвращает True, если игрок нажал "Выйти"
 		3. draw() -> pygame.Surface
 ---
-13. Класс Entity
+15. Класс Entity
 	* Базовый класс сущности
 	* Поля:
 		* screen: Screen - экран, для доступа к списку сущностей и к клеткам мира
@@ -181,8 +211,9 @@
 		3. calc()
 		4. draw(surface: pygame.Surface)
 		5. move() -> None | Entity - просчёт движения с учётом карты и сущностей. При столкновении с сущностью возвращает эту сущность
+		6. remove() - удаляет себя из списка сущностей
 ---
-14. Класс World
+16. Класс World
 	* Хранит информацию о игровом мире
 	* Поля:
 		* name: str
@@ -191,13 +222,15 @@
 	* Методы:
 		1. init(name: str) - загрузка ScreenData и size
 		2. screenExist(x, y) -> bool - проверка существует ли экран с такими координатами
-		3. createScreen(x, y) -> Screen
+		3. createScreen(x, y, saveData: SaveData, player: EntityPlayer) -> Screen
 	* Хранение мира:
-		В папке worlds файл worldName.txt:
-		```width height```
-		В папке worlds папка worldName с экранами этого мира
+		* В папке worlds файл worldName.txt:
+
+			```width height```
+
+		* В папке worlds папка worldName с экранами этого мира
 ---
-15. Класс ScreenData
+17. Класс ScreenData
 	* Хранит информацию об одном экране
 	* Поля:
 		* tiles: list[list[str]] - строка - id Tile`а
@@ -217,7 +250,37 @@
 		```
 		* В данных сущности могут быть любые дополнительные поля, необходимые для сущности.
 ---
-16. Класс EntityPlayer(Entity)
+18. Класс EntityPlayer(Entity)
 	* Поля:
 		* health: int
+		* coins: int
+		* buttonPressed: [bool, bool, bool, bool] - Нажаты ли кнопки движения в направлениях: вверх, вправо, вниз, влево (для корректного изменения направления движения)
+		* weapon: Entity | None - оружее при ударе
+	* Методы:
+		* onKeyDown(key)
+		* onKeyUp(key)
+		* onJoyHat(value)
+		* onJoyButonDown(button)
+		* onJoyButonUp(button)
+---
+19. Класс Animator
+	* Аниматор сущностей
+	* Поля:
+		* image: pygame.Surface - картинка с анимациями, каждая анимация на новой строке
+		* frameSize: tuple[int, int]
+		* animation: list\[tuple[int, int]] - tuple[скорость переключения кадров, кол-во кадров] для каждой анимации.
+		* frame: tuple[int, int] - tuple[строка, картинка]
+		* counter: int - счетчик для переключения кадров с определённой скоростью
+		* names: list\[str] - названия анимаций
+	* Методы:
+		* init(image: pygame.Surface, frameSize: tuple[int, int], animation: list\[int, int])
+		* setNames(names: list\[str]) - устанавливает название для каждой анимации
+		* calc() -> tuple[bool, bool] - прибавляет счётчик, и переключает кадр, если прошло достаточно времени. После последнего кадра идёт первый.
+
+			Возвращает два значения:
+			* Был ли переключён кадр
+			* Поледний ли это кадр анимации
+		* getImage() -> pygame.Surface - возвращает текущий кадр
+		* setAnimation(animation: int | str) - устанавливает текущую анимацию по номеру или её названию
+		* curAnimation() -> tuple[int, str | None] - номер и название (если есть, иначе None) текущей анимации
 ---
