@@ -16,6 +16,7 @@
 		* folder_data = "data"
 		* folder_save = "save"
 		* folder_images = "images"
+		* folder_worlds = "worlds"
 		* screen_width = 15
 		* screen_height = 7
 ---
@@ -202,7 +203,7 @@
 		* tiles: list[list[str]] - строка - id Tile`а
 		* entity: list[dict] - словарь с информацией о сущности
 	* Формат хранения:
-		* В папке worldName файл x;y.json:
+		* В папке worldName файл "x;y.json":
 		```
 		{
 			tiles: [["tileId"]],
@@ -214,5 +215,9 @@
 			]
 		}
 		```
-		* У сущности могут быть любые дополнительные поля, необходимые для сущности.
+		* В данных сущности могут быть любые дополнительные поля, необходимые для сущности.
+---
+16. Класс EntityPlayer(Entity)
+	* Поля:
+		* health: int
 ---
