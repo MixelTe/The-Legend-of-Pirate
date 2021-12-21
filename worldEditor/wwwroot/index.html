@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>World Editor</title>
+	<!-- <link rel="shortcut icon" type="image/x-icon" href="favicon.ico"> -->
+	<link rel="stylesheet" type="text/css" href="popup.css">
+	<link rel="stylesheet" type="text/css" href="styles.css">
+	<script defer src="out/functions.js"></script>
+	<script defer src="out/popup.js"></script>
+	<script defer src="out/main.js"></script>
+</head>
+<body>
+	<div class="toolbar">
+		<h1>World Editor</h1>
+		<table>
+			<tr><td><label for="inp-width">Width</label></td><td><input type="number" id="inp-width" value="10"></td></tr>
+			<tr><td><label for="inp-height">Height</label></td><td><input type="number" id="inp-height" value="10"></td></tr>
+		</table>
+		<div class="world-map">
+			<table id="world-map"></table>
+		</div>
+		<div class="btns line">
+			<button id="btn-left">←</button>
+			<button id="btn-up">↑</button>
+			<button id="btn-right">→</button>
+			<button id="btn-down">↓</button>
+		</div>
+		<div class="line">
+			<button id="btn-center">center</button>
+		</div>
+		<div class="line">
+			World:
+			<button id="btn-new">create new</button>
+			<button id="btn-save">save</button>
+			<button id="btn-load">load</button>
+		</div>
+	</div>
+	<div class="viewport">
+		<canvas id="canvas"></canvas>
+	</div>
+</body>
+</html>
+
