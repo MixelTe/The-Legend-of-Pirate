@@ -23,6 +23,7 @@
 	* Поля:
 		* width = 1920
 		* height = 1080
+		* fps = 30
 		* overlay_height: int
 		* folder_data = "data"
 		* folder_save = "save"
@@ -30,6 +31,7 @@
 		* folder_worlds = "worlds"
 		* screen_width = 15
 		* screen_height = 7
+		* demageDelay = 400 (миллисекунды)
 ---
 3. Класс Window
 	* Базовый класс окна
@@ -85,10 +87,12 @@
 		* worlds: Dict[str, World] - Все миры
 	* Методы:
 		1. init(mainSurface: pygame.Surface, save: int) - загрузка сохранения и создание текущего мира и экрана
-		2. on_event(event: Event) - вызывает методы player.keyDown(key) и player.keyUp(key), при соответствующих событиях
+		2. on_event(event: Event)
+			* вызывает методы player.keyDown(key) и player.keyUp(key), при соответствующих событиях. Если screenAnim == None.
+			* вызывает метод overlay.onClick(pos) при нажатии.
 		3. calc() -> None | Window
 			* Если screenAnim не None, то (пропуская пункты ниже) вызывает screenAnim.calc(). Если метод возвращает True, то присваеваит None в screenAnim.
-			* Вызывает screen.calc() если метод возвращает ScreenGoTo, то переключает эран на требуемый: если мир тот же, то создаётся следующий экран и ScreenAnimationMove, если мир другой, то создаётся новый мир, экран и ScreenAnimationBlur. Обновляет информацию в saveData
+			* Вызывает screen.calc() если метод возвращает ScreenGoTo, то переключает эран на требуемый: если мир тот же, то создаётся следующий экран и ScreenAnimationMove, если мир другой, то создаётся новый мир, экран и ScreenAnimationBlur. Обновляет информацию в saveData. Присваетвает новый экран в player.screen
 			* Вызывает overlay.calc(), если метод возвращает True, то вызывает saveData.save() и возвращает WindowStart(mainSurface, save)
 			* Проверяет кол-во жизней у игрока. Если их <= 0, то вызывает saveData.save() и возвращает WindowEnd(mainSurface, save)
 		4. draw() - Если screenAnim None, то вызывет screen.draw() и выводит полученую картинку на экран, иначе выводит screenAnim.next(). Выводит на экран overlay.draw()
@@ -131,14 +135,14 @@
 		* world: World
 		* tiles: list\[list\[Tile]]
 		* entities: list\[Entity]
-		* goTo: ScreenGoTo | None
+		* goToVar: ScreenGoTo | None
 	* Методы:
 		1. init(world: World, data: ScreenData, saveData: SaveData, player: EntityPlayer) - добавляет player в список entities
-		2. calc() -> None | ScreenGoTo - вызов calc у всех entities. Возвращает goTo.
+		2. calc() -> None | ScreenGoTo - вызов calc у всех entities. Возвращает goToVar.
 		3. draw() -> pygame.Surface - вызов draw у всех entities, возвращает итоговый кадр
 		4. addEntity(entity: Entity) -> добавляет entity в их список
 		5. removeEntity(entity: Entity) -> удаляет entity из списка
-		6. goTo(world: str, screen: tuple[int, int]) - создаёт ScreenGoTo и присваивает в goTo
+		6. goTo(world: str, screen: tuple[int, int]) - создаёт ScreenGoTo и присваивает в goToVar
 ---
 10. Класс ScreenGoTo
 	* То куда необходимо переключить экран и его изображение
@@ -188,12 +192,14 @@
 	* Методы:
 		1. init(player: EntityPlayer)
 		2. calc() -> bool - возвращает True, если игрок нажал "Выйти"
-		3. draw() -> pygame.Surface
+		3. draw() -> pygame.Surface - если player.message не пусто, то выводится это сообщение.
+		4. onClick(pos)
 ---
 15. Класс Entity
 	* Базовый класс сущности
 	* Поля:
 		* screen: Screen - экран, для доступа к списку сущностей и к клеткам мира
+		* group: int - группа к которой пренадлежит сущность, для определения нужно ли наносить урон (присваивать значение только с помощью полей класса EntityGroups)
 		* x: float
 		* y: float
 		* width: int
@@ -210,10 +216,24 @@
 		3. applyData(data: dict) - установка значений полей из соответствующих полей данных
 		3. calc()
 		4. draw(surface: pygame.Surface)
-		5. move() -> None | Entity - просчёт движения с учётом карты и сущностей. При столкновении с сущностью возвращает эту сущность
+		5. move() -> None | Entity | Tile - просчёт движения с учётом карты и сущностей. При столкновении с сущностью или клеткой возвращает эту сущность или клетку
 		6. remove() - удаляет себя из списка сущностей
+	* Класс EntityGroups:
+		* Группы сущностей
+		* Поля:
+			* neutral = 0
+			* player = 1
+			* enemy = 2
 ---
-16. Класс World
+16. Класс EntityAlive(Entity)
+	* Поля:
+		* animator: Animator
+		* health: int
+		* damageDelay: int - при вызове calc уменьшается на 1000 / Settings.fps
+	* Методы:
+		* takeDamage(damage: int) - Уменьшение здоровья и установка damageDelay в Settings.damageDelay, если damageDelay <= 0
+---
+17. Класс World
 	* Хранит информацию о игровом мире
 	* Поля:
 		* name: str
@@ -230,7 +250,7 @@
 
 		* В папке worlds папка worldName с экранами этого мира
 ---
-17. Класс ScreenData
+18. Класс ScreenData
 	* Хранит информацию об одном экране
 	* Поля:
 		* tiles: list[list[str]] - строка - id Tile`а
@@ -250,12 +270,12 @@
 		```
 		* В данных сущности могут быть любые дополнительные поля, необходимые для сущности.
 ---
-18. Класс EntityPlayer(Entity)
+19. Класс EntityPlayer(EntityAlive)
 	* Поля:
-		* health: int
 		* coins: int
-		* buttonPressed: [bool, bool, bool, bool] - Нажаты ли кнопки движения в направлениях: вверх, вправо, вниз, влево (для корректного изменения направления движения)
+		* buttonPressed: [bool, bool, bool, bool] - нажаты ли кнопки движения в направлениях: вверх, вправо, вниз, влево (для корректного изменения направления движения)
 		* weapon: Entity | None - оружее при ударе
+		* message: str - сообщение, которое выведится игроку
 	* Методы:
 		* onKeyDown(key)
 		* onKeyUp(key)
@@ -263,7 +283,7 @@
 		* onJoyButonDown(button)
 		* onJoyButonUp(button)
 ---
-19. Класс Animator
+20. Класс Animator
 	* Аниматор сущностей
 	* Поля:
 		* image: pygame.Surface - картинка с анимациями, каждая анимация на новой строке
@@ -283,4 +303,26 @@
 		* getImage() -> pygame.Surface - возвращает текущий кадр
 		* setAnimation(animation: int | str) - устанавливает текущую анимацию по номеру или её названию
 		* curAnimation() -> tuple[int, str | None] - номер и название (если есть, иначе None) текущей анимации
+---
+21. Класс Tile
+	* Одна клетка на экране
+	* Поля:
+		* tileIds: dict[str, Tile]
+		* image: pygame.Surface
+		* speed: float - множитель скорости клетки
+		* digable: bool - можно ли копать на этой клетке
+		* solid: bool - плотная ли клетка (стена)
+	* Методы:
+		* init(image: str, speed: float, digable: bool, solid: bool)
+		* static fromId(id: str) -> Tile - получить клетку по id
+---
+## Сущности
+---
+22. Класс EntityShovel(Entity)
+	* Лопата, которой бьёт игрок
+	* Группа: player
+---
+23. Класс EntityCrab(EntityAlive)
+	* Спит пока к нему не подойдёт игрок, потом ходит за игроком. Может уснуть во время погони.
+	* Группа: enemy
 ---
