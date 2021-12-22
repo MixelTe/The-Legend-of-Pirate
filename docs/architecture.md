@@ -1,7 +1,7 @@
 1. Класс Main
 	* Создаётся на старте программы и вызывается метод start
 	* Поля:
-		* screen: Surface - Главный холст
+		* screen: pygame.Surface - Главный холст
 		* window: Window - Текущее окно. При старте: WindowStart
 	* Методы:
 		1. init() - создание окна 1920x1080 в полноэкранном режиме
@@ -35,20 +35,17 @@
 ---
 3. Класс Window
 	* Базовый класс окна
-	* Поля:
-		* mainSurface: pygame.Surface
 	* Методы:
-		1. init(mainSurface: pygame.Surface)
-		2. on_event(event: Event) - обрабатывает событие
-		3. calc() -> None | Window - просчитывает новый кадр
-		4. draw(screen: Surface) - рисует текущий кадр
+		1. on_event(event: Event) - обрабатывает событие
+		2. calc() -> None | Window - просчитывает новый кадр
+		3. draw(screen: pygame.Surface) - рисует текущий кадр
 ---
 4. Класс WindowStart(Window)
 	* Стартовое окно.
 	* Поля:
 		* save: int - ячейка сохранения
 	* Методы:
-		1. init(mainSurface: pygame.Surface, save: int = 1)
+		1. init(save: int = 1)
 	* Кнопки:
 		2. "Старт" - запуск игры, при нажатии метод calc возвращает WindowGame(mainSurface, save)
 		3. "Статистика" - при нажатии метод calc возвращает WindowStatistics(mainSurface, save)
@@ -63,7 +60,7 @@
 	* Поля:
 		* save: int - ячейка сохранения
 	* Методы:
-		1. init(mainSurface: pygame.Surface, save: int)
+		1. init(save: int)
 	* Кнопки:
 		2. "Назад" - при нажатии метод calc возвращает WindowStart(mainSurface, save)
 ---
@@ -72,7 +69,7 @@
 	* Поля:
 		* save: int - ячейка сохранения
 	* Методы:
-		1. init(mainSurface: pygame.Surface, save: int)
+		1. init(save: int)
 ---
 7. Класс WindowGame(Window)
 	* Игровой движок
@@ -95,7 +92,7 @@
 			* Вызывает screen.calc() если метод возвращает ScreenGoTo, то переключает эран на требуемый: если мир тот же, то создаётся следующий экран и ScreenAnimationMove, если мир другой, то создаётся новый мир, экран и ScreenAnimationBlur. Обновляет информацию в saveData. Присваетвает новый экран в player.screen
 			* Вызывает overlay.calc(), если метод возвращает True, то вызывает saveData.save() и возвращает WindowStart(mainSurface, save)
 			* Проверяет кол-во жизней у игрока. Если их <= 0, то вызывает saveData.save() и возвращает WindowEnd(mainSurface, save)
-		4. draw() - Если screenAnim None, то вызывет screen.draw() и выводит полученую картинку на экран, иначе выводит screenAnim.next(). Выводит на экран overlay.draw()
+		4. draw(screen: pygame.Surface) - Если screenAnim None, то вызывет screen.draw() и выводит полученую картинку на экран, иначе выводит screenAnim.next(). Выводит на экран overlay.draw() и self.screen.draw()
 ---
 8. Класс SaveData
 	* Все данные, необходимые для сохранения прогресса игрока
