@@ -307,14 +307,19 @@
 21. Класс Tile
 	* Одна клетка на экране
 	* Поля:
-		* tileIds: dict[str, Tile]
+		* static tileIds: dict[str, Tile]
 		* image: pygame.Surface
 		* speed: float - множитель скорости клетки
 		* digable: bool - можно ли копать на этой клетке
 		* solid: bool - плотная ли клетка (стена)
 	* Методы:
-		* init(image: str, speed: float, digable: bool, solid: bool)
-		* static fromId(id: str) -> Tile - получить клетку по id
+		* init(image: str, solid: bool = False, digable: bool = False, speed: float = 1) - добавляет себя в tileIds по ключу image отрезав расширение файла (всё после первой точки)
+		* static fromId(id: str) -> Tile - получить клетку по id из tileIds
+	* Создаёт все клетки на старте программы:
+		```
+		Tile("img.png", False, True, 1)
+		Tile("img.png")
+		```
 ---
 ## Сущности
 ---
