@@ -11,6 +11,5 @@ class WindowStart(Window):
         self.rect = pygame.Rect(500, 500, WindowStart.image.get_width() * scale, WindowStart.image.get_height() * scale)
         self.image = pygame.transform.scale(self.image, (self.rect.width, self.rect.height))
 
-
     def draw(self, screen: pygame.Surface):
         screen.blit(self.image, self.rect)

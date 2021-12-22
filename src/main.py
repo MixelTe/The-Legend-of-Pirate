@@ -24,7 +24,9 @@ class Main:
                     running = False
                 self.window.on_event(event)
 
-            self.window.calc()
+            result = self.window.calc()
+            if (isinstance(result, Window)):
+                self.window = result
 
             screen.fill((0, 0, 0))
             self.window.draw(screen)
