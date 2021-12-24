@@ -232,6 +232,7 @@ class World
 		const height = TileSize * ViewHeight;
 		const X = Math.floor(x / width);
 		const Y = Math.floor(y / height);
+		if (X >= this.width || Y >= this.height) return;
 		const view = this.map[Y][X]
 		if (view) view.pen(x - X * width, y - Y * height);
 	}
@@ -363,28 +364,19 @@ canvas.addEventListener("wheel", e =>
 		else TileSize *= v
 		TileSize = Math.max(Math.round(TileSize), 2);
 		inp_tilesize.valueAsNumber = TileSize;
+		normalizeCamera();
 	}
 	else if (e.shiftKey)
 	{
-		if (e.deltaY > 0) camera_x += moveSpeed;
-		else camera_x -= moveSpeed;
-		const width = world.width * ViewWidth * TileSize;
-		if (width > canvas.width)
-		{
-			camera_x = Math.max(Math.min(camera_x, 0), -width + canvas.width);
-		}
-		else camera_x = 0;
+		if (e.deltaY > 0) camera_x -= moveSpeed;
+		else camera_x += moveSpeed;
+		normalizeCamera();
 	}
 	else
 	{
 		if (e.deltaY > 0) camera_y -= moveSpeed;
 		else camera_y += moveSpeed;
-		const height = world.height * ViewHeight * TileSize
-		if (height > canvas.height)
-		{
-			camera_y = Math.max(Math.min(camera_y, 0), -height + canvas.height);
-		}
-		else camera_y = 0;
+		normalizeCamera();
 	}
 });
 
@@ -395,17 +387,29 @@ canvas.addEventListener("mousedown", e =>
 	e.preventDefault();
 	if (e.button == 0)
 	{
+		if (camera_moving)
+		{
+			centerView(e.offsetX - camera_x, e.offsetY - camera_y);
+			camera_moving = null;
+			return;
+		}
 		if (inp_mode_pen.checked)
 		{
 			drawing = true;
 		}
 		else
 		{
-			world.fill(e.offsetX + camera_x, e.offsetY + camera_y);
+			world.fill(e.offsetX - camera_x, e.offsetY - camera_y);
 		}
 	}
 	if (e.button == 2)
 	{
+		if (drawing)
+		{
+			centerView(e.offsetX - camera_x, e.offsetY - camera_y);
+			drawing = false;
+			return;
+		}
 		camera_moving = { x: e.offsetX, y: e.offsetY, cx: camera_x, cy: camera_y };
 		canvas.classList.add("cursor-move");
 	}
@@ -419,29 +423,18 @@ canvas.addEventListener("mousemove", e =>
 			drawing = false;
 			return;
 		}
-		world.pen(e.offsetX + camera_x, e.offsetY + camera_y);
+		world.pen(e.offsetX - camera_x, e.offsetY - camera_y);
 	}
 	else if (camera_moving)
 	{
 		camera_x = camera_moving.cx + e.offsetX - camera_moving.x;
 		camera_y = camera_moving.cy + e.offsetY - camera_moving.y;
-		const width = world.width * ViewWidth * TileSize;
-		const height = world.height * ViewHeight * TileSize
-		if (width > canvas.width)
-		{
-			camera_x = Math.max(Math.min(camera_x, 0), -width + canvas.width);
-		}
-		else camera_x = 0;
-		if (height > canvas.height)
-		{
-			camera_y = Math.max(Math.min(camera_y, 0), -height + canvas.height);
-		}
-		else camera_y = 0;
+		normalizeCamera();
 	}
 });
 canvas.addEventListener("mouseup", e =>
 {
-	if (drawing) world.pen(e.offsetX + camera_x, e.offsetY + camera_y);
+	if (drawing) world.pen(e.offsetX - camera_x, e.offsetY - camera_y);
 	drawing = false;
 	camera_moving = null;
 	canvas.classList.remove("cursor-move");
@@ -466,6 +459,38 @@ function loadImages()
 		img.addEventListener("load", () => tileImages[key] = img);
 	}
 }
+function centerView(x: number, y: number)
+{
+	let width = TileSize * ViewWidth;
+	let height = TileSize * ViewHeight;
+	const X = Math.floor(x / width);
+	const Y = Math.floor(y / height);
+	if (X >= world.width || Y >= world.height) return;
+	TileSize = Math.min(canvas.width / ViewWidth, canvas.height / ViewHeight);
+	TileSize = Math.floor(TileSize);
+	inp_tilesize.valueAsNumber = TileSize;
+	width = TileSize * ViewWidth;
+	height = TileSize * ViewHeight;
+	camera_x = - X * width + Math.floor((canvas.width - width) / 2);
+	camera_y = - Y * height + Math.floor((canvas.height - height) / 2);
+	normalizeCamera();
+}
+function normalizeCamera()
+{
+	const width = world.width * ViewWidth * TileSize;
+	const height = world.height * ViewHeight * TileSize
+	if (width > canvas.width)
+	{
+		camera_x = Math.max(Math.min(camera_x, 0), -width + canvas.width);
+	}
+	else camera_x = 0;
+	if (height > canvas.height)
+	{
+		camera_y = Math.max(Math.min(camera_y, 0), -height + canvas.height);
+	}
+	else camera_y = 0;
+}
+
 
 loadImages();
 loop();
