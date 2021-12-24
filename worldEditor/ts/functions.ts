@@ -23,6 +23,18 @@ function Button(classes?: string[] | string, innerText?: string, clickListener?:
 	if (clickListener) button.addEventListener("click", clickListener.bind(undefined, button));
 	return button;
 }
+function Table(classes?: string[] | string, children?: HTMLElement[])
+{
+	return initEl("table", classes, children, undefined);
+}
+function TR(classes?: string[] | string, children?: HTMLElement[])
+{
+	return initEl("tr", classes, children, undefined);
+}
+function TD(classes?: string[] | string, children?: HTMLElement[], innerText?: string)
+{
+	return initEl("td", classes, children, innerText);
+}
 
 function initEl<K extends keyof HTMLElementTagNameMap>(tagName: K, classes: string[] | string | undefined, children: HTMLElement[] | undefined, innerText: string | undefined)
 {

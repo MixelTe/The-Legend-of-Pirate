@@ -398,7 +398,6 @@ canvas.addEventListener("mousedown", e =>
 		if (inp_mode_pen.checked)
 		{
 			drawing = true;
-			world.pen(e.offsetX + camera_x, e.offsetY + camera_y);
 		}
 		else
 		{
@@ -440,8 +439,9 @@ canvas.addEventListener("mousemove", e =>
 		else camera_y = 0;
 	}
 });
-canvas.addEventListener("mouseup", () =>
+canvas.addEventListener("mouseup", e =>
 {
+	if (drawing) world.pen(e.offsetX + camera_x, e.offsetY + camera_y);
 	drawing = false;
 	camera_moving = null;
 	canvas.classList.remove("cursor-move");
