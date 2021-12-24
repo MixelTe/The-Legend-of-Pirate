@@ -3,6 +3,8 @@ html {
 }
 body {
 	min-height: 100%;
+	max-height: 100%;
+	max-width: 100%;
 	margin: 0;
 	display: flex;
 	flex-direction: row;
@@ -16,6 +18,7 @@ h1 {
 	background-color: rgb(195, 247, 195);
 	width: 300px;
 	padding: 0.4em;
+	flex-shrink: 0;
 	/* min-height: 100%; */
 }
 .btns {
@@ -30,7 +33,9 @@ h1 {
 .line {
 	margin: 0.4em 0;
 }
-
+.margin-left > * {
+	margin-left: 0.5em;
+}
 
 .world-map {
 	overflow: auto;
@@ -71,4 +76,7 @@ h1 {
 .viewport {
 	flex-grow: 1;
 	overflow: auto;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
