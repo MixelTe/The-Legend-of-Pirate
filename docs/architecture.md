@@ -6,7 +6,7 @@
 	* Методы:
 		1. init() - создание окна 1920x1080 в полноэкранном режиме
 		2. start() - запуск игрового цикла.
-			* Цикл вызывает методы on_event, calc и draw у window. Если функция calc возвращает Window, то текущее окно заменяется на него.
+			* Цикл вызывает методы on_event, update и draw у window. Если функция update возвращает Window, то текущее окно заменяется на него.
 			* Для работы контроллеров (gamepad):
 				```python
 				pygame.joystick.init()
@@ -37,7 +37,7 @@
 	* Базовый класс окна
 	* Методы:
 		1. on_event(event: Event) - обрабатывает событие
-		2. calc() -> None | Window - просчитывает новый кадр
+		2. update() -> None | Window - просчитывает новый кадр
 		3. draw(screen: pygame.Surface) - рисует текущий кадр
 ---
 4. Класс WindowStart(Window)
@@ -47,8 +47,8 @@
 	* Методы:
 		1. init(save: int = 1)
 	* Кнопки:
-		2. "Старт" - запуск игры, при нажатии метод calc возвращает WindowGame(mainSurface, save)
-		3. "Статистика" - при нажатии метод calc возвращает WindowStatistics(mainSurface, save)
+		2. "Старт" - запуск игры, при нажатии метод update возвращает WindowGame(mainSurface, save)
+		3. "Статистика" - при нажатии метод update возвращает WindowStatistics(mainSurface, save)
 		4. Выбор ячейки сохранения - три кнопки: "1", "2" и "3". При нажатии на кнопки save меняется на соответствующее значение.
 		5. "Выйти" - при нажатии создаёт событие quit.
 		```python
@@ -62,10 +62,10 @@
 	* Методы:
 		1. init(save: int)
 	* Кнопки:
-		2. "Назад" - при нажатии метод calc возвращает WindowStart(mainSurface, save)
+		2. "Назад" - при нажатии метод update возвращает WindowStart(mainSurface, save)
 ---
 6. Класс WindowEnd(Window)
-	* Финальный экран. Возможно титры или просто благодарность за игру. Включается после победы над боссом. После показа титров или нажатия кнопки "Продолжить" метод calc возвращает WindowStatistics(mainSurface, save)
+	* Финальный экран. Возможно титры или просто благодарность за игру. Включается после победы над боссом. После показа титров или нажатия кнопки "Продолжить" метод update возвращает WindowStatistics(mainSurface, save)
 	* Поля:
 		* save: int - ячейка сохранения
 	* Методы:
@@ -85,12 +85,12 @@
 	* Методы:
 		1. init(mainSurface: pygame.Surface, save: int) - загрузка сохранения и создание текущего мира и экрана
 		2. on_event(event: Event)
-			* вызывает методы player.keyDown(key) и player.keyUp(key), при соответствующих событиях. Если screenAnim == None.
+			* вызывает методы player.keyDown(key), player.keyUp(key), player.onJoyHat(value), player.onJoyButonDown(button), player.onJoyButonUp(button), при соответствующих событиях. Если screenAnim == None.
 			* вызывает метод overlay.onClick(pos) при нажатии.
-		3. calc() -> None | Window
-			* Если screenAnim не None, то (пропуская пункты ниже) вызывает screenAnim.calc(). Если метод возвращает True, то присваеваит None в screenAnim.
-			* Вызывает screen.calc() если метод возвращает ScreenGoTo, то переключает эран на требуемый: если мир тот же, то создаётся следующий экран и ScreenAnimationMove, если мир другой, то создаётся новый мир, экран и ScreenAnimationBlur. Обновляет информацию в saveData. Присваетвает новый экран в player.screen
-			* Вызывает overlay.calc(), если метод возвращает True, то вызывает saveData.save() и возвращает WindowStart(mainSurface, save)
+		3. update() -> None | Window
+			* Если screenAnim не None, то (пропуская пункты ниже) вызывает screenAnim.update(). Если метод возвращает True, то присваеваит None в screenAnim.
+			* Вызывает screen.update() если метод возвращает ScreenGoTo, то переключает эран на требуемый: если мир тот же, то создаётся следующий экран и ScreenAnimationMove, если мир другой, то создаётся новый мир, экран и ScreenAnimationBlur. Обновляет информацию в saveData. Присваетвает новый экран в player.screen
+			* Вызывает overlay.update(), если метод возвращает True, то вызывает saveData.save() и возвращает WindowStart(mainSurface, save)
 			* Проверяет кол-во жизней у игрока. Если их <= 0, то вызывает saveData.save() и возвращает WindowEnd(mainSurface, save)
 		4. draw(screen: pygame.Surface) - Если screenAnim None, то вызывет screen.draw() и выводит полученую картинку на экран, иначе выводит screenAnim.next(). Выводит на экран overlay.draw() и self.screen.draw()
 ---
@@ -105,6 +105,7 @@
 		* screen: tuple[int, int] - экран на котором находится точка сохранения
 		* coins: int
 		* health: int
+		* bullets: int
 		* tags: list\[str] - тэги. Например: "дверь1 открыта"
 	* Методы:
 		1. init(save: int)
@@ -120,6 +121,7 @@
 		// состояние игрока
 		coins
 		health
+		bullets
 		// тэги, в одну строку, через точку с запятой (;)
 		";".join(tags)
 		```
@@ -135,7 +137,7 @@
 		* goToVar: ScreenGoTo | None
 	* Методы:
 		1. init(world: World, data: ScreenData, saveData: SaveData, player: EntityPlayer) - добавляет player в список entities
-		2. calc() -> None | ScreenGoTo - вызов calc у всех entities. Возвращает goToVar.
+		2. update() -> None | ScreenGoTo - вызов update у всех entities. Возвращает goToVar.
 		3. draw() -> pygame.Surface - вызов draw у всех entities, возвращает итоговый кадр
 		4. addEntity(entity: Entity) -> добавляет entity в их список
 		5. removeEntity(entity: Entity) -> удаляет entity из списка
@@ -154,7 +156,7 @@
 	* Анимация для плавной смены экранов
 		* surface: pygame.Surface - холст для отрисовки кадра
 	* Методы:
-		2. calc() -> bool - возвращает флаг закончилась ли анимация
+		2. update() -> bool - возвращает флаг закончилась ли анимация
 		3. draw() -> pygame.Surface - возвращает кадр анимации сдвига
 ---
 12. Класс ScreenAnimationMove(ScreenAnimation)
@@ -188,7 +190,7 @@
 		* player: EntityPlayer
 	* Методы:
 		1. init(player: EntityPlayer)
-		2. calc() -> bool - возвращает True, если игрок нажал "Выйти"
+		2. update() -> bool - возвращает True, если игрок нажал "Выйти"
 		3. draw() -> pygame.Surface - если player.message не пусто, то выводится это сообщение.
 		4. onClick(pos)
 ---
@@ -211,7 +213,7 @@
 		1. init(screen: Screen)
 		2. static fromData(data: dict) -> Entity - создаёт сущность из данных. И вызывает у него applyData(data)
 		3. applyData(data: dict) - установка значений полей из соответствующих полей данных
-		3. calc()
+		3. update()
 		4. draw(surface: pygame.Surface)
 		5. move() -> None | Entity | Tile - просчёт движения с учётом карты и сущностей. При столкновении с сущностью или клеткой возвращает эту сущность или клетку
 		6. remove() - удаляет себя из списка сущностей
@@ -226,7 +228,7 @@
 	* Поля:
 		* animator: Animator
 		* health: int
-		* damageDelay: int - при вызове calc уменьшается на 1000 / Settings.fps
+		* damageDelay: int - при вызове update уменьшается на 1000 / Settings.fps
 	* Методы:
 		* takeDamage(damage: int) - Уменьшение здоровья и установка damageDelay в Settings.damageDelay, если damageDelay <= 0
 ---
@@ -270,10 +272,13 @@
 19. Класс EntityPlayer(EntityAlive)
 	* Поля:
 		* coins: int
+		* bullets: int
 		* buttonPressed: [bool, bool, bool, bool] - нажаты ли кнопки движения в направлениях: вверх, вправо, вниз, влево (для корректного изменения направления движения)
 		* weapon: Entity | None - оружее при ударе
 		* message: str - сообщение, которое выведится игроку
 	* Методы:
+		* init() - присваивает None в screen
+		* update() - пропускается если screen == None
 		* onKeyDown(key)
 		* onKeyUp(key)
 		* onJoyHat(value)
@@ -292,7 +297,7 @@
 	* Методы:
 		* init(image: pygame.Surface, frameSize: tuple[int, int], animation: list\[int, int])
 		* setNames(names: list\[str]) - устанавливает название для каждой анимации
-		* calc() -> tuple[bool, bool] - прибавляет счётчик, и переключает кадр, если прошло достаточно времени. После последнего кадра идёт первый.
+		* update() -> tuple[bool, bool] - прибавляет счётчик, и переключает кадр, если прошло достаточно времени. После последнего кадра идёт первый.
 
 			Возвращает два значения:
 			* Был ли переключён кадр
