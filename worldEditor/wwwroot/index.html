@@ -14,6 +14,9 @@
 <body>
 	<div class="toolbar">
 		<h1>World Editor</h1>
+		<div class="line">
+			<button id="btn-controls">Show controls</button>
+		</div>
 		<table>
 			<tr><td><label for="inp-width">Width</label></td><td><input type="number" id="inp-width" value="5"></td></tr>
 			<tr><td><label for="inp-height">Height</label></td><td><input type="number" id="inp-height" value="5"></td></tr>
@@ -31,13 +34,13 @@
 			<label>Zoom: <input type="number" id="inp-tilesize" min="1"></label>
 		</div>
 		<div class="line">
-			<span>Camera speed: </span>
+			<span>Scroll speed: </span>
 			<input type="range" id="inp_cameraSpeed" min="1" max="10" step="1" value="4">
 		</div>
 		<div class="line">
 			<span>Mode: </span>
 			<span class="margin-left">
-				<label><span>Pen:</span><input type="radio" id="inp-mode-pen" name="mode"></label>
+				<label><span>Pen:</span><input type="radio" id="inp-mode-pen" name="mode" checked></label>
 				<label><span>Fill:</span><input type="radio" id="inp-mode-fill" name="mode"></label>
 			</span>
 		</div>

@@ -19,6 +19,7 @@ h1 {
 	width: 300px;
 	padding: 0.4em;
 	flex-shrink: 0;
+	overflow-y: auto;
 	/* min-height: 100%; */
 }
 .btns {
@@ -79,4 +80,7 @@ h1 {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+}
+.cursor-move {
+	cursor: move;
 }

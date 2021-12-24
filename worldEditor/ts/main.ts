@@ -9,6 +9,8 @@ const btn_save = getButton("btn-save")
 const btn_load = getButton("btn-load")
 const btn_new = getButton("btn-new")
 const inp_cameraSpeed = getInput("inp_cameraSpeed");
+const inp_mode_pen = getInput("inp-mode-pen");
+const inp_mode_fill = getInput("inp-mode-fill");
 const world_map = getTable("world-map")
 const div_viewport = getDiv("viewport")
 const canvas = getCanvas("canvas");
@@ -28,10 +30,11 @@ const tileImages: TileImages = {};
 inp_tilesize.valueAsNumber = TileSize;
 let camera_x = 0;
 let camera_y = 0;
-let camera_speed = () =>
+const camera_speed = () =>
 {
 	return Math.round(TileSize * inp_cameraSpeed.valueAsNumber / 2);
 };
+let pen: keyof (typeof tileIds) = "sand";
 
 
 class World
@@ -218,6 +221,20 @@ class World
 			}
 		}
 	}
+
+	public fill(x: number, y: number)
+	{
+
+	}
+	public pen(x: number, y: number)
+	{
+		const width = TileSize * ViewWidth;
+		const height = TileSize * ViewHeight;
+		const X = Math.floor(x / width);
+		const Y = Math.floor(y / height);
+		const view = this.map[Y][X]
+		if (view) view.pen(x - X * width, y - Y * height);
+	}
 }
 class View
 {
@@ -260,6 +277,16 @@ class View
 		ctx.strokeStyle = "black";
 		ctx.lineWidth = 1;
 		ctx.strokeRect(0, 0, ViewWidth * TileSize, ViewHeight * TileSize)
+	}
+	public fill(x: number, y: number)
+	{
+
+	}
+	public pen(x: number, y: number)
+	{
+		const X = Math.floor(x / TileSize);
+		const Y = Math.floor(y / TileSize);
+		this.tiles[Y][X].id = pen;
 	}
 }
 class Tile
@@ -360,6 +387,72 @@ canvas.addEventListener("wheel", e =>
 		else camera_y = 0;
 	}
 });
+
+let camera_moving: null | { x: number, y: number, cx: number, cy: number } = null;
+let drawing = false;
+canvas.addEventListener("mousedown", e =>
+{
+	e.preventDefault();
+	if (e.button == 0)
+	{
+		if (inp_mode_pen.checked)
+		{
+			drawing = true;
+			world.pen(e.offsetX + camera_x, e.offsetY + camera_y);
+		}
+		else
+		{
+			world.fill(e.offsetX + camera_x, e.offsetY + camera_y);
+		}
+	}
+	if (e.button == 2)
+	{
+		camera_moving = { x: e.offsetX, y: e.offsetY, cx: camera_x, cy: camera_y };
+		canvas.classList.add("cursor-move");
+	}
+});
+canvas.addEventListener("mousemove", e =>
+{
+	if (drawing)
+	{
+		if (!inp_mode_pen.checked)
+		{
+			drawing = false;
+			return;
+		}
+		world.pen(e.offsetX + camera_x, e.offsetY + camera_y);
+	}
+	else if (camera_moving)
+	{
+		camera_x = camera_moving.cx + e.offsetX - camera_moving.x;
+		camera_y = camera_moving.cy + e.offsetY - camera_moving.y;
+		const width = world.width * ViewWidth * TileSize;
+		const height = world.height * ViewHeight * TileSize
+		if (width > canvas.width)
+		{
+			camera_x = Math.max(Math.min(camera_x, 0), -width + canvas.width);
+		}
+		else camera_x = 0;
+		if (height > canvas.height)
+		{
+			camera_y = Math.max(Math.min(camera_y, 0), -height + canvas.height);
+		}
+		else camera_y = 0;
+	}
+});
+canvas.addEventListener("mouseup", () =>
+{
+	drawing = false;
+	camera_moving = null;
+	canvas.classList.remove("cursor-move");
+});
+canvas.addEventListener("mouseleave", () =>
+{
+	drawing = false;
+	camera_moving = null;
+	canvas.classList.remove("cursor-move");
+});
+canvas.addEventListener("contextmenu", e => e.preventDefault());
 
 function loadImages()
 {
