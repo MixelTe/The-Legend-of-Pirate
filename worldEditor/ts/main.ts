@@ -222,19 +222,28 @@ class World
 		}
 	}
 
+	private getView(x: number, y: number)
+	{
+		const width = TileSize * ViewWidth;
+		const height = TileSize * ViewHeight;
+		const X = Math.floor(x / width);
+		const Y = Math.floor(y / height);
+		if (X >= this.width || Y >= this.height) return { view: null, X, Y };
+		return { view: this.map[Y][X], X: x - X * width, Y: y - Y * height };
+	}
 	public fill(x: number, y: number)
 	{
 
 	}
 	public pen(x: number, y: number)
 	{
-		const width = TileSize * ViewWidth;
-		const height = TileSize * ViewHeight;
-		const X = Math.floor(x / width);
-		const Y = Math.floor(y / height);
-		if (X >= this.width || Y >= this.height) return;
-		const view = this.map[Y][X]
-		if (view) view.pen(x - X * width, y - Y * height);
+		const {view, X, Y} = this.getView(x, y);
+		if (view) view.pen(X, Y);
+	}
+	public pick(x: number, y: number)
+	{
+		const {view, X, Y} = this.getView(x, y);
+		if (view) view.pick(X, Y);
 	}
 }
 class View
@@ -288,6 +297,12 @@ class View
 		const X = Math.floor(x / TileSize);
 		const Y = Math.floor(y / TileSize);
 		this.tiles[Y][X].id = pen;
+	}
+	public pick(x: number, y: number)
+	{
+		const X = Math.floor(x / TileSize);
+		const Y = Math.floor(y / TileSize);
+		pen = this.tiles[Y][X].id;
 	}
 }
 class Tile
@@ -412,6 +427,10 @@ canvas.addEventListener("mousedown", e =>
 		}
 		camera_moving = { x: e.offsetX, y: e.offsetY, cx: camera_x, cy: camera_y };
 		canvas.classList.add("cursor-move");
+	}
+	if (e.button == 1)
+	{
+		world.pick(e.offsetX - camera_x, e.offsetY - camera_y);
 	}
 });
 canvas.addEventListener("mousemove", e =>
