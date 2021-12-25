@@ -202,6 +202,13 @@ class World
 		{
 			for (let x = 0; x < this.width; x++)
 			{
+				if (x * viewWidth + camera_x > canvas.width ||
+					y * viewHeight + camera_y > canvas.height ||
+					(x + 1) * viewWidth + camera_x < 0 ||
+					(y + 1) * viewHeight + camera_y < 0)
+				{
+					continue;
+				}
 				let view = this.map[y][x];
 				if (view)
 				{
@@ -233,7 +240,8 @@ class World
 	}
 	public fill(x: number, y: number)
 	{
-
+		const {view, X, Y} = this.getView(x, y);
+		if (view) view.fill(X, Y);
 	}
 	public pen(x: number, y: number)
 	{
@@ -290,7 +298,23 @@ class View
 	}
 	public fill(x: number, y: number)
 	{
+		const X = Math.floor(x / TileSize);
+		const Y = Math.floor(y / TileSize);
+		const tile = this.tiles[Y][X].id;
+		this.fillR(X, Y, tile, []);
+	}
+	private fillR(x: number, y: number, tile: Tiles, path: number[])
+	{
+		if (x < 0 || y < 0 || x >= ViewWidth || y >= ViewHeight) return;
+		if (this.tiles[y][x].id != tile) return;
 
+		this.tiles[y][x].id = pen;
+		const key = (x: number, y: number) => y * ViewWidth + x;
+		path.push(key(x, y));
+		if (path.indexOf(key(x + 1, y)) == -1) this.fillR(x + 1, y, tile, path);
+		if (path.indexOf(key(x - 1, y)) == -1) this.fillR(x - 1, y, tile, path);
+		if (path.indexOf(key(x, y + 1)) == -1) this.fillR(x, y + 1, tile, path);
+		if (path.indexOf(key(x, y - 1)) == -1) this.fillR(x, y - 1, tile, path);
 	}
 	public pen(x: number, y: number)
 	{
@@ -307,8 +331,8 @@ class View
 }
 class Tile
 {
-	id: keyof typeof tileIds = "sand";
-	constructor(id?: keyof typeof tileIds)
+	id: Tiles = "sand";
+	constructor(id?: Tiles)
 	{
 		if (id) this.id = id;
 	}
@@ -396,7 +420,7 @@ canvas.addEventListener("wheel", e =>
 });
 
 let camera_moving: null | { x: number, y: number, cx: number, cy: number } = null;
-let drawing = false;
+let drawing: null | "pen" | "fill" = null;
 canvas.addEventListener("mousedown", e =>
 {
 	e.preventDefault();
@@ -410,11 +434,11 @@ canvas.addEventListener("mousedown", e =>
 		}
 		if (inp_mode_pen.checked)
 		{
-			drawing = true;
+			drawing = "pen";
 		}
 		else
 		{
-			world.fill(e.offsetX - camera_x, e.offsetY - camera_y);
+			drawing = "fill"
 		}
 	}
 	if (e.button == 2)
@@ -422,7 +446,7 @@ canvas.addEventListener("mousedown", e =>
 		if (drawing)
 		{
 			centerView(e.offsetX - camera_x, e.offsetY - camera_y);
-			drawing = false;
+			drawing = null;
 			return;
 		}
 		camera_moving = { x: e.offsetX, y: e.offsetY, cx: camera_x, cy: camera_y };
@@ -439,7 +463,7 @@ canvas.addEventListener("mousemove", e =>
 	{
 		if (!inp_mode_pen.checked)
 		{
-			drawing = false;
+			drawing = null;
 			return;
 		}
 		world.pen(e.offsetX - camera_x, e.offsetY - camera_y);
@@ -453,24 +477,33 @@ canvas.addEventListener("mousemove", e =>
 });
 canvas.addEventListener("mouseup", e =>
 {
-	if (drawing) world.pen(e.offsetX - camera_x, e.offsetY - camera_y);
-	drawing = false;
+	if (drawing == "pen") world.pen(e.offsetX - camera_x, e.offsetY - camera_y);
+	if (drawing == "fill") world.fill(e.offsetX - camera_x, e.offsetY - camera_y);
+	drawing = null;
 	camera_moving = null;
 	canvas.classList.remove("cursor-move");
 });
 canvas.addEventListener("mouseleave", () =>
 {
-	drawing = false;
+	drawing = null;
 	camera_moving = null;
 	canvas.classList.remove("cursor-move");
 });
 canvas.addEventListener("contextmenu", e => e.preventDefault());
+window.addEventListener("keypress", e =>
+{
+	switch (e.code) {
+		case "KeyW": inp_mode_fill.checked = true; break;
+		case "KeyS": inp_mode_pen.checked = true; break;
+	}
+});
+
 
 function loadImages()
 {
 	for (const k in tileIds)
 	{
-		const key = <keyof typeof tileIds>k;
+		const key = <Tiles>k;
 		const path = tileIds[key];
 		// const img = document.createElement("img");
 		const img = new Image()
@@ -542,5 +575,6 @@ function loop()
 
 type TileImages =
 {
-	[Property in keyof(typeof tileIds)]?: HTMLImageElement;
+	[Property in Tiles]?: HTMLImageElement;
 }
+type Tiles = keyof typeof tileIds;
