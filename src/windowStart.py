@@ -26,7 +26,5 @@ class WindowStart(Window):
         screen.blit(self.image_quit, self.rect_quit)
 
     def quit_game(self, pos):
-        x = pos[0]
-        y = pos[1]
-        if [x, y] in self.quit_size:
+        if [pos[0], pos[1]] in self.quit_size:
             pygame.quit()
