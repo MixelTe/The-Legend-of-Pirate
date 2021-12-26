@@ -620,6 +620,7 @@ canvas.addEventListener("mousedown", e =>
 });
 canvas.addEventListener("mousemove", e =>
 {
+	setCursor("none")
 	if (inp_mode_view.checked)
 	{
 		world.setCursor(e.offsetX - camera_x, e.offsetY - camera_y)
