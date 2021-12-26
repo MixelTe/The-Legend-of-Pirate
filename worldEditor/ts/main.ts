@@ -41,7 +41,6 @@ const camera_speed = () =>
 	return Math.round(TileSize * inp_cameraSpeed.valueAsNumber / 2);
 };
 let pen: keyof (typeof tileIds) = "sand";
-let viewMode = false;
 
 
 class World
@@ -230,7 +229,7 @@ class World
 				}
 				else
 				{
-					if (viewMode && icon_plus)
+					if (inp_mode_view.checked && icon_plus)
 					{
 						const rect = icon_center_rect();
 						ctx.drawImage(icon_plus, rect.x, rect.y, rect.w, rect.h);
@@ -344,7 +343,7 @@ class View
 		ctx.strokeStyle = "black";
 		ctx.lineWidth = 1;
 		ctx.strokeRect(0, 0, ViewWidth * TileSize, ViewHeight * TileSize);
-		if (viewMode)
+		if (inp_mode_view.checked)
 		{
 			ctx.fillStyle = "rgba(0, 0, 0, 0.3)";
 			ctx.fillRect(0, 0, ViewWidth * TileSize, ViewHeight * TileSize);
@@ -457,11 +456,23 @@ class MiniMap
 
 	constructor()
 	{
-		this.canvas.addEventListener("click", e =>
+		this.canvas.addEventListener("contextmenu", e => e.preventDefault());
+		this.canvas.addEventListener("mousedown", e =>
 		{
 			const x = Math.min(Math.floor(e.offsetX / this.size), world.width);
 			const y = Math.min(Math.floor(e.offsetY / this.size), world.height);
-			centerView(x * TileSize * ViewWidth, y * TileSize * ViewHeight);
+			const X = x * TileSize * ViewWidth;
+			const Y = y * TileSize * ViewHeight;
+			if (e.button == 0)
+			{
+				camera_x = -(X - Math.round((canvas.width - ViewWidth * TileSize) / 2));
+				camera_y = -(Y - Math.round((canvas.height - ViewHeight * TileSize) / 2));
+				normalizeCamera();
+			}
+			else
+			{
+				centerView(X, Y);
+			}
 		});
 	}
 
@@ -533,11 +544,6 @@ btn_new.addEventListener("click", async () =>
 	}
 	world = new World(inp_width.valueAsNumber, inp_height.valueAsNumber)
 });
-inp_mode_view.addEventListener("change", () =>
-{
-	viewMode = inp_mode_view.checked;
-	setCursor("none");
-});
 inp_tilesize.addEventListener("change", () => TileSize = inp_tilesize.valueAsNumber);
 canvas.addEventListener("wheel", e =>
 {
@@ -580,7 +586,7 @@ canvas.addEventListener("mousedown", e =>
 			camera_moving = null;
 			return;
 		}
-		if (viewMode)
+		if (inp_mode_view.checked)
 		{
 			world.mousedown(e.offsetX, e.offsetY);
 		}
@@ -614,7 +620,7 @@ canvas.addEventListener("mousedown", e =>
 });
 canvas.addEventListener("mousemove", e =>
 {
-	if (viewMode)
+	if (inp_mode_view.checked)
 	{
 		world.setCursor(e.offsetX - camera_x, e.offsetY - camera_y)
 	}
@@ -645,7 +651,7 @@ canvas.addEventListener("mousemove", e =>
 canvas.addEventListener("mouseup", e =>
 {
 	setCursor("none");
-	if (viewMode)
+	if (inp_mode_view.checked)
 	{
 		if (e.button == 0) world.mouseup(e.offsetX, e.offsetY);
 		world.setCursor(e.offsetX - camera_x, e.offsetY - camera_y)
@@ -669,6 +675,16 @@ window.addEventListener("keypress", e =>
 	switch (e.code) {
 		case "KeyW": inp_mode_fill.checked = true; break;
 		case "KeyS": inp_mode_pen.checked = true; break;
+		case "KeyA": inp_mode_view.checked = !inp_mode_view.checked; break;
+	}
+});
+window.addEventListener("keydown", e =>
+{
+	switch (e.code) {
+		case "ArrowUp": world.up(); break;
+		case "ArrowRight": world.right(); break;
+		case "ArrowDown": world.down(); break;
+		case "ArrowLeft": world.left(); break;
 	}
 });
 

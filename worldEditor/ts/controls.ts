@@ -4,7 +4,7 @@ controls_popup.okBtn = false;
 getButton("btn-controls").addEventListener("click", () => controls_popup.open());
 controls_popup.content.appendChild(Div([], [
 	H1([], [], "Управление"),
-	Table([], [
+	Table("controls-table", [
 		TR([], [
 			TD([], [], "Движение экрана:"),
 		]),
@@ -22,8 +22,13 @@ controls_popup.content.appendChild(Div([], [
 		]),
 		TR([], [
 			TD([], [], "Отцентрировать"),
-			TD([], [], "ЛКМ + ПКМ"),
+			TD([], [], "ЛКМ + ПКМ\nПКМ на миникарте"),
 		]),
+		TR([], [
+			TD([], [], "Переместить к экрану"),
+			TD([], [], "ЛКМ на миникарте"),
+		]),
+		TR("row-spacer"),
 		TR([], [
 			TD([], [], "Рисование:"),
 		]),
@@ -42,6 +47,18 @@ controls_popup.content.appendChild(Div([], [
 		TR([], [
 			TD([], [], "Заливка"),
 			TD([], [], "W"),
+		]),
+		TR("row-spacer"),
+		TR([], [
+			TD([], [], "Мир:"),
+		]),
+		TR([], [
+			TD([], [], "Режим экранов"),
+			TD([], [], "A"),
+		]),
+		TR([], [
+			TD([], [], "Сдвинуть все экраны"),
+			TD([], [], "Стрелки"),
 		]),
 	]),
 ]));

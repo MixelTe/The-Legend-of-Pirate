@@ -122,3 +122,13 @@ h1 {
 .cursor-pointer {
 	cursor: pointer;
 }
+
+.controls-table {
+	border-spacing: 1em 0.3em;
+}
+.row-spacer {
+	height: 0.8em;
+}
+.row-nospace {
+	border-spacing: 0;
+}

@@ -34,23 +34,23 @@
 			<button id="btn-right">→</button>
 			<button id="btn-down">↓</button>
 		</div>
-		<div class="line">
+		<div class="line" title="Size of one tile">
 			<label>Zoom: <input type="number" id="inp-tilesize" min="1"></label>
 		</div>
-		<div class="line">
+		<div class="line" title="Speed of scrolling with mouse wheel">
 			<span>Scroll speed: </span>
 			<input type="range" id="inp_cameraSpeed" min="1" max="10" step="1" value="4">
 		</div>
 		<div class="line">
-			<span>Mode: </span>
+			<span title="Drawing mode">Mode: </span>
 			<span class="margin-left">
-				<label><span>[S] Pen:</span><input type="radio" id="inp-mode-pen" name="mode" checked></label>
-				<label><span>[W] Fill:</span><input type="radio" id="inp-mode-fill" name="mode"></label>
+				<label title="Fill one tile"><span>[S] Pen:</span><input type="radio" id="inp-mode-pen" name="mode" checked></label>
+				<label title="Fill all same tiles touching the sides"><span>[W] Fill:</span><input type="radio" id="inp-mode-fill" name="mode"></label>
 			</span>
 		</div>
 		<div class="line">
 			<label>
-				<span>View Mode:</span>
+				<span>[A] View Mode:</span>
 				<span class="checkbox-switch">
 					<input type="checkbox" id="inp-mode-view">
 					<span></span>
