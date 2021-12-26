@@ -17,11 +17,6 @@ class WindowStart(Window):
         self.rect_quit = pygame.Rect(750, 400, WindowStart.image_quit.get_width() * scale, WindowStart.image_quit.get_height() * scale)
         self.image_quit = pygame.transform.scale(self.image_quit, (self.rect_quit.width, self.rect_quit.height))
         
-
-        for i in range(750, 750 + self.rect_quit.width):
-            for j in range(400, 400 + self.rect_quit.height):
-                self.quit_size.append([i, j])
-
     def draw(self, screen: pygame.Surface):
         screen.blit(self.image_start, self.rect_start)
         screen.blit(self.image_quit, self.rect_quit)
@@ -29,7 +24,6 @@ class WindowStart(Window):
     def on_event(self, event: pygame.event.Event):       
          if event.type == pygame.MOUSEBUTTONDOWN:
             print(event)
-            self.pos = event.pos
             self.rect_mouse = (self.pos[0], self.pos[1], 1, 1)
             self.quit_game()
 
