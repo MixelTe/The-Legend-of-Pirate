@@ -12,7 +12,7 @@ const inp_cameraSpeed = getInput("inp_cameraSpeed");
 const inp_mode_pen = getInput("inp-mode-pen");
 const inp_mode_fill = getInput("inp-mode-fill");
 const inp_mode_view = getInput("inp-mode-view");
-const world_map = getTable("world-map")
+// const world_map = getTable("world-map")
 const div_viewport = getDiv("viewport")
 const canvas = getCanvas("canvas");
 const ctx = getCanvasContext(canvas);
@@ -124,7 +124,7 @@ class World
 			}
 		}
 		if (this.map[0]) this.map[0][0] = new View(); // Temp
-		this.createTable();
+		// this.createTable();
 	}
 	public up()
 	{
@@ -160,11 +160,11 @@ class World
 	}
 	private createTable()
 	{
-		world_map.innerHTML = "";
+		// world_map.innerHTML = "";
 		for (let y = 0; y < this.height; y++)
 		{
 			const row = document.createElement("tr")
-			world_map.appendChild(row);
+			// world_map.appendChild(row);
 			for (let x = 0; x < this.width; x++)
 			{
 				const cell = document.createElement("td");
@@ -449,7 +449,46 @@ class Tile
 	}
 }
 
-let world = new World(0, 0)
+class MiniMap
+{
+	private canvas = getCanvas("minimap");
+	private ctx = getCanvasContext(this.canvas);
+	private size = 20;
+
+	constructor()
+	{
+		this.canvas.addEventListener("click", e =>
+		{
+			const x = Math.min(Math.floor(e.offsetX / this.size), world.width);
+			const y = Math.min(Math.floor(e.offsetY / this.size), world.height);
+			centerView(x * TileSize * ViewWidth, y * TileSize * ViewHeight);
+		});
+	}
+
+	public draw()
+	{
+		this.canvas.width = (this.size + 1) * world.width + 2;
+		this.canvas.height = (this.size + 1) * world.height + 2;
+
+		for (let y = 0; y < world.height; y++)
+		{
+			for (let x = 0; x < world.width; x++)
+			{
+				if (world.map[y] && world.map[y][x]) this.ctx.fillStyle = "rgb(243, 200, 81)";
+				else this.ctx.fillStyle = "rgb(177, 225, 255)";
+				this.ctx.fillRect(x * (this.size + 1) + 1, y * (this.size + 1) + 1, this.size, this.size);
+			}
+		}
+
+		const coefX = (this.canvas.width - 2) / (world.width * ViewWidth * TileSize);
+		const coefY = (this.canvas.height - 2) / (world.height * ViewHeight * TileSize);
+		this.ctx.strokeStyle = "blue";
+		this.ctx.strokeRect(-camera_x * coefX + 1, -camera_y * coefY + 1, canvas.width * coefX, canvas.height * coefY);
+	}
+}
+
+let world = new World(0, 0);
+const minimap = new MiniMap();
 
 inp_width.addEventListener("change", () =>
 {
@@ -608,7 +647,7 @@ canvas.addEventListener("mouseup", e =>
 	setCursor("none");
 	if (viewMode)
 	{
-		world.mouseup(e.offsetX, e.offsetY);
+		if (e.button == 0) world.mouseup(e.offsetX, e.offsetY);
 		world.setCursor(e.offsetX - camera_x, e.offsetY - camera_y)
 	}
 	if (drawing == "pen") world.pen(e.offsetX - camera_x, e.offsetY - camera_y);
@@ -728,6 +767,8 @@ function loop()
 	ctx.lineTo(canvas.width - 2, canvas.height * partY);
 	ctx.stroke();
 	ctx.restore();
+
+	minimap.draw();
 
 	requestAnimationFrame(loop);
 }
