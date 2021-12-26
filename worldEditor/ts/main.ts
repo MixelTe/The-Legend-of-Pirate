@@ -294,6 +294,7 @@ class World
 			if (vx >= this.width || vy >= this.height || vx < 0 || vy < 0) return;
 			this.map[vy][vx] = this.map[view_moving.vy][view_moving.vx];
 			this.map[view_moving.vy][view_moving.vx] = undefined;
+			return;
 		}
 		if (view) view.mouseup(X, Y, vx, vy);
 		else
