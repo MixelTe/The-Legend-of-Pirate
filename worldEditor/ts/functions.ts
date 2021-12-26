@@ -91,3 +91,13 @@ function getDiv(id: string)
 	if (el instanceof HTMLDivElement) return el;
 	throw new Error(`${id} element not Div`);
 }
+
+function rectPointIntersect(rect: {x: number, y: number, w: number, h: number}, point: {x: number, y: number})
+{
+	return (
+		rect.x + rect.w >= point.x &&
+		point.x >= rect.x &&
+		rect.y + rect.h >= point.y &&
+		point.y >= rect.y
+	);
+}

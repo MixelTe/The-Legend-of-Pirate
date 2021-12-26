@@ -73,6 +73,36 @@ h1 {
 	background-color: rgb(243, 200, 81);
 }
 
+.checkbox-switch {
+	position: relative;
+	display: inline-block;
+	background-color: azure;
+	/* border: 1px solid rgb(123, 216, 247); */
+	border-radius: 1em;
+	width: 2.5em;
+	height: 1.2em;
+	box-shadow: 0 0 0.2em rgba(0, 0, 0, 0.5);
+}
+.checkbox-switch input {
+	visibility: hidden;
+}
+.checkbox-switch span {
+	position: absolute;
+	left: 0.15em;
+	top: 0.15em;
+	display: inline-block;
+	width: 0.9em;
+	height: 0.9em;
+	background-color: tomato;
+	box-shadow: 0 0 0.2em tomato;
+	border-radius: 1em;
+	transition: 250ms;
+}
+.checkbox-switch input:checked ~ span {
+	background-color: lime;
+	box-shadow: 0 0 0.2em lime;
+	left: 1.45em;
+}
 
 .viewport {
 	flex-grow: 1;
@@ -83,4 +113,7 @@ h1 {
 }
 .cursor-move {
 	cursor: move;
+}
+.cursor-pointer {
+	cursor: pointer;
 }

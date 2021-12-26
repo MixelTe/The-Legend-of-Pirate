@@ -11,6 +11,7 @@ const btn_new = getButton("btn-new")
 const inp_cameraSpeed = getInput("inp_cameraSpeed");
 const inp_mode_pen = getInput("inp-mode-pen");
 const inp_mode_fill = getInput("inp-mode-fill");
+const inp_mode_view = getInput("inp-mode-view");
 const world_map = getTable("world-map")
 const div_viewport = getDiv("viewport")
 const canvas = getCanvas("canvas");
@@ -26,6 +27,11 @@ const tileIds = {
 	wall: "wall.png",
 }
 const tileImages: TileImages = {};
+let icon_move: null | HTMLImageElement = null;
+let icon_plus: null | HTMLImageElement = null;
+const icon_center_rect = () => { const size = TileSize * 2; return { x: (ViewWidth * TileSize - size) / 2, y: (ViewHeight * TileSize - size) / 2, w: size, h: size } };
+let icon_trash: null | HTMLImageElement = null;
+const icon_trash_rect = () => { const size = TileSize * 0.9; return { x: (ViewWidth - 0.5) * TileSize - size, y: TileSize / 2, w: size, h: size * 1.5 } };
 
 inp_tilesize.valueAsNumber = TileSize;
 let camera_x = 0;
@@ -35,6 +41,7 @@ const camera_speed = () =>
 	return Math.round(TileSize * inp_cameraSpeed.valueAsNumber / 2);
 };
 let pen: keyof (typeof tileIds) = "sand";
+let viewMode = false;
 
 
 class World
@@ -116,7 +123,7 @@ class World
 				this.map.push(line)
 			}
 		}
-		if (this.map[0]) this.map[0][0] = new View();
+		if (this.map[0]) this.map[0][0] = new View(); // Temp
 		this.createTable();
 	}
 	public up()
@@ -209,23 +216,37 @@ class World
 				{
 					continue;
 				}
-				let view = this.map[y][x];
+				const view = this.map[y][x];
+				ctx.save();
+				ctx.fillStyle = "lightblue";
+				ctx.translate(x * viewWidth, y * viewHeight);
+				ctx.fillRect(0, 0, viewWidth, viewHeight);
 				if (view)
 				{
 					ctx.save();
-					ctx.translate(x * viewWidth, y * viewHeight);
+					if (view_moving && view_moving.vx == x && view_moving.vy == y) ctx.translate(view_moving.dx, view_moving.dy);
 					view.draw();
 					ctx.restore();
 				}
 				else
 				{
-					ctx.save();
-					ctx.fillStyle = "lightblue";
-					ctx.translate(x * viewWidth, y * viewHeight);
-					ctx.fillRect(0, 0, viewWidth, viewHeight);
-					ctx.restore();
+					if (viewMode && icon_plus)
+					{
+						const rect = icon_center_rect();
+						ctx.drawImage(icon_plus, rect.x, rect.y, rect.w, rect.h);
+					}
 				}
+				ctx.restore();
 			}
+		}
+		if (view_moving)
+		{
+			ctx.save();
+			ctx.translate(view_moving.vx * viewWidth, view_moving.vy * viewHeight);
+			ctx.translate(view_moving.dx, view_moving.dy);
+			const view = this.map[view_moving.vy][view_moving.vx];
+			if (view) view.draw();
+			ctx.restore();
 		}
 	}
 
@@ -235,23 +256,51 @@ class World
 		const height = TileSize * ViewHeight;
 		const X = Math.floor(x / width);
 		const Y = Math.floor(y / height);
-		if (X >= this.width || Y >= this.height) return { view: null, X, Y };
-		return { view: this.map[Y][X], X: x - X * width, Y: y - Y * height };
+		if (X >= this.width || Y >= this.height) return { view: null, X, Y, vx: X, vy: Y };
+		return { view: this.map[Y][X], X: x - X * width, Y: y - Y * height, vx: X, vy: Y };
 	}
 	public fill(x: number, y: number)
 	{
-		const {view, X, Y} = this.getView(x, y);
+		const { view, X, Y } = this.getView(x, y);
 		if (view) view.fill(X, Y);
 	}
 	public pen(x: number, y: number)
 	{
-		const {view, X, Y} = this.getView(x, y);
+		const { view, X, Y } = this.getView(x, y);
 		if (view) view.pen(X, Y);
 	}
 	public pick(x: number, y: number)
 	{
-		const {view, X, Y} = this.getView(x, y);
+		const { view, X, Y } = this.getView(x, y);
 		if (view) view.pick(X, Y);
+	}
+	public setCursor(x: number, y: number)
+	{
+		const { view, X, Y } = this.getView(x, y);
+		if (view) view.setCursor(X, Y);
+		else setCursor("pointer");
+	}
+	public mousedown(x: number, y: number)
+	{
+		const {view, X, Y, vx, vy } = this.getView(x - camera_x, y - camera_y);
+		if (!view) return;
+		view.mousedown(X, Y, x, y, vx, vy);
+	}
+	public mouseup(x: number, y: number)
+	{
+		const {view, X, Y, vx, vy } = this.getView(x - camera_x, y - camera_y);
+		if (view_moving)
+		{
+			if (view) return;
+			if (vx >= this.width || vy >= this.height || vx < 0 || vy < 0) return;
+			this.map[vy][vx] = this.map[view_moving.vy][view_moving.vx];
+			this.map[view_moving.vy][view_moving.vx] = undefined;
+		}
+		if (view) view.mouseup(X, Y, vx, vy);
+		else
+		{
+			this.map[vy][vx] = new View();
+		}
 	}
 }
 class View
@@ -294,7 +343,22 @@ class View
 		}
 		ctx.strokeStyle = "black";
 		ctx.lineWidth = 1;
-		ctx.strokeRect(0, 0, ViewWidth * TileSize, ViewHeight * TileSize)
+		ctx.strokeRect(0, 0, ViewWidth * TileSize, ViewHeight * TileSize);
+		if (viewMode)
+		{
+			ctx.fillStyle = "rgba(0, 0, 0, 0.3)";
+			ctx.fillRect(0, 0, ViewWidth * TileSize, ViewHeight * TileSize);
+			if (icon_move)
+			{
+				const rect = icon_center_rect();
+				ctx.drawImage(icon_move, rect.x, rect.y, rect.w, rect.h);
+			}
+			if (icon_trash)
+			{
+				const rect = icon_trash_rect();
+				ctx.drawImage(icon_trash, rect.x, rect.y, rect.w, rect.h);
+			}
+		}
 	}
 	public fill(x: number, y: number)
 	{
@@ -327,6 +391,45 @@ class View
 		const X = Math.floor(x / TileSize);
 		const Y = Math.floor(y / TileSize);
 		pen = this.tiles[Y][X].id;
+	}
+	public setCursor(x: number, y: number)
+	{
+		if (rectPointIntersect(icon_trash_rect(), { x, y }))
+		{
+			setCursor("pointer");
+		}
+		else
+		{
+			setCursor("move");
+		}
+	}
+	public mousedown(x: number, y: number, rx: number, ry: number, vx: number, vy: number)
+	{
+		if (rectPointIntersect(icon_trash_rect(), { x, y }))
+		{ }
+		else
+		{
+			view_moving = { x: rx, y: ry, dx: 0, dy: 0, vx, vy };
+		}
+	}
+	public async mouseup(x: number, y: number, vx: number, vy: number)
+	{
+		if (rectPointIntersect(icon_trash_rect(), { x, y }))
+		{
+			const popup = new Popup();
+			popup.content.appendChild(Div([], [], "Вы уверены, что хотите удалить экран?"));
+			const r = await popup.openAsync();
+			if (r)
+			{
+				const popup = new Popup();
+				popup.content.appendChild(Div([], [], "Вы точно уверены, что хотите удалить экран?"));
+				popup.reverse = true;
+				const r = await popup.openAsync();
+				if (!r) return;
+			}
+			if (!r) return;
+			world.map[vy][vx] = undefined;
+		}
 	}
 }
 class Tile
@@ -373,7 +476,7 @@ btn_load.addEventListener("click", () => {
 });
 btn_new.addEventListener("click", async () =>
 {
-	if (world.height != 0 || world.width != 0)
+	if (world.height != 0 && world.width != 0)
 	{
 		let popup = new Popup();
 		popup.content.appendChild(Div([], [], "Вы уверены, что хотите создать пустой мир?"));
@@ -390,6 +493,11 @@ btn_new.addEventListener("click", async () =>
 		if (!r) return
 	}
 	world = new World(inp_width.valueAsNumber, inp_height.valueAsNumber)
+});
+inp_mode_view.addEventListener("change", () =>
+{
+	viewMode = inp_mode_view.checked;
+	setCursor("none");
 });
 inp_tilesize.addEventListener("change", () => TileSize = inp_tilesize.valueAsNumber);
 canvas.addEventListener("wheel", e =>
@@ -420,6 +528,7 @@ canvas.addEventListener("wheel", e =>
 });
 
 let camera_moving: null | { x: number, y: number, cx: number, cy: number } = null;
+let view_moving: null | { x: number, y: number, dx: number, dy: number, vx: number, vy: number } = null;
 let drawing: null | "pen" | "fill" = null;
 canvas.addEventListener("mousedown", e =>
 {
@@ -432,13 +541,20 @@ canvas.addEventListener("mousedown", e =>
 			camera_moving = null;
 			return;
 		}
-		if (inp_mode_pen.checked)
+		if (viewMode)
 		{
-			drawing = "pen";
+			world.mousedown(e.offsetX, e.offsetY);
 		}
 		else
 		{
-			drawing = "fill"
+			if (inp_mode_pen.checked)
+			{
+				drawing = "pen";
+			}
+			else
+			{
+				drawing = "fill"
+			}
 		}
 	}
 	if (e.button == 2)
@@ -450,7 +566,7 @@ canvas.addEventListener("mousedown", e =>
 			return;
 		}
 		camera_moving = { x: e.offsetX, y: e.offsetY, cx: camera_x, cy: camera_y };
-		canvas.classList.add("cursor-move");
+		setCursor("move");
 	}
 	if (e.button == 1)
 	{
@@ -459,6 +575,10 @@ canvas.addEventListener("mousedown", e =>
 });
 canvas.addEventListener("mousemove", e =>
 {
+	if (viewMode)
+	{
+		world.setCursor(e.offsetX - camera_x, e.offsetY - camera_y)
+	}
 	if (drawing)
 	{
 		if (!inp_mode_pen.checked)
@@ -472,22 +592,37 @@ canvas.addEventListener("mousemove", e =>
 	{
 		camera_x = camera_moving.cx + e.offsetX - camera_moving.x;
 		camera_y = camera_moving.cy + e.offsetY - camera_moving.y;
+		setCursor("move")
+		normalizeCamera();
+	}
+	else if (view_moving)
+	{
+		view_moving.dx = e.offsetX - view_moving.x;
+		view_moving.dy = e.offsetY - view_moving.y;
+		setCursor("move")
 		normalizeCamera();
 	}
 });
 canvas.addEventListener("mouseup", e =>
 {
+	setCursor("none");
+	if (viewMode)
+	{
+		world.mouseup(e.offsetX, e.offsetY);
+		world.setCursor(e.offsetX - camera_x, e.offsetY - camera_y)
+	}
 	if (drawing == "pen") world.pen(e.offsetX - camera_x, e.offsetY - camera_y);
 	if (drawing == "fill") world.fill(e.offsetX - camera_x, e.offsetY - camera_y);
 	drawing = null;
 	camera_moving = null;
-	canvas.classList.remove("cursor-move");
+	view_moving = null;
 });
 canvas.addEventListener("mouseleave", () =>
 {
 	drawing = null;
 	camera_moving = null;
-	canvas.classList.remove("cursor-move");
+	view_moving = null;
+	setCursor("none")
 });
 canvas.addEventListener("contextmenu", e => e.preventDefault());
 window.addEventListener("keypress", e =>
@@ -501,15 +636,21 @@ window.addEventListener("keypress", e =>
 
 function loadImages()
 {
+	function loadImage(url: string, onload: (img: HTMLImageElement) => void)
+	{
+		const img = new Image()
+		img.src = url;
+		img.addEventListener("load", () => onload(img));
+	}
 	for (const k in tileIds)
 	{
 		const key = <Tiles>k;
 		const path = tileIds[key];
-		// const img = document.createElement("img");
-		const img = new Image()
-		img.src = "../../src/data/images/" + path;
-		img.addEventListener("load", () => tileImages[key] = img);
+		loadImage("../../src/data/images/" + path, img => tileImages[key] = img);
 	}
+	loadImage("./imgs/icon-move.png", img => icon_move = img);
+	loadImage("./imgs/icon-trash.png", img => icon_trash = img);
+	loadImage("./imgs/icon-plus.png", img => icon_plus = img);
 }
 function centerView(x: number, y: number)
 {
@@ -542,10 +683,28 @@ function normalizeCamera()
 	}
 	else camera_y = 0;
 }
-
+function setCursor(cursor: "none" | "pointer" | "move")
+{
+	switch (cursor)
+	{
+		case "none":
+			canvas.classList.remove("cursor-move");
+			canvas.classList.remove("cursor-pointer");
+			break;
+		case "pointer":
+			canvas.classList.remove("cursor-move");
+			canvas.classList.add("cursor-pointer");
+			break;
+		case "move":
+			canvas.classList.add("cursor-move");
+			canvas.classList.remove("cursor-pointer");
+			break;
+	}
+}
 
 loadImages();
 loop();
+btn_new.click() // Temp
 function loop()
 {
 	const rect = div_viewport.getBoundingClientRect();
