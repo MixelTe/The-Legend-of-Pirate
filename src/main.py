@@ -23,9 +23,6 @@ class Main:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    print(event)
-                    self.window.quit_game(event.pos)
                 self.window.on_event(event)
 
             result = self.window.calc()
