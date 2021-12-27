@@ -23,11 +23,8 @@ class WindowStart(Window):
     
     def on_event(self, event: pygame.event.Event):       
          if event.type == pygame.MOUSEBUTTONDOWN:
-            print(event)
-            self.rect_mouse = (self.pos[0], self.pos[1], 1, 1)
-            self.quit_game()
+            self.quit_game(event.pos)
 
-
-    def quit_game(self):
-        if pygame.sprite.spritecollideany(self.rect_quit, self.rect_mouse):
+    def quit_game(self, pos):
+        if self.rect_quit.collidepoint(pos):
             pygame.event.post(pygame.event.Event(pygame.QUIT))
