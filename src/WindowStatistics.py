@@ -26,5 +26,4 @@ class WindowStatistics(Window):
     
     def on_event(self, event: pygame.event.Event):       
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if self.rect_quit.collidepoint(event.pos):
-                pygame.event.post(pygame.event.Event(pygame.QUIT))
+            pass

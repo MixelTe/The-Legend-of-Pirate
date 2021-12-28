@@ -29,7 +29,7 @@ class Main:
             if (isinstance(result, Window)):
                 self.window = result
 
-            screen.fill((0, 0, 0))
+            screen.fill((133, 133, 133))
             self.window.draw(screen)
             pygame.display.flip()
 
