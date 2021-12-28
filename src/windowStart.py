@@ -9,11 +9,11 @@ class WindowStart(Window):
     image_quit = load_image("quit.png", -1)
 
     def __init__(self):
-        scale = 12
-        self.rect_start = pygame.Rect(750, 200, WindowStart.image_start.get_width() * scale, WindowStart.image_start.get_height() * scale)
+        scale = 16
+        self.rect_start = pygame.Rect(750, 300, WindowStart.image_start.get_width() * scale, WindowStart.image_start.get_height() * scale)
         self.image_start = pygame.transform.scale(self.image_start, (self.rect_start.width, self.rect_start.height))
         
-        self.rect_quit = pygame.Rect(750, 400, WindowStart.image_quit.get_width() * scale, WindowStart.image_quit.get_height() * scale)
+        self.rect_quit = pygame.Rect(750, 550, WindowStart.image_quit.get_width() * scale, WindowStart.image_quit.get_height() * scale)
         self.image_quit = pygame.transform.scale(self.image_quit, (self.rect_quit.width, self.rect_quit.height))
 
         self.stat = False
