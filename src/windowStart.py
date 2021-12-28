@@ -22,9 +22,6 @@ class WindowStart(Window):
         screen.blit(self.image_quit, self.rect_quit)
     
     def on_event(self, event: pygame.event.Event):       
-         if event.type == pygame.MOUSEBUTTONDOWN:
-            self.quit_game(event.pos)
-
-    def quit_game(self, pos):
-        if self.rect_quit.collidepoint(pos):
-            pygame.event.post(pygame.event.Event(pygame.QUIT))
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if self.rect_quit.collidepoint(pos):
+             pygame.event.post(pygame.event.Event(pygame.QUIT))
