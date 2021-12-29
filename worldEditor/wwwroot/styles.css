@@ -51,9 +51,9 @@ h1 {
 	background-color: gray;
 	border-radius: 5px;
 }
-*::-webkit-scrollbar-button {
+/* *::-webkit-scrollbar-button {
 	background-color: rgba(64, 224, 208, 0.5);
-}
+} */
 *::-webkit-scrollbar-corner {
 	background-color: turquoise;
 }
@@ -107,6 +107,18 @@ h1 {
 	background-color: lime;
 	box-shadow: 0 0 0.2em lime;
 	left: 1.45em;
+}
+#palette {
+	display: flex;
+}
+#palette img {
+	cursor: pointer;
+	image-rendering: pixelated;
+	width: 48px;
+	height: 48px;
+}
+#palette canvas {
+	cursor: pointer;
 }
 
 .viewport {

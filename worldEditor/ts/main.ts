@@ -12,8 +12,10 @@ const inp_cameraSpeed = getInput("inp_cameraSpeed");
 const inp_mode_pen = getInput("inp-mode-pen");
 const inp_mode_fill = getInput("inp-mode-fill");
 const inp_mode_view = getInput("inp-mode-view");
+const inp_mode_entity = getInput("inp-mode-entity");
 // const world_map = getTable("world-map")
-const div_viewport = getDiv("viewport")
+const div_viewport = getDiv("viewport");
+const div_palette = getDiv("palette");
 const canvas = getCanvas("canvas");
 const ctx = getCanvasContext(canvas);
 
@@ -21,11 +23,13 @@ const ViewWidth = 15;
 const ViewHeight = 7;
 let TileSize = 16 * 2;
 const tileIds = {
-	none: "none.png",
 	ice: "ice.png",
 	sand: "sand.png",
 	wall: "wall.png",
 }
+const entity: Entity[] = [
+	new Entity_Crab(),
+];
 const tileImages: TileImages = {};
 let icon_move: null | HTMLImageElement = null;
 let icon_plus: null | HTMLImageElement = null;
@@ -546,6 +550,7 @@ btn_new.addEventListener("click", async () =>
 	world = new World(inp_width.valueAsNumber, inp_height.valueAsNumber)
 });
 inp_tilesize.addEventListener("change", () => TileSize = inp_tilesize.valueAsNumber);
+inp_mode_entity.addEventListener("change", () => setPalete());
 canvas.addEventListener("wheel", e =>
 {
 	const moveSpeed = camera_speed();
@@ -688,6 +693,7 @@ window.addEventListener("keypress", e =>
 		case "KeyW": inp_mode_fill.checked = true; break;
 		case "KeyS": inp_mode_pen.checked = true; break;
 		case "KeyA": inp_mode_view.checked = !inp_mode_view.checked; break;
+		case "KeyD": inp_mode_entity.checked = !inp_mode_entity.checked; setPalete(); break;
 	}
 });
 window.addEventListener("keydown", e =>
@@ -713,11 +719,15 @@ function loadImages()
 	{
 		const key = <Tiles>k;
 		const path = tileIds[key];
+		tileImages[key] = undefined;
 		loadImage("../../src/data/images/" + path, img => tileImages[key] = img);
 	}
 	loadImage("./imgs/icon-move.png", img => icon_move = img);
 	loadImage("./imgs/icon-trash.png", img => icon_trash = img);
 	loadImage("./imgs/icon-plus.png", img => icon_plus = img);
+	entity.forEach(e => {
+		loadImage("../../src/data/images/" + e.imgUrl, img => e.img = img);
+	});
 }
 function centerView(x: number, y: number)
 {
@@ -768,8 +778,46 @@ function setCursor(cursor: "none" | "pointer" | "move")
 			break;
 	}
 }
+function setPalete()
+{
+	div_palette.innerHTML = "";
+	if (inp_mode_entity.checked)
+	{
+		entity.forEach(e =>
+		{
+			const img = document.createElement("canvas");
+			div_palette.appendChild(img);
+			function addImg()
+			{
+				if (e.img) e.drawCanvas(img, 48);
+				else setTimeout(addImg, 100);
+			}
+			addImg();
+		});
+	}
+	else
+	{
+		for (const k in tileImages)
+		{
+			const key = <keyof TileImages>k;
+			function addImg()
+			{
+				const img = tileImages[key];
+				if (img)
+				{
+					div_palette.appendChild(img);
+					img.addEventListener("click", () => pen = key);
+				}
+				else setTimeout(addImg, 100);
+			}
+			addImg();
+		}
+	}
+}
+
 
 loadImages();
+setPalete();
 loop();
 btn_new.click() // Temp
 function loop()

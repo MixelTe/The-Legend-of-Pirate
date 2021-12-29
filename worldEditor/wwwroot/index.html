@@ -10,6 +10,7 @@
 	<script defer src="out/functions.js"></script>
 	<script defer src="out/popup.js"></script>
 	<script defer src="out/controls.js"></script>
+	<script defer src="out/entity.js"></script>
 	<script defer src="out/main.js"></script>
 </head>
 <body>
@@ -57,11 +58,22 @@
 				</span>
 			</label>
 		</div>
-		<div class="line ">
+		<div class="line" title="Режим расстановки и настройки сущностей">
+			<label>
+				<span>[D] Режим сущностей:</span>
+				<span class="checkbox-switch">
+					<input type="checkbox" id="inp-mode-entity">
+					<span></span>
+				</span>
+			</label>
+		</div>
+		<div class="line">
 			Мир:
 			<button id="btn-new">Новый</button>
 			<button id="btn-save">Сохранить</button>
 			<button id="btn-load">Загрузить</button>
+		</div>
+		<div class="line" id="palette">
 		</div>
 	</div>
 	<div class="viewport" id="viewport">
