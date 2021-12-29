@@ -553,8 +553,18 @@ canvas.addEventListener("wheel", e =>
 	{
 		e.preventDefault();
 		const v = 1.4
-		if (e.deltaY > 0) TileSize /= v
-		else TileSize *= v
+		if (e.deltaY > 0)
+		{
+			TileSize /= v;
+			camera_x /= v;
+			camera_y /= v;
+		}
+		else
+		{
+			TileSize *= v;
+			camera_x *= v;
+			camera_y *= v;
+		}
 		TileSize = Math.max(Math.round(TileSize), 2);
 		inp_tilesize.valueAsNumber = TileSize;
 		normalizeCamera();
