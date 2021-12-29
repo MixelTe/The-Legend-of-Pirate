@@ -41,6 +41,67 @@ class Entity
 		ctx.strokeStyle = "rgba(0, 0, 0, 0.5)";
 		ctx.strokeRect(this.x * TileSize, this.y * TileSize, obj.widthHitbox * TileSize, obj.heightHitbox * TileSize);
 		ctx.restore();
+		if (selectedEntity == this)
+		{
+			const fontSize = TileSize / 5;
+			ctx.save();
+			ctx.font = `${fontSize}px Arial`;
+			let line = 0;
+			const drawLine = (text: string) =>
+			{
+				ctx.fillText(text, this.x * TileSize + 2, this.y * TileSize + line * fontSize);
+				line += 1;
+			}
+			for (let i = 0; i < this.objData.length; i++)
+			{
+				const data = this.objData[i];
+				if (!data.displayColor) continue;
+				ctx.fillStyle = data.displayColor;
+				ctx.strokeStyle = data.displayColor;
+				ctx.lineWidth = 2;
+				if (data.type == "bool" || data.type == "number" || data.type == "text")
+				{
+					drawLine(`${data.name}: ${data.value}`);
+				}
+				else if (data.type == "area")
+				{
+					const rect = <Rect>data.value;
+					if (rect == null) continue;
+					ctx.strokeRect(rect.x * TileSize, rect.y * TileSize, rect.w * TileSize, rect.h * TileSize);
+				}
+				else if (data.type == "aura")
+				{
+					const rect = <Rect>data.value;
+					if (rect == null) continue;
+					ctx.strokeRect(
+						this.x * TileSize + obj.widthHitbox * TileSize / 2 - rect.x * TileSize,
+						this.y * TileSize + obj.heightHitbox * TileSize / 2 - rect.y * TileSize,
+						rect.w * TileSize, rect.h * TileSize);
+				}
+				else if (data.type == 'tile')
+				{
+					const point = <Point>data.value;
+					if (point == null) continue;
+					ctx.save();
+					ctx.globalAlpha = 0.6;
+					ctx.fillRect(point.x * TileSize, point.y * TileSize, TileSize, TileSize);
+					ctx.restore();
+				}
+				else if (data.type == 'tiles')
+				{
+					const points = <Point[]>data.value;
+					if (points == null) continue;
+					ctx.save();
+					ctx.globalAlpha = 0.6;
+					for (let j = 0; j < points.length; j++) {
+						const point = points[j];
+						ctx.fillRect(point.x * TileSize, point.y * TileSize, TileSize, TileSize);
+					}
+					ctx.restore();
+				}
+			}
+			ctx.restore();
+		}
 	};
 	public intersect(x: number, y: number)
 	{
@@ -117,12 +178,12 @@ class Entity_Crab extends Entity
 	protected static override readonly widthImg = 0.8;
 	protected static override readonly heightImg = 0.677;
 	public override objData: ObjData = [
-		{ type: "bool", name: "sleeping", value: true, displayColor: "black" },
+		{ type: "bool", name: "sleeping", value: true },
 		{ type: "number", name: "hp", value: 1, displayColor: "black" },
 		{ type: "text", name: "tag", value: null, displayColor: "black" },
-		{ type: "aura", name: "atackArea", value: { x: 0, y: 0, w: 1, h: 1 }, displayColor: "black" },
-		{ type: "area", name: "sleepArea", value: null, displayColor: "azure" },
+		{ type: "aura", name: "atackArea", value: { x: 0.5, y: 0.5, w: 1, h: 1 }, displayColor: "orange" },
+		{ type: "area", name: "sleepArea", value: { x: 6, y: 2, w: 5, h: 3 }, displayColor: "azure" },
 		{ type: "tile", name: "favoriteTile", value: { x: 1, y: 4 }, displayColor: "pink" },
-		{ type: "tiles", name: "killingTiles", value: null, displayColor: "tomato" },
+		{ type: "tiles", name: "killingTiles", value: [{ x: 13, y: 2 }, { x: 13, y: 3 }], displayColor: "tomato" },
 	];
 }

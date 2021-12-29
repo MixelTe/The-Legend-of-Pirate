@@ -149,8 +149,14 @@ canvas {
 	user-select: none;
 }
 
+.color-rect {
+	width: 0.6em;
+	height: 0.6em;
+	border-radius: 50%;
+	background: conic-gradient(#fff 0.25turn, #000 0.25turn 0.5turn, #fff 0.5turn 0.75turn, #000 0.75turn) top left / 50% 50% repeat;
+}
 .inp-short {
-	width: 2.5em;
+	width: 3.5em;
 	margin-right: 0.5em;
 }
 /* .entity-editor {

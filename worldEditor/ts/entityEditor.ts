@@ -11,8 +11,11 @@ class EntityEditor
 		this.popup.content.appendChild(table);
 		entity.objData.forEach(data =>
 		{
+			const colorRect = Div("color-rect");
+			if (data.displayColor) colorRect.style.background = data.displayColor;
 			const td = TD();
 			const tr = TR([], [
+				TD([], [colorRect]),
 				TD([], [], data.name),
 				td
 			]);
@@ -141,7 +144,7 @@ class EntityEditor
 		const inpY = Input("inp-short", "number");
 		const inpW = Input("inp-short", "number");
 		const inpH = Input("inp-short", "number");
-		let rect = { x: 0, y: 0, w: 0, h: 0 };
+		let rect = { x: addD ? 0.5 : 0, y: addD ? 0.5 : 0, w: 1, h: 1 };
 		const inpNone = Input([], "checkbox");
 		td.appendChild(Div([], [
 			initEl("label", [], [

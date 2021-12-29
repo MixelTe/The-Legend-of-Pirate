@@ -47,6 +47,7 @@ const camera_speed = () =>
 };
 let pen: keyof (typeof tileIds) = "sand";
 let penEntity: typeof Entity = Entity_Crab;
+let selectedEntity: Entity | null = null;
 
 
 class World
@@ -642,10 +643,13 @@ canvas.addEventListener("mousedown", e =>
 			if (entity)
 			{
 				entity_moving = { x: e.offsetX, y: e.offsetY, dx: 0, dy: 0, entity };
+				if (selectedEntity == entity) selectedEntity = null;
+				else selectedEntity = entity;
 			}
 			else
 			{
 				drawing = "entity";
+				selectedEntity = null;
 			}
 		}
 		else
@@ -760,7 +764,7 @@ window.addEventListener("keypress", e =>
 		case "KeyS": inp_mode_pen.checked = true; break;
 		case "KeyA": inp_mode_view.checked = !inp_mode_view.checked; break;
 		case "KeyD": inp_mode_entity.checked = !inp_mode_entity.checked; setPalete(); break;
-		case "KeyC": endEntityMove()?.center(); break;
+		// case "KeyC": endEntityMove()?.center(); break;
 	}
 });
 window.addEventListener("keydown", e =>
@@ -869,6 +873,7 @@ function setPalete()
 	}
 	else
 	{
+		selectedEntity = null;
 		for (const k in tileImages)
 		{
 			const key = <keyof TileImages>k;
