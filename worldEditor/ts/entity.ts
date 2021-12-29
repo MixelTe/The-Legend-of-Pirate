@@ -25,6 +25,8 @@ class Entity
 		const coef = size / this.width;
 		canvas.width = this.width * coef;
 		canvas.height = this.height * coef;
+		canvas.style.width = `${canvas.width}px`;
+		canvas.style.height = `${canvas.height}px`;
 		const ctx = getCanvasContext(canvas);
 		ctx.imageSmoothingEnabled = false;
 		ctx.drawImage(this.img, 0, 0, this.width, this.height, 0, 0, canvas.width, canvas.height);

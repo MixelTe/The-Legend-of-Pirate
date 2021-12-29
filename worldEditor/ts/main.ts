@@ -46,7 +46,7 @@ const camera_speed = () =>
 	return Math.round(TileSize * inp_cameraSpeed.valueAsNumber / 2);
 };
 let pen: keyof (typeof tileIds) = "sand";
-let penEntity: typeof Entity = Entity_Crab;
+let penEntity: typeof Entity | null = null;
 let selectedEntity: Entity | null = null;
 
 
@@ -465,9 +465,11 @@ class View
 	}
 	public setEntity(x: number, y: number)
 	{
-		const X = x / TileSize;
-		const Y = y / TileSize;
-		this.entity.push(new penEntity(X, Y));
+		// const X = x / TileSize;
+		// const Y = y / TileSize;
+		const X = Math.floor(x / TileSize);
+		const Y = Math.floor(y / TileSize);
+		if (penEntity) this.entity.push(new penEntity(X, Y));
 	}
 }
 class Tile
@@ -862,9 +864,15 @@ function setPalete()
 	div_palette.innerHTML = "";
 	if (inp_mode_entity.checked)
 	{
+		const img = document.createElement("img");
+		img.title = "Отключить добавление";
+		img.src = "./imgs/none.png";
+		img.addEventListener("click", () => penEntity = null);
+		div_palette.appendChild(img);
 		entity.forEach(e =>
 		{
 			const img = document.createElement("canvas");
+			img.title = e.name;
 			div_palette.appendChild(img);
 			function addImg()
 			{
@@ -891,6 +899,7 @@ function setPalete()
 				const img = tileImages[key];
 				if (img)
 				{
+					img.title = key;
 					div_palette.appendChild(img);
 					img.addEventListener("click", () => pen = key);
 				}
