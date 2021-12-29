@@ -47,6 +47,12 @@ class Entity
 		const Y = y / TileSize;
 		return X >= this.x && X <= this.x + obj.widthHitbox && Y >= this.y && Y <= this.y + obj.heightHitbox;
 	}
+	public center()
+	{
+		const obj = <EntityObj><any>this.constructor;
+		this.x = Math.floor(this.x + obj.widthHitbox / 2) + (1 - obj.widthHitbox) / 2;
+		this.y = Math.floor(this.y + obj.heightHitbox / 2) + (1 - obj.heightHitbox) / 2;
+	}
 }
 interface EntityObj
 {

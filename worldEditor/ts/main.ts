@@ -730,13 +730,7 @@ canvas.addEventListener("mouseup", e =>
 	if (drawing == "pen") world.pen(e.offsetX - camera_x, e.offsetY - camera_y);
 	if (drawing == "fill") world.fill(e.offsetX - camera_x, e.offsetY - camera_y);
 	if (drawing == "entity") world.entity(e.offsetX - camera_x, e.offsetY - camera_y);
-	if (enemy_moving)
-	{
-		enemy_moving.entity.x += enemy_moving.dx / TileSize;
-		enemy_moving.entity.y += enemy_moving.dy / TileSize;
-		enemy_moving.entity.x = Math.min(Math.max(enemy_moving.entity.x, 0), ViewWidth);
-		enemy_moving.entity.y = Math.min(Math.max(enemy_moving.entity.y, 0), ViewHeight);
-	}
+	if (enemy_moving) endEntityMove();
 	drawing = null;
 	camera_moving = null;
 	view_moving = null;
@@ -758,6 +752,7 @@ window.addEventListener("keypress", e =>
 		case "KeyS": inp_mode_pen.checked = true; break;
 		case "KeyA": inp_mode_view.checked = !inp_mode_view.checked; break;
 		case "KeyD": inp_mode_entity.checked = !inp_mode_entity.checked; setPalete(); break;
+		case "KeyC": endEntityMove()?.center(); break;
 	}
 });
 window.addEventListener("keydown", e =>
@@ -880,6 +875,19 @@ function setPalete()
 			}
 			addImg();
 		}
+	}
+}
+function endEntityMove()
+{
+	if (enemy_moving)
+	{
+		enemy_moving.entity.x += enemy_moving.dx / TileSize;
+		enemy_moving.entity.y += enemy_moving.dy / TileSize;
+		enemy_moving.entity.x = Math.min(Math.max(enemy_moving.entity.x, 0), ViewWidth);
+		enemy_moving.entity.y = Math.min(Math.max(enemy_moving.entity.y, 0), ViewHeight);
+		const entity = enemy_moving.entity;
+		enemy_moving = null;
+		return entity;
 	}
 }
 
