@@ -82,6 +82,7 @@
 		* screenAnim: ScreenAnimationMove | None
 		* overlay: Overlay
 		* worlds: Dict[str, World] - Все миры
+		* time: datetime - время запуска игры для сохранения времени игры
 	* Методы:
 		1. init(mainSurface: pygame.Surface, save: int) - загрузка сохранения и создание текущего мира и экрана
 		2. on_event(event: Event)
@@ -106,6 +107,7 @@
 		* coins: int
 		* health: int
 		* bullets: int
+		* time: int - время игры в секундах
 		* tags: list\[str] - тэги. Например: "дверь1 открыта"
 	* Методы:
 		1. init(save: int)
@@ -122,6 +124,7 @@
 		coins
 		health
 		bullets
+		time
 		// тэги, в одну строку, через точку с запятой (;)
 		";".join(tags)
 		```
