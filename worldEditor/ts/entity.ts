@@ -2,8 +2,9 @@ class Entity
 {
 	public x: number;
 	public y: number;
-	public static imgUrl: string = "none.png";
+	protected readonly objData: ObjData = [];
 	public static img: HTMLImageElement | undefined;
+	public static readonly imgUrl: string = "none.png";
 	protected static readonly width: number = 1;
 	protected static readonly height: number = 1;
 	protected static readonly widthImg: number = 1;
@@ -16,6 +17,7 @@ class Entity
 	{
 		this.x = x;
 		this.y = y;
+		this.center();
 	}
 	public static draw(canvas: HTMLCanvasElement, size: number)
 	{
@@ -53,6 +55,10 @@ class Entity
 		this.x = Math.floor(this.x + obj.widthHitbox / 2) + (1 - obj.widthHitbox) / 2;
 		this.y = Math.floor(this.y + obj.heightHitbox / 2) + (1 - obj.heightHitbox) / 2;
 	}
+	public openMenu()
+	{
+		new EntityEditor(this.objData).show();
+	}
 }
 interface EntityObj
 {
@@ -67,11 +73,41 @@ interface EntityObj
 	readonly widthImg: number;
 	readonly heightImg: number;
 }
+interface EntityDataType
+{
+	"bool": boolean | null,
+	"number": number | null,
+	"text": string | null,
+	"aura": Rect | null,
+	"area": Rect | null,
+	"tile": Point | null,
+	"tiles": Point[] | null,
+};
+interface Rect
+{
+	x: number,
+	y: number,
+	w: number,
+	h: number
+}
+interface Point
+{
+	x: number,
+	y: number,
+}
+interface EntityData<T extends (keyof EntityDataType)>
+{
+	type: T;
+	name: string;
+	value: EntityDataType[T];
+	displayColor?: string,
+}
+type ObjData = EntityData<keyof EntityDataType>[];
 
 class Entity_Crab extends Entity
 {
-	public static override imgUrl: string = "crab.png";
 	public static override img: HTMLImageElement | undefined;
+	public static override readonly imgUrl: string = "crab.png";
 	protected static override readonly width = 13;
 	protected static override readonly height = 11;
 	protected static override readonly widthHitbox = 0.8;
@@ -80,4 +116,13 @@ class Entity_Crab extends Entity
 	protected static override readonly yImg = 0;
 	protected static override readonly widthImg = 0.8;
 	protected static override readonly heightImg = 0.677;
+	protected override readonly objData: ObjData = [
+		{ type: "bool", name: "sleeping", value: true, displayColor: "black" },
+		{ type: "number", name: "hp", value: 1, displayColor: "black" },
+		{ type: "text", name: "tag", value: null, displayColor: "black" },
+		{ type: "aura", name: "atackArea", value: { x: 0, y: 0, w: 1, h: 1 }, displayColor: "black" },
+		{ type: "area", name: "sleepArea", value: null, displayColor: "azure" },
+		{ type: "tile", name: "favoriteTile", value: null, displayColor: "pink" },
+		{ type: "tiles", name: "killingTiles", value: null, displayColor: "tomato" },
+	];
 }

@@ -21,7 +21,8 @@ const ctx = getCanvasContext(canvas);
 
 const ViewWidth = 15;
 const ViewHeight = 7;
-let TileSize = 16 * 2;
+// let TileSize = 16 * 2;
+let TileSize = 16 * 4; // Temp
 const tileIds = {
 	ice: "ice.png",
 	sand: "sand.png",
@@ -700,8 +701,10 @@ canvas.addEventListener("mousemove", e =>
 	}
 	else if (entity_moving)
 	{
-		entity_moving.dx = e.offsetX - entity_moving.x;
-		entity_moving.dy = e.offsetY - entity_moving.y;
+		// entity_moving.dx = e.offsetX - entity_moving.x;
+		// entity_moving.dy = e.offsetY - entity_moving.y;
+		entity_moving.dx = Math.floor((e.offsetX - entity_moving.x + TileSize / 2) / TileSize) * TileSize;
+		entity_moving.dy = Math.floor((e.offsetY - entity_moving.y + TileSize / 2) / TileSize) * TileSize;
 		setCursor("move");
 	}
 	else if (camera_moving)
@@ -745,6 +748,14 @@ canvas.addEventListener("mouseleave", () =>
 	setCursor("none");
 });
 canvas.addEventListener("contextmenu", e => e.preventDefault());
+canvas.addEventListener("dblclick", e =>
+{
+	if (inp_mode_entity.checked && e.button == 0)
+	{
+		const entity = world.getEntity(e.offsetX - camera_x, e.offsetY - camera_y);
+		if (entity) entity.openMenu();
+	}
+});
 window.addEventListener("keypress", e =>
 {
 	switch (e.code) {
@@ -848,6 +859,7 @@ function setPalete()
 			div_palette.appendChild(img);
 			function addImg()
 			{
+				if (!inp_mode_entity.checked) return;
 				if (e.img)
 				{
 					e.draw(img, 48);
@@ -865,6 +877,7 @@ function setPalete()
 			const key = <keyof TileImages>k;
 			function addImg()
 			{
+				if (inp_mode_entity.checked) return;
 				const img = tileImages[key];
 				if (img)
 				{
@@ -885,6 +898,7 @@ function endEntityMove()
 		entity_moving.entity.y += entity_moving.dy / TileSize;
 		entity_moving.entity.x = Math.min(Math.max(entity_moving.entity.x, 0), ViewWidth);
 		entity_moving.entity.y = Math.min(Math.max(entity_moving.entity.y, 0), ViewHeight);
+		entity_moving.entity.center();
 		const entity = entity_moving.entity;
 		entity_moving = null;
 		return entity;
@@ -896,6 +910,9 @@ loadImages();
 setPalete();
 loop();
 btn_new.click() // Temp
+world.map[0][0]?.setEntity(100, 100); // Temp
+inp_mode_entity.checked = !inp_mode_entity.checked; // Temp
+setPalete(); // Temp
 function loop()
 {
 	const rect = div_viewport.getBoundingClientRect();
