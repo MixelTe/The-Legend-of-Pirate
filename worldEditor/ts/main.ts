@@ -45,6 +45,7 @@ const camera_speed = () =>
 	return Math.round(TileSize * inp_cameraSpeed.valueAsNumber / 2);
 };
 let pen: keyof (typeof tileIds) = "sand";
+let penEntity: typeof Entity = Entity_Crab;
 
 
 class World
@@ -306,6 +307,16 @@ class World
 			this.map[vy][vx] = new View();
 		}
 	}
+	public getEntity(x: number, y: number)
+	{
+		const { view, X, Y } = this.getView(x, y);
+		return view && view.getEntity(X, Y) || null;
+	}
+	public entity(x: number, y: number)
+	{
+		const { view, X, Y } = this.getView(x, y);
+		if (view) view.setEntity(X, Y);
+	}
 }
 class View
 {
@@ -346,7 +357,10 @@ class View
 				}
 			}
 		}
+		ctx.save();
+		if (!inp_mode_entity.checked) ctx.globalAlpha = 0.5;
 		this.entity.forEach(e => e.draw());
+		ctx.restore();
 		ctx.strokeStyle = "black";
 		ctx.lineWidth = 1;
 		ctx.strokeRect(0, 0, ViewWidth * TileSize, ViewHeight * TileSize);
@@ -436,6 +450,21 @@ class View
 			if (!r) return;
 			world.map[vy][vx] = undefined;
 		}
+	}
+	public getEntity(x: number, y: number)
+	{
+		for (let i = 0; i < this.entity.length; i++)
+		{
+			const e = this.entity[i];
+			if (e.intersect(x, y)) return e;
+		}
+		return null;
+	}
+	public setEntity(x: number, y: number)
+	{
+		const X = x / TileSize;
+		const Y = y / TileSize;
+		this.entity.push(new penEntity(X, Y));
 	}
 }
 class Tile
@@ -592,7 +621,8 @@ canvas.addEventListener("wheel", e =>
 
 let camera_moving: null | { x: number, y: number, cx: number, cy: number } = null;
 let view_moving: null | { x: number, y: number, dx: number, dy: number, vx: number, vy: number } = null;
-let drawing: null | "pen" | "fill" = null;
+let enemy_moving: null | { x: number, y: number, dx: number, dy: number, entity: Entity } = null;
+let drawing: null | "pen" | "fill" | "entity" = null;
 canvas.addEventListener("mousedown", e =>
 {
 	e.preventDefault();
@@ -607,6 +637,18 @@ canvas.addEventListener("mousedown", e =>
 		if (inp_mode_view.checked)
 		{
 			world.mousedown(e.offsetX, e.offsetY);
+		}
+		else if (inp_mode_entity.checked)
+		{
+			const entity = world.getEntity(e.offsetX - camera_x, e.offsetY - camera_y);
+			if (entity)
+			{
+				enemy_moving = { x: e.offsetX, y: e.offsetY, dx: 0, dy: 0, entity };
+			}
+			else
+			{
+				drawing = "entity";
+			}
 		}
 		else
 		{
@@ -633,7 +675,15 @@ canvas.addEventListener("mousedown", e =>
 	}
 	if (e.button == 1)
 	{
-		world.pick(e.offsetX - camera_x, e.offsetY - camera_y);
+		if (inp_mode_entity.checked)
+		{
+			const entity = world.getEntity(e.offsetX - camera_x, e.offsetY - camera_y);
+			if (entity) penEntity = <typeof Entity>entity.constructor;
+		}
+		else
+		{
+			world.pick(e.offsetX - camera_x, e.offsetY - camera_y);
+		}
 	}
 });
 canvas.addEventListener("mousemove", e =>
@@ -645,25 +695,27 @@ canvas.addEventListener("mousemove", e =>
 	}
 	if (drawing)
 	{
-		if (!inp_mode_pen.checked)
-		{
-			drawing = null;
-			return;
-		}
-		world.pen(e.offsetX - camera_x, e.offsetY - camera_y);
+		if (drawing == "pen") world.pen(e.offsetX - camera_x, e.offsetY - camera_y);
+		else drawing = null;
+	}
+	else if (enemy_moving)
+	{
+		enemy_moving.dx = e.offsetX - enemy_moving.x;
+		enemy_moving.dy = e.offsetY - enemy_moving.y;
+		setCursor("move");
 	}
 	else if (camera_moving)
 	{
 		camera_x = camera_moving.cx + e.offsetX - camera_moving.x;
 		camera_y = camera_moving.cy + e.offsetY - camera_moving.y;
-		setCursor("move")
+		setCursor("move");
 		normalizeCamera();
 	}
 	else if (view_moving)
 	{
 		view_moving.dx = e.offsetX - view_moving.x;
 		view_moving.dy = e.offsetY - view_moving.y;
-		setCursor("move")
+		setCursor("move");
 		normalizeCamera();
 	}
 });
@@ -677,16 +729,26 @@ canvas.addEventListener("mouseup", e =>
 	}
 	if (drawing == "pen") world.pen(e.offsetX - camera_x, e.offsetY - camera_y);
 	if (drawing == "fill") world.fill(e.offsetX - camera_x, e.offsetY - camera_y);
+	if (drawing == "entity") world.entity(e.offsetX - camera_x, e.offsetY - camera_y);
+	if (enemy_moving)
+	{
+		enemy_moving.entity.x += enemy_moving.dx / TileSize;
+		enemy_moving.entity.y += enemy_moving.dy / TileSize;
+		enemy_moving.entity.x = Math.min(Math.max(enemy_moving.entity.x, 0), ViewWidth);
+		enemy_moving.entity.y = Math.min(Math.max(enemy_moving.entity.y, 0), ViewHeight);
+	}
 	drawing = null;
 	camera_moving = null;
 	view_moving = null;
+	enemy_moving = null;
 });
 canvas.addEventListener("mouseleave", () =>
 {
 	drawing = null;
 	camera_moving = null;
 	view_moving = null;
-	setCursor("none")
+	enemy_moving = null;
+	setCursor("none");
 });
 canvas.addEventListener("contextmenu", e => e.preventDefault());
 window.addEventListener("keypress", e =>
@@ -791,7 +853,11 @@ function setPalete()
 			div_palette.appendChild(img);
 			function addImg()
 			{
-				if (e.img) e.draw(img, 48);
+				if (e.img)
+				{
+					e.draw(img, 48);
+					img.addEventListener("click", () => penEntity = e);
+				}
 				else setTimeout(addImg, 100);
 			}
 			addImg();
