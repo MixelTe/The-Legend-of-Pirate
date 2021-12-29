@@ -759,6 +759,7 @@ canvas.addEventListener("dblclick", e =>
 });
 window.addEventListener("keypress", e =>
 {
+	if (Popup.Opened) return;
 	switch (e.code) {
 		case "KeyW": inp_mode_fill.checked = true; break;
 		case "KeyS": inp_mode_pen.checked = true; break;

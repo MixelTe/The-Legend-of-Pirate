@@ -6,6 +6,7 @@ interface PopupEvenListener {
 type FocusEls = "ok" | "cancel" | "close" | "none";
 class Popup
 {
+	public static Opened = 0;
 	public content = Div();
 	public set title(v: string) { this.titleEl.innerText = v; }
 	public get title(): string { return this.titleEl.innerText }
@@ -38,6 +39,7 @@ class Popup
 	private onKeyUp: (e: KeyboardEvent) => void = () => {};
 	protected openPopup()
 	{
+		Popup.Opened += 1;
 		this.body = Div("popup");
 		this.body.appendChild(Div("popup-block", [
 			Div("popup-header", [
@@ -61,6 +63,7 @@ class Popup
 	}
 	public close(confirmed: boolean)
 	{
+		Popup.Opened -= 1;
 		document.body.removeChild(this.body);
 		window.removeEventListener("keyup", this.onKeyUp);
 		this.fireEvent(confirmed ? "ok" : "cancel");
