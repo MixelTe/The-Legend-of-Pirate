@@ -122,9 +122,24 @@ class Entity
 	{
 		new EntityEditor(this, vx, vy).show();
 	}
+	public getData(): EntitySaveData
+	{
+		const obj = <EntityObj><any>this.constructor;
+		const data: EntitySaveData = {
+			className: obj.name,
+			x: this.x,
+			y: this.y,
+		}
+		this.objData.forEach(dataEl =>
+		{
+			data[dataEl.name] = dataEl.value;
+		});
+		return data;
+	}
 }
 interface EntityObj
 {
+	name: keyof typeof EntityDict,
 	imgUrl: string;
 	img: HTMLImageElement | undefined;
 	readonly width: number;
@@ -188,4 +203,8 @@ class Entity_Crab extends Entity
 		{ type: "tile", name: "favoriteTile", value: { x: 1, y: 4 }, displayColor: "pink" },
 		{ type: "tiles", name: "killingTiles", value: [{ x: 13, y: 2 }, { x: 13, y: 3 }], displayColor: "tomato" },
 	];
+}
+
+const EntityDict = {
+	"Entity_Crab": Entity_Crab,
 }

@@ -19,6 +19,7 @@ const div_palette = getDiv("palette");
 const canvas = getCanvas("canvas");
 const ctx = getCanvasContext(canvas);
 
+const localStorageKey = "world-data";
 const ViewWidth = 15;
 const ViewHeight = 7;
 // let TileSize = 16 * 2;
@@ -129,7 +130,6 @@ class World
 				this.map.push(line)
 			}
 		}
-		if (this.map[0]) this.map[0][0] = new View(); // Temp
 		// this.createTable();
 	}
 	public up()
@@ -321,6 +321,33 @@ class World
 		const { view, X, Y } = this.getView(x, y);
 		if (view) view.setEntity(X, Y);
 	}
+	public saveToLocalStarage()
+	{
+		const data = this.getData();
+		const json = JSON.stringify(data);
+		localStorage.setItem(localStorageKey, json);
+	}
+	private getData()
+	{
+		const data: WorldData = {
+			width: this.width,
+			height: this.height,
+			map: [],
+		}
+		for (let y = 0; y < this.width; y++)
+		{
+			const row: (ViewData | undefined)[] = [];
+			for (let x = 0; x < this.height; x++)
+			{
+				const view = this.map[y][x];
+				if (view) row.push(view.getData());
+				else row.push(undefined);
+			}
+			data.map.push(row);
+		}
+
+		return data;
+	}
 }
 class View
 {
@@ -470,6 +497,24 @@ class View
 		const X = Math.floor(x / TileSize);
 		const Y = Math.floor(y / TileSize);
 		if (penEntity) this.entity.push(new penEntity(X, Y));
+	}
+	public getData()
+	{
+		const data: ViewData = {
+			tiles: [],
+			entity: [],
+		}
+		for (let y = 0; y < ViewHeight; y++)
+		{
+			const row: Tiles[] = [];
+			for (let x = 0; x < ViewWidth; x++)
+			{
+				row.push(this.tiles[y][x].id);
+			}
+			data.tiles.push(row);
+		}
+		this.entity.forEach(e => data.entity.push(e.getData()));
+		return data;
 	}
 }
 class Tile
@@ -928,7 +973,10 @@ function endEntityMove()
 loadImages();
 setPalete();
 loop();
+setTimeout(() => world.saveToLocalStarage(), 1000);
 btn_new.click() // Temp
+world.map[0][0] = new View(); // Temp
+penEntity = Entity_Crab; // Temp
 world.map[0][0]?.setEntity(100, 100); // Temp
 inp_mode_entity.checked = !inp_mode_entity.checked; // Temp
 setPalete(); // Temp
@@ -966,3 +1014,22 @@ type TileImages =
 	[Property in Tiles]?: HTMLImageElement;
 }
 type Tiles = keyof typeof tileIds;
+
+interface WorldData
+{
+	map: (ViewData | undefined)[][];
+	width: number;
+	height: number;
+}
+interface ViewData
+{
+	tiles: Tiles[][];
+	entity: EntitySaveData[];
+}
+interface EntitySaveData
+{
+	className: keyof typeof EntityDict;
+	x: number;
+	y: number;
+	[a: string]: any;
+}
