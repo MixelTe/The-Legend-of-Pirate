@@ -348,14 +348,11 @@ class View
 		{
 			for (let x = 0; x < ViewWidth; x++)
 			{
-				let view = this.tiles[y][x];
-				if (view)
-				{
-					ctx.save();
-					ctx.translate(x * TileSize, y * TileSize);
-					view.draw();
-					ctx.restore();
-				}
+				let tile = this.tiles[y][x];
+				ctx.save();
+				ctx.translate(x * TileSize, y * TileSize);
+				tile.draw();
+				ctx.restore();
 			}
 		}
 		ctx.save();
