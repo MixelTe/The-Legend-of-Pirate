@@ -183,11 +183,13 @@ class World
 					if (this.map[y][x])
 					{
 						const popup = new Popup();
+						popup.focusOn = "cancel";
 						popup.content.appendChild(Div([], [], "Вы уверены, что хотите удалить экран?"));
 						const r = await popup.openAsync();
 						if (r)
 						{
 							const popup = new Popup();
+							popup.focusOn = "cancel";
 							popup.content.appendChild(Div([], [], "Вы точно уверены, что хотите удалить экран?"));
 							popup.reverse = true;
 							const r = await popup.openAsync();
@@ -436,11 +438,13 @@ class View
 		if (rectPointIntersect(icon_trash_rect(), { x, y }))
 		{
 			const popup = new Popup();
+			popup.focusOn = "cancel";
 			popup.content.appendChild(Div([], [], "Вы уверены, что хотите удалить экран?"));
 			const r = await popup.openAsync();
 			if (r)
 			{
 				const popup = new Popup();
+				popup.focusOn = "cancel";
 				popup.content.appendChild(Div([], [], "Вы точно уверены, что хотите удалить экран?"));
 				popup.reverse = true;
 				const r = await popup.openAsync();
@@ -564,6 +568,7 @@ btn_new.addEventListener("click", async () =>
 	if (world.height != 0 && world.width != 0)
 	{
 		let popup = new Popup();
+		popup.focusOn = "cancel";
 		popup.content.appendChild(Div([], [], "Вы уверены, что хотите создать пустой мир?"));
 		let r = await popup.openAsync();
 		if (!r) return
@@ -571,10 +576,12 @@ btn_new.addEventListener("click", async () =>
 		popup.content.appendChild(Div([], [], "Вы точно уверены, что хотите создать пустой мир?"));
 		popup.reverse = true
 		r = await popup.openAsync();
+		popup.focusOn = "cancel";
 		if (!r) return
 		popup = new Popup();
 		popup.content.appendChild(Div([], [], "Вы уверены, что хотите создать пустой мир? Все несохранённые данные будут потеряны!"));
 		r = await popup.openAsync();
+		popup.focusOn = "cancel";
 		if (!r) return
 	}
 	world = new World(inp_width.valueAsNumber, inp_height.valueAsNumber)

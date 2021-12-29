@@ -31,6 +31,28 @@ class EntityEditor
 				default: console.error("switch default"); break;
 			}
 		});
+		table.appendChild(TR([], [
+			TD(),
+			TD([], [], "Удалить сущность"),
+			TD([], [
+				Button("delete-button", "Удалить", async () =>
+				{
+					let popup = new Popup();
+					popup.focusOn = "cancel";
+					popup.content.appendChild(Div([], [], "Вы уверены, что хотите удалить сущность?"));
+					let r = await popup.openAsync();
+					if (!r) return
+					const view = world.map[vy][vx];
+					if (!view) return;
+					const i = view.entity.indexOf(entity);
+					if (i >= 0)
+					{
+						view.entity.splice(i, 1);
+						this.popup.close(true);
+					}
+				}),
+			]),
+		]));
 		this.popup.addListener("cancel", () => entity.objData = this.objDataCopy);
 	}
 	private copyData(objData: ObjData)

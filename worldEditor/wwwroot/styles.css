@@ -159,6 +159,20 @@ canvas {
 	width: 3.5em;
 	margin-right: 0.5em;
 }
+.delete-button {
+	color: white;
+	background-color: tomato;
+	border: 1px solid black;
+	padding: 0.2em 0.4em;
+	border-radius: 0.4em;
+	outline: none;
+}
+.delete-button:focus, .delete-button:hover {
+	box-shadow: 0 0 0.5em 0.2em tomato;
+}
+.delete-button:active {
+	box-shadow: 0 0 0.2em 0em black inset;
+}
 /* .entity-editor {
 
 } */

@@ -30,8 +30,8 @@ class Popup
 	private onCancel: ((popup: Popup) => void)[] = [];
 	private body = Div("popup");
 	private titleEl = Div("popup-title");
-	private cancelBtnEl = Button([], "Cancel", this.close.bind(this, false));
-	private okBtnEl = Button([], "OK", this.close.bind(this, true));
+	private cancelBtnEl = Button([], "Отмена", this.close.bind(this, false));
+	private okBtnEl = Button([], "ОК", this.close.bind(this, true));
 	private closeBtnEl = Button("popup-close", "x", this.close.bind(this, false));
 	private footer = Div("popup-footer", [this.cancelBtnEl, this.okBtnEl]);
 	private focusEl: FocusEls = "ok";
