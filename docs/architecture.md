@@ -1,4 +1,4 @@
-1. Класс Main
+1. ## Класс Main
 	* Создаётся на старте программы и вызывается метод start
 	* Поля:
 		* screen: pygame.Surface - Главный холст
@@ -18,7 +18,7 @@
 				```
 				События контроллера: JOYAXISMOTION, JOYBALLMOTION, JOYBUTTONDOWN, JOYBUTTONUP, JOYHATMOTION
 ---
-2. Класс Settings
+2. ## Класс Settings
 	* Содержит все системные настройки игры
 	* Поля:
 		* width = 1920
@@ -33,14 +33,14 @@
 		* screen_height = 7
 		* demageDelay = 400 (миллисекунды)
 ---
-3. Класс Window
+3. ## Класс Window
 	* Базовый класс окна
 	* Методы:
 		1. on_event(event: Event) - обрабатывает событие
 		2. update() -> None | Window - просчитывает новый кадр
 		3. draw(screen: pygame.Surface) - рисует текущий кадр
 ---
-4. Класс WindowStart(Window)
+4. ## Класс WindowStart(Window)
 	* Стартовое окно.
 	* Поля:
 		* save: int - ячейка сохранения
@@ -55,7 +55,7 @@
 		pygame.event.post(pygame.event.Event(pygame.QUIT))
 		```
 ---
-5. Класс WindowStatistics(Window)
+5. ## Класс WindowStatistics(Window)
 	* Отображает статистику текущего сохранения
 	* Поля:
 		* save: int - ячейка сохранения
@@ -64,14 +64,14 @@
 	* Кнопки:
 		2. "Назад" - при нажатии метод update возвращает WindowStart(mainSurface, save)
 ---
-6. Класс WindowEnd(Window)
+6. ## Класс WindowEnd(Window)
 	* Финальный экран. Возможно титры или просто благодарность за игру. Включается после победы над боссом. После показа титров или нажатия кнопки "Продолжить" метод update возвращает WindowStatistics(mainSurface, save)
 	* Поля:
 		* save: int - ячейка сохранения
 	* Методы:
 		1. init(save: int)
 ---
-7. Класс WindowGame(Window)
+7. ## Класс WindowGame(Window)
 	* Игровой движок
 	* Поля:
 		* save: int - ячейка сохранения
@@ -94,7 +94,7 @@
 			* Проверяет кол-во жизней у игрока. Если их <= 0, то вызывает saveData.save() и возвращает WindowEnd(mainSurface, save)
 		4. draw(screen: pygame.Surface) - Если screenAnim None, то вызывет screen.draw() и выводит полученую картинку на экран, иначе выводит screenAnim.next(). Выводит на экран overlay.draw() и self.screen.draw()
 ---
-8. Класс SaveData
+8. ## Класс SaveData
 	* Все данные, необходимые для сохранения прогресса игрока
 	* Поля:
 		* save: int - ячейка сохранения
@@ -126,7 +126,7 @@
 		";".join(tags)
 		```
 ---
-9. Класс Screen
+9. ## Класс Screen
 	* Логика и отрисовка одного экрана
 	* Поля:
 		* surface: pygame.Surface - размер: (Settings.width, Settings.height - Settings.overlay_height)
@@ -143,7 +143,7 @@
 		5. removeEntity(entity: Entity) -> удаляет entity из списка
 		6. goTo(world: str, screen: tuple[int, int]) - создаёт ScreenGoTo и присваивает в goToVar
 ---
-10. Класс ScreenGoTo
+10. ## Класс ScreenGoTo
 	* То куда необходимо переключить экран и его изображение
 	* Поля:
 		* world: str
@@ -152,14 +152,14 @@
 	* Методы:
 		1. init(world: str, screen: tuple[int, int], image: pygame.Surface)
 ---
-11. Класс ScreenAnimation
+11. ## Класс ScreenAnimation
 	* Анимация для плавной смены экранов
 		* surface: pygame.Surface - холст для отрисовки кадра
 	* Методы:
 		2. update() -> bool - возвращает флаг закончилась ли анимация
 		3. draw() -> pygame.Surface - возвращает кадр анимации сдвига
 ---
-12. Класс ScreenAnimationMove(ScreenAnimation)
+12. ## Класс ScreenAnimationMove(ScreenAnimation)
 	* Анимация сдвига экрана
 	* Поля:
 		* imageOld: pygame.Surface - предыдущий экран
@@ -171,7 +171,7 @@
 	* Методы:
 		1. init(imageOld: pygame.Surface, imageNew: pygame.Surface, direction: tuple\[int, int]) - direction - значения 1, 0 или -1 сдвиг по x или y. На основе direction установка dx, dy и скорости
 ---
-13. Класс ScreenAnimationBlur(ScreenAnimation)
+13. ## Класс ScreenAnimationBlur(ScreenAnimation)
 	* Анимация смены экрана
 	* Поля:
 		* imageOld: pygame.Surface - предыдущий экран
@@ -183,7 +183,7 @@
 	* Методы:
 		1. init(imageOld: pygame.Surface, imageNew: pygame.Surface, direction: tuple\[int, int]) - direction - значения 1, 0 или -1 сдвиг по x или y. На основе direction установка dx, dy и скорости
 ---
-14. Класс Overlay
+14. ## Класс Overlay
 	* Вывод информации про количество жизней, инвентарь, кнопка "Сохранить и выйти"
 	* Поля:
 		* surface: pygame.Surface
@@ -194,7 +194,7 @@
 		3. draw() -> pygame.Surface - если player.message не пусто, то выводится это сообщение.
 		4. onClick(pos)
 ---
-15. Класс Entity
+15. ## Класс Entity
 	* Базовый класс сущности
 	* Поля:
 		* screen: Screen - экран, для доступа к списку сущностей и к клеткам мира
@@ -224,7 +224,7 @@
 			* player = 1
 			* enemy = 2
 ---
-16. Класс EntityAlive(Entity)
+16. ## Класс EntityAlive(Entity)
 	* Поля:
 		* animator: Animator
 		* health: int
@@ -232,7 +232,7 @@
 	* Методы:
 		* takeDamage(damage: int) - Уменьшение здоровья и установка damageDelay в Settings.damageDelay, если damageDelay <= 0
 ---
-17. Класс World
+17. ## Класс World
 	* Хранит информацию о игровом мире
 	* Поля:
 		* name: str
@@ -249,7 +249,7 @@
 
 		* В папке worlds папка worldName с экранами этого мира
 ---
-18. Класс ScreenData
+18. ## Класс ScreenData
 	* Хранит информацию об одном экране
 	* Поля:
 		* tiles: list[list[str]] - строка - id Tile`а
@@ -269,7 +269,7 @@
 		```
 		* В данных сущности могут быть любые дополнительные поля, необходимые для сущности.
 ---
-19. Класс EntityPlayer(EntityAlive)
+19. ## Класс EntityPlayer(EntityAlive)
 	* Поля:
 		* coins: int
 		* bullets: int
@@ -285,7 +285,7 @@
 		* onJoyButonDown(button)
 		* onJoyButonUp(button)
 ---
-20. Класс Animator
+20. ## Класс Animator
 	* Аниматор сущностей
 	* Поля:
 		* image: pygame.Surface - картинка с анимациями, каждая анимация на новой строке
@@ -306,7 +306,7 @@
 		* setAnimation(animation: int | str) - устанавливает текущую анимацию по номеру или её названию
 		* curAnimation() -> tuple[int, str | None] - номер и название (если есть, иначе None) текущей анимации
 ---
-21. Класс Tile
+21. ## Класс Tile
 	* Одна клетка на экране
 	* Поля:
 		* static tileIds: dict[str, Tile]
@@ -325,11 +325,11 @@
 ---
 ## Сущности
 ---
-22. Класс EntityShovel(Entity)
+22. ## Класс EntityShovel(Entity)
 	* Лопата, которой бьёт игрок
 	* Группа: player
 ---
-23. Класс EntityCrab(EntityAlive)
+23. ## Класс EntityCrab(EntityAlive)
 	* Спит пока к нему не подойдёт игрок, потом ходит за игроком. Может уснуть во время погони.
 	* Группа: enemy
 ---
