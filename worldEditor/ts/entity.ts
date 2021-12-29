@@ -34,7 +34,7 @@ class Entity
 		const width = obj.widthImg * TileSize;
 		const height = obj.heightImg * TileSize;
 		ctx.save();
-		if (enemy_moving && enemy_moving.entity == this) ctx.translate(enemy_moving.dx, enemy_moving.dy);
+		if (entity_moving && entity_moving.entity == this) ctx.translate(entity_moving.dx, entity_moving.dy);
 		ctx.drawImage(obj.img, 0, 0, obj.width, obj.height, (this.x + obj.xImg) * TileSize, (this.y + obj.yImg) * TileSize, width, height);
 		ctx.strokeStyle = "rgba(0, 0, 0, 0.5)";
 		ctx.strokeRect(this.x * TileSize, this.y * TileSize, obj.widthHitbox * TileSize, obj.heightHitbox * TileSize);

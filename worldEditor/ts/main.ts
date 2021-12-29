@@ -621,7 +621,7 @@ canvas.addEventListener("wheel", e =>
 
 let camera_moving: null | { x: number, y: number, cx: number, cy: number } = null;
 let view_moving: null | { x: number, y: number, dx: number, dy: number, vx: number, vy: number } = null;
-let enemy_moving: null | { x: number, y: number, dx: number, dy: number, entity: Entity } = null;
+let entity_moving: null | { x: number, y: number, dx: number, dy: number, entity: Entity } = null;
 let drawing: null | "pen" | "fill" | "entity" = null;
 canvas.addEventListener("mousedown", e =>
 {
@@ -643,7 +643,7 @@ canvas.addEventListener("mousedown", e =>
 			const entity = world.getEntity(e.offsetX - camera_x, e.offsetY - camera_y);
 			if (entity)
 			{
-				enemy_moving = { x: e.offsetX, y: e.offsetY, dx: 0, dy: 0, entity };
+				entity_moving = { x: e.offsetX, y: e.offsetY, dx: 0, dy: 0, entity };
 			}
 			else
 			{
@@ -698,10 +698,10 @@ canvas.addEventListener("mousemove", e =>
 		if (drawing == "pen") world.pen(e.offsetX - camera_x, e.offsetY - camera_y);
 		else drawing = null;
 	}
-	else if (enemy_moving)
+	else if (entity_moving)
 	{
-		enemy_moving.dx = e.offsetX - enemy_moving.x;
-		enemy_moving.dy = e.offsetY - enemy_moving.y;
+		entity_moving.dx = e.offsetX - entity_moving.x;
+		entity_moving.dy = e.offsetY - entity_moving.y;
 		setCursor("move");
 	}
 	else if (camera_moving)
@@ -730,18 +730,18 @@ canvas.addEventListener("mouseup", e =>
 	if (drawing == "pen") world.pen(e.offsetX - camera_x, e.offsetY - camera_y);
 	if (drawing == "fill") world.fill(e.offsetX - camera_x, e.offsetY - camera_y);
 	if (drawing == "entity") world.entity(e.offsetX - camera_x, e.offsetY - camera_y);
-	if (enemy_moving) endEntityMove();
+	if (entity_moving) endEntityMove();
 	drawing = null;
 	camera_moving = null;
 	view_moving = null;
-	enemy_moving = null;
+	entity_moving = null;
 });
 canvas.addEventListener("mouseleave", () =>
 {
 	drawing = null;
 	camera_moving = null;
 	view_moving = null;
-	enemy_moving = null;
+	entity_moving = null;
 	setCursor("none");
 });
 canvas.addEventListener("contextmenu", e => e.preventDefault());
@@ -879,14 +879,14 @@ function setPalete()
 }
 function endEntityMove()
 {
-	if (enemy_moving)
+	if (entity_moving)
 	{
-		enemy_moving.entity.x += enemy_moving.dx / TileSize;
-		enemy_moving.entity.y += enemy_moving.dy / TileSize;
-		enemy_moving.entity.x = Math.min(Math.max(enemy_moving.entity.x, 0), ViewWidth);
-		enemy_moving.entity.y = Math.min(Math.max(enemy_moving.entity.y, 0), ViewHeight);
-		const entity = enemy_moving.entity;
-		enemy_moving = null;
+		entity_moving.entity.x += entity_moving.dx / TileSize;
+		entity_moving.entity.y += entity_moving.dy / TileSize;
+		entity_moving.entity.x = Math.min(Math.max(entity_moving.entity.x, 0), ViewWidth);
+		entity_moving.entity.y = Math.min(Math.max(entity_moving.entity.y, 0), ViewHeight);
+		const entity = entity_moving.entity;
+		entity_moving = null;
 		return entity;
 	}
 }
