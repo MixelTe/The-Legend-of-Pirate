@@ -262,7 +262,7 @@ class World
 		const X = Math.floor(x / width);
 		const Y = Math.floor(y / height);
 		if (X >= this.width || Y >= this.height) return { view: null, X, Y, vx: X, vy: Y };
-		return { view: this.map[Y][X], X: x - X * width, Y: y - Y * height, vx: X, vy: Y };
+		return { view: this.map[Y][X] || null, X: x - X * width, Y: y - Y * height, vx: X, vy: Y };
 	}
 	public fill(x: number, y: number)
 	{
@@ -310,8 +310,8 @@ class World
 	}
 	public getEntity(x: number, y: number)
 	{
-		const { view, X, Y } = this.getView(x, y);
-		return view && view.getEntity(X, Y) || null;
+		const { view, X, Y, vx, vy } = this.getView(x, y);
+		return { entity: view && view.getEntity(X, Y) || null, vx, vy };
 	}
 	public entity(x: number, y: number)
 	{
@@ -638,7 +638,7 @@ canvas.addEventListener("mousedown", e =>
 		}
 		else if (inp_mode_entity.checked)
 		{
-			const entity = world.getEntity(e.offsetX - camera_x, e.offsetY - camera_y);
+			const { entity } = world.getEntity(e.offsetX - camera_x, e.offsetY - camera_y);
 			if (entity)
 			{
 				entity_moving = { x: e.offsetX, y: e.offsetY, dx: 0, dy: 0, entity };
@@ -749,8 +749,8 @@ canvas.addEventListener("dblclick", e =>
 {
 	if (inp_mode_entity.checked && e.button == 0)
 	{
-		const entity = world.getEntity(e.offsetX - camera_x, e.offsetY - camera_y);
-		if (entity) entity.openMenu();
+		const { entity, vx, vy } = world.getEntity(e.offsetX - camera_x, e.offsetY - camera_y);
+		if (entity) entity.openMenu(vx, vy);
 	}
 });
 window.addEventListener("keypress", e =>

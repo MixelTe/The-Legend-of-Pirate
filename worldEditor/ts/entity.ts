@@ -2,7 +2,7 @@ class Entity
 {
 	public x: number;
 	public y: number;
-	protected readonly objData: ObjData = [];
+	public objData: ObjData = [];
 	public static img: HTMLImageElement | undefined;
 	public static readonly imgUrl: string = "none.png";
 	protected static readonly width: number = 1;
@@ -55,9 +55,9 @@ class Entity
 		this.x = Math.floor(this.x + obj.widthHitbox / 2) + (1 - obj.widthHitbox) / 2;
 		this.y = Math.floor(this.y + obj.heightHitbox / 2) + (1 - obj.heightHitbox) / 2;
 	}
-	public openMenu()
+	public openMenu(vx: number, vy: number)
 	{
-		new EntityEditor(this.objData).show();
+		new EntityEditor(this, vx, vy).show();
 	}
 }
 interface EntityObj
@@ -95,7 +95,7 @@ interface Point
 	x: number,
 	y: number,
 }
-interface EntityData<T extends (keyof EntityDataType)>
+interface EntityData<T extends keyof EntityDataType>
 {
 	type: T;
 	name: string;
@@ -116,13 +116,13 @@ class Entity_Crab extends Entity
 	protected static override readonly yImg = 0;
 	protected static override readonly widthImg = 0.8;
 	protected static override readonly heightImg = 0.677;
-	protected override readonly objData: ObjData = [
+	public override objData: ObjData = [
 		{ type: "bool", name: "sleeping", value: true, displayColor: "black" },
 		{ type: "number", name: "hp", value: 1, displayColor: "black" },
 		{ type: "text", name: "tag", value: null, displayColor: "black" },
 		{ type: "aura", name: "atackArea", value: { x: 0, y: 0, w: 1, h: 1 }, displayColor: "black" },
 		{ type: "area", name: "sleepArea", value: null, displayColor: "azure" },
-		{ type: "tile", name: "favoriteTile", value: null, displayColor: "pink" },
+		{ type: "tile", name: "favoriteTile", value: { x: 1, y: 4 }, displayColor: "pink" },
 		{ type: "tiles", name: "killingTiles", value: null, displayColor: "tomato" },
 	];
 }

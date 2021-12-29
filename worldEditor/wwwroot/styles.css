@@ -145,7 +145,14 @@ h1 {
 .row-nospace {
 	border-spacing: 0;
 }
+canvas {
+	user-select: none;
+}
 
+.inp-short {
+	width: 2.5em;
+	margin-right: 0.5em;
+}
 /* .entity-editor {
 
 } */
