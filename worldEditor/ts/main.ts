@@ -27,8 +27,8 @@ const tileIds = {
 	sand: "sand.png",
 	wall: "wall.png",
 }
-const entity: Entity[] = [
-	new Entity_Crab(),
+const entity: (typeof Entity)[] = [
+	Entity_Crab,
 ];
 const tileImages: TileImages = {};
 let icon_move: null | HTMLImageElement = null;
@@ -310,6 +310,7 @@ class World
 class View
 {
 	tiles: Tile[][] = [];
+	entity: Entity[] = [];
 	constructor()
 	{
 		for (let y = 0; y < ViewHeight; y++)
@@ -345,6 +346,7 @@ class View
 				}
 			}
 		}
+		this.entity.forEach(e => e.draw());
 		ctx.strokeStyle = "black";
 		ctx.lineWidth = 1;
 		ctx.strokeRect(0, 0, ViewWidth * TileSize, ViewHeight * TileSize);
@@ -789,7 +791,7 @@ function setPalete()
 			div_palette.appendChild(img);
 			function addImg()
 			{
-				if (e.img) e.drawCanvas(img, 48);
+				if (e.img) e.draw(img, 48);
 				else setTimeout(addImg, 100);
 			}
 			addImg();

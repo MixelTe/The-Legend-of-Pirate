@@ -110,6 +110,7 @@ h1 {
 }
 #palette {
 	display: flex;
+	flex-wrap: wrap;
 }
 #palette img {
 	cursor: pointer;

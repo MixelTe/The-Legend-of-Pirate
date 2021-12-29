@@ -1,23 +1,17 @@
 abstract class Entity
 {
-	public imgUrl: string = "none.png";
-	public img: HTMLImageElement | undefined;
-	public abstract draw(ctx: CanvasRenderingContext2D, size: number): void;
-	public abstract drawCanvas(canvas: HTMLCanvasElement, size: number): void;
-}
-
-class Entity_Crab extends Entity
-{
-	public override imgUrl: string = "crab.png";
-	private readonly width = 13;
-	private readonly height = 11;
-	public draw(ctx: CanvasRenderingContext2D, size: number)
+	public x: number;
+	public y: number;
+	public static imgUrl: string = "none.png";
+	public static img: HTMLImageElement | undefined;
+	protected static readonly width: number;
+	protected static readonly height: number;
+	constructor(x: number, y: number)
 	{
-		if (this.img == undefined) return;
-		const coef = this.img.height / this.img.width;
-		ctx.drawImage(this.img, 0, 0, 13, 11, 0, 0, size, size * coef);
-	};
-	public drawCanvas(canvas: HTMLCanvasElement, size: number)
+		this.x = x;
+		this.y = y;
+	}
+	public static draw(canvas: HTMLCanvasElement, size: number)
 	{
 		if (this.img == undefined) return;
 		const coef = size / this.width;
@@ -27,4 +21,19 @@ class Entity_Crab extends Entity
 		ctx.imageSmoothingEnabled = false;
 		ctx.drawImage(this.img, 0, 0, this.width, this.height, 0, 0, canvas.width, canvas.height);
 	};
+	public draw()
+	{
+		if (Entity.img == undefined) return;
+		const coef = TileSize / Entity.width;
+		const width = Entity.width * coef;
+		const height = Entity.height * coef;
+		ctx.drawImage(Entity.img, 0, 0, 13, 11, 0, 0, width, height);
+	};
+}
+
+class Entity_Crab extends Entity
+{
+	public static override imgUrl: string = "crab.png";
+	protected static override readonly width = 13;
+	protected static override readonly height = 11;
 }
