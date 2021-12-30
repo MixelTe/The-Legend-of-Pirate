@@ -23,6 +23,18 @@ function Button(classes?: string[] | string, innerText?: string, clickListener?:
 	if (clickListener) button.addEventListener("click", clickListener.bind(undefined, button));
 	return button;
 }
+function Table(classes?: string[] | string, children?: HTMLElement[])
+{
+	return initEl("table", classes, children, undefined);
+}
+function TR(classes?: string[] | string, children?: HTMLElement[])
+{
+	return initEl("tr", classes, children, undefined);
+}
+function TD(classes?: string[] | string, children?: HTMLElement[], innerText?: string)
+{
+	return initEl("td", classes, children, innerText);
+}
 
 function initEl<K extends keyof HTMLElementTagNameMap>(tagName: K, classes: string[] | string | undefined, children: HTMLElement[] | undefined, innerText: string | undefined)
 {
@@ -71,4 +83,21 @@ function getTable(id: string)
 	if (el == null) throw new Error(`${id} not found`);
 	if (el instanceof HTMLTableElement) return el;
 	throw new Error(`${id} element not Table`);
+}
+function getDiv(id: string)
+{
+	const el = <unknown | null>document.getElementById(id);
+	if (el == null) throw new Error(`${id} not found`);
+	if (el instanceof HTMLDivElement) return el;
+	throw new Error(`${id} element not Div`);
+}
+
+function rectPointIntersect(rect: {x: number, y: number, w: number, h: number}, point: {x: number, y: number})
+{
+	return (
+		rect.x + rect.w >= point.x &&
+		point.x >= rect.x &&
+		rect.y + rect.h >= point.y &&
+		point.y >= rect.y
+	);
 }
