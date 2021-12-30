@@ -48,6 +48,10 @@ controls_popup.content.appendChild(Div([], [
 			TD([], [], "Заливка"),
 			TD([], [], "W"),
 		]),
+		TR([], [
+			TD([], [], "Быстрая палитра"),
+			TD([], [], "Q"),
+		]),
 		TR("row-spacer"),
 		TR([], [
 			TD([], [], "Мир:"),
