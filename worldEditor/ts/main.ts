@@ -26,9 +26,15 @@ const ViewHeight = 7;
 let TileSize = 16 * 2;
 // let TileSize = 16 * 4; // Temp
 const tileIds = {
-	ice: "ice.png",
-	sand: "sand.png",
-	wall: "wall.png",
+	sand1: "sand1.png",
+	sand2: "sand2.png",
+	sand3: "sand3.png",
+	grass1: "grass1.png",
+	grass2: "grass2.png",
+	grass3: "grass3.png",
+	water_deep: "water_deep.png",
+	water_low: "water_low.png",
+	water_sand: "water_sand.png",
 }
 const entity: (typeof Entity)[] = [
 	Entity_Crab,
@@ -47,7 +53,7 @@ const camera_speed = () =>
 {
 	return Math.round(TileSize * inp_cameraSpeed.valueAsNumber / 2);
 };
-let pen: keyof (typeof tileIds) = "sand";
+let pen: keyof (typeof tileIds) = "sand1";
 let penEntity: typeof Entity | null = null;
 let selectedEntity: Entity | null = null;
 let worldFileName = "worldData.json";
@@ -402,11 +408,14 @@ class View
 			{
 				if (x == 0 || x == ViewWidth - 1 || y == 0 || y == ViewHeight - 1)
 				{
-					line.push(new Tile("wall"))
+					line.push(new Tile("water_deep"))
 				}
 				else
 				{
-					line.push(new Tile())
+					const random = Math.floor(Math.random() * 3);
+					if (random == 0) line.push(new Tile("sand1"));
+					else if (random == 1) line.push(new Tile("sand2"));
+					else line.push(new Tile("sand3"));
 				}
 			}
 			this.tiles.push(line)
@@ -578,7 +587,7 @@ class View
 }
 class Tile
 {
-	id: Tiles = "sand";
+	id: Tiles = "sand1";
 	constructor(id?: Tiles)
 	{
 		if (id) this.id = id;
@@ -650,6 +659,8 @@ class FastPalette
 	private tiles: Tiles[] = [pen];
 	private entity: (typeof Entity | null)[] = [penEntity];
 	private hovered: number | null = null;
+	private addtileI = 1;
+	private addentityI = 1;
 	constructor()
 	{
 		const imgs = div_fast_palette.querySelectorAll(".fast-palette-part");
@@ -724,14 +735,14 @@ class FastPalette
 	public addTile(tileid: Tiles)
 	{
 		if (this.tiles.indexOf(tileid) != -1) return;
-		this.tiles.push(tileid);
-		if (this.tiles.length > this.imgs.length) this.tiles.shift();
+		this.tiles[this.addtileI] = tileid;
+		this.addtileI = (this.addtileI + 1) % this.imgs.length;
 	}
 	public addEntity(entity: null | typeof Entity)
 	{
 		if (this.entity.indexOf(entity) != -1) return;
-		this.entity.push(entity);
-		if (this.entity.length > this.imgs.length) this.entity.shift();
+		this.entity[this.addentityI] = entity;
+		this.addentityI = (this.addentityI + 1) % this.imgs.length;
 	}
 }
 
