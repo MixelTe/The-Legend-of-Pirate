@@ -435,9 +435,11 @@ class EntityEditor_TileSeclector {
         if (this.cursor)
             drawTile(this.cursor.x, this.cursor.y, true);
     }
-    pointSelected(x, y) {
-        for (let i = 0; i < this.selected.length; i++) {
-            const point = this.selected[i];
+    pointSelected(x, y, selected) {
+        if (selected == undefined)
+            selected = this.selected;
+        for (let i = 0; i < selected.length; i++) {
+            const point = selected[i];
             if (point.x == x && point.y == y)
                 return i;
         }
@@ -445,9 +447,14 @@ class EntityEditor_TileSeclector {
     }
     async get() {
         const r = await this.popup.openAsync();
-        console.log(r);
-        if (r && (this.selected.length > 0 || !this.oneTile))
-            return this.selected;
-        return null;
+        const selected = [];
+        if (!r || this.selected.length == 0)
+            return null;
+        this.selected.forEach(el => {
+            if (!this.pointSelected(el.x, el.y, selected)) {
+                selected.push(el);
+            }
+        });
+        return selected;
     }
 }
