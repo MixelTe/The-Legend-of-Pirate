@@ -6,7 +6,7 @@ const btn_right = getButton("btn-right")
 const btn_down = getButton("btn-down")
 const btn_left = getButton("btn-left")
 const btn_save = getButton("btn-save")
-const btn_load = getButton("btn-load")
+const inp_load = getInput("inp-load")
 const btn_new = getButton("btn-new")
 const inp_cameraSpeed = getInput("inp_cameraSpeed");
 const inp_mode_pen = getInput("inp-mode-pen");
@@ -49,6 +49,7 @@ const camera_speed = () =>
 let pen: keyof (typeof tileIds) = "sand";
 let penEntity: typeof Entity | null = null;
 let selectedEntity: Entity | null = null;
+let worldFileName = "worldData.json";
 
 
 class World
@@ -366,6 +367,10 @@ class World
 	{
 		const json = localStorage.getItem(localStorageKey);
 		if (!json) return;
+		World.loadData(json);
+	}
+	public static loadData(json: string)
+	{
 		try
 		{
 			const data = <WorldData>JSON.parse(json);
@@ -659,36 +664,32 @@ btn_save.addEventListener("click", () => {
 	const text = JSON.stringify(world.getData());
 	var el = document.createElement('a');
 	el.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-	el.setAttribute('download', "worldData.json");
+	el.setAttribute('download', worldFileName);
 
 	el.style.display = 'none';
 	document.body.appendChild(el);
 	el.click();
 	document.body.removeChild(el);
 });
-btn_load.addEventListener("click", () => {
-
+inp_load.addEventListener("input", async () =>
+{
+	const curFiles = inp_load.files;
+	if (!curFiles) return;
+	if (curFiles.length == 0) return;
+	if (world.height != 0 && world.width != 0)
+	{
+		if (!await askForSure("заменить текущий мир")) return;
+	}
+	const file = curFiles[0];
+	worldFileName = file.name;
+	const data = await file.text();
+	World.loadData(data);
 });
 btn_new.addEventListener("click", async () =>
 {
 	if (world.height != 0 && world.width != 0)
 	{
-		let popup = new Popup();
-		popup.focusOn = "cancel";
-		popup.content.appendChild(Div([], [], "Вы уверены, что хотите создать пустой мир?"));
-		let r = await popup.openAsync();
-		if (!r) return
-		popup = new Popup();
-		popup.content.appendChild(Div([], [], "Вы точно уверены, что хотите создать пустой мир?"));
-		popup.reverse = true
-		r = await popup.openAsync();
-		popup.focusOn = "cancel";
-		if (!r) return
-		popup = new Popup();
-		popup.content.appendChild(Div([], [], "Вы уверены, что хотите создать пустой мир? Все несохранённые данные будут потеряны!"));
-		r = await popup.openAsync();
-		popup.focusOn = "cancel";
-		if (!r) return
+		if (!await askForSure("создать пустой мир")) return;
 	}
 	world = new World(inp_width.valueAsNumber, inp_height.valueAsNumber)
 });
@@ -1026,6 +1027,26 @@ function endEntityMove()
 		entity_moving = null;
 		return entity;
 	}
+}
+async function askForSure(action: string)
+{
+	let popup = new Popup();
+	popup.focusOn = "cancel";
+	popup.content.appendChild(Div([], [], `Вы уверены, что хотите ${action}?`));
+	let r = await popup.openAsync();
+	if (!r) return false;
+	popup = new Popup();
+	popup.focusOn = "cancel";
+	popup.content.appendChild(Div([], [], `Вы точно уверены, что хотите ${action}?`));
+	popup.reverse = true
+	r = await popup.openAsync();
+	if (!r) return false;
+	popup = new Popup();
+	popup.focusOn = "cancel";
+	popup.content.appendChild(Div([], [], `Вы уверены, что хотите ${action}? Все несохранённые данные будут потеряны!`));
+	r = await popup.openAsync();
+	if (!r) return false;
+	return true;
 }
 
 

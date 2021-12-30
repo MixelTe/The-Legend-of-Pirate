@@ -89,7 +89,9 @@ h1 {
 	box-shadow: 0 0 0.2em rgba(0, 0, 0, 0.5);
 }
 .checkbox-switch input {
-	visibility: hidden;
+	position: absolute;
+	opacity: 0;
+	pointer-events: none;
 }
 .checkbox-switch span {
 	position: absolute;
@@ -108,6 +110,14 @@ h1 {
 	box-shadow: 0 0 0.2em lime;
 	left: 1.45em;
 }
+.checkbox-switch:hover span, .checkbox-switch input:focus ~ span {
+	box-shadow: 0 0 0.2em 0.1em tomato,
+				0 0 0.5em black;
+}
+.checkbox-switch:hover input:checked ~ span, .checkbox-switch input:checked:focus ~ span {
+	box-shadow: 0 0 0.2em 0.1em lime,
+				0 0 0.5em black;
+}
 #palette {
 	display: flex;
 	flex-wrap: wrap;
@@ -120,6 +130,23 @@ h1 {
 }
 #palette canvas {
 	cursor: pointer;
+}
+.inp-file input {
+	position: absolute;
+	opacity: 0;
+	pointer-events: none;
+}
+.inp-file span {
+	background-color: lightgreen;
+	border: 1px solid green;
+	border-radius: 0.2em;
+	padding: 0.09em 0.4em;
+}
+.inp-file span:hover, .inp-file input:focus ~ span {
+	background-color: hsl(120, 73%, 60%);
+}
+.inp-file span:active {
+	background-color: hsl(120, 73%, 80%);
 }
 
 .viewport {
