@@ -22,8 +22,8 @@ const ctx = getCanvasContext(canvas);
 const localStorageKey = "world-data";
 const ViewWidth = 15;
 const ViewHeight = 7;
-// let TileSize = 16 * 2;
-let TileSize = 16 * 4; // Temp
+let TileSize = 16 * 2;
+// let TileSize = 16 * 4; // Temp
 const tileIds = {
 	ice: "ice.png",
 	sand: "sand.png",
@@ -327,7 +327,7 @@ class World
 		const json = JSON.stringify(data);
 		localStorage.setItem(localStorageKey, json);
 	}
-	private getData()
+	public getData()
 	{
 		const data: WorldData = {
 			width: this.width,
@@ -347,6 +347,39 @@ class World
 		}
 
 		return data;
+	}
+	public static fromData(data: WorldData)
+	{
+		const world = new World(data.width, data.height);
+
+		for (let y = 0; y < data.height; y++)
+		{
+			for (let x = 0; x < data.width; x++)
+			{
+				const vData = data.map[y][x];
+				if (vData) world.map[y][x] = View.fromData(vData);
+			}
+		}
+		return world;
+	}
+	public static loadFromLocalStorage()
+	{
+		const json = localStorage.getItem(localStorageKey);
+		if (!json) return;
+		try
+		{
+			const data = <WorldData>JSON.parse(json);
+			const newWorld = World.fromData(data);
+			world = newWorld;
+		}
+		catch (error)
+		{
+			console.error(error);
+			const popup = new Popup();
+			popup.cancelBtn = false;
+			popup.content.appendChild(Div([], [], "Произошла ошибка при загрузке данных"));
+			popup.open();
+		}
 	}
 }
 class View
@@ -515,6 +548,24 @@ class View
 		}
 		this.entity.forEach(e => data.entity.push(e.getData()));
 		return data;
+	}
+	public static fromData(data: ViewData)
+	{
+		const view = new View();
+
+		for (let y = 0; y < ViewHeight; y++)
+		{
+			for (let x = 0; x < ViewWidth; x++)
+			{
+				view.tiles[y][x] = new Tile(data.tiles[y][x]);
+			}
+		}
+		data.entity.forEach(eData =>
+		{
+			const entity = Entity.fromData(eData);
+			if (entity) view.entity.push(entity);
+		});
+		return view;
 	}
 }
 class Tile
@@ -972,14 +1023,15 @@ function endEntityMove()
 
 loadImages();
 setPalete();
+World.loadFromLocalStorage();
 loop();
-setTimeout(() => world.saveToLocalStarage(), 1000);
-btn_new.click() // Temp
-world.map[0][0] = new View(); // Temp
-penEntity = Entity_Crab; // Temp
-world.map[0][0]?.setEntity(100, 100); // Temp
-inp_mode_entity.checked = !inp_mode_entity.checked; // Temp
-setPalete(); // Temp
+setInterval(() => world.saveToLocalStarage(), 1000);
+// btn_new.click() // Temp
+// world.map[0][0] = new View(); // Temp
+// penEntity = Entity_Crab; // Temp
+// world.map[0][0]?.setEntity(100, 100); // Temp
+// inp_mode_entity.checked = !inp_mode_entity.checked; // Temp
+// setPalete(); // Temp
 function loop()
 {
 	const rect = div_viewport.getBoundingClientRect();

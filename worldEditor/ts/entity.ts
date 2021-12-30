@@ -95,7 +95,8 @@ class Entity
 					if (points == null) continue;
 					ctx.save();
 					ctx.globalAlpha = 0.6;
-					for (let j = 0; j < points.length; j++) {
+					for (let j = 0; j < points.length; j++)
+					{
 						const point = points[j];
 						ctx.fillRect(point.x * TileSize, point.y * TileSize, TileSize, TileSize);
 					}
@@ -135,6 +136,29 @@ class Entity
 			data[dataEl.name] = dataEl.value;
 		});
 		return data;
+	}
+	public static fromData(data: EntitySaveData)
+	{
+		const classObj = EntityDict[data.className];
+		if (!classObj)
+		{
+			console.error(`Cant create entity: No such class name "${data.className}"`);
+			return;
+		};
+		const entity = new classObj(data.x, data.y);
+		for (let i = 0; i < entity.objData.length; i++)
+		{
+			const dataEl = entity.objData[i];
+			const value = data[dataEl.name];
+			if (value === undefined)
+			{
+				console.error(`No such field "${dataEl.name}"`, data);
+				dataEl.value = null;
+				continue;
+			}
+			dataEl.value = value;
+		}
+		return entity;
 	}
 }
 interface EntityObj
