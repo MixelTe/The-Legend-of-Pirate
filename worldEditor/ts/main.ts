@@ -20,7 +20,7 @@ const div_fast_palette = getDiv("fast-palette");
 const canvas = getCanvas("canvas");
 const ctx = getCanvasContext(canvas);
 
-const localStorageKey = "world-data";
+const localStorageKey = "WorldEditor-world-data";
 const ViewWidth = 15;
 const ViewHeight = 7;
 let TileSize = 16 * 2;
