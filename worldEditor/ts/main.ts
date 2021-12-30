@@ -656,7 +656,15 @@ btn_down.addEventListener("click", () => world.down());
 btn_left.addEventListener("click", () => world.left());
 
 btn_save.addEventListener("click", () => {
+	const text = JSON.stringify(world.getData());
+	var el = document.createElement('a');
+	el.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+	el.setAttribute('download', "worldData.json");
 
+	el.style.display = 'none';
+	document.body.appendChild(el);
+	el.click();
+	document.body.removeChild(el);
 });
 btn_load.addEventListener("click", () => {
 
