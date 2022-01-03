@@ -1,7 +1,7 @@
 import pygame
 from window import Window
 from functions import load_image
-from WindowStatistics import WindowStatistics
+from windowSaveSelection import WindowSaveSelection
 
 
 class WindowStart(Window):
@@ -34,4 +34,4 @@ class WindowStart(Window):
 
     def calc(self):
         if self.stat:
-            return WindowStatistics()
+            return WindowSaveSelection()
