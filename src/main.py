@@ -32,7 +32,7 @@ class Main:
             self.window.draw(screen)
             pygame.display.flip()
 
-            clock.tick(60)
+            clock.tick(Settings.fps)
 
         pygame.quit()
 
