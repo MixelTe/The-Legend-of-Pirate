@@ -179,12 +179,9 @@
 	* Поля:
 		* imageOld: pygame.Surface - предыдущий экран
 		* imageNew: pygame.Surface - новый экран
-		* dx: float - сдвиг экранов
-		* dy: float
-		* speedX: float - скорость сдвига
-		* speedY: float
+		* blurState: int
 	* Методы:
-		1. init(imageOld: pygame.Surface, imageNew: pygame.Surface, direction: tuple\[int, int]) - direction - значения 1, 0 или -1 сдвиг по x или y. На основе direction установка dx, dy и скорости
+		1. init(imageOld: pygame.Surface, imageNew: pygame.Surface)
 ---
 14. ## Класс Overlay
 	* Вывод информации про количество жизней, инвентарь, кнопка "Сохранить и выйти"
