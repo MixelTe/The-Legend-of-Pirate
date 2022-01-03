@@ -177,11 +177,10 @@
 13. ## Класс ScreenAnimationBlur(ScreenAnimation)
 	* Анимация смены экрана
 	* Поля:
-		* imageOld: pygame.Surface - предыдущий экран
-		* imageNew: pygame.Surface - новый экран
+		* image: pygame.Surface
 		* blurState: int
 	* Методы:
-		1. init(imageOld: pygame.Surface, imageNew: pygame.Surface)
+		1. init(imageOld: pygame.Surface)
 ---
 14. ## Класс Overlay
 	* Вывод информации про количество жизней, инвентарь, кнопка "Сохранить и выйти"
