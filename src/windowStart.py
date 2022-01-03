@@ -15,7 +15,7 @@ class WindowStart(Window):
         self.start = createSprite(WindowStart.image_start, scale, self.all_sprites, 750, 200)
         self.quit = createSprite(WindowStart.image_quit, scale, self.all_sprites, 750, 400)
 
-        self.start = False
+        self.starting = False
 
     def draw(self, screen: pygame.Surface):
         self.all_sprites.draw(screen)
@@ -25,8 +25,8 @@ class WindowStart(Window):
             if self.quit.rect.collidepoint(event.pos):
                 pygame.event.post(pygame.event.Event(pygame.QUIT))
             if self.start.rect.collidepoint(event.pos):
-                self.start = True
+                self.starting = True
 
     def calc(self):
-        if self.start:
+        if self.starting:
             return WindowSaveSelection()
