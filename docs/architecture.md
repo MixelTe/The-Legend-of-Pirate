@@ -159,8 +159,8 @@
 	* Анимация для плавной смены экранов
 		* surface: pygame.Surface - холст для отрисовки кадра
 	* Методы:
-		1. update() -> bool - возвращает флаг закончилась ли анимация
-		2. draw() -> pygame.Surface - возвращает кадр анимации сдвига
+		2. update() -> bool - возвращает флаг закончилась ли анимация
+		3. draw() -> pygame.Surface - возвращает кадр анимации сдвига
 ---
 12. ## Класс ScreenAnimationMove(ScreenAnimation)
 	* Анимация сдвига экрана
@@ -177,10 +177,14 @@
 13. ## Класс ScreenAnimationBlur(ScreenAnimation)
 	* Анимация смены экрана
 	* Поля:
-		* image: pygame.Surface
-		* blurState: int
+		* imageOld: pygame.Surface - предыдущий экран
+		* imageNew: pygame.Surface - новый экран
+		* dx: float - сдвиг экранов
+		* dy: float
+		* speedX: float - скорость сдвига
+		* speedY: float
 	* Методы:
-		1. init(imageOld: pygame.Surface)
+		1. init(imageOld: pygame.Surface, imageNew: pygame.Surface, direction: tuple\[int, int]) - direction - значения 1, 0 или -1 сдвиг по x или y. На основе direction установка dx, dy и скорости
 ---
 14. ## Класс Overlay
 	* Вывод информации про количество жизней, инвентарь, кнопка "Сохранить и выйти"
