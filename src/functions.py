@@ -25,3 +25,10 @@ def joinPath(*path: list[str]):
     for i in range(1, len(path)):
         joined = os.path.join(joined, path[i])
     return joined
+
+
+def createSprite(img: pygame.Surface, scale: int, group: pygame.sprite.Group, x=0, y=0):
+    sprite = pygame.sprite.Sprite(group)
+    sprite.rect = pygame.Rect(x, y, img.get_width() * scale, img.get_height() * scale)
+    sprite.image = pygame.transform.scale(img, (sprite.rect.width, sprite.rect.height))
+    return sprite

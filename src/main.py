@@ -9,7 +9,6 @@ screen = pygame.display.set_mode((Settings.width, Settings.height))
 from windowStart import WindowStart
 
 
-
 class Main:
     def __init__(self):
         pygame.display.set_caption('The Legend of Pirate')
@@ -33,7 +32,7 @@ class Main:
             self.window.draw(screen)
             pygame.display.flip()
 
-            clock.tick(60)
+            clock.tick(Settings.fps)
 
         pygame.quit()
 

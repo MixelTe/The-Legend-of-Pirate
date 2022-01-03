@@ -41,31 +41,22 @@
 		3. draw(screen: pygame.Surface) - рисует текущий кадр
 ---
 4. ## Класс WindowStart(Window)
-	* Стартовое окно.
-	* Поля:
-		* save: int - ячейка сохранения
-	* Методы:
-		1. init(save: int = 1)
+	* Стартовое окно
 	* Кнопки:
-		2. "Старт" - запуск игры, при нажатии метод update возвращает WindowGame(mainSurface, save)
-		3. "Статистика" - при нажатии метод update возвращает WindowStatistics(mainSurface, save)
-		4. Выбор ячейки сохранения - три кнопки: "1", "2" и "3". При нажатии на кнопки save меняется на соответствующее значение.
-		5. "Выйти" - при нажатии создаёт событие quit.
+		1. "Старт" - запуск игры, при нажатии метод update возвращает WindowSaveSelection()
+		2. "Выйти" - при нажатии создаёт событие quit.
 		```python
 		pygame.event.post(pygame.event.Event(pygame.QUIT))
 		```
 ---
-5. ## Класс WindowStatistics(Window)
-	* Отображает статистику текущего сохранения
-	* Поля:
-		* save: int - ячейка сохранения
-	* Методы:
-		1. init(save: int)
+5. ## Класс WindowSaveSelection(Window)
+	* Выбор сохранения для запуска. Отображает статистику всех сохранений.
 	* Кнопки:
-		2. "Назад" - при нажатии метод update возвращает WindowStart(mainSurface, save)
+		1. "Сохранение 1/2/3" - запуск игры, при нажатии метод update возвращает WindowGame(save)
+		2. "Назад" - при нажатии метод update возвращает WindowStart()
 ---
 6. ## Класс WindowEnd(Window)
-	* Финальный экран. Возможно титры или просто благодарность за игру. Включается после победы над боссом. После показа титров или нажатия кнопки "Продолжить" метод update возвращает WindowStatistics(mainSurface, save)
+	* Финальный экран. Возможно титры или просто благодарность за игру. Включается после победы над боссом. После показа титров или нажатия кнопки "Продолжить" метод update возвращает WindowStart()
 	* Поля:
 		* save: int - ячейка сохранения
 	* Методы:
@@ -84,7 +75,7 @@
 		* worlds: Dict[str, World] - Все миры
 		* time: datetime - время запуска игры для сохранения времени игры
 	* Методы:
-		1. init(mainSurface: pygame.Surface, save: int) - загрузка сохранения и создание текущего мира и экрана
+		1. init(save: int) - загрузка сохранения и создание текущего мира и экрана
 		2. on_event(event: Event)
 			* вызывает методы player.keyDown(key), player.keyUp(key), player.onJoyHat(value), player.onJoyButonDown(button), player.onJoyButonUp(button), при соответствующих событиях. Если screenAnim == None.
 			* вызывает метод overlay.onClick(pos) при нажатии.
