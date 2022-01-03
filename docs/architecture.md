@@ -274,13 +274,12 @@
 ---
 19. ## Класс EntityPlayer(EntityAlive)
 	* Поля:
-		* coins: int
-		* bullets: int
 		* buttonPressed: [bool, bool, bool, bool] - нажаты ли кнопки движения в направлениях: вверх, вправо, вниз, влево (для корректного изменения направления движения)
-		* weapon: Entity | None - оружее при ударе
+		* weapon: Entity | None - оружие при ударе
 		* message: str - сообщение, которое выведится игроку
+		* saveData: SaveData
 	* Методы:
-		* init() - присваивает None в screen
+		* init(saveData: SaveData) - присваивает None в screen
 		* update() - пропускается если screen == None
 		* onKeyDown(key)
 		* onKeyUp(key)
