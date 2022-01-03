@@ -10,3 +10,4 @@ class Settings:
     screen_width = 15
     screen_height = 7
     demageDelay = 400
+    fullscreen = False

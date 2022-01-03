@@ -1,10 +1,8 @@
 import pygame
-import os
 from settings import Settings
 from window import Window
 
-# screen = pygame.display.set_mode((Settings.width, Settings.height), pygame.FULLSCREEN)
-screen = pygame.display.set_mode((Settings.width, Settings.height))
+screen = pygame.display.set_mode((Settings.width, Settings.height), pygame.FULLSCREEN if Settings.fullscreen else 0)
 
 from windowStart import WindowStart
 
@@ -19,6 +17,9 @@ class Main:
         running = True
 
         while running:
+            for i in range(pygame.joystick.get_count()):
+                pygame.joystick.Joystick(i).init()
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
@@ -37,5 +38,5 @@ class Main:
         pygame.quit()
 
 
-if (__name__ == "__main__"):
-    Main().start()
+pygame.joystick.init()
+Main().start()
