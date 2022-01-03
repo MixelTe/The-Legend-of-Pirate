@@ -246,31 +246,31 @@
 		2. screenExist(x, y) -> bool - проверка существует ли экран с такими координатами
 		3. createScreen(x, y, saveData: SaveData, player: EntityPlayer) -> Screen
 	* Хранение мира:
-		* В папке worlds файл worldName.txt:
+		* В папке worlds файл worldName.txt, формат хранения:
+		```
+		map: list[list[ViewData | None]]
+		width: int
+		height: int
 
-			```width height```
-
-		* В папке worlds папка worldName с экранами этого мира
+		ViewData
+		{
+			tiles: list[list[string]];
+			entity: list[EntitySaveData];
+		}
+		EntitySaveData
+		{
+			className: keyof typeof EntityDict;
+			x: number;
+			y: number;
+			[a: string]: any;
+		}
+		```
 ---
 18. ## Класс ScreenData
 	* Хранит информацию об одном экране
 	* Поля:
 		* tiles: list[list[str]] - строка - id Tile`а
 		* entity: list[dict] - словарь с информацией о сущности
-	* Формат хранения:
-		* В папке worldName файл "x;y.json":
-		```
-		{
-			tiles: [["tileId"]],
-			entity: [{
-					class: "className",
-					x: number,
-					y: number
-				}
-			]
-		}
-		```
-		* В данных сущности могут быть любые дополнительные поля, необходимые для сущности.
 ---
 19. ## Класс EntityPlayer(EntityAlive)
 	* Поля:
