@@ -9,7 +9,7 @@ class WindowStatistics(Window):
 
     def __init__(self):
         scale = 16
-        
+
         self.rect_save1 = pygame.Rect(750, 200, WindowStatistics.image_quit.get_width() * scale, WindowStatistics.image_quit.get_height() * scale)
         self.image_save1 = pygame.transform.scale(self.image_quit, (self.rect_save1.width, self.rect_save1.height))
 
@@ -18,12 +18,12 @@ class WindowStatistics(Window):
 
         self.rect_save3 = pygame.Rect(750, 700, WindowStatistics.image_quit.get_width() * scale, WindowStatistics.image_quit.get_height() * scale)
         self.image_save3 = pygame.transform.scale(self.image_quit, (self.rect_save3.width, self.rect_save3.height))
-        
+
     def draw(self, screen: pygame.Surface):
         screen.blit(self.image_save1, self.rect_save1)
         screen.blit(self.image_save2, self.rect_save2)
         screen.blit(self.image_save3, self.rect_save3)
-    
-    def on_event(self, event: pygame.event.Event):       
+
+    def on_event(self, event: pygame.event.Event):
         if event.type == pygame.MOUSEBUTTONDOWN:
             pass
