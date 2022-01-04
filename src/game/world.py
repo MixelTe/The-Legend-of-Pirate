@@ -1,9 +1,11 @@
-from windowGame import WindowGame
+from __future__ import annotations
 
 
 class World:
+    worlds: dict[str, World] = {}
+
     def __init__(self, name: str):
-        WindowGame.worlds[name] = self
+        World.worlds[name] = self
         # загрузка ScreenData и size
         self.name = name
         self.size: tuple[int, int]

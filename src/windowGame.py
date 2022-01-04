@@ -9,8 +9,6 @@ from window import Window
 from datetime import datetime
 
 class WindowGame(Window):
-    worlds: dict[str, World] = {}
-
     def __init__(self, save: int):
         self.save = save
         self.saveData =  SaveData(save)
