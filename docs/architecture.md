@@ -230,7 +230,7 @@
 	* Поля:
 		* name: str
 		* size: tuple[int, int]
-		* screens: dict[(int, int), ScreenData]
+		* screens: list[list[ScreenData | None]]
 		* static worlds: Dict[str, World] - Все миры
 	* Методы:
 		1. init(name: str) - загрузка ScreenData и size
@@ -238,18 +238,18 @@
 	* Хранение мира:
 		* В папке worlds файл worldName.txt, формат хранения:
 		```
-		map: list[list[ViewData | None]]
+		map: list[list[ScreenData | None]]
 		width: int
 		height: int
 
-		ViewData
+		ScreenData
 		{
 			tiles: list[list[string]];
-			entity: list[EntitySaveData];
+			entity: list[EntityData];
 		}
-		EntitySaveData
+		EntityData
 		{
-			className: keyof typeof EntityDict;
+			className: str;
 			x: number;
 			y: number;
 			[a: string]: any;
