@@ -51,6 +51,7 @@ class WindowGame(Window):
             pass
         exitNow = self.overlay.update()
         if (exitNow):
+            self.saveData.save()
             from windowStart import WindowStart
             return WindowStart()
         if (self.player.health <= 0):

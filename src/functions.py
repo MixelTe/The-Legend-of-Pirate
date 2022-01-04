@@ -41,3 +41,9 @@ def createSprite(img: pygame.Surface, scale: int, group: pygame.sprite.Group, x=
 def loadJSON(path):
     with open(path, "r", encoding="utf-8") as f:
         return json.load(f)
+
+def multRect(rect: pygame.Rect, value: float):
+    rect.x *= value
+    rect.y *= value
+    rect.height *= value
+    rect.width *= value
