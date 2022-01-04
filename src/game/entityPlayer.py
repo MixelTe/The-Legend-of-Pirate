@@ -2,7 +2,7 @@ from game.entity import Entity
 from saveData import SaveData
 
 
-class EntityPlayer:
+class EntityPlayer(Entity):
     def __init__(self, saveData: SaveData):
         super().__init__(None)
         self.saveData = saveData

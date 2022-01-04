@@ -27,6 +27,6 @@ class WindowStart(Window):
             if self.start.rect.collidepoint(event.pos):
                 self.starting = True
 
-    def calc(self):
+    def update(self):
         if self.starting:
             return WindowSaveSelection()

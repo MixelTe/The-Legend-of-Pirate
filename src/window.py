@@ -5,7 +5,7 @@ class Window():
     def on_event(self, event: pygame.event.Event):
         pass
 
-    def calc(self):
+    def update(self):
         pass
 
     def draw(self, screen: pygame.Surface):
