@@ -133,9 +133,10 @@
 		1. init(world: World, data: ScreenData, saveData: SaveData, player: EntityPlayer) - добавляет player в список entities
 		2. update() -> None | ScreenGoTo - вызов update у всех entities. Возвращает goToVar.
 		3. draw() -> pygame.Surface - вызов draw у всех entities, возвращает итоговый кадр
-		4. addEntity(entity: Entity) -> добавляет entity в их список
-		5. removeEntity(entity: Entity) -> удаляет entity из списка
+		4. addEntity(entity: Entity) - добавляет entity в их список
+		5. removeEntity(entity: Entity) - удаляет entity из списка
 		6. goTo(world: str, screen: tuple[int, int]) - создаёт ScreenGoTo и присваивает в goToVar
+		7. static create(world: World, x: int, y: int, saveData: SaveData, player: EntityPlayer) -> Screen
 ---
 10. ## Класс ScreenGoTo
 	* То куда необходимо переключить экран и его изображение
@@ -235,7 +236,6 @@
 	* Методы:
 		1. init(name: str) - загрузка ScreenData и size
 		2. screenExist(x, y) -> bool - проверка существует ли экран с такими координатами
-		3. createScreen(x, y, saveData: SaveData, player: EntityPlayer) -> Screen
 	* Хранение мира:
 		* В папке worlds файл worldName.txt, формат хранения:
 		```
