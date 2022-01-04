@@ -1,8 +1,8 @@
-from game.entity import Entity
-from saveData import SaveData
+from game.entity import Entity, EntityAlive
+from game.saveData import SaveData
 
 
-class EntityPlayer(Entity):
+class EntityPlayer(EntityAlive):
     def __init__(self, saveData: SaveData):
         super().__init__(None)
         self.saveData = saveData

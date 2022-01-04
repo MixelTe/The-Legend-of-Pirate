@@ -1,10 +1,12 @@
 from __future__ import annotations
+from typing import Union
 import pygame
+from functions import GameExeption
 from game.entity import Entity
 from game.entityPlayer import EntityPlayer
 from game.tile import Tile
 from game.world import ScreenData, World
-from saveData import SaveData
+from game.saveData import SaveData
 from settings import Settings
 
 
@@ -18,7 +20,7 @@ class Screen:
         self.entities: list[Entity]
         self.goToVar: ScreenGoTo = None
 
-    def update(self): # -> None | ScreenGoTo
+    def update(self) -> Union[None, ScreenGoTo]:
         # вызов update у всех entities. Возвращает goToVar.
         pass
 
@@ -40,7 +42,9 @@ class Screen:
 
     @staticmethod
     def create(world: World, x: int, y: int, saveData: SaveData, player: EntityPlayer) -> Screen:
-        pass
+        if (not world.screenExist(x, y)):
+            raise GameExeption(f"Screen.create: screen not exist, x: {x}, y: {y}")
+        return Screen(world, world[x, y], saveData, player)
 
 
 class ScreenGoTo:

@@ -1,6 +1,11 @@
 import pygame
 import os
+import json
 from settings import Settings
+
+
+class GameExeption(Exception):
+    pass
 
 
 def load_image(name, color_key=None):
@@ -32,3 +37,7 @@ def createSprite(img: pygame.Surface, scale: int, group: pygame.sprite.Group, x=
     sprite.rect = pygame.Rect(x, y, img.get_width() * scale, img.get_height() * scale)
     sprite.image = pygame.transform.scale(img, (sprite.rect.width, sprite.rect.height))
     return sprite
+
+def loadJSON(path):
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)
