@@ -42,8 +42,8 @@ def loadJSON(path):
     with open(path, "r", encoding="utf-8") as f:
         return json.load(f)
 
-def multRect(rect: pygame.Rect, value: float):
-    rect.x *= value
-    rect.y *= value
-    rect.height *= value
-    rect.width *= value
+def multRect(rect, value: float):
+    rect[0] *= value
+    rect[1] *= value
+    rect[2] *= value
+    rect[3] *= value

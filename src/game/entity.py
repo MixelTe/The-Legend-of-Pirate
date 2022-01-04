@@ -6,15 +6,15 @@ from settings import Settings
 
 
 class Entity:
-    entityDict: dict[str, Entity] # словарь всех Entity для метода Entity.fromData
+    entityDict: dict[str, Entity] = {} # словарь всех Entity для метода Entity.fromData
     def __init__(self, screen, data: dict=None):
         from game.screen import Screen
         self.screen: Screen = screen # экран, для доступа к списку сущностей и к клеткам мира
         self.group = EntityGroups.neutral # группа к которой пренадлежит сущность, для определения нужно ли наносить урон (присваивать значение только с помощью полей класса EntityGroups)
         self.x: float = 0
         self.y: float = 0
-        self.width: int = 1
-        self.height: int = 1
+        self.width: float = 1
+        self.height: float = 1
         self.speed: float = 0
         self.speedX: float = 0
         self.speedY: float = 0
@@ -38,7 +38,7 @@ class Entity:
         self.move()
 
     def draw(self, surface: pygame.Surface):
-        rect = pygame.Rect(self.x, self.y, self.width, self.height)
+        rect = [self.x, self.y, self.width, self.height]
         multRect(rect, Settings.tileSize)
         if (self.image is None):
             pygame.draw.rect(surface, "green", rect)
@@ -60,8 +60,8 @@ class EntityGroups:
 
 
 class EntityAlive(Entity):
-    def __init__(self, screen: pygame.Screen):
-        super().__init__(screen)
+    def __init__(self, screen, data: dict=None):
+        super().__init__(screen, data)
         self.animator: Animator = None
         self.health = 1
         self.damageDelay = 0 # при вызове update уменьшается на 1000 / Settings.fps
@@ -69,3 +69,13 @@ class EntityAlive(Entity):
     def takeDamage(self, damage: int):
         # Уменьшение здоровья и установка damageDelay в Settings.damageDelay, если damageDelay <= 0
         pass
+
+
+def loadEntities():
+    from game.entities.entityCrab import EntityCrab
+    Entity.entityDict["Entity_Crab"] = EntityCrab
+    from game.entities.entityShovel import EntityShovel
+    Entity.entityDict["Entity_Shovel"] = EntityShovel
+
+
+loadEntities()

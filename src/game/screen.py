@@ -26,7 +26,7 @@ class Screen:
             self.tiles.append(row)
 
         for eData in data.entity:
-            self.entities.append(Entity(self, eData))
+            self.entities.append(Entity.fromData(eData, self))
         self.entities.append(player)
 
     def update(self) -> Union[None, ScreenGoTo]:

@@ -1,4 +1,5 @@
 import pygame
+from functions import joinPath
 from game.entityPlayer import EntityPlayer
 from game.overlay import Overlay
 from game.screen import Screen
