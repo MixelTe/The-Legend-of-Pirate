@@ -280,14 +280,15 @@
 20. ## Класс Animator
 	* Аниматор сущностей
 	* Поля:
-		* image: pygame.Surface - картинка с анимациями, каждая анимация на новой строке
+		* frames: dict[str, list\[pygame.Surface]] - все кадры анимации по названию
 		* frameSize: tuple[int, int]
 		* animation: list\[tuple[int, int]] - tuple[скорость переключения кадров, кол-во кадров] для каждой анимации.
-		* frame: tuple[int, int] - tuple[строка, картинка]
+		* frame: tuple[int, int] - tuple[строка, картинка] текущий кадр
 		* counter: int - счетчик для переключения кадров с определённой скоростью
-		* names: list\[str] - названия анимаций
 	* Методы:
-		* init(image: pygame.Surface, frameSize: tuple[int, int], animation: list\[int, int])
+		* init(frameSize: tuple[int, int], folder: str, animations: list\[str]) - 
+			* folder - папка с анимациями, animations - название файлов с анимацией
+			* добавляет каждую анимацию в frames, разделив на кадры. Ключ - название файла без расширения
 		* setNames(names: list\[str]) - устанавливает название для каждой анимации
 		* update() -> tuple[bool, bool] - прибавляет счётчик, и переключает кадр, если прошло достаточно времени. После последнего кадра идёт первый.
 
