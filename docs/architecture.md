@@ -72,7 +72,6 @@
 		* screen: Screen
 		* screenAnim: ScreenAnimationMove | None
 		* overlay: Overlay
-		* worlds: Dict[str, World] - Все миры
 		* time: datetime - время запуска игры для сохранения времени игры
 	* Методы:
 		1. init(save: int) - загрузка сохранения и создание текущего мира и экрана
@@ -232,6 +231,7 @@
 		* name: str
 		* size: tuple[int, int]
 		* screens: dict[(int, int), ScreenData]
+		* static worlds: Dict[str, World] - Все миры
 	* Методы:
 		1. init(name: str) - загрузка ScreenData и size
 		2. screenExist(x, y) -> bool - проверка существует ли экран с такими координатами
