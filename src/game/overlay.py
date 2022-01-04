@@ -8,13 +8,13 @@ class Overlay:
         self.surface = pygame.Surface((Settings.width, Settings.overlay_height))
         self.player = player
 
-    def update() -> bool:
+    def update(self) -> bool:
         #возвращает True, если игрок нажал "Выйти"
         pass
 
-    def draw() -> pygame.Surface:
+    def draw(self) -> pygame.Surface:
         # если player.message не пусто, то выводится это сообщение.
         pass
 
-    def onClick(pos: tuple[int, int]):
+    def onClick(self, pos: tuple[int, int]):
         pass

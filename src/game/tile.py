@@ -11,6 +11,7 @@ class Tile:
         self.digable = digable # можно ли копать на этой клетке
         self.solid = solid # плотная ли клетка (стена)
 
+    @staticmethod
     def fromId(id: str) -> Tile:
         # получить клетку по id из tileIds
         pass

@@ -1,6 +1,3 @@
-from game.entityPlayer import EntityPlayer
-from game.screen import Screen
-from saveData import SaveData
 from windowGame import WindowGame
 
 
@@ -14,9 +11,6 @@ class World:
 
     def screenExist(self, x: int, y: int) -> bool:
         # проверка существует ли экран с такими координатами
-        pass
-
-    def createScreen(self, x: int, y: int, saveData: SaveData, player: EntityPlayer) -> Screen:
         pass
 
 

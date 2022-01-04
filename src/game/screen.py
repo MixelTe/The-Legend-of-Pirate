@@ -1,3 +1,4 @@
+from __future__ import annotations
 import pygame
 from game.entity import Entity
 from game.entityPlayer import EntityPlayer
@@ -35,6 +36,10 @@ class Screen:
 
     def goTo(self, world: str, screen: tuple[int, int]):
         # создаёт ScreenGoTo и присваивает в goToVar
+        pass
+
+    @staticmethod
+    def create(world: World, x: int, y: int, saveData: SaveData, player: EntityPlayer) -> Screen:
         pass
 
 
