@@ -205,9 +205,8 @@
 		* hitbox: pygame.Rect - область для просчёта столкновений, относительно сущности.
 		* static entityDict: dict[str, class] - словарь всех Entity для метода Entity.fromData
 	* Методы:
-		1. init(screen: Screen)
-		2. static fromData(data: dict) -> Entity - создаёт сущность из данных. И вызывает у него applyData(data)
-		3. applyData(data: dict) - установка значений полей из соответствующих полей данных
+		1. init(screen: Screen, data: dict=None) - если data не None, вызывает applyData(data)
+		2. applyData(data: dict) - установка значений полей из соответствующих полей данных
 		3. update()
 		4. draw(surface: pygame.Surface)
 		5. move() -> None | Entity | Tile - просчёт движения с учётом карты и сущностей. При столкновении с сущностью или клеткой возвращает эту сущность или клетку
