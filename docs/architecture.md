@@ -282,7 +282,7 @@
 	* Поля:
 		* frames: dict[str, list\[pygame.Surface]] - все кадры анимации по названию
 		* frameSize: tuple[int, int]
-		* animation: list\[tuple[int, int]] - tuple[скорость переключения кадров, кол-во кадров] для каждой анимации.
+		* animationSpeed: list\[int] - скорость переключения кадров (милисекунды между кадрами) для каждой анимации.
 		* frame: tuple[int, int] - tuple[строка, картинка] текущий кадр
 		* counter: int - счетчик для переключения кадров с определённой скоростью
 	* Методы:
