@@ -11,3 +11,7 @@ class Settings:
     screen_height = 7
     demageDelay = 400
     fullscreen = False
+    tileSize = 1
+
+
+Settings.tileSize = Settings.width / Settings.screen_width

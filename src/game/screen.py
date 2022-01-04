@@ -19,9 +19,9 @@ class Screen:
         self.entities: list[Entity] = []
         self.goToVar: ScreenGoTo = None
 
-        for y in range(len(data.tiles)):
+        for y in range(Settings.screen_height):
             row = []
-            for x in range(len(data.tiles[y])):
+            for x in range(Settings.screen_width):
                 row.append(Tile.fromId(data.tiles[y][x]))
             self.tiles.append(row)
 

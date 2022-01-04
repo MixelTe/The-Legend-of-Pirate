@@ -5,6 +5,7 @@ from game.screen import Screen
 from game.screenAnimation import ScreenAnimation
 from game.world import World
 from game.saveData import SaveData
+from settings import Settings
 from window import Window
 from datetime import datetime
 
@@ -60,5 +61,10 @@ class WindowGame(Window):
             # return WindowEnd(self.save)
 
     def draw(self, screen: pygame.Surface):
-        # Если screenAnim None, то вызывет screen.draw() и выводит полученую картинку на экран, иначе выводит screenAnim.next(). Выводит на экран overlay.draw() и self.screen.draw()
-        pass
+        if (self.screenAnim):
+            screenImg = self.screenAnim.draw()
+        else:
+            screenImg = self.screen.draw()
+        overlay = self.overlay.draw()
+        screen.blit(overlay, (0, 0))
+        screen.blit(screenImg, (0, Settings.overlay_height))

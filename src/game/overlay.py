@@ -14,7 +14,7 @@ class Overlay:
 
     def draw(self) -> pygame.Surface:
         # если player.message не пусто, то выводится это сообщение.
-        pass
+        return self.surface
 
     def onClick(self, pos: tuple[int, int]):
         pass
