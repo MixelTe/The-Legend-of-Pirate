@@ -1,10 +1,11 @@
 class SaveData:
     def __init__(self, save: int):
-        self.save = save
+        self.saveFile = save
         self.saveVersion = 1
         self.checkPointX = 0
         self.checkPointY = 0
-        self.world = "start"
+        # self.world = "start"
+        self.world = "test" # Temp
         self.screen = (0, 0)
         self.coins = 0
         self.health = 3
