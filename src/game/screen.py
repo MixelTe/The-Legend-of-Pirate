@@ -12,33 +12,48 @@ from settings import Settings
 
 class Screen:
     def __init__(self, world: World, data: ScreenData, saveData: SaveData, player: EntityPlayer):
-        # добавляет player в список entities
         self.surface = pygame.Surface((Settings.width, Settings.height - Settings.overlay_height))
         self.saveData = saveData
-        self.world: World
-        self.tiles: list[list[Tile]]
-        self.entities: list[Entity]
+        self.world = world
+        self.tiles: list[list[Tile]] = []
+        self.entities: list[Entity] = []
         self.goToVar: ScreenGoTo = None
 
+        for y in range(len(data.tiles)):
+            row = []
+            for x in range(len(data.tiles[y])):
+                row.append(Tile.fromId(data.tiles[y][x]))
+            self.tiles.append(row)
+
+        for eData in data.entity:
+            self.entities.append(Entity(self, eData))
+        self.entities.append(player)
+
     def update(self) -> Union[None, ScreenGoTo]:
-        # вызов update у всех entities. Возвращает goToVar.
-        pass
+        for entity in self.entities:
+            entity.update()
+        return self.goToVar
 
     def draw(self) -> pygame.Surface:
-        # вызов draw у всех entities, возвращает итоговый кадр
-        pass
+        self.surface.fill("red")
+
+        for y in range(len(self.tiles)):
+            for x in range(len(self.tiles[y])):
+                self.tiles[y][x].draw(self.surface, x, y)
+
+        for entity in self.entities:
+            entity.draw(self.surface)
+
+        return self.surface
 
     def addEntity(self, entity: Entity):
-        # добавляет entity в их список
-        pass
+        self.entities.append(entity)
 
     def removeEntity(self, entity: Entity):
-        # удаляет entity из списка
-        pass
+        self.entities.remove(entity)
 
     def goTo(self, world: str, screen: tuple[int, int]):
-        # создаёт ScreenGoTo и присваивает в goToVar
-        pass
+        self.goToVar = ScreenGoTo(world, screen, self.surface)
 
     @staticmethod
     def create(world: World, x: int, y: int, saveData: SaveData, player: EntityPlayer) -> Screen:

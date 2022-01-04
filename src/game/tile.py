@@ -15,3 +15,6 @@ class Tile:
     def fromId(id: str) -> Tile:
         # получить клетку по id из tileIds
         pass
+
+    def draw(self, surface: pygame.Surface, x: int, y: int):
+        pass
