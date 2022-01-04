@@ -88,7 +88,7 @@
 8. ## Класс SaveData
 	* Все данные, необходимые для сохранения прогресса игрока
 	* Поля:
-		* save: int - ячейка сохранения
+		* saveFile: int - ячейка сохранения
 		* saveVersion: int - версия файла сохранения
 		* checkPointX: int
 		* checkPointY: int
