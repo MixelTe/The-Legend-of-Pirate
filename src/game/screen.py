@@ -28,6 +28,7 @@ class Screen:
         for eData in data.entity:
             self.entities.append(Entity.fromData(eData, self))
         self.entities.append(player)
+        player.screen = self
 
     def update(self) -> Union[None, ScreenGoTo]:
         for entity in self.entities:
@@ -37,9 +38,8 @@ class Screen:
     def draw(self) -> pygame.Surface:
         self.surface.fill("red")
 
-        for y in range(len(self.tiles)):
-            for x in range(len(self.tiles[y])):
-                self.tiles[y][x].draw(self.surface, x, y)
+        for (tile, x, y) in self.getTiles():
+            tile.draw(self.surface, x, y)
 
         for entity in self.entities:
             entity.draw(self.surface)
@@ -55,6 +55,9 @@ class Screen:
     def goTo(self, world: str, screen: tuple[int, int]):
         self.goToVar = ScreenGoTo(world, screen, self.surface)
 
+    def getTiles(self):
+        return TileIterator(self.tiles)
+
     @staticmethod
     def create(world: World, x: int, y: int, saveData: SaveData, player: EntityPlayer) -> Screen:
         if (not world.screenExist(x, y)):
@@ -67,3 +70,27 @@ class ScreenGoTo:
         self.world = world
         self.screen = screen
         self.image = image # изображение последнего кадра этого экрана
+
+
+class TileIterator:
+    def __init__(self, tiles: list[list[Tile]]):
+        self.tiles = tiles
+        self.y = 0
+        self.x = 0
+
+    def __iter__(self):
+        self.y = 0
+        self.x = 0
+        return self
+
+    def __next__(self):
+        if (self.y >= Settings.screen_height):
+            raise StopIteration
+        tile = self.tiles[self.y][self.x]
+        x = self.x
+        y = self.y
+        self.x += 1
+        if (self.x >= Settings.screen_width):
+            self.x = 0
+            self.y += 1
+        return (tile, x, y)

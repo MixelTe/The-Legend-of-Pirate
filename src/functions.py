@@ -47,3 +47,4 @@ def multRect(rect, value: float):
     rect[1] *= value
     rect[2] *= value
     rect[3] *= value
+    return rect
