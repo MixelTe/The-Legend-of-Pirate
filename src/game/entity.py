@@ -23,6 +23,7 @@ class Entity:
         self.speedX: float = 0
         self.speedY: float = 0
         self.image: pygame.Surface = None
+        self.imagePos: tuple[float, float] = (0, 0)
         if (data):
             self.applyData(data)
 
@@ -46,7 +47,8 @@ class Entity:
         if (self.image is None):
             pygame.draw.rect(surface, "green", rect)
         else:
-            surface.blit(self.image, (rect[0], rect[1]))
+            surface.blit(self.image, (rect[0] + self.imagePos[0] * Settings.tileSize,
+                         rect[1] + self.imagePos[1] * Settings.tileSize))
         if (Settings.drawHitboxes):
             pygame.draw.rect(surface, "cyan", rect, round(Settings.tileSize * 0.03125) + 1)
 

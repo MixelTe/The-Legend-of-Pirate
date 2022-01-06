@@ -6,9 +6,8 @@ from game.saveData import SaveData
 from settings import Settings
 
 
-image = load_image("crab.png")
-image = image.subsurface(0, 0, 13, 11)
-image = pygame.transform.scale(image, (Settings.tileSize * 0.8, Settings.tileSize * 0.677))
+image = load_image("pirate.png")
+image = pygame.transform.scale(image, (Settings.tileSize * 0.75, Settings.tileSize * 1.5))
 
 
 class EntityPlayer(EntityAlive):
@@ -19,9 +18,13 @@ class EntityPlayer(EntityAlive):
         # нажаты ли кнопки движения в направлениях: вверх, вправо, вниз, влево (для корректного изменения направления движения)
         self.weapon: Entity = None
         self.message = ""
+        self.image = image
         self.speed = 0.1
+        self.width = 0.75
+        self.height = 1
+        self.imagePos = (0, -0.5)
         self.x = saveData.checkPointX + (1 - self.width) / 2
-        self.y = saveData.checkPointY + (1 - self.width) / 2
+        self.y = saveData.checkPointY + (1 - self.height) / 2
 
     def onKeyDown(self, key):
         if (key == pygame.K_w or key == pygame.K_UP):
