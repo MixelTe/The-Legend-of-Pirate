@@ -204,6 +204,7 @@
 		* speedX: float - текущая скорость
 		* speedY: float
 		* image: pygame.Surface
+		* imagePos: tuple[int, int] - положение картинки относительно сущности
 		* static entityDict: dict[str, class] - словарь всех Entity для метода Entity.fromData
 	* Методы:
 		1. init(screen: Screen, data: dict=None) - если data не None, вызывает applyData(data)
