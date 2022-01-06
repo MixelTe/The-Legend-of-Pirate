@@ -133,7 +133,7 @@
 		* entities: list\[Entity]
 		* goToVar: ScreenGoTo | None
 	* Методы:
-		1. init(world: World, data: ScreenData, saveData: SaveData, player: EntityPlayer) - добавляет player в список entities
+		1. init(world: World, data: ScreenData, pos: tuple[int, int], saveData: SaveData, player: EntityPlayer) - добавляет player в список entities
 		2. update() -> None | ScreenGoTo - вызов update у всех entities. Возвращает goToVar.
 		3. draw() -> pygame.Surface - вызов draw у всех entities, возвращает итоговый кадр
 		4. addEntity(entity: Entity) - добавляет entity в их список
