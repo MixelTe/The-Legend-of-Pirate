@@ -40,7 +40,7 @@ class Entity:
         self.y = data["y"]
 
     def update(self):
-        self.move()
+        return self.move()
 
     def draw(self, surface: pygame.Surface):
         rect = (self.imgRect[0] + self.x, self.imgRect[1] + self.y, self.imgRect[2], self.imgRect[3])
@@ -108,8 +108,9 @@ class Entity:
 
 class EntityGroups:
     neutral = 0
-    player = 1
-    enemy = 2
+    playerSelf = 1
+    player = 2
+    enemy = 3
 
 
 class EntityAlive(Entity):
@@ -118,10 +119,26 @@ class EntityAlive(Entity):
         self.animator: Animator = None
         self.health = 1
         self.damageDelay = 0  # при вызове update уменьшается на 1000 / Settings.fps
+        self.strength = 1
+        self.alive = True
 
     def takeDamage(self, damage: int):
-        # Уменьшение здоровья и установка damageDelay в Settings.damageDelay, если damageDelay <= 0
-        pass
+        if (self.damageDelay <= 0):
+            self.damageDelay = Settings.demageDelay
+            self.health -= damage
+            if (self.health <= 0):
+                self.alive = False
+
+    def update(self):
+        if (not self.alive):
+            return (None, None)
+        rect, collision = super().update()
+        if (self.damageDelay > 0):
+            self.damageDelay -= 1000 / Settings.fps
+        if (self.group == EntityGroups.enemy and isinstance(collision, EntityAlive)):
+            if (collision.group == EntityGroups.player):
+                collision.takeDamage(self.strength)
+        return (rect, collision)
 
 
 def loadEntities():

@@ -1,4 +1,4 @@
-from game.entity import Entity, EntityAlive
+from game.entity import EntityAlive
 
 class EntityCrab(EntityAlive):
     def __init__(self, screen, data: dict=None):
@@ -11,7 +11,7 @@ class EntityCrab(EntityAlive):
         self.speedY = self.speed
 
     def update(self):
-        rect, collision = self.move()
+        rect, collision = super().update()
         if (collision is None or rect is None):
             return
 
