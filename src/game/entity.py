@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Union
+from typing import Set, Union
 import pygame
 from functions import GameExeption, rectIntersection
 from game.animator import Animator
@@ -47,6 +47,8 @@ class Entity:
             pygame.draw.rect(surface, "green", rect)
         else:
             surface.blit(self.image, (rect[0], rect[1]))
+        if (Settings.drawHitboxes):
+            pygame.draw.rect(surface, "cyan", rect, 5)
 
     def move(self) -> Union[tuple[None, None], tuple[tuple[int, int, int, int], Union[Tile, Entity]]]:
         # просчёт движения с учётом карты и сущностей. При столкновении с сущностью или клеткой возвращает эту сущность или клетку

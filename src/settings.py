@@ -12,6 +12,7 @@ class Settings:
     demageDelay = 400
     fullscreen = False
     tileSize = 1
+    drawHitboxes = True
 
 
 Settings.tileSize = Settings.width / Settings.screen_width
