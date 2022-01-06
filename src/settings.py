@@ -6,7 +6,7 @@ class Settings:
     fps = 60
     overlay_height = 184
     folder_data = "data"
-    folder_save = "save"
+    folder_saves = "saves"
     folder_images = "images"
     folder_worlds = "worlds"
     screen_width = 15

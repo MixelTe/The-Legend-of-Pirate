@@ -14,7 +14,7 @@ from datetime import datetime
 class WindowGame(Window):
     def __init__(self, save: int):
         self.save = save
-        self.saveData = SaveData(save)
+        self.saveData = SaveData(save).load()
         self.player = EntityPlayer(self.saveData)
         self.world = World.getWorld(self.saveData.world)
         self.screen = Screen.create(self.world, *self.saveData.screen, self.saveData, self.player)
@@ -37,6 +37,7 @@ class WindowGame(Window):
             self.player.onJoyAxis(event.axis, event.value)
         if (event.type == pygame.MOUSEBUTTONUP):
             self.overlay.onClick(event.pos)
+            self.saveData.save()
 
     def update(self):
         if (self.screenAnim):

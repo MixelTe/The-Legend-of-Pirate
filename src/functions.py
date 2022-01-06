@@ -30,7 +30,7 @@ def joinPath(*path: list[str]):
     joined = path[0]
     for i in range(1, len(path)):
         joined = os.path.join(joined, path[i])
-    return joined
+    return str(joined)
 
 
 def createSprite(img: pygame.Surface, scale: int, group: pygame.sprite.Group, x=0, y=0):
