@@ -10,7 +10,6 @@ from windowGame import WindowGame
 
 class Main:
     def __init__(self):
-        pygame.display.set_caption('The Legend of Pirate')
         # self.window: Window = WindowStart()
         self.window: Window = WindowGame(0) # Temp
 
@@ -19,8 +18,11 @@ class Main:
         running = True
 
         while running:
+            joysticks = []
             for i in range(pygame.joystick.get_count()):
-                pygame.joystick.Joystick(i).init()
+                joystick = pygame.joystick.Joystick(i)
+                joystick.init()
+                joysticks.append(joystick)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -39,5 +41,7 @@ class Main:
 
         pygame.quit()
 
+
 pygame.joystick.init()
+pygame.display.set_caption('The Legend of Pirate')
 Main().start()

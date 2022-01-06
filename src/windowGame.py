@@ -33,6 +33,8 @@ class WindowGame(Window):
             self.player.onJoyButonUp(event.button)
         if (event.type == pygame.JOYHATMOTION):
             self.player.onJoyHat(event.value)
+        if (event.type == pygame.JOYAXISMOTION):
+            self.player.onJoyAxis(event.axis, event.value)
         if (event.type == pygame.MOUSEBUTTONUP):
             self.overlay.onClick(event.pos)
 

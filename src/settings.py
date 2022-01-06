@@ -1,6 +1,8 @@
 class Settings:
-    width = 1920
-    height = 1080
+    # width = 1920
+    # height = 1080
+    width = 720
+    height = 405
     fps = 60
     overlay_height = 184
     folder_data = "data"
@@ -16,3 +18,4 @@ class Settings:
 
 
 Settings.tileSize = Settings.width / Settings.screen_width
+Settings.overlay_height = Settings.height - Settings.screen_height * Settings.tileSize

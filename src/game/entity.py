@@ -48,7 +48,7 @@ class Entity:
         else:
             surface.blit(self.image, (rect[0], rect[1]))
         if (Settings.drawHitboxes):
-            pygame.draw.rect(surface, "cyan", rect, 5)
+            pygame.draw.rect(surface, "cyan", rect, round(Settings.tileSize * 0.03125) + 1)
 
     def move(self) -> Union[tuple[None, None], tuple[tuple[int, int, int, int], Union[Tile, Entity]]]:
         # просчёт движения с учётом карты и сущностей. При столкновении с сущностью или клеткой возвращает эту сущность или клетку
