@@ -39,6 +39,5 @@ class Main:
 
         pygame.quit()
 
-
 pygame.joystick.init()
 Main().start()

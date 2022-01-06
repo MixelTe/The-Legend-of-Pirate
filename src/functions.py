@@ -38,10 +38,16 @@ def createSprite(img: pygame.Surface, scale: int, group: pygame.sprite.Group, x=
     sprite.image = pygame.transform.scale(img, (sprite.rect.width, sprite.rect.height))
     return sprite
 
+
 def loadJSON(path):
     with open(path, "r", encoding="utf-8") as f:
         return json.load(f)
 
 
-def multRect(rect, value: float):
-    return (rect[0] * value, rect[1] * value, rect[2] * value, rect[3] * value)
+def rectIntersection(rect1: tuple[int, int, int, int], rect2: tuple[int, int, int, int]):
+    return (
+        rect1[0] + rect1[2] > rect2[0] and
+        rect2[0] + rect2[2] > rect1[0] and
+        rect1[1] + rect1[3] > rect2[1] and
+        rect2[1] + rect2[3] > rect1[1]
+    )

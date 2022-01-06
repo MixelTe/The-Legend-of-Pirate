@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import Union
 import pygame
-from functions import GameExeption, multRect
+from functions import GameExeption, rectIntersection
 from game.animator import Animator
 from game.tile import Tile
 from settings import Settings
@@ -23,8 +23,6 @@ class Entity:
         self.speedX: float = 0
         self.speedY: float = 0
         self.image: pygame.Surface = None
-        # область отрисовки изображения, относительно сущности.
-        self.imgRect: tuple[float, float, float, float] = [0, 0, 1, 1]
         if (data):
             self.applyData(data)
 
@@ -43,21 +41,21 @@ class Entity:
         return self.move()
 
     def draw(self, surface: pygame.Surface):
-        rect = (self.imgRect[0] + self.x, self.imgRect[1] + self.y, self.imgRect[2], self.imgRect[3])
-        rect = multRect(rect, Settings.tileSize)
+        rect = (self.x * Settings.tileSize, self.y * Settings.tileSize,
+                self.width * Settings.tileSize, self.height * Settings.tileSize)
         if (self.image is None):
             pygame.draw.rect(surface, "green", rect)
         else:
-            surface.blit(self.image, (rect[0], rect[1]), (rect[2], rect[3]))
+            surface.blit(self.image, (rect[0], rect[1]))
 
     def move(self) -> Union[tuple[None, None], tuple[tuple[int, int, int, int], Union[Tile, Entity]]]:
         # просчёт движения с учётом карты и сущностей. При столкновении с сущностью или клеткой возвращает эту сущность или клетку
         nX = self.x + self.speedX
         nY = self.y + self.speedY
-        newRect = pygame.Rect(*multRect((nX, nY, self.width, self.height), Settings.tileSize))
+        newRect = (nX, nY, self.width, self.height)
         for (tile, x, y) in self.screen.getTiles():
             rect = (x, y, 1, 1)
-            if (not newRect.colliderect(multRect(rect, Settings.tileSize))):
+            if (not rectIntersection(newRect, rect)):
                 continue
             if (tile.solid):
                 self.move_toEdge(rect)
@@ -69,7 +67,7 @@ class Entity:
             if (entity == self):
                 continue
             rect = entity.get_rect()
-            if (newRect.colliderect(multRect(rect, Settings.tileSize))):
+            if (rectIntersection(newRect, rect)):
                 self.move_toEdge(rect)
                 return [rect, entity]
         self.x = nX
@@ -81,14 +79,26 @@ class Entity:
         if (pos[0] < 0):
             self.x = rect[0] - self.width
         if (pos[0] > 0):
-            self.x = rect[0]  + rect[2]
+            self.x = rect[0] + rect[2]
         if (pos[1] < 0):
             self.y = rect[1] - self.height
         if (pos[1] > 0):
-            self.y = rect[1]  + rect[3]
+            self.y = rect[1] + rect[3]
 
     def get_relPos(self, rect: tuple[int, int, int, int]):
         pos = [0, 0]
+        # rect = pygame.Rect(*multRect(rect, Settings.tileSize))
+        # this = pygame.Rect(*multRect((self.x, self.y, self.width, self.height), Settings.tileSize))
+
+        # if (this.x + this.width <= rect[0]):
+        #     pos[0] = -1
+        # if (this.x >= rect[0] + rect[2]):
+        #     pos[0] = 1
+        # if (this.y + this.height <= rect[1]):
+        #     pos[1] = -1
+        # if (this.y >= rect[1] + rect[3]):
+        #     pos[1] = 1
+
         if (self.x + self.width <= rect[0]):
             pos[0] = -1
         if (self.x >= rect[0] + rect[2]):
