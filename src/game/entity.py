@@ -1,7 +1,9 @@
 from __future__ import annotations
+from typing import Union
 import pygame
 from functions import GameExeption, multRect
 from game.animator import Animator
+from game.tile import Tile
 from settings import Settings
 
 
@@ -48,7 +50,7 @@ class Entity:
         else:
             surface.blit(self.image, (rect[0], rect[1]), (rect[2], rect[3]))
 
-    def move(self):  # -> None | Entity | Tile
+    def move(self) -> Union[tuple[None, None], tuple[tuple[int, int, int, int], Union[Tile, Entity]]]:
         nX = self.x + self.speedX
         nY = self.y + self.speedY
         newRect = pygame.Rect(*multRect([nX, nY, self.width, self.height], Settings.tileSize))
@@ -58,10 +60,35 @@ class Entity:
             rect = [x, y, 1, 1]
             multRect(rect, Settings.tileSize)
             if (newRect.colliderect(rect)):
-                return tile
+                self.move_toEdge((x, y, 1, 1))
+                return [(x, y, 1, 1), tile]
         self.x = nX
         self.y = nY
+        return (None, None)
         # просчёт движения с учётом карты и сущностей. При столкновении с сущностью или клеткой возвращает эту сущность или клетку
+
+    def move_toEdge(self, rect: tuple[int, int, int, int]):
+        pos = self.get_relPos(rect)
+        if (pos[0] < 0):
+            self.x = rect[0] - self.width
+        if (pos[0] > 0):
+            self.x = rect[0]  + rect[2]
+        if (pos[1] < 0):
+            self.y = rect[1] - self.height
+        if (pos[1] > 0):
+            self.y = rect[1]  + rect[3]
+
+    def get_relPos(self, rect: tuple[int, int, int, int]):
+        pos = [0, 0]
+        if (self.x + self.width <= rect[0]):
+            pos[0] = -1
+        if (self.x >= rect[0] + rect[2]):
+            pos[0] = 1
+        if (self.y + self.height <= rect[1]):
+            pos[1] = -1
+        if (self.y >= rect[1] + rect[3]):
+            pos[1] = 1
+        return pos[0], pos[1]
 
     def remove(self):
         self.screen.removeEntity(self)

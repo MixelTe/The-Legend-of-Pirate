@@ -6,4 +6,21 @@ class EntityCrab(EntityAlive):
         self.width = 0.8
         self.height = 0.677
         self.imgRect = [0, 0, 0.8, 0.677]
-        self.speedX = 0.04
+        self.speed = 0.04
+        self.speedX = self.speed
+        self.speedY = self.speed
+
+    def update(self):
+        rect, collision = self.move()
+        if (collision is None or rect is None):
+            return
+
+        pos = self.get_relPos(rect)
+        if (pos[0] > 0):
+            self.speedX = self.speed
+        if (pos[0] < 0):
+            self.speedX = -self.speed
+        if (pos[1] > 0):
+            self.speedY = self.speed
+        if (pos[1] < 0):
+            self.speedY = -self.speed
