@@ -56,12 +56,15 @@ class Entity:
         nY = self.y + self.speedY
         newRect = pygame.Rect(*multRect((nX, nY, self.width, self.height), Settings.tileSize))
         for (tile, x, y) in self.screen.getTiles():
-            if (not tile.solid):
-                continue
             rect = (x, y, 1, 1)
-            if (newRect.colliderect(multRect(rect, Settings.tileSize))):
+            if (not newRect.colliderect(multRect(rect, Settings.tileSize))):
+                continue
+            if (tile.solid):
                 self.move_toEdge(rect)
                 return [rect, tile]
+            else:
+                nX = self.x + self.speedX * tile.speed
+                nY = self.y + self.speedY * tile.speed
         for entity in self.screen.entities:
             if (entity == self):
                 continue
