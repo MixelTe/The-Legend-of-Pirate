@@ -42,9 +42,6 @@ def loadJSON(path):
     with open(path, "r", encoding="utf-8") as f:
         return json.load(f)
 
+
 def multRect(rect, value: float):
-    rect[0] *= value
-    rect[1] *= value
-    rect[2] *= value
-    rect[3] *= value
-    return rect
+    return (rect[0] * value, rect[1] * value, rect[2] * value, rect[3] * value)

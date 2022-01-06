@@ -10,6 +10,8 @@ class EntityPlayer(EntityAlive):
         # нажаты ли кнопки движения в направлениях: вверх, вправо, вниз, влево (для корректного изменения направления движения)
         self.weapon: Entity = None
         self.message = ""
+        self.x = saveData.checkPointX + (1 - self.width) / 2
+        self.y = saveData.checkPointY + (1 - self.width) / 2
 
     def onKeyDown(self, key):
         pass

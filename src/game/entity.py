@@ -43,29 +43,35 @@ class Entity:
         self.move()
 
     def draw(self, surface: pygame.Surface):
-        rect = [self.imgRect[0] + self.x, self.imgRect[1] + self.y, self.imgRect[2], self.imgRect[3]]
-        multRect(rect, Settings.tileSize)
+        rect = (self.imgRect[0] + self.x, self.imgRect[1] + self.y, self.imgRect[2], self.imgRect[3])
+        rect = multRect(rect, Settings.tileSize)
         if (self.image is None):
             pygame.draw.rect(surface, "green", rect)
         else:
             surface.blit(self.image, (rect[0], rect[1]), (rect[2], rect[3]))
 
     def move(self) -> Union[tuple[None, None], tuple[tuple[int, int, int, int], Union[Tile, Entity]]]:
+        # просчёт движения с учётом карты и сущностей. При столкновении с сущностью или клеткой возвращает эту сущность или клетку
         nX = self.x + self.speedX
         nY = self.y + self.speedY
-        newRect = pygame.Rect(*multRect([nX, nY, self.width, self.height], Settings.tileSize))
+        newRect = pygame.Rect(*multRect((nX, nY, self.width, self.height), Settings.tileSize))
         for (tile, x, y) in self.screen.getTiles():
             if (not tile.solid):
                 continue
-            rect = [x, y, 1, 1]
-            multRect(rect, Settings.tileSize)
-            if (newRect.colliderect(rect)):
-                self.move_toEdge((x, y, 1, 1))
-                return [(x, y, 1, 1), tile]
+            rect = (x, y, 1, 1)
+            if (newRect.colliderect(multRect(rect, Settings.tileSize))):
+                self.move_toEdge(rect)
+                return [rect, tile]
+        for entity in self.screen.entities:
+            if (entity == self):
+                continue
+            rect = entity.get_rect()
+            if (newRect.colliderect(multRect(rect, Settings.tileSize))):
+                self.move_toEdge(rect)
+                return [rect, entity]
         self.x = nX
         self.y = nY
         return (None, None)
-        # просчёт движения с учётом карты и сущностей. При столкновении с сущностью или клеткой возвращает эту сущность или клетку
 
     def move_toEdge(self, rect: tuple[int, int, int, int]):
         pos = self.get_relPos(rect)
@@ -89,6 +95,9 @@ class Entity:
         if (self.y >= rect[1] + rect[3]):
             pos[1] = 1
         return pos[0], pos[1]
+
+    def get_rect(self):
+        return (self.x, self.y, self.width, self.height)
 
     def remove(self):
         self.screen.removeEntity(self)
