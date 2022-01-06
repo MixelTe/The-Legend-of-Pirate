@@ -13,8 +13,11 @@
 				```
 				В игровом цикле (для (пере)подключения контроллера):
 				```python
+				joysticks = []
 				for i in range(pygame.joystick.get_count()):
-        			pygame.joystick.Joystick(i).init()
+					joystick = pygame.joystick.Joystick(i)
+					joystick.init()
+					joysticks.append(joystick)
 				```
 				События контроллера: JOYAXISMOTION, JOYBALLMOTION, JOYBUTTONDOWN, JOYBUTTONUP, JOYHATMOTION
 ---
