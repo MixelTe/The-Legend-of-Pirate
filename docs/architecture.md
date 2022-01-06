@@ -223,6 +223,7 @@
 		* animator: Animator
 		* health: int
 		* damageDelay: int - при вызове update уменьшается на 1000 / Settings.fps
+		* alive: bool - жива ли сущность
 	* Методы:
 		* takeDamage(damage: int) - Уменьшение здоровья и установка damageDelay в Settings.damageDelay, если damageDelay <= 0
 ---
