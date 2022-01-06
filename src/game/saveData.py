@@ -1,3 +1,7 @@
+from functions import joinPath
+from settings import Settings
+import os
+
 class SaveData:
     def __init__(self, save: int):
         self.saveFile = save
@@ -14,8 +18,11 @@ class SaveData:
         self.tags: list[str] = []
 
     def load(self):
-        # если файла сохранения нет, то оставляет значения по умолчанию
-        pass
+        path = joinPath(Settings.folder_data, Settings.folder_save, f"{self.saveFile}.txt")
+        if (not os.path.isfile(path)):
+            return
+        with open(path) as f:
+            pass
 
     def save(self):
         pass
