@@ -282,15 +282,12 @@
 20. ## Класс Animator
 	* Аниматор сущностей
 	* Поля:
-		* frames: dict[str, list\[pygame.Surface]] - все кадры анимации по названию
-		* frameSize: tuple[int, int]
+		* data: AnimatorData - все анимации и их кадры
 		* animationSpeed: list\[int] - скорость переключения кадров (милисекунды между кадрами) для каждой анимации.
 		* frame: tuple[int, int] - tuple[строка, картинка] текущий кадр
 		* counter: int - счетчик для переключения кадров с определённой скоростью
 	* Методы:
-		* init(frameSize: tuple[int, int], folder: str, animations: list\[str]) - 
-			* folder - папка с анимациями, animations - название файлов с анимацией
-			* добавляет каждую анимацию в frames, разделив на кадры. Ключ - название файла без расширения
+		* init(data: AnimatorData)
 		* update() -> tuple[bool, bool] - прибавляет счётчик, и переключает кадр, если прошло достаточно времени. После последнего кадра идёт первый.
 
 			Возвращает два значения:
@@ -299,6 +296,17 @@
 		* getImage() -> pygame.Surface - возвращает текущий кадр
 		* setAnimation(animation: str) - устанавливает текущую анимацию по её названию
 		* curAnimation() -> str - название текущей анимации
+## Класс AnimatorData
+* Хранит картинки для аниматора сущностей
+* Поля:
+	* frames: dict[str, list\[pygame.Surface]] - все кадры анимации по названию
+	* frameSize: tuple[int, int]
+* Методы:
+	* init(frameSize: tuple[int, int], folder: str, animations: list\[str], imgSize: tuple[int, int]) - 
+		* frameSize - размер каждого кадра в анимациях
+		* folder - папка с анимациями, animations - название файлов с анимацией
+		* imgSize - размер кадра, который будет выводиться на экран
+		* Добавляет каждую анимацию в frames, разделив на кадры и применив масштаб imgSize. Ключ - название файла без расширения
 ---
 21. ## Класс Tile
 	* Одна клетка на экране
