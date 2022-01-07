@@ -354,6 +354,7 @@
 * Небольшое окно с текстом, вверху или внизу в зависимости от положения игрока
 * Поля:
 	* opened: bool - отображать ли окно
+	* pos: tuple[int, int]
 * Метды:
 	* init(player: EntityPlayer)
 	* setText(text: str)
