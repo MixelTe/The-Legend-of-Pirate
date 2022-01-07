@@ -1,5 +1,6 @@
 import pygame
 from game.entityPlayer import EntityPlayer
+from game.gamePopup import GamePopupDialog, GamePopupTextbox
 from game.overlay import Overlay
 from game.screen import Screen
 from game.screenAnimation import ScreenAnimation, ScreenAnimationBlur, ScreenAnimationMove
@@ -19,27 +20,52 @@ class WindowGame(Window):
         self.screen: Screen = Screen.create(self.world, *self.saveData.screen, self.saveData, self.player)
         self.screenAnim: ScreenAnimation = None
         self.overlay = Overlay(self.player)
+        self.dialog: GamePopupDialog = None
+        self.popup = GamePopupTextbox()
         self.time = datetime.now()
 
     def on_event(self, event: pygame.event.Event):
-        if (event.type == pygame.KEYDOWN):
-            self.player.onKeyDown(event.key)
-        if (event.type == pygame.KEYUP):
-            self.player.onKeyUp(event.key)
-        if (event.type == pygame.JOYBUTTONDOWN):
-            self.player.onJoyButonDown(event.button)
-        if (event.type == pygame.JOYBUTTONUP):
-            self.player.onJoyButonUp(event.button)
-        if (event.type == pygame.JOYHATMOTION):
-            self.player.onJoyHat(event.value)
-        if (event.type == pygame.JOYAXISMOTION):
-            self.player.onJoyAxis(event.axis, event.value)
+        if (self.dialog is None):
+            if (event.type == pygame.KEYDOWN):
+                self.player.onKeyDown(event.key)
+            if (event.type == pygame.KEYUP):
+                self.player.onKeyUp(event.key)
+            if (event.type == pygame.JOYBUTTONDOWN):
+                self.player.onJoyButonDown(event.button)
+            if (event.type == pygame.JOYBUTTONUP):
+                self.player.onJoyButonUp(event.button)
+            if (event.type == pygame.JOYHATMOTION):
+                self.player.onJoyHat(event.value)
+            if (event.type == pygame.JOYAXISMOTION):
+                self.player.onJoyAxis(event.axis, event.value)
+        else:
+            if (event.type == pygame.MOUSEMOTION):
+                self.dialog.onMove(event.pos)
+            if (event.type == pygame.MOUSEBUTTONUP):
+                self.dialog.onMouseUp(event.pos)
+            if (event.type == pygame.KEYUP):
+                self.dialog.onKeyUp(event.key)
+            if (event.type == pygame.JOYBUTTONDOWN):
+                self.dialog.onJoyButonUp(event.button)
+            if (event.type == pygame.JOYHATMOTION):
+                self.dialog.onJoyHat(event.value)
+            if (event.type == pygame.JOYAXISMOTION):
+                self.dialog.onJoyAxis(event.axis, event.value)
         if (event.type == pygame.MOUSEBUTTONUP):
             self.overlay.onClick(event.pos)
         if (event.type == pygame.MOUSEMOTION):
             self.overlay.onMouseMove(event.pos)
 
     def update(self):
+        exitNow = self.overlay.update()
+        if (exitNow):
+            self.saveData.save()
+            from windowStart import WindowStart
+            return WindowStart()
+
+        if (self.dialog is not None):
+            self.dialog.update()
+            return
         if (self.screenAnim):
             done = self.screenAnim.update()
             if (done):
@@ -64,16 +90,13 @@ class WindowGame(Window):
                 self.world = World.getWorld(goTo.world)
                 self.screen = Screen.create(self.world, *goTo.screen, self.saveData, self.player)
                 self.screenAnim = ScreenAnimationBlur(goTo.image, self.screen.draw())
-        exitNow = self.overlay.update()
-        if (exitNow):
-            self.saveData.save()
-            from windowStart import WindowStart
-            return WindowStart()
-        if (self.player.health <= 0):
-            self.saveData.health = SaveData(0).health
-            self.saveData.save()
-            from windowEnd import WindowEnd
-            return WindowEnd(self.save)
+
+            if (self.player.health <= 0):
+                self.saveData.health = SaveData(0).health
+                self.saveData.save()
+                from windowEnd import WindowEnd
+                return WindowEnd(self.save)
+        self.popup.update()
 
     def draw(self, screen: pygame.Surface):
         if (self.screenAnim):
@@ -83,3 +106,6 @@ class WindowGame(Window):
         overlay = self.overlay.draw()
         screen.blit(overlay, (0, 0))
         screen.blit(screenImg, (0, Settings.overlay_height))
+        if (self.popup.opened):
+            pos = (self.popup.pos[0], self.popup.pos[1] + Settings.overlay_height)
+            screen.blit(self.popup.draw(), pos)
