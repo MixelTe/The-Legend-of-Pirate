@@ -71,10 +71,8 @@ class WindowGame(Window):
         if (self.player.health <= 0):
             self.saveData.health = SaveData(0).health
             self.saveData.save()
-            from windowStart import WindowStart
-            return WindowStart()
-            # from windowEnd import WindowEnd
-            # return WindowEnd(self.save)
+            from windowEnd import WindowEnd
+            return WindowEnd(self.save)
 
     def draw(self, screen: pygame.Surface):
         if (self.screenAnim):
