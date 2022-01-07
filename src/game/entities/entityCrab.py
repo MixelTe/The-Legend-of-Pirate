@@ -22,7 +22,7 @@ class EntityCrab(EntityAlive):
     def update(self):
         collisions = super().update()
         for rect, collision in collisions:
-            if (collision is None or rect is None):
+            if (rect is None):
                 return
 
             pos = self.get_relPos(rect)

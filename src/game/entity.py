@@ -7,6 +7,14 @@ from game.tile import Tile
 from settings import Settings
 
 
+screenBorders = [
+    (-1, 0, 1, Settings.screen_height),
+    (Settings.screen_width, 0, 1, Settings.screen_height),
+    (0, -1, Settings.screen_width, 1),
+    (0, Settings.screen_height, Settings.screen_width, 1),
+]
+
+
 class Entity:
     entityDict: dict[str, Entity] = {}  # словарь всех Entity для метода Entity.fromData
 
@@ -52,7 +60,7 @@ class Entity:
         if (Settings.drawHitboxes):
             pygame.draw.rect(surface, "cyan", rect, round(Settings.tileSize * 0.03125) + 1)
 
-    def move(self) -> list[tuple[tuple[int, int, int, int], Union[Tile, Entity]]]:
+    def move(self) -> list[tuple[tuple[int, int, int, int], Union[Tile, Entity, None]]]:
         # просчёт движения с учётом карты и сущностей. При столкновении с сущностью или клеткой возвращает эту сущность или клетку
         moveX = 1
         moveY = 1
@@ -81,6 +89,7 @@ class Entity:
             else:
                 nX = self.x + self.speedX * tile.speed * moveX
                 nY = self.y + self.speedY * tile.speed * moveY
+
         for entity in self.screen.entities:
             if (entity == self):
                 continue
@@ -97,6 +106,22 @@ class Entity:
                     newRect = (nX, nY, self.width, self.height)
                     continue
                 return colision
+
+        for rect in screenBorders:
+            if (not rectIntersection(newRect, rect)):
+                continue
+            self.move_toEdge(rect)
+            colision.append((rect, None))
+            if (not rectIntersection((nX, self.y, self.width, self.height), rect)):
+                nY = self.y
+                newRect = (nX, nY, self.width, self.height)
+                continue
+            if (not rectIntersection((self.x, nY, self.width, self.height), rect)):
+                nX = self.x
+                newRect = (nX, nY, self.width, self.height)
+                continue
+            return colision
+
         self.x = nX
         self.y = nY
         return colision
