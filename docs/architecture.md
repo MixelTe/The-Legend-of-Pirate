@@ -280,6 +280,8 @@
 		* onJoyHat(value)
 		* onJoyButonDown(button)
 		* onJoyButonUp(button)
+		* onJoyAxis(axis, value)
+		* preUpdate() - вызывается до вызова update у всех сущностей
 ---
 20. ## Класс Animator
 	* Аниматор сущностей
