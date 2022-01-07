@@ -206,9 +206,9 @@ class EntityAlive(Entity):
 
 def loadEntities():
     from game.entities.entityCrab import EntityCrab
-    Entity.entityDict["Entity_Crab"] = EntityCrab
+    Entity.entityDict["crab"] = EntityCrab
     from game.entities.entityShovel import EntityShovel
-    Entity.entityDict["Entity_Shovel"] = EntityShovel
+    Entity.entityDict["shovel"] = EntityShovel
 
 
 loadEntities()
