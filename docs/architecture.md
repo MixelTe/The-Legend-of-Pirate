@@ -356,7 +356,7 @@
 	* opened: bool - отображать ли окно
 * Метды:
 	* init(player: EntityPlayer)
-	* setText()
+	* setText(text: str)
 ---
 ## Сущности
 ---
