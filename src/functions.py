@@ -27,10 +27,7 @@ def load_image(name, color_key=None):
 
 
 def joinPath(*path: list[str]):
-    joined = path[0]
-    for i in range(1, len(path)):
-        joined = os.path.join(joined, path[i])
-    return str(joined)
+    return str(os.path.join(*path))
 
 
 def createSprite(img: pygame.Surface, scale: int, group: pygame.sprite.Group, x=0, y=0):
