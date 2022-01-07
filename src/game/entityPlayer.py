@@ -17,7 +17,7 @@ class EntityPlayer(EntityAlive):
         self.buttonPressed = [False, False, False, False]
         # нажаты ли кнопки движения в направлениях: вверх, вправо, вниз, влево (для корректного изменения направления движения)
         self.weapon: Entity = None
-        self.message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam nec sollicitudin turpis, non feugiat odio. In vitae vehicula dui. Sed ultrices ultricies varius. Sed dapibus imperdiet vestibulum. Aliquam id sagittis odio. Integer malesuada nunc vitae nisl malesuada, ut sollicitudin arcu vehicula. Integer sit amet diam eget leo fringilla euismod. Maecenas eu viverra sapien. Mauris vitae enim nisi. Vestibulum a facilisis lacus. Proin ultricies velit a lorem lobortis lobortis. Donec vestibulum vestibulum sagittis. Donec non facilisis nibh, id scelerisque mi. Aenean aliquet vel libero mollis maximus. Donec vel porta nisi. Nullam nec aliquam magna."
+        self.message = ""
         self.image = image
         self.speed = 0.1
         self.width = 0.75
@@ -104,3 +104,6 @@ class EntityPlayer(EntityAlive):
 
     def update(self):
         return super().update()
+
+    def preUpdate(self):
+        self.message = ""

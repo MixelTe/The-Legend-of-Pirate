@@ -33,6 +33,7 @@ class Screen:
         player.screen = self
 
     def update(self) -> Union[None, ScreenGoTo]:
+        self.player.preUpdate()
         for entity in self.entities:
             entity.update()
         return self.goToVar

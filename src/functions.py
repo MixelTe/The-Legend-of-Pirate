@@ -56,6 +56,7 @@ def multRect(rect: tuple[float, float, float, float], vw: float, vh: float=None)
         vh = vw
     return pygame.Rect(rect[0] * vw, rect[1] * vh, rect[2] * vw, rect[3] * vh)
 
+
 def multPos(pos: tuple[float, float], vw: float, vh: float=None):
     if (vh is None):
         vh = vw
