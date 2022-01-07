@@ -40,6 +40,15 @@ class EntityPlayer(EntityAlive):
             self.buttonPressed[3] = True
             self.speedX = -self.speed
 
+        if (key == pygame.K_KP_4):
+            self.screen.tryGoTo("left")
+        if (key == pygame.K_KP_8):
+            self.screen.tryGoTo("up")
+        if (key == pygame.K_KP_6):
+            self.screen.tryGoTo("right")
+        if (key == pygame.K_KP_2):
+            self.screen.tryGoTo("down")
+
     def onKeyUp(self, key):
         if (key == pygame.K_w or key == pygame.K_UP):
             self.buttonPressed[0] = False
@@ -92,3 +101,6 @@ class EntityPlayer(EntityAlive):
 
     def onJoyButonUp(self, button):
         pass
+
+    def update(self):
+        return super().update()

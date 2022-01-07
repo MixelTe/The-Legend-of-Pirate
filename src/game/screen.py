@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Union
+from typing import Literal, Union
 import pygame
 from functions import GameExeption
 from game.entity import Entity
@@ -11,10 +11,12 @@ from settings import Settings
 
 
 class Screen:
-    def __init__(self, world: World, data: ScreenData, saveData: SaveData, player: EntityPlayer):
+    def __init__(self, world: World, data: ScreenData, pos: tuple[int, int], saveData: SaveData, player: EntityPlayer):
         self.surface = pygame.Surface((Settings.width, Settings.height - Settings.overlay_height))
+        self.pos = pos
         self.saveData = saveData
         self.world = world
+        self.player = player
         self.tiles: list[list[Tile]] = []
         self.entities: list[Entity] = []
         self.goToVar: ScreenGoTo = None
@@ -55,6 +57,21 @@ class Screen:
     def goTo(self, world: str, screen: tuple[int, int]):
         self.goToVar = ScreenGoTo(world, screen, self.surface)
 
+    def tryGoTo(self, dir: Union[Literal["up"], Literal["right"], Literal["down"], Literal["left"]]):
+        pos = list(self.pos)
+        if (dir == "up"):
+            pos[1] -= 1
+        if (dir == "right"):
+            pos[0] += 1
+        if (dir == "down"):
+            pos[1] += 1
+        if (dir == "left"):
+            pos[0] -= 1
+        if (self.world.screenExist(*pos)):
+            self.goToVar = ScreenGoTo(self.world.name, pos, self.surface)
+            return True
+        return False
+
     def getTiles(self):
         return TileIterator(self.tiles)
 
@@ -62,7 +79,7 @@ class Screen:
     def create(world: World, x: int, y: int, saveData: SaveData, player: EntityPlayer) -> Screen:
         if (not world.screenExist(x, y)):
             raise GameExeption(f"Screen.create: screen not exist, x: {x}, y: {y}")
-        return Screen(world, world[x, y], saveData, player)
+        return Screen(world, world[x, y], (x, y), saveData, player)
 
 
 class ScreenGoTo:
