@@ -1,6 +1,6 @@
 // name, imgUrl, width, height, widthHitbox, heightHitbox, xImg, yImg, widthImg, heightImg, objData
 
-createNewEntityClass("Crab", "crab.png", 13, 11, 0.8, 0.677, 0, 0, 0.8, 0.677, [
+createNewEntityClass_Auto("crab", false, 13, 11, 0.8, 0.677, 0, 0, 0.8, 0.677, [
 	{ type: "bool", name: "sleeping", value: true },
 	{ type: "number", name: "hp", value: 1, displayColor: "black" },
 	{ type: "text", name: "tag", value: null, displayColor: "black" },
@@ -10,4 +10,9 @@ createNewEntityClass("Crab", "crab.png", 13, 11, 0.8, 0.677, 0, 0, 0.8, 0.677, [
 	{ type: "tiles", name: "killingTiles", value: [{ x: 13, y: 2 }, { x: 13, y: 3 }], displayColor: "tomato" },
 ]);
 
-createNewEntityClass("Cactus", "cactus.png", 16, 16, 1, 1, 0, 0, 1, 1, [])
+createNewEntityClass_Auto("cactus", false, 16, 16, 1, 1)
+createNewEntityClass_Auto("door", false, 11, 12, 1, 1)
+createNewEntityClass_Auto("palm", false, 20, 22, 1, 1)
+createNewEntityClass_Auto("trader", true, 14, 24, 0.75, 1, 0, -0.5, 0.75, 1.5)
+createNewEntityClass_Auto("door", false, 11, 12, 1, 1)
+createNewEntityClass_Auto("door", false, 11, 12, 1, 1)

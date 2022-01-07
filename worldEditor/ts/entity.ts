@@ -228,5 +228,10 @@ function createNewEntityClass(name: string, imgUrl: string, width: number, heigh
 		public override objData: ObjData = objData;
 	}
 	EntityDict[name] = Entity_New;
-	return Entity_New;
+}
+function createNewEntityClass_Auto(name: string, hasFolder: boolean, width: number, height: number, widthHitbox: number, heightHitbox: number, xImg?: number, yImg?: number, widthImg?: number, heightImg?: number, objData?: ObjData)
+{
+	let imgUrl = name + ".png"
+	if (hasFolder) imgUrl = name + "/stay.png"
+	createNewEntityClass(name, imgUrl, width, height, widthHitbox, heightHitbox, xImg || 0, yImg || 0, widthImg || widthHitbox, heightImg || heightHitbox, objData || [])
 }
