@@ -42,10 +42,21 @@ def loadJSON(path):
         return json.load(f)
 
 
-def rectIntersection(rect1: tuple[int, int, int, int], rect2: tuple[int, int, int, int]):
+def rectIntersection(rect1: tuple[float, float, float, float], rect2: tuple[float, float, float, float]):
     return (
         rect1[0] + rect1[2] > rect2[0] and
         rect2[0] + rect2[2] > rect1[0] and
         rect1[1] + rect1[3] > rect2[1] and
         rect2[1] + rect2[3] > rect1[1]
     )
+
+
+def multRect(rect: tuple[float, float, float, float], vw: float, vh: float=None):
+    if (vh is None):
+        vh = vw
+    return pygame.Rect(rect[0] * vw, rect[1] * vh, rect[2] * vw, rect[3] * vh)
+
+def multPos(pos: tuple[float, float], vw: float, vh: float=None):
+    if (vh is None):
+        vh = vw
+    return (pos[0] * vw, pos[1] * vh)

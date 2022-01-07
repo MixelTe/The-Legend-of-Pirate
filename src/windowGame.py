@@ -37,6 +37,8 @@ class WindowGame(Window):
             self.player.onJoyAxis(event.axis, event.value)
         if (event.type == pygame.MOUSEBUTTONUP):
             self.overlay.onClick(event.pos)
+        if (event.type == pygame.MOUSEMOTION):
+            self.overlay.onMouseMove(event.pos)
 
     def update(self):
         if (self.screenAnim):
