@@ -1,4 +1,3 @@
-from typing import Literal, Union
 import pygame
 from functions import load_image
 from game.entity import Entity, EntityAlive

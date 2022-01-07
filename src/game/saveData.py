@@ -1,4 +1,3 @@
-from ntpath import join
 from functions import GameExeption, joinPath
 from settings import Settings
 import os

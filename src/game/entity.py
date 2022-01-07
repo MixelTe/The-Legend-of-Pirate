@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Set, Union
+from typing import Union
 import pygame
 from functions import GameExeption, rectIntersection
 from game.animator import Animator
