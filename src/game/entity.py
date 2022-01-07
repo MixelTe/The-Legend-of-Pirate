@@ -52,31 +52,54 @@ class Entity:
         if (Settings.drawHitboxes):
             pygame.draw.rect(surface, "cyan", rect, round(Settings.tileSize * 0.03125) + 1)
 
-    def move(self) -> Union[tuple[None, None], tuple[tuple[int, int, int, int], Union[Tile, Entity]]]:
+    def move(self) -> list[tuple[tuple[int, int, int, int], Union[Tile, Entity]]]:
         # просчёт движения с учётом карты и сущностей. При столкновении с сущностью или клеткой возвращает эту сущность или клетку
+        moveX = 1
+        moveY = 1
         nX = self.x + self.speedX
         nY = self.y + self.speedY
         newRect = (nX, nY, self.width, self.height)
+        colision = []
         for (tile, x, y) in self.screen.getTiles():
             rect = (x, y, 1, 1)
             if (not rectIntersection(newRect, rect)):
                 continue
             if (tile.solid):
                 self.move_toEdge(rect)
-                return [rect, tile]
+                colision.append((rect, tile))
+                if (not rectIntersection((nX, self.y, self.width, self.height), rect)):
+                    nY = self.y
+                    moveY = 0
+                    newRect = (nX, nY, self.width, self.height)
+                    continue
+                if (not rectIntersection((self.x, nY, self.width, self.height), rect)):
+                    nX = self.x
+                    moveX = 0
+                    newRect = (nX, nY, self.width, self.height)
+                    continue
+                return colision
             else:
-                nX = self.x + self.speedX * tile.speed
-                nY = self.y + self.speedY * tile.speed
+                nX = self.x + self.speedX * tile.speed * moveX
+                nY = self.y + self.speedY * tile.speed * moveY
         for entity in self.screen.entities:
             if (entity == self):
                 continue
             rect = entity.get_rect()
             if (rectIntersection(newRect, rect)):
                 self.move_toEdge(rect)
-                return [rect, entity]
+                colision.append((rect, entity))
+                if (not rectIntersection((nX, self.y, self.width, self.height), rect)):
+                    nY = self.y
+                    newRect = (nX, nY, self.width, self.height)
+                    continue
+                if (not rectIntersection((self.x, nY, self.width, self.height), rect)):
+                    nX = self.x
+                    newRect = (nX, nY, self.width, self.height)
+                    continue
+                return colision
         self.x = nX
         self.y = nY
-        return (None, None)
+        return colision
 
     def move_toEdge(self, rect: tuple[int, int, int, int]):
         pos = self.get_relPos(rect)
@@ -146,13 +169,14 @@ class EntityAlive(Entity):
     def update(self):
         if (not self.alive):
             return (None, None)
-        rect, collision = super().update()
+        collisions = super().update()
         if (self.damageDelay > 0):
             self.damageDelay -= 1000 / Settings.fps
-        if (self.group == EntityGroups.enemy and isinstance(collision, EntityAlive)):
-            if (collision.group == EntityGroups.player):
-                collision.takeDamage(self.strength)
-        return (rect, collision)
+        for rect, collision in collisions:
+            if (self.group == EntityGroups.enemy and isinstance(collision, EntityAlive)):
+                if (collision.group == EntityGroups.player):
+                    collision.takeDamage(self.strength)
+        return collisions
 
 
 def loadEntities():
