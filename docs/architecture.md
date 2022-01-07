@@ -132,6 +132,7 @@
 		* tiles: list\[list\[Tile]]
 		* entities: list\[Entity]
 		* goToVar: ScreenGoTo | None
+		* player: EntityPlayer
 	* Методы:
 		1. init(world: World, data: ScreenData, pos: tuple[int, int], saveData: SaveData, player: EntityPlayer) - добавляет player в список entities
 		2. update() -> None | ScreenGoTo - вызов update у всех entities. Возвращает goToVar.
