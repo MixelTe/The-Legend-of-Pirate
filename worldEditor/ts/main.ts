@@ -1028,13 +1028,13 @@ function loadImages()
 		const key = <Tiles>k;
 		const path = tileIds[key];
 		tileImages[key] = undefined;
-		loadImage("../../src/data/images/" + path, img => tileImages[key] = img);
+		loadImage("../../src/data/images/tiles/" + path, img => tileImages[key] = img);
 	}
 	loadImage("./imgs/icon-move.png", img => icon_move = img);
 	loadImage("./imgs/icon-trash.png", img => icon_trash = img);
 	loadImage("./imgs/icon-plus.png", img => icon_plus = img);
 	entity.forEach(e => {
-		loadImage("../../src/data/images/" + e.imgUrl, img => e.img = img);
+		loadImage("../../src/data/images/entities/" + e.imgUrl, img => e.img = img);
 	});
 }
 function centerView(x: number, y: number)
