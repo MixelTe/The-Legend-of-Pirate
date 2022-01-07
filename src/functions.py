@@ -1,3 +1,4 @@
+from typing import Literal, Union
 import pygame
 import os
 import json
@@ -8,11 +9,11 @@ class GameExeption(Exception):
     pass
 
 
-def load_image(name, color_key=None):
+def load_image(name: str, color_key=None):
     fullname = joinPath(Settings.folder_data, Settings.folder_images, name)
     try:
         image = pygame.image.load(fullname)
-    except pygame.error as message:
+    except Exception as message:
         raise GameExeption(f'Cannot load image: {name}\n{message}')
 
     if color_key is None:
@@ -25,6 +26,15 @@ def load_image(name, color_key=None):
 
     return image
 
+def load_tile(name: str):
+    return load_image(joinPath(Settings.folder_tiles, name))
+
+def load_entity(name: str, folder: str=None):
+    if (folder is None):
+        path = joinPath(Settings.folder_entities, name)
+    else:
+        path = joinPath(Settings.folder_entities, folder, name)
+    return load_image(path)
 
 def joinPath(*path: list[str]):
     return str(os.path.join(*path))

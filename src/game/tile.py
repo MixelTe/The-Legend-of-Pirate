@@ -1,13 +1,13 @@
 from __future__ import annotations
 import pygame
-from functions import GameExeption, load_image
+from functions import GameExeption, load_tile
 from settings import Settings
 
 
 class Tile:
     tileIds: dict[str, Tile] = {}
     def __init__(self, image: str, solid: bool = False, digable: bool = False, speed: float = 1):
-        self.image = load_image(image)
+        self.image = load_tile(image)
         self.image = pygame.transform.scale(self.image, (Settings.tileSize, Settings.tileSize))
         self.speed = speed # множитель скорости клетки
         self.digable = digable # можно ли копать на этой клетке

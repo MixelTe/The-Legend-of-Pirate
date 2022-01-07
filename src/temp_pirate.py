@@ -1,9 +1,9 @@
 import pygame
-from functions import load_image
+from functions import load_entity
 
 
 class Pirate():
-    image = load_image("pirate.png", -1)
+    image = load_entity("pirate.png")
 
     def __init__(self):
         scale = 8

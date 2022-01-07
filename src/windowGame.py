@@ -21,7 +21,7 @@ class WindowGame(Window):
         self.screenAnim: ScreenAnimation = None
         self.overlay = Overlay(self.player)
         self.dialog: GamePopupDialog = None
-        self.popup = GamePopupTextbox()
+        self.popup = GamePopupTextbox(self.player)
         self.time = datetime.now()
 
     def on_event(self, event: pygame.event.Event):

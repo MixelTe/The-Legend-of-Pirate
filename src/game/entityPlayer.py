@@ -1,11 +1,11 @@
 import pygame
-from functions import load_image
+from functions import load_entity
 from game.entity import Entity, EntityAlive
 from game.saveData import SaveData
 from settings import Settings
 
 
-image = load_image("pirate.png")
+image = load_entity("pirate.png")
 image = pygame.transform.scale(image, (Settings.tileSize * 0.75, Settings.tileSize * 1.5))
 
 

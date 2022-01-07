@@ -1,10 +1,10 @@
 import pygame
-from functions import load_image
+from functions import load_entity
 from game.entity import EntityAlive
 from settings import Settings
 
 
-image = load_image("crab.png")
+image = load_entity("crab.png")
 image = image.subsurface(0, 0, 13, 11)
 image = pygame.transform.scale(image, (Settings.tileSize * 0.8, Settings.tileSize * 0.677))
 

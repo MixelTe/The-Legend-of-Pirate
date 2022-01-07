@@ -5,8 +5,8 @@ from windowSaveSelection import WindowSaveSelection
 
 
 class WindowStart(Window):
-    image_start = load_image("start.png", -1)
-    image_quit = load_image("quit.png", -1)
+    image_start = load_image("start.png")
+    image_quit = load_image("quit.png")
 
     def __init__(self):
         self.all_sprites = pygame.sprite.Group()

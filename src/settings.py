@@ -8,6 +8,8 @@ class Settings:
     folder_data = "data"
     folder_saves = "saves"
     folder_images = "images"
+    folder_entities = "entities"
+    folder_tiles = "tiles"
     folder_worlds = "worlds"
     screen_width = 15
     screen_height = 7
