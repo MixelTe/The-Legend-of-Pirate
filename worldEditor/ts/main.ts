@@ -36,9 +36,8 @@ const tileIds = {
 	water_low: "water_low.png",
 	water_sand: "water_sand.png",
 }
-const entity: (typeof Entity)[] = [
-	Entity_Crab,
-];
+const entity: (typeof Entity)[] = [];
+for (const key in EntityDict) entity.push(EntityDict[<keyof typeof EntityDict>key])
 const tileImages: TileImages = {};
 let icon_move: null | HTMLImageElement = null;
 let icon_plus: null | HTMLImageElement = null;
@@ -1100,7 +1099,7 @@ function setPalete()
 		entity.forEach(e =>
 		{
 			const img = document.createElement("canvas");
-			img.title = e.name;
+			img.title = e.className;
 			div_palette.appendChild(img);
 			function addImg()
 			{

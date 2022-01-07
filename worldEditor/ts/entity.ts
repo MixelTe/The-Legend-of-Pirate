@@ -5,6 +5,7 @@ class Entity
 	public objData: ObjData = [];
 	public static img: HTMLImageElement | undefined;
 	public static readonly imgUrl: string = "none.png";
+	public static readonly className: string = "Entity"
 	protected static readonly width: number = 1;
 	protected static readonly height: number = 1;
 	protected static readonly widthImg: number = 1;
@@ -127,7 +128,7 @@ class Entity
 	{
 		const obj = <EntityObj><any>this.constructor;
 		const data: EntitySaveData = {
-			className: obj.name,
+			className: obj.className,
 			x: this.x,
 			y: this.y,
 		}
@@ -163,7 +164,7 @@ class Entity
 }
 interface EntityObj
 {
-	name: keyof typeof EntityDict,
+	className: keyof typeof EntityDict,
 	imgUrl: string;
 	img: HTMLImageElement | undefined;
 	readonly width: number;
@@ -206,29 +207,26 @@ interface EntityData<T extends keyof EntityDataType>
 }
 type ObjData = EntityData<keyof EntityDataType>[];
 
-class Entity_Crab extends Entity
-{
-	public static override img: HTMLImageElement | undefined;
-	public static override readonly imgUrl: string = "crab.png";
-	protected static override readonly width = 13;
-	protected static override readonly height = 11;
-	protected static override readonly widthHitbox = 0.8;
-	protected static override readonly heightHitbox = 0.677;
-	protected static override readonly xImg = 0;
-	protected static override readonly yImg = 0;
-	protected static override readonly widthImg = 0.8;
-	protected static override readonly heightImg = 0.677;
-	public override objData: ObjData = [
-		{ type: "bool", name: "sleeping", value: true },
-		{ type: "number", name: "hp", value: 1, displayColor: "black" },
-		{ type: "text", name: "tag", value: null, displayColor: "black" },
-		{ type: "aura", name: "atackArea", value: { x: 0.5, y: 0.5, w: 1, h: 1 }, displayColor: "orange" },
-		{ type: "area", name: "sleepArea", value: { x: 6, y: 2, w: 5, h: 3 }, displayColor: "azure" },
-		{ type: "tile", name: "favoriteTile", value: { x: 1, y: 4 }, displayColor: "pink" },
-		{ type: "tiles", name: "killingTiles", value: [{ x: 13, y: 2 }, { x: 13, y: 3 }], displayColor: "tomato" },
-	];
-}
 
-const EntityDict = {
-	"Entity_Crab": Entity_Crab,
+const EntityDict: { [a: string]: typeof Entity } = {};
+
+function createNewEntityClass(name: string, imgUrl: string, width: number, height: number, widthHitbox: number, heightHitbox: number,
+	xImg: number, yImg: number, widthImg: number, heightImg: number, objData: ObjData)
+{
+	class Entity_New extends Entity
+	{
+		public static override readonly imgUrl = imgUrl;
+		protected static override readonly width = width;
+		protected static override readonly height = height;
+		protected static override readonly widthHitbox = widthHitbox;
+		protected static override readonly heightHitbox = heightHitbox;
+		protected static override readonly xImg = xImg;
+		protected static override readonly yImg = yImg;
+		protected static override readonly widthImg = widthImg;
+		protected static override readonly heightImg = heightImg;
+		public static override readonly className = name
+		public override objData: ObjData = objData;
+	}
+	EntityDict[name] = Entity_New;
+	return Entity_New;
 }
