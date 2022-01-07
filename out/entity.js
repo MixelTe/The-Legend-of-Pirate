@@ -5,6 +5,7 @@ class Entity {
     objData = [];
     static img;
     static imgUrl = "none.png";
+    static className = "Entity";
     static width = 1;
     static height = 1;
     static widthImg = 1;
@@ -118,7 +119,7 @@ class Entity {
     getData() {
         const obj = this.constructor;
         const data = {
-            className: obj.name,
+            className: obj.className,
             x: this.x,
             y: this.y,
         };
@@ -149,27 +150,26 @@ class Entity {
     }
 }
 ;
-class Entity_Crab extends Entity {
-    static img;
-    static imgUrl = "crab.png";
-    static width = 13;
-    static height = 11;
-    static widthHitbox = 0.8;
-    static heightHitbox = 0.677;
-    static xImg = 0;
-    static yImg = 0;
-    static widthImg = 0.8;
-    static heightImg = 0.677;
-    objData = [
-        { type: "bool", name: "sleeping", value: true },
-        { type: "number", name: "hp", value: 1, displayColor: "black" },
-        { type: "text", name: "tag", value: null, displayColor: "black" },
-        { type: "aura", name: "atackArea", value: { x: 0.5, y: 0.5, w: 1, h: 1 }, displayColor: "orange" },
-        { type: "area", name: "sleepArea", value: { x: 6, y: 2, w: 5, h: 3 }, displayColor: "azure" },
-        { type: "tile", name: "favoriteTile", value: { x: 1, y: 4 }, displayColor: "pink" },
-        { type: "tiles", name: "killingTiles", value: [{ x: 13, y: 2 }, { x: 13, y: 3 }], displayColor: "tomato" },
-    ];
+const EntityDict = {};
+function createNewEntityClass(name, imgUrl, width, height, widthHitbox, heightHitbox, xImg, yImg, widthImg, heightImg, objData) {
+    class Entity_New extends Entity {
+        static imgUrl = imgUrl;
+        static width = width;
+        static height = height;
+        static widthHitbox = widthHitbox;
+        static heightHitbox = heightHitbox;
+        static xImg = xImg;
+        static yImg = yImg;
+        static widthImg = widthImg;
+        static heightImg = heightImg;
+        static className = name;
+        objData = objData;
+    }
+    EntityDict[name] = Entity_New;
 }
-const EntityDict = {
-    "Entity_Crab": Entity_Crab,
-};
+function createNewEntityClass_Auto(name, hasFolder, width, height, widthHitbox, heightHitbox, xImg, yImg, widthImg, heightImg, objData) {
+    let imgUrl = name + ".png";
+    if (hasFolder)
+        imgUrl = name + "/stay.png";
+    createNewEntityClass(name, imgUrl, width, height, widthHitbox, heightHitbox, xImg || 0, yImg || 0, widthImg || widthHitbox, heightImg || heightHitbox, objData || []);
+}

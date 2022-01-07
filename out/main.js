@@ -36,9 +36,9 @@ const tileIds = {
     water_low: "water_low.png",
     water_sand: "water_sand.png",
 };
-const entity = [
-    Entity_Crab,
-];
+const entity = [];
+for (const key in EntityDict)
+    entity.push(EntityDict[key]);
 const tileImages = {};
 let icon_move = null;
 let icon_plus = null;
@@ -930,13 +930,13 @@ function loadImages() {
         const key = k;
         const path = tileIds[key];
         tileImages[key] = undefined;
-        loadImage("./images/" + path, img => tileImages[key] = img);
+        loadImage("./images/tiles/" + path, img => tileImages[key] = img);
     }
     loadImage("./imgs/icon-move.png", img => icon_move = img);
     loadImage("./imgs/icon-trash.png", img => icon_trash = img);
     loadImage("./imgs/icon-plus.png", img => icon_plus = img);
     entity.forEach(e => {
-        loadImage("./images/" + e.imgUrl, img => e.img = img);
+        loadImage("./images/entities/" + e.imgUrl, img => e.img = img);
     });
 }
 function centerView(x, y) {
@@ -995,7 +995,7 @@ function setPalete() {
         div_palette.appendChild(img);
         entity.forEach(e => {
             const img = document.createElement("canvas");
-            img.title = e.name;
+            img.title = e.className;
             div_palette.appendChild(img);
             function addImg() {
                 if (!inp_mode_entity.checked)
