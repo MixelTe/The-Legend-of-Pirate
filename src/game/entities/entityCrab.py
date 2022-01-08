@@ -5,15 +5,15 @@ from settings import Settings
 
 
 image = load_entity("crab.png")
-image = image.subsurface(0, 0, 13, 11)
-image = pygame.transform.scale(image, (Settings.tileSize * 0.8, Settings.tileSize * 0.677))
+image = image.subsurface(0, 0, 20, 11)
+image = pygame.transform.scale(image, (Settings.tileSize * 1, Settings.tileSize * 0.55))
 
 
 class EntityCrab(EntityAlive):
     def __init__(self, screen, data: dict=None):
         super().__init__(screen, data)
-        self.width = 0.8
-        self.height = 0.677
+        self.width = 1
+        self.height = 0.55
         self.speed = 0.04
         self.speedX = self.speed
         self.speedY = self.speed

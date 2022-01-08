@@ -243,6 +243,13 @@ def loadEntities():
     Entity.entityDict["crab"] = EntityCrab
     from game.entities.entityShovel import EntityShovel
     Entity.entityDict["shovel"] = EntityShovel
+    from game.entities.entities import EntityCactus, EntityDoor, EntityPalm, EntityTrader, EntityCannon, EntityTrainer
+    Entity.entityDict["cactus"] = EntityCactus
+    Entity.entityDict["door"] = EntityDoor
+    Entity.entityDict["palm"] = EntityPalm
+    Entity.entityDict["trader"] = EntityTrader
+    Entity.entityDict["cannon"] = EntityCannon
+    Entity.entityDict["trainer"] = EntityTrainer
 
 
 loadEntities()

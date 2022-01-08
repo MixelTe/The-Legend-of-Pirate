@@ -64,7 +64,7 @@ class Overlay:
 
         for i in range(3):
             pos = (self.heartsPos[0] + (heartSize + Settings.tileSize * 0.2) * i, self.heartsPos[1])
-            if (self.player.health >= i):
+            if (self.player.health >= i + 1):
                 self.surface.blit(img_heart, pos)
             else:
                 self.surface.blit(img_heartEmpty, pos)
