@@ -342,7 +342,6 @@
 		* pos: tuple[int int]
 	* Метды:
 		* init()
-		* close()
 		* draw() -> pygame.Surface
 		* update()
 		* on*() - методы для обработки соответствующих событий
