@@ -25,17 +25,6 @@ const ViewWidth = 15;
 const ViewHeight = 7;
 let TileSize = 16 * 2;
 // let TileSize = 16 * 4; // Temp
-const tileIds = {
-    sand1: "sand1.png",
-    sand2: "sand2.png",
-    sand3: "sand3.png",
-    grass1: "grass1.png",
-    grass2: "grass2.png",
-    grass3: "grass3.png",
-    water_deep: "water_deep.png",
-    water_low: "water_low.png",
-    water_sand: "water_sand.png",
-};
 const entity = [];
 for (const key in EntityDict)
     entity.push(EntityDict[key]);
