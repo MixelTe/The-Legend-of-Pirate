@@ -1,17 +1,20 @@
 from typing import Union
 import pygame
-from functions import load_image, multPos, multRect
+from functions import getPosMult, getRectMult, load_image
 from game.entityPlayer import EntityPlayer
 from game.gameDialog import GameDialog, GameDialog_exit
 from settings import Settings
 
+
+multRect = getRectMult(Settings.width, Settings.overlay_height)
+multPos = getPosMult(Settings.width, Settings.overlay_height)
 
 heartSize = Settings.tileSize * 0.8
 img_heart = pygame.transform.scale(load_image("heart.png"), (heartSize, heartSize))
 img_heartEmpty = pygame.transform.scale(load_image("heart_empty.png"), (heartSize, heartSize))
 coinSize = Settings.tileSize * 0.4
 img_coin = pygame.transform.scale(load_image("coin.png"), (coinSize, coinSize))
-exitBtn = multRect((0.8, 0.15, 0.18, 0.7), Settings.width, Settings.overlay_height)
+exitBtn = multRect((0.8, 0.15, 0.18, 0.7))
 img_exitBtn = pygame.transform.scale(load_image("quit.png"), (exitBtn[2], exitBtn[3]))
 img_exitBtn_active = pygame.transform.scale(load_image("quit_active.png"), (exitBtn[2], exitBtn[3]))
 
@@ -25,17 +28,17 @@ class Overlay:
         self.exitBtn = exitBtn
         self.exitBtn_hover = False
 
-        self.msgBox = multRect((0.25, 0.03, 0.5, 0.94), Settings.width, Settings.overlay_height)
-        self.msgBox_text = multRect((0.26, 0.05, 0.48, 0.9), Settings.width, Settings.overlay_height)
+        self.msgBox = multRect((0.25, 0.03, 0.5, 0.94))
+        self.msgBox_text = multRect((0.26, 0.05, 0.48, 0.9))
         self.text_past = ""
         self.text_img = None
 
         self.fontM = pygame.font.Font(None, int(Settings.tileSize * 0.44) + 1)
         self.fontL = pygame.font.Font(None, int(Settings.tileSize * 0.55) + 1)
 
-        self.heartsPos = multPos((0.03, 0.35), Settings.width, Settings.overlay_height)
-        self.coinPos = multPos((0.02, 0.08), Settings.width, Settings.overlay_height)
-        self.coinText = multRect((0.05, 0.08, 0.48, 0.9), Settings.width, Settings.overlay_height)
+        self.heartsPos = multPos((0.03, 0.35))
+        self.coinPos = multPos((0.02, 0.08))
+        self.coinText = multRect((0.05, 0.08, 0.48, 0.9))
         self.text_coin_past = -1
         self.text_coin = None
 

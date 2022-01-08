@@ -1,4 +1,3 @@
-from typing import Literal, Union
 import pygame
 import os
 import json
@@ -71,3 +70,15 @@ def multPos(pos: tuple[float, float], vw: float, vh: float=None):
     if (vh is None):
         vh = vw
     return (pos[0] * vw, pos[1] * vh)
+
+
+def getRectMult(vw: float, vh: float=None):
+    def mult(rect: tuple[float, float, float, float]):
+        return multRect(rect, vw, vh)
+    return mult
+
+
+def getPosMult(vw: float, vh: float=None):
+    def mult(pos: tuple[float, float]):
+        return multPos(pos, vw, vh)
+    return mult

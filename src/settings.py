@@ -1,3 +1,6 @@
+from ntpath import join
+
+
 class Settings:
     # width = 1920
     # height = 1080
@@ -11,6 +14,7 @@ class Settings:
     folder_entities = "entities"
     folder_tiles = "tiles"
     folder_worlds = "worlds"
+    path_font = ""
     screen_width = 15
     screen_height = 7
     demageDelay = 400
@@ -21,3 +25,4 @@ class Settings:
 
 Settings.tileSize = Settings.width / Settings.screen_width
 Settings.overlay_height = Settings.height - Settings.screen_height * Settings.tileSize
+Settings.path_font = join(Settings.folder_data, "fonts", "Fifaks10Dev1.ttf")
