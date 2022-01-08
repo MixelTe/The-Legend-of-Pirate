@@ -1,9 +1,10 @@
 from __future__ import annotations
-from typing import Literal, Union
+from typing import Callable, Literal, Union
 import pygame
 from functions import GameExeption
 from game.entity import Entity
 from game.entityPlayer import EntityPlayer
+from game.gameDialog import GameDialog
 from game.tile import Tile
 from game.world import ScreenData, World
 from game.saveData import SaveData
@@ -11,12 +12,13 @@ from settings import Settings
 
 
 class Screen:
-    def __init__(self, world: World, data: ScreenData, pos: tuple[int, int], saveData: SaveData, player: EntityPlayer):
+    def __init__(self, world: World, data: ScreenData, pos: tuple[int, int], saveData: SaveData, player: EntityPlayer, openDialog: Callable):
         self.surface = pygame.Surface((Settings.width, Settings.height - Settings.overlay_height))
         self.pos = pos
         self.saveData = saveData
         self.world = world
         self.player = player
+        self.openDialog = openDialog
         self.tiles: list[list[Tile]] = []
         self.entities: list[Entity] = []
         self.goToVar: ScreenGoTo = None
@@ -77,10 +79,10 @@ class Screen:
         return TileIterator(self.tiles)
 
     @staticmethod
-    def create(world: World, x: int, y: int, saveData: SaveData, player: EntityPlayer) -> Screen:
+    def create(world: World, x: int, y: int, saveData: SaveData, player: EntityPlayer, openDialog: Callable) -> Screen:
         if (not world.screenExist(x, y)):
             raise GameExeption(f"Screen.create: screen not exist, x: {x}, y: {y}")
-        return Screen(world, world[x, y], (x, y), saveData, player)
+        return Screen(world, world[x, y], (x, y), saveData, player, openDialog)
 
 
 class ScreenGoTo:

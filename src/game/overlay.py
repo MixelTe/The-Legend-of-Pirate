@@ -2,6 +2,7 @@ from typing import Union
 import pygame
 from functions import load_image, multPos, multRect
 from game.entityPlayer import EntityPlayer
+from game.gameDialog import GameDialog, GameDialog_exit
 from settings import Settings
 
 
@@ -72,7 +73,10 @@ class Overlay:
         return self.surface
 
     def onClick(self, pos: tuple[int, int]):
-        self.exit = self.exitBtn.collidepoint(pos)
+        if (self.exitBtn.collidepoint(pos)):
+            def onClose(r: bool):
+                self.exit = r
+            self.player.screen.openDialog(GameDialog_exit(onClose))
 
     def onMouseMove(self, pos: tuple[int, int]):
         self.exitBtn_hover = self.exitBtn.collidepoint(pos)

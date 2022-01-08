@@ -17,7 +17,7 @@ class WindowGame(Window):
         self.saveData = SaveData(save).load()
         self.player = EntityPlayer(self.saveData)
         self.world = World.getWorld(self.saveData.world)
-        self.screen: Screen = Screen.create(self.world, *self.saveData.screen, self.saveData, self.player)
+        self.screen: Screen = Screen.create(self.world, *self.saveData.screen, self.saveData, self.player, self.openDialog)
         self.screenAnim: ScreenAnimation = None
         self.overlay = Overlay(self.player)
         self.dialog: GameDialog = None
@@ -63,7 +63,9 @@ class WindowGame(Window):
             return WindowStart()
 
         if (self.dialog is not None):
-            self.dialog.update()
+            r = self.dialog.update()
+            if (r):
+                self.dialog = None
             return
         if (self.screenAnim):
             done = self.screenAnim.update()
@@ -105,4 +107,7 @@ class WindowGame(Window):
         screen.blit(overlay, (0, 0))
         screen.blit(screenImg, (0, Settings.overlay_height))
         if (self.dialog is not None):
-            screen.blit(self.dialog.draw(), self.dialog.pos)
+            screen.blit(self.dialog.draw(), self.dialog.rect.topleft)
+
+    def openDialog(self, dialog: GameDialog):
+        self.dialog = dialog
