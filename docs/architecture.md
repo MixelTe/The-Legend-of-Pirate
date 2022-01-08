@@ -75,26 +75,24 @@
 		* screen: Screen
 		* screenAnim: ScreenAnimationMove | None
 		* overlay: Overlay
-		* dialog: GamePopupDialog | None
-		* popup: GamePopupTextbox
+		* dialog: GameDialog | None
 		* time: datetime - время запуска игры для сохранения времени игры
 	* Методы:
 		1. init(save: int) - загрузка сохранения и создание текущего мира и экрана
 		2. on_event(event: Event)
-			* Если dialog не None, то вызывает popup.on* методы и пропускает следующие пункты
+			* Если dialog не None, то вызывает dialog.on* методы и пропускает следующие пункты
 			* вызывает методы player.keyDown(key), player.keyUp(key), player.onJoyHat(value), player.onJoyButonDown(button), player.onJoyButonUp(button), при соответствующих событиях. Если screenAnim == None.
 			* вызывает метод overlay.onClick(pos) при нажатии.
 		3. update() -> None | Window
 			* Вызывает overlay.update(), если метод возвращает True, то вызывает saveData.save() и возвращает WindowStart(mainSurface, save)
 			* Если Если dialog не None, вызывает dialog.update() и пропускает следующие пункты
-			* Вызывает popup.update()
 			* Если screenAnim не None, то (пропуская пункты ниже) вызывает screenAnim.update(). Если метод возвращает True, то присваеваит None в screenAnim.
 			* Вызывает screen.update() если метод возвращает ScreenGoTo, то переключает эран на требуемый: если мир тот же, то создаётся следующий экран и ScreenAnimationMove, если мир другой, то создаётся новый мир, экран и ScreenAnimationBlur. Обновляет информацию в saveData. Присваетвает новый экран в player.screen
 			* Проверяет кол-во жизней у игрока. Если их <= 0, то вызывает saveData.save() и возвращает WindowEnd(mainSurface, save)
 		4. draw(screen: pygame.Surface)
 			* Если screenAnim None, то вызывет screen.draw() и выводит полученую картинку на экран, иначе выводит screenAnim.draw()
 			* Выводит на экран overlay.draw() и self.screen.draw()
-			* Если popup.opened, то выводит на экран popup.draw()
+			* Если dialog не None, то выводит на экран dialog.draw()
 ---
 8. ## Класс SaveData
 	* Все данные, необходимые для сохранения прогресса игрока
@@ -338,26 +336,14 @@
 		Tile("img.png")
 		```
 ---
-22. ## Класс GamePopup
-	* Базвый класс, позволяющий выводить на экран сообщения
+22. ## Класс GameDialog
+	* Диалоговое окно, при его открытии игра останавливается
 	* Метды:
 		* init()
 		* close()
 		* draw() -> pygame.Surface
 		* update()
-## Класс GamePopupDialog(GamePopup)
-* Диалоговое окно, при его открытии игра останавливается
-* Метды:
-	* on*() - методы для обработки соответствующих событий
-
-## Класс GamePopupTextbox(GamePopup)
-* Небольшое окно с текстом, вверху или внизу в зависимости от положения игрока
-* Поля:
-	* opened: bool - отображать ли окно
-	* pos: tuple[int, int]
-* Метды:
-	* init(player: EntityPlayer)
-	* setText(text: str)
+		* on*() - методы для обработки соответствующих событий
 ---
 ## Сущности
 ---
