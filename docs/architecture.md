@@ -93,6 +93,7 @@
 			* Если screenAnim None, то вызывет screen.draw() и выводит полученую картинку на экран, иначе выводит screenAnim.draw()
 			* Выводит на экран overlay.draw() и self.screen.draw()
 			* Если dialog не None, то выводит на экран dialog.draw()
+		5. openDialog: (dialog: GameDialog) -> None - присваевает dialog в self.dialog
 ---
 8. ## Класс SaveData
 	* Все данные, необходимые для сохранения прогресса игрока
@@ -139,14 +140,15 @@
 		* entities: list\[Entity]
 		* goToVar: ScreenGoTo | None
 		* player: EntityPlayer
+		* openDialog: (dialog: GameDialog) -> None
 	* Методы:
-		1. init(world: World, data: ScreenData, pos: tuple[int, int], saveData: SaveData, player: EntityPlayer) - добавляет player в список entities
+		1. init(world: World, data: ScreenData, pos: tuple[int, int], saveData: SaveData, player: EntityPlayer, openDialog: (dialog: GameDialog) -> None) - добавляет player в список entities
 		2. update() -> None | ScreenGoTo - вызов update у всех entities. Возвращает goToVar.
 		3. draw() -> pygame.Surface - вызов draw у всех entities, возвращает итоговый кадр
 		4. addEntity(entity: Entity) - добавляет entity в их список
 		5. removeEntity(entity: Entity) - удаляет entity из списка
 		6. goTo(world: str, screen: tuple[int, int]) - создаёт ScreenGoTo и присваивает в goToVar
-		7. static create(world: World, x: int, y: int, saveData: SaveData, player: EntityPlayer) -> Screen
+		7. static create(world: World, x: int, y: int, saveData: SaveData, player: EntityPlayer, openDialog: (dialog: GameDialog) -> None) -> Screen
 ---
 10. ## Класс ScreenGoTo
 	* То куда необходимо переключить экран и его изображение
