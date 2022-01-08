@@ -1,25 +1,26 @@
 import pygame
 
+from functions import load_entity
+from settings import Settings
+
 
 class AnimatorData:
-    def init(self, folder: str, animations: list[tuple[str, int, tuple[int, int], tuple[int, int, int, int]]]):
+    def __init__(self, folder: str, animations: list[tuple[str, int, tuple[int, int], tuple[int, int, int, int]]]):
         self.frames: dict[str, tuple[list[pygame.Surface], int, tuple[int, int]]] = {}
         # все кадры анимации, скорость переключения кадров (милисекунды между кадрами) и позиция картинки относительно сущности для каждой анимации
 
-        # folder - папка с анимациями
-        # animations - список tuple с содержимом:
-            # [0] - название файла с анимацией
-            # [1] - промежуток между кадрами (скорость переключения)
-            # [2] - размер кадра в анимации
-            # [3] - положение относительно сущности и требуемый размер кадра
-        # Добавляет каждую анимацию в frames, разделив на кадры и применив масштаб imgSize. Ключ - название файла без расширения
-        # Для каждой анимации в animations:
-            # Делит картинку [0] на кадры размером [2]
-            # Применяет масштаб [3] для каждого кадра
-            # В frames[название_файла_без_расширения] кладёт tuple, с содержимым:
-                # Список со всеми увеличеными кадрами
-                # Промежуток между кадрами [1]
-                # Положение кадра относительно сущности [3]
+        for imgName, speed, frameSize, imgRect in animations:
+            animName = imgName[:imgName.index(".")]
+            allFrames = load_entity(imgName, folder)
+            frames = []
+            w = allFrames.get_width() // frameSize[0]
+            h = allFrames.get_height() // frameSize[1]
+            for y in range(h):
+                for x in range(w):
+                    frame = allFrames.subsurface(x * frameSize[0], y * frameSize[1], *frameSize)
+                    frame = pygame.transform.scale(frame, (imgRect[2] * Settings.tileSize, imgRect[3] * Settings.tileSize))
+                    frames.append(frame)
+            self.frames[animName] = (frames, speed, (imgRect[0], imgRect[1]))
 
     def get_image(self, animation: str, index: int):
         return (self.frames[animation][0][index], self.frames[animation][2])
@@ -27,28 +28,35 @@ class AnimatorData:
     def get_speed(self, animation: str):
         return self.frames[animation][1]
 
+    def get_len(self, animation: str):
+        return len(self.frames[animation][0])
+
 
 class Animator:
-    def init(self, data: AnimatorData, frame: tuple[str, int]):
+    def __init__(self, data: AnimatorData, anim: str):
         self.data = data # все анимации и их кадры
-        self.frame = frame # tuple[анимация, картинка] текущий кадр
+        self.anim = anim # текущая анимация
+        self.frame = 0 # текущий кадр
         self.counter = 0 # счетчик для переключения кадров с определённой скоростью
 
     def update(self) -> tuple[bool, bool]:
-        # прибавляет счётчик, и переключает кадр, если прошло достаточно времени. После последнего кадра идёт первый.
+        self.counter += 1000 / Settings.fps
+        if (self.counter > self.data.get_speed(self.anim)):
+            self.counter = 0
+            self.frame += 1
+            self.frame = self.frame % self.data.get_len(self.anim)
+            return (True, self.frame == 0)
         # Возвращает два значения:
         # Был ли переключён кадр
-        # Поледний ли это кадр анимации
-        pass
+        # Поледний ли был кадр анимации
+        return (False, False)
 
     def getImage(self) -> tuple[pygame.Surface, tuple[int, int]]:
-        # возвращает текущий кадр и его позицию относительно сущности
-        pass
+        return self.data.get_image(self.anim, self.frame)
 
     def setAnimation(self, animation: str):
-        # устанавливает текущую анимацию по её названию
-        pass
+        self.anim = animation
+        self.frame = 0
 
     def curAnimation(self) -> str:
-        # название текущей анимации
-        pass
+        return self.anim

@@ -23,6 +23,7 @@ class Entity:
         self.screen: Screen = screen  # экран, для доступа к списку сущностей и к клеткам мира
         # группа к которой пренадлежит сущность, для определения нужно ли наносить урон (присваивать значение только с помощью полей класса EntityGroups)
         self.group = EntityGroups.neutral
+        self.animator: Animator = None
         self.x: float = 0
         self.y: float = 0
         self.width: float = 1
@@ -47,9 +48,14 @@ class Entity:
         self.y = data["y"]
 
     def update(self):
+        if (self.animator is not None):
+            self.animator.update()
         return self.move()
 
     def draw(self, surface: pygame.Surface):
+        if (self.animator is not None):
+            self.image, self.imagePos = self.animator.getImage()
+
         rect = (self.x * Settings.tileSize, self.y * Settings.tileSize,
                 self.width * Settings.tileSize, self.height * Settings.tileSize)
         if (self.image is None):
@@ -199,7 +205,6 @@ class EntityGroups:
 class EntityAlive(Entity):
     def __init__(self, screen, data: dict = None):
         super().__init__(screen, data)
-        self.animator: Animator = None
         self.health = 1
         self.damageDelay = 0  # при вызове update уменьшается на 1000 / Settings.fps
         self.strength = 1
