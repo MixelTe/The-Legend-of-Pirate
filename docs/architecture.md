@@ -85,7 +85,7 @@
 			* вызывает метод overlay.onClick(pos) при нажатии.
 		3. update() -> None | Window
 			* Вызывает overlay.update(), если метод возвращает True, то вызывает saveData.save() и возвращает WindowStart(mainSurface, save)
-			* Если Если dialog не None, вызывает dialog.update() и пропускает следующие пункты
+			* Если Если dialog не None, вызывает dialog.update() и пропускает следующие пункты, если метод вернул True, то присваевает None в dialog
 			* Если screenAnim не None, то (пропуская пункты ниже) вызывает screenAnim.update(). Если метод возвращает True, то присваеваит None в screenAnim.
 			* Вызывает screen.update() если метод возвращает ScreenGoTo, то переключает эран на требуемый: если мир тот же, то создаётся следующий экран и ScreenAnimationMove, если мир другой, то создаётся новый мир, экран и ScreenAnimationBlur. Обновляет информацию в saveData. Присваетвает новый экран в player.screen
 			* Проверяет кол-во жизней у игрока. Если их <= 0, то вызывает saveData.save() и возвращает WindowEnd(mainSurface, save)
@@ -345,7 +345,7 @@
 	* Метды:
 		* init()
 		* draw() -> pygame.Surface
-		* update()
+		* update() -> bool - закрыт ли диалог
 		* on*() - методы для обработки соответствующих событий
 ---
 ## Сущности
