@@ -341,7 +341,7 @@
 22. ## Класс GameDialog
 	* Диалоговое окно, при его открытии игра останавливается
 	* Поля:
-		* pos: tuple[int int]
+		* rect: pygame.Rect
 	* Метды:
 		* init()
 		* draw() -> pygame.Surface
