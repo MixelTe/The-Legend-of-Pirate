@@ -2,4 +2,5 @@ from window import Window
 
 
 class WindowEnd(Window):
-    pass
+    def __init__(self, save: int):
+        pass

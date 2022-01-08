@@ -1,6 +1,6 @@
 import pygame
 from functions import load_entity
-from game.entity import EntityAlive
+from game.entity import EntityAlive, EntityGroups
 from settings import Settings
 
 
@@ -12,6 +12,7 @@ image = pygame.transform.scale(image, (Settings.tileSize * 1, Settings.tileSize 
 class EntityCrab(EntityAlive):
     def __init__(self, screen, data: dict=None):
         super().__init__(screen, data)
+        self.group = EntityGroups.enemy
         self.width = 1
         self.height = 0.55
         self.speed = 0.04

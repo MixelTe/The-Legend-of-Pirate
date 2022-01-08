@@ -92,11 +92,11 @@ class WindowGame(Window):
                 self.screen = Screen.create(self.world, *goTo.screen, self.saveData, self.player, self.openDialog)
                 self.screenAnim = ScreenAnimationBlur(goTo.image, self.screen.draw())
 
-            if (self.player.health <= 0):
-                self.saveData.health = SaveData(0).health
-                self.saveData.save()
-                from windowEnd import WindowEnd
-                return WindowEnd(self.save)
+        if (self.player.health <= 0):
+            self.saveData.health = SaveData(0).health
+            self.saveData.save()
+            from windowEnd import WindowEnd
+            return WindowEnd(self.save)
 
     def draw(self, screen: pygame.Surface):
         if (self.screenAnim):

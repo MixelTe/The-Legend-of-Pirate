@@ -32,7 +32,7 @@ class World:
             raise GameExeption(f"World.load: cannot load world: {self.name}\n" + str(x))
 
     def screenExist(self, x: int, y: int) -> bool:
-        if (self.size[0] <= x or self.size[1] <= y):
+        if (self.size[0] <= x or self.size[1] <= y or x < 0 or y < 0):
             return False
         return self[x, y] is not None
 

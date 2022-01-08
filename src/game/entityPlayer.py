@@ -1,6 +1,6 @@
 import pygame
 from functions import load_entity
-from game.entity import Entity, EntityAlive
+from game.entity import Entity, EntityAlive, EntityGroups
 from game.saveData import SaveData
 from settings import Settings
 
@@ -15,6 +15,8 @@ class EntityPlayer(EntityAlive):
         self.saveData = saveData
         self.buttonPressed = [False, False, False, False]
         # нажаты ли кнопки движения в направлениях: вверх, вправо, вниз, влево (для корректного изменения направления движения)
+        self.health = 3
+        self.group = EntityGroups.playerSelf
         self.weapon: Entity = None
         self.message = ""
         self.image = image
