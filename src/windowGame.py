@@ -1,6 +1,6 @@
 import pygame
 from game.entityPlayer import EntityPlayer
-from game.gamePopup import GamePopupDialog, GamePopupTextbox
+from game.gameDialog import GameDialog
 from game.overlay import Overlay
 from game.screen import Screen
 from game.screenAnimation import ScreenAnimation, ScreenAnimationBlur, ScreenAnimationMove
@@ -20,8 +20,7 @@ class WindowGame(Window):
         self.screen: Screen = Screen.create(self.world, *self.saveData.screen, self.saveData, self.player)
         self.screenAnim: ScreenAnimation = None
         self.overlay = Overlay(self.player)
-        self.dialog: GamePopupDialog = None
-        self.popup = GamePopupTextbox(self.player)
+        self.dialog: GameDialog = None
         self.time = datetime.now()
 
     def on_event(self, event: pygame.event.Event):
@@ -96,7 +95,6 @@ class WindowGame(Window):
                 self.saveData.save()
                 from windowEnd import WindowEnd
                 return WindowEnd(self.save)
-        self.popup.update()
 
     def draw(self, screen: pygame.Surface):
         if (self.screenAnim):
@@ -106,6 +104,5 @@ class WindowGame(Window):
         overlay = self.overlay.draw()
         screen.blit(overlay, (0, 0))
         screen.blit(screenImg, (0, Settings.overlay_height))
-        if (self.popup.opened):
-            pos = (self.popup.pos[0], self.popup.pos[1] + Settings.overlay_height)
-            screen.blit(self.popup.draw(), pos)
+        if (self.dialog is not None):
+            screen.blit(self.dialog.draw(), self.dialog.pos)

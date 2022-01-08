@@ -1,10 +1,9 @@
 import pygame
-from game.entityPlayer import EntityPlayer
 
 
-class GamePopup:
-    def close(self):
-        pass
+class GameDialog:
+    def __init__(self):
+        self.pos = (0, 0)
 
     def draw(self) -> pygame.Surface:
         pass
@@ -12,8 +11,6 @@ class GamePopup:
     def update(self):
         pass
 
-
-class GamePopupDialog(GamePopup):
     def onMove(pos: tuple[int, int]):
         pass
 
@@ -30,14 +27,4 @@ class GamePopupDialog(GamePopup):
         pass
 
     def onJoyButonUp(self, button):
-        pass
-
-
-class GamePopupTextbox(GamePopup):
-    def __init__(self, player: EntityPlayer):
-        self.pos = (0, 0)
-        self.player = player
-        self.opened = False
-
-    def setText(text: str):
         pass
