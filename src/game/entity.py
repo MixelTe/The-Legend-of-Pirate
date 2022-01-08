@@ -217,7 +217,7 @@ class EntityAlive(Entity):
 
     def update(self):
         if (not self.alive):
-            return (None, None)
+            return []
         collisions = super().update()
         if (self.damageDelay > 0):
             self.damageDelay -= 1000 / Settings.fps
