@@ -73,7 +73,7 @@ class Entity:
             if (not rectIntersection(newRect, rect)):
                 continue
             if (tile.solid):
-                self.move_toEdge(rect)
+                pos = self.move_toEdge(rect)
                 colision.append((rect, tile))
                 if (not rectIntersection((nX, self.y, self.width, self.height), rect)):
                     nY = self.y
@@ -85,6 +85,8 @@ class Entity:
                     moveX = 0
                     newRect = (nX, nY, self.width, self.height)
                     continue
+                if (pos[0] == 0 and pos[1] == 0):
+                    self.pushOutside(rect)
                 return colision
             else:
                 nX = self.x + self.speedX * tile.speed * moveX
@@ -95,7 +97,7 @@ class Entity:
                 continue
             rect = entity.get_rect()
             if (rectIntersection(newRect, rect)):
-                self.move_toEdge(rect)
+                pos = self.move_toEdge(rect)
                 colision.append((rect, entity))
                 if (not rectIntersection((nX, self.y, self.width, self.height), rect)):
                     nY = self.y
@@ -105,12 +107,14 @@ class Entity:
                     nX = self.x
                     newRect = (nX, nY, self.width, self.height)
                     continue
+                if (pos[0] == 0 and pos[1] == 0):
+                    self.pushOutside(rect)
                 return colision
 
         for rect in screenBorders:
             if (not rectIntersection(newRect, rect)):
                 continue
-            self.move_toEdge(rect)
+            pos = self.move_toEdge(rect)
             colision.append((rect, None))
             if (not rectIntersection((nX, self.y, self.width, self.height), rect)):
                 nY = self.y
@@ -120,6 +124,8 @@ class Entity:
                 nX = self.x
                 newRect = (nX, nY, self.width, self.height)
                 continue
+            if (pos[0] == 0 and pos[1] == 0):
+                self.pushOutside(rect)
             return colision
 
         self.x = nX
@@ -136,6 +142,21 @@ class Entity:
             self.y = rect[1] - self.height
         if (pos[1] > 0):
             self.y = rect[1] + rect[3]
+        return pos
+
+    def pushOutside(self, rect: tuple[int, int, int, int]):
+        hor_c = ((self.x + self.width / 2) - (rect[0] + rect[2] / 2)) / (rect[2] / 2 + self.width / 2)
+        ver_c = ((self.y + self.height / 2) - (rect[1] + rect[3] / 2)) / (rect[3] / 2 + self.height / 2)
+        if (abs(hor_c) > abs(ver_c)):
+            if (hor_c > 0):
+                self.x = rect[0] + rect[2]
+            else:
+                self.x = rect[0] - self.width
+        else:
+            if (ver_c > 0):
+                self.y = rect[1] + rect[3]
+            else:
+                self.y = rect[1] - self.height
 
     def get_relPos(self, rect: tuple[int, int, int, int]):
         pos = [0, 0]
@@ -183,8 +204,11 @@ class EntityAlive(Entity):
         self.damageDelay = 0  # при вызове update уменьшается на 1000 / Settings.fps
         self.strength = 1
         self.alive = True
+        self.immortal = False
 
     def takeDamage(self, damage: int):
+        if (self.immortal):
+            return
         if (self.damageDelay <= 0):
             self.damageDelay = Settings.demageDelay
             self.health -= damage
@@ -198,9 +222,19 @@ class EntityAlive(Entity):
         if (self.damageDelay > 0):
             self.damageDelay -= 1000 / Settings.fps
         for rect, collision in collisions:
-            if (self.group == EntityGroups.enemy and isinstance(collision, EntityAlive)):
-                if (collision.group == EntityGroups.player):
+            if (self.group == EntityGroups.player and isinstance(collision, EntityAlive)):
+                if (collision.group == EntityGroups.enemy or
+                        collision.group == EntityGroups.neutral):
                     collision.takeDamage(self.strength)
+            if (self.group == EntityGroups.enemy and isinstance(collision, EntityAlive)):
+                if (collision.group == EntityGroups.player or
+                        collision.group == EntityGroups.playerSelf):
+                    collision.takeDamage(self.strength)
+            if (isinstance(collision, EntityAlive) and collision.group == EntityGroups.neutral):
+                if (self.group == EntityGroups.playerSelf or
+                    self.group == EntityGroups.player or
+                        self.group == EntityGroups.enemy):
+                    self.takeDamage(collision.strength)
         return collisions
 
 
