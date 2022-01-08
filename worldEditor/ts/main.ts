@@ -68,6 +68,8 @@ class World
 	{
 		this.width = width;
 		this.height = height;
+		inp_width.valueAsNumber = width;
+		inp_height.valueAsNumber = height;
 		this.map = []
 		if (world)
 		{
@@ -342,10 +344,10 @@ class World
 			height: this.height,
 			map: [],
 		}
-		for (let y = 0; y < this.width; y++)
+		for (let y = 0; y < this.height; y++)
 		{
 			const row: (ViewData | undefined)[] = [];
-			for (let x = 0; x < this.height; x++)
+			for (let x = 0; x < this.width; x++)
 			{
 				const view = this.map[y][x];
 				if (view) row.push(view.getData());
