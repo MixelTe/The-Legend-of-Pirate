@@ -35,6 +35,13 @@ const tileIds = {
 	water_deep: "water_deep.png",
 	water_low: "water_low.png",
 	water_sand: "water_sand.png",
+	mountain: "mountain.png",
+	A: "A.png",
+	AttackB: "AttackB.png",
+	D: "D.png",
+	DigB: "DigB.png",
+	S: "S.png",
+	W: "W.png",
 }
 const entity: (typeof Entity)[] = [];
 for (const key in EntityDict) entity.push(EntityDict[<keyof typeof EntityDict>key])

@@ -12,6 +12,7 @@ createNewEntityClass_Auto("crab", false, 13, 11, 0.8, 0.677, 0, 0, 0.8, 0.677, [
 
 createNewEntityClass_Auto("cactus", false, 16, 16, 1, 1)
 createNewEntityClass_Auto("door", false, 11, 12, 1, 1)
-createNewEntityClass_Auto("palm", false, 20, 22, 1.5, 1.5)
+createNewEntityClass_Auto("palm", false, 20, 22, 0.6, 0.7, -0.4, -0.8, 1.5, 1.5)
 createNewEntityClass_Auto("trader", true, 14, 24, 0.75, 1, 0, -0.5, 0.75, 1.5)
 createNewEntityClass_Auto("cannon", true, 11, 12, 1, 1)
+createNewEntityClass_Auto("trainer", false, 9, 18, 0.75, 1, 0, -0.5, 0.75, 1.5)
