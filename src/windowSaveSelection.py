@@ -10,11 +10,11 @@ class WindowSaveSelection(Window):
 
     def __init__(self):
         self.all_sprites = pygame.sprite.Group()
-        scale = 16
+        scale = 0.4
 
-        self.save1 = createSprite(WindowSaveSelection.image_start, scale, self.all_sprites, 750, 200)
-        self.save2 = createSprite(WindowSaveSelection.image_start, scale, self.all_sprites, 750, 450)
-        self.save3 = createSprite(WindowSaveSelection.image_start, scale, self.all_sprites, 750, 700)
+        self.save1 = createSprite(WindowSaveSelection.image_start, scale, self.all_sprites, 0.3, 0.05)
+        self.save2 = createSprite(WindowSaveSelection.image_start, scale, self.all_sprites, 0.3, 0.37)
+        self.save3 = createSprite(WindowSaveSelection.image_start, scale, self.all_sprites, 0.3, 0.7)
 
         self.startSave = None
 

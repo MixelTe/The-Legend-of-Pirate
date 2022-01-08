@@ -10,10 +10,10 @@ class WindowStart(Window):
 
     def __init__(self):
         self.all_sprites = pygame.sprite.Group()
-        scale = 16
+        scale = 0.4
 
-        self.start = createSprite(WindowStart.image_start, scale, self.all_sprites, 750, 200)
-        self.quit = createSprite(WindowStart.image_quit, scale, self.all_sprites, 750, 400)
+        self.start = createSprite(WindowStart.image_start, scale, self.all_sprites, 0.3, 0.15)
+        self.quit = createSprite(WindowStart.image_quit, scale, self.all_sprites, 0.3, 0.55)
 
         self.starting = False
 

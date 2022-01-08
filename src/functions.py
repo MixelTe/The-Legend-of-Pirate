@@ -41,7 +41,8 @@ def joinPath(*path: list[str]):
 
 def createSprite(img: pygame.Surface, scale: int, group: pygame.sprite.Group, x=0, y=0):
     sprite = pygame.sprite.Sprite(group)
-    sprite.rect = pygame.Rect(x, y, img.get_width() * scale, img.get_height() * scale)
+    scale = Settings.width * scale / img.get_width()
+    sprite.rect = pygame.Rect(x * Settings.width, y * Settings.height, img.get_width() * scale, img.get_height() * scale)
     sprite.image = pygame.transform.scale(img, (sprite.rect.width, sprite.rect.height))
     return sprite
 
