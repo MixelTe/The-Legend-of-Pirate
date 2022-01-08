@@ -14,7 +14,7 @@ class Settings:
     folder_entities = "entities"
     folder_tiles = "tiles"
     folder_worlds = "worlds"
-    path_font = ""
+    path_font = None
     screen_width = 15
     screen_height = 7
     demageDelay = 400
