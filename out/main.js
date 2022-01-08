@@ -63,6 +63,8 @@ class World {
     constructor(width, height, world) {
         this.width = width;
         this.height = height;
+        inp_width.valueAsNumber = width;
+        inp_height.valueAsNumber = height;
         this.map = [];
         if (world) {
             if (world.width > width) {
@@ -305,9 +307,9 @@ class World {
             height: this.height,
             map: [],
         };
-        for (let y = 0; y < this.width; y++) {
+        for (let y = 0; y < this.height; y++) {
             const row = [];
-            for (let x = 0; x < this.height; x++) {
+            for (let x = 0; x < this.width; x++) {
                 const view = this.map[y][x];
                 if (view)
                     row.push(view.getData());
@@ -930,13 +932,13 @@ function loadImages() {
         const key = k;
         const path = tileIds[key];
         tileImages[key] = undefined;
-        loadImage("./images/tiles/" + path, img => tileImages[key] = img);
+        loadImage("../../src/data/images/tiles/" + path, img => tileImages[key] = img);
     }
     loadImage("./imgs/icon-move.png", img => icon_move = img);
     loadImage("./imgs/icon-trash.png", img => icon_trash = img);
     loadImage("./imgs/icon-plus.png", img => icon_plus = img);
     entity.forEach(e => {
-        loadImage("./images/entities/" + e.imgUrl, img => e.img = img);
+        loadImage("../../src/data/images/entities/" + e.imgUrl, img => e.img = img);
     });
 }
 function centerView(x, y) {
