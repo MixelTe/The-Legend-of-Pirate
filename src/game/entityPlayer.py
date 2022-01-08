@@ -5,7 +5,7 @@ from game.saveData import SaveData
 from settings import Settings
 
 
-image = load_entity("pirate.png")
+image = load_entity("stay.png", "pirate")
 image = pygame.transform.scale(image, (Settings.tileSize * 0.75, Settings.tileSize * 1.5))
 
 

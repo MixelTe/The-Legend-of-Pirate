@@ -5,16 +5,17 @@ from windowGame import WindowGame
 
 
 class WindowSaveSelection(Window):
-    image_start = load_image("start.png")
-    image_quit = load_image("quit.png")
+    img_save1 = load_image("save1.png")
+    img_save2 = load_image("save2.png")
+    img_save3 = load_image("save3.png")
 
     def __init__(self):
         self.all_sprites = pygame.sprite.Group()
         scale = 0.4
 
-        self.save1 = createSprite(WindowSaveSelection.image_start, scale, self.all_sprites, 0.3, 0.05)
-        self.save2 = createSprite(WindowSaveSelection.image_start, scale, self.all_sprites, 0.3, 0.37)
-        self.save3 = createSprite(WindowSaveSelection.image_start, scale, self.all_sprites, 0.3, 0.7)
+        self.save1 = createSprite(WindowSaveSelection.img_save1, scale, self.all_sprites, 0.3, 0.05)
+        self.save2 = createSprite(WindowSaveSelection.img_save2, scale, self.all_sprites, 0.3, 0.37)
+        self.save3 = createSprite(WindowSaveSelection.img_save3, scale, self.all_sprites, 0.3, 0.7)
 
         self.startSave = None
 

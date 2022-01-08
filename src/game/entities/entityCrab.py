@@ -4,8 +4,7 @@ from game.entity import EntityAlive, EntityGroups
 from settings import Settings
 
 
-image = load_entity("crab.png")
-image = image.subsurface(0, 0, 20, 11)
+image = load_entity("stay.png", "crab")
 image = pygame.transform.scale(image, (Settings.tileSize * 1, Settings.tileSize * 0.55))
 
 
