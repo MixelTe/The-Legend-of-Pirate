@@ -201,6 +201,14 @@ class EntityCoolName(Entity):
 
 Если необходимо убрать стандартную отрисовку, то нужно обязательно в конце отрисовки вызвать метод ```self.draw_dev(surface)```
 
+Для отображения прямоугольников есть функция
+
+```py
+self.draw_rect(self, surface: pygame.Surface, color: str, rect: tuple[float, float, float, float], fill=False, mul=False, rel=False)
+```
+mul - умножать ли значения на размер клетки
+rel - рисовать относительно сущности
+
 ## Установка запретных клеток
 
 Метод **canGoOn** вызывается для каждой клетки, если он возвращает False - клетка считается стеной.

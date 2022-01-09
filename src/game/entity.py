@@ -70,9 +70,19 @@ class Entity:
     def draw_dev(self, surface: pygame.Surface):
         rect = multRect(self.get_rect(), Settings.tileSize)
         if (self.image is None and Settings.drawNoneImgs):
-            pygame.draw.rect(surface, "green", rect)
+            self.draw_rect(surface, "green", rect, True)
         if (Settings.drawHitboxes):
-            pygame.draw.rect(surface, "cyan", rect, round(Settings.tileSize * 0.03125) + 1)
+            self.draw_rect(surface, "cyan", rect)
+
+    def draw_rect(self, surface: pygame.Surface, color, rect, fill=False, mul=False, rel=False):
+        if (mul):
+            rect = multRect(rect, Settings.tileSize)
+        if (rel):
+            rect = (rect[0] * self.x * Settings.tileSize, rect[1] * self.y * Settings.tileSize, rect[2], rect[3])
+        if (fill):
+            pygame.draw.rect(surface, color, rect)
+        else:
+            pygame.draw.rect(surface, color, rect, round(Settings.tileSize * 0.03125) + 1)
 
     def move(self) -> list[tuple[tuple[int, int, int, int], Union[Tile, Entity, None]]]:
         # просчёт движения с учётом карты и сущностей. При столкновении с сущностью или клеткой возвращает эту сущность или клетку
