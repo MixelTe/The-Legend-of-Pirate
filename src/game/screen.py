@@ -55,7 +55,8 @@ class Screen:
         self.entities.append(entity)
 
     def removeEntity(self, entity: Entity):
-        self.entities.remove(entity)
+        if (entity in self.entities):
+            self.entities.remove(entity)
 
     def goTo(self, world: str, screen: tuple[int, int]):
         self.goToVar = ScreenGoTo(world, screen, self.surface)
