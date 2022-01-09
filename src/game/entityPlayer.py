@@ -36,7 +36,6 @@ class EntityPlayer(EntityAlive):
         self.x = saveData.checkPointX + (1 - self.width) / 2
         self.y = saveData.checkPointY + (1 - self.height) / 2
         self.animator = Animator(animatorData, "stay")
-        self.image = self.animator.getImage()
 
     def onKeyDown(self, key):
         if (key == pygame.K_w or key == pygame.K_UP):

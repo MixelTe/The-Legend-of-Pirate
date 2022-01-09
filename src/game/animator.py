@@ -5,7 +5,7 @@ from settings import Settings
 
 
 class AnimatorData:
-    def __init__(self, folder: str, animations: list[tuple[str, int, tuple[int, int], tuple[int, int, int, int]]]):
+    def __init__(self, folder: str, animations: list[tuple[str, int, tuple[int, int], tuple[float, float, float, float]]]):
         self.frames: dict[str, tuple[list[pygame.Surface], int, tuple[int, int]]] = {}
         # все кадры анимации, скорость переключения кадров (милисекунды между кадрами) и позиция картинки относительно сущности для каждой анимации
 
@@ -13,13 +13,11 @@ class AnimatorData:
             animName = imgName[:imgName.index(".")]
             allFrames = load_entity(imgName, folder)
             frames = []
-            w = allFrames.get_width() // frameSize[0]
-            h = allFrames.get_height() // frameSize[1]
-            for y in range(h):
-                for x in range(w):
-                    frame = allFrames.subsurface(x * frameSize[0], y * frameSize[1], *frameSize)
-                    frame = pygame.transform.scale(frame, (imgRect[2] * Settings.tileSize, imgRect[3] * Settings.tileSize))
-                    frames.append(frame)
+            count = allFrames.get_width() // frameSize[0]
+            for x in range(count):
+                frame = allFrames.subsurface(x * frameSize[0], 0, *frameSize)
+                frame = pygame.transform.scale(frame, (imgRect[2] * Settings.tileSize, imgRect[3] * Settings.tileSize))
+                frames.append(frame)
             self.frames[animName] = (frames, speed, (imgRect[0], imgRect[1]))
 
     def get_image(self, animation: str, index: int):
