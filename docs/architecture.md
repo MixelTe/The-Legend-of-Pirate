@@ -202,14 +202,13 @@
 	* Базовый класс сущности
 	* Поля:
 		* screen: Screen - экран, для доступа к списку сущностей и к клеткам мира
-		* group: int - группа к которой пренадлежит сущность, для определения нужно ли наносить урон (присваивать значение только с помощью полей класса EntityGroups)
 		* x: float
 		* y: float
 		* width: int
 		* height: int
-		* speed: float - скорость сущности
 		* speedX: float - текущая скорость
 		* speedY: float
+		* animator: Animator
 		* image: pygame.Surface
 		* imagePos: tuple[int, int] - положение картинки относительно сущности
 		* static entityDict: dict[str, class] - словарь всех Entity для метода Entity.fromData
@@ -221,6 +220,9 @@
 		5. move() -> None | Entity | Tile - просчёт движения с учётом карты и сущностей. При столкновении с сущностью или клеткой возвращает эту сущность или клетку
 		6. remove() - удаляет себя из списка сущностей
 		7. static fromData(data: dict, screen: Screen) - создание сущности по данным
+		8. canGoOn(tile: Tile) -> bool - может ли сущность наступить на эту клетку
+		9. get_tile(dx: int = 0, dy: int = 0) -> Tile | None - клетка относительно сущности
+		10. get_entities(rect: tuple[float, float, float, float]) -> list\[Entity] - сущности попадающие в область
 	* Класс EntityGroups:
 		* Группы сущностей
 		* Поля:
@@ -230,7 +232,7 @@
 ---
 16. ## Класс EntityAlive(Entity)
 	* Поля:
-		* animator: Animator
+		* group: int - группа к которой пренадлежит сущность, для определения нужно ли наносить урон (присваивать значение только с помощью полей класса EntityGroups)
 		* health: int
 		* damageDelay: int - при вызове update уменьшается на 1000 / Settings.fps
 		* alive: bool - жива ли сущность
