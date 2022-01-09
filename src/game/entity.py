@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import Union
 import pygame
-from functions import GameExeption, rectIntersection
+from functions import GameExeption, multRect, rectIntersection
 from game.animator import Animator
 from game.tile import Tile
 from settings import Settings
@@ -60,8 +60,7 @@ class Entity:
         if (self.animator is not None):
             self.image, self.imagePos = self.animator.getImage()
 
-        rect = (self.x * Settings.tileSize, self.y * Settings.tileSize,
-                self.width * Settings.tileSize, self.height * Settings.tileSize)
+        rect = multRect(self.get_rect(), Settings.tileSize)
         if (self.image is not None):
             surface.blit(self.image, (rect[0] + self.imagePos[0] * Settings.tileSize,
                          rect[1] + self.imagePos[1] * Settings.tileSize))
@@ -69,8 +68,7 @@ class Entity:
         self.draw_dev(surface)
 
     def draw_dev(self, surface: pygame.Surface):
-        rect = (self.x * Settings.tileSize, self.y * Settings.tileSize,
-                self.width * Settings.tileSize, self.height * Settings.tileSize)
+        rect = multRect(self.get_rect(), Settings.tileSize)
         if (self.image is None and Settings.drawNoneImgs):
             pygame.draw.rect(surface, "green", rect)
         if (Settings.drawHitboxes):
