@@ -207,6 +207,7 @@ class EntityCoolName(Entity):
 self.draw_rect(self, surface: pygame.Surface, color: str, rect: tuple[float, float, float, float], fill=False, mul=False, rel=False)
 ```
 mul - умножать ли значения на размер клетки
+
 rel - рисовать относительно сущности
 
 ## Установка запретных клеток
