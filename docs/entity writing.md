@@ -1,4 +1,9 @@
 # Написание сущностей
+Все сущности находятся в папке **src/game/entities**
+
+В этой папке должны лежать все сущности и только сущности.
+
+(Кроме EntityPlayer)
 # Базовая сущность
 Существует два вида сущностей: обычные и живые (могут наносить и получать урон).
 
@@ -23,6 +28,18 @@ class EntityCoolNameAlive(EntityAlive):
 ```
 
 У такой сущности будет сила атаки 0 и кол-во hp - 1
+
+## Регистрация сущности
+Для того, чтобы сущность появилась в игре её необходимо зарегистрировать.
+```py
+from game.entity import Entity
+
+class EntityCoolName(Entity):
+	pass
+
+Entity.registerEntity("coolName", EntityCoolName)
+```
+Если сущность с таким id уже существует, произойдёт ошибка
 
 ## Настройка Сущности
 ```py
@@ -104,6 +121,8 @@ class EntityCoolName(Entity):
 Для загрузки анимаций необходимо создать AnimatorData, вне класса (или статическим полем):
 
 ```py
+from game.animator import Animator, AnimatorData
+
 animatorData = AnimatorData("папка_с_анимаиями", [])
 
 class EntityCoolName(Entity):
@@ -133,7 +152,7 @@ animatorData = AnimatorData("cool_entity", [
 Сущности необходимо создать Animator
 
 ```py
-animatorData = AnimatorData("папка_с_анимаиями", [
+animatorData = AnimatorData("папка_с_анимациями", [
     ("going.png", 150, (12, 24), (0, -0.5, 0.75, 1.5)),
     # и другие
 ])
@@ -148,7 +167,67 @@ class EntityCoolName(Entity):
 * setAnimation("название анимации") - запустить анимацию
 * curAnimation() - возвращает название текущей анимации
 
+Методы, которые вызываются автоматически:
+* get_image() -> tuple[pygame.Surface, tuple[int, int]] - текущий кадр и его положение относительно сущности
+* update() -> tuple[bool, bool] - (Был ли переключён кадр, Поледний ли был кадр анимации)
+
 
 # Сущность с "кодом"
 Для всего, что сложнее, чем кактус, необходимо модифицировать работу сущности.
+
+## Изменение отрисовки сущности
+Для этого необходимо модифировать функцию draw.
+
+```py
+class EntityCoolName(Entity):
+    def draw(self, surface: pygame.Surface) -> None:
+        super().draw(surface)
+```
+**super().draw(surface)** рисует картинку сущности (если есть).
+
+Если необходимо убрать стандартную отрисовку, то нужно обязательно в конце отрисовки вызвать метод ```self.draw_dev(surface)```
+
+## Установка запретных клеток
+
+Метод **canGoOn** вызывается для каждой клетки, если он возвращает False - клетка считается стеной.
+
+Клетки, которые вляются стенами для всех (solid), учитыватся вне функции **canGoOn**
+
+```py
+class EntityCoolName(Entity):
+    def canGoOn(self, tile: Tile) -> bool:
+        return True # По умолчанию сущность может ходить по всем клеткам
+```
+
+## Изменение поведения
+Для этого необходимо модифировать функцию update.
+
+```py
+class EntityCoolName(Entity):
+    def update(self):
+        super().update()
+```
+
+**super().update()** - обновляет аниматор и просчитывает положение сущности по текущей скорости.
+Возвращает список столкновений, в котором каждый элемент - это tuple из прямоугольника с которым столкнулась сущность и объектом, с которым столкнулась (Entity, Tile или None (столкновение с краем экрана))
+
+Пример проверки столкновения с игроком, с клеткой глубокой воды
+
+```py
+class EntityCoolName(Entity):
+    def update(self):
+        collisions = super().update()
+
+        for rect, collision in collisions:
+            if (isinstance(collision, EntityPlayer)):
+                print("Столкновение с игроком"):
+            elif (isinstance(collision, Tile)):
+                if (collision.id == "water_deep"):
+                    print("Столкновение с глубокой водой")
+```
+
+Для создания сущности, не подчиняющейся законам физики, необходимо убрать вызов метода **super().update()**. При этом будет необходимо будет самостоятельно прочитывать движение сущности.
+
+## Взаимодействие с миром
+Для создания сложных сущностей потребуятся данные о мире
 
