@@ -78,7 +78,7 @@ class Entity:
         if (mul):
             rect = multRect(rect, Settings.tileSize)
         if (rel):
-            rect = (rect[0] * self.x * Settings.tileSize, rect[1] * self.y * Settings.tileSize, rect[2], rect[3])
+            rect = (rect[0] + self.x * Settings.tileSize, rect[1] + self.y * Settings.tileSize, rect[2], rect[3])
         if (fill):
             pygame.draw.rect(surface, color, rect)
         else:
