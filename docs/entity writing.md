@@ -100,6 +100,20 @@ class EntityCoolName(Entity):
         self.image = EntityCoolName.image
 ```
 
+## Загрузка данных
+Если у сущности есть параметры, которые сохранены в файле с миром, то их необходимо получить из данных, которые передаются сущности при создании.
+
+Для этого необходимо модифицировать функцию **applyData**
+Она получает словарь данных. Словарь не равен None.
+```py
+class EntityCoolName(Entity):
+    def applyData(self, data: dict):
+        super().applyData(data)
+        if ("nickname" in data):
+            self.myCoolNickname = data["nickname"]
+```
+**super().applyData(data)** - присваевает x и y из данных
+
 ## Анимации
 ### Картинки
 Для добавления анимаций их необходимо положить в папку **src/data/images/entities/название_сущности**
