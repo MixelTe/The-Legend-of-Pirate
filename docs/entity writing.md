@@ -229,5 +229,42 @@ class EntityCoolName(Entity):
 Для создания сущности, не подчиняющейся законам физики, необходимо убрать вызов метода **super().update()**. При этом будет необходимо будет самостоятельно прочитывать движение сущности.
 
 ## Взаимодействие с миром
-Для создания сложных сущностей потребуятся данные о мире
+Для создания сложных сущностей потребуятся данные о мире и способы взаимодействовать с ним.
 
+В поля помеченные в списке буквой **W** можно присваивать значения
+
+* self.get_tile() - получить клетку на которой стоит сущность
+
+* self.get_tile(dx: int, dy: int) - получить клетку относительно сущности
+
+* self.get_entities(rect: tuple[float, float, float, float]) - получить сущностей попадающих в данную область
+
+* self.remove() - удалить эту сущность
+
+* self.screen.addEntity(entity: Entity) - добавить сущность в мир
+
+* self.screen.removeEntity(entity: Entity) - удалить сущность из мира
+
+* self.screen.goTo(world: str, screen: tuple[int, int]) - переключить экран. world - id мира, screen - координаты экрана. Если такого нет, произойдёт ошибка.
+
+* self.screen.world.name - id текущего мира
+
+* self.screen.world.size - размер текущего мира
+
+* self.screen.world.screenExist(x: int, y: int) - проверка, существует ли экран с такими координатами
+
+* self.screen.tryGoTo(dir: "up" | "right" | "down" | "left") - переключить экран на соседний. Если такого нет, ничего не произойдёт.
+
+* self.screen.getTiles() -> итератор всех клеток, где каждый элемент - это (tile, x, y)
+
+* self.screen.entities - список всех сущностей
+
+* self.screen.openDialog(dialog: GameDialog) - открыть диалоговое окно
+
+* self.screen.pos - позиция экрана (в мире)
+
+* self.screen.saveData - данные сохранения мира (SaveData)
+
+* self.screen.player - игрок (EntityPlayer)
+
+* **W** self.screen.player.message - сообщение, которое выводиться игроку
