@@ -225,12 +225,7 @@
 		10. canGoOn(tile: Tile) -> bool - может ли сущность наступить на эту клетку
 		11. get_tile(dx: int = 0, dy: int = 0) -> Tile | None - клетка относительно сущности
 		12. get_entities(rect: tuple[float, float, float, float]) -> list\[Entity] - сущности попадающие в область
-	* Класс EntityGroups:
-		* Группы сущностей
-		* Поля:
-			* neutral = 0
-			* player = 1
-			* enemy = 2
+		13. get_entitiesD(rect: tuple[float, float, float, float]) -> list\[Entity] - сущности попадающие в область, относительную сущности
 ---
 16. ## Класс EntityAlive(Entity)
 	* Поля:
@@ -240,6 +235,12 @@
 		* alive: bool - жива ли сущность
 	* Методы:
 		* takeDamage(damage: int) - Уменьшение здоровья и установка damageDelay в Settings.damageDelay, если damageDelay <= 0
+	* Класс EntityGroups:
+		* Группы сущностей
+		* Поля:
+			* neutral = 0
+			* player = 1
+			* enemy = 2
 ---
 17. ## Класс World
 	* Хранит информацию о игровом мире
