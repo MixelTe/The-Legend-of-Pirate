@@ -41,6 +41,12 @@ class Entity:
             return Entity.entityDict[clas](screen, data)
         raise GameExeption(f"Entity.fromData: no Entity with className: {clas}")
 
+    @staticmethod
+    def registerEntity(id: str, entityClass):
+        if (id in Entity.entityDict):
+            raise GameExeption(f"Entity.registerEntity: id is already taken: {id}")
+        Entity.entityDict[id] = entityClass
+
     def applyData(self, data: dict):
         self.x = data["x"]
         self.y = data["y"]
@@ -56,12 +62,17 @@ class Entity:
 
         rect = (self.x * Settings.tileSize, self.y * Settings.tileSize,
                 self.width * Settings.tileSize, self.height * Settings.tileSize)
-        if (self.image is None):
-            if (Settings.drawNoneImgs):
-                pygame.draw.rect(surface, "green", rect)
-        else:
+        if (self.image is not None):
             surface.blit(self.image, (rect[0] + self.imagePos[0] * Settings.tileSize,
                          rect[1] + self.imagePos[1] * Settings.tileSize))
+
+        self.draw_dev(surface)
+
+    def draw_dev(self, surface: pygame.Surface):
+        rect = (self.x * Settings.tileSize, self.y * Settings.tileSize,
+                self.width * Settings.tileSize, self.height * Settings.tileSize)
+        if (self.image is None and Settings.drawNoneImgs):
+            pygame.draw.rect(surface, "green", rect)
         if (Settings.drawHitboxes):
             pygame.draw.rect(surface, "cyan", rect, round(Settings.tileSize * 0.03125) + 1)
 
@@ -278,17 +289,17 @@ class EntityAlive(Entity):
 
 
 def loadEntities():
-    from game.entities.entityCrab import EntityCrab
-    Entity.entityDict["crab"] = EntityCrab
-    from game.entities.entityShovel import EntityShovel
-    Entity.entityDict["shovel"] = EntityShovel
-    from game.entities.entities import EntityCactus, EntityDoor, EntityPalm, EntityTrader, EntityCannon, EntityTrainer
-    Entity.entityDict["cactus"] = EntityCactus
-    Entity.entityDict["door"] = EntityDoor
-    Entity.entityDict["palm"] = EntityPalm
-    Entity.entityDict["trader"] = EntityTrader
-    Entity.entityDict["cannon"] = EntityCannon
-    Entity.entityDict["trainer"] = EntityTrainer
+    import importlib.util
+    from os import listdir
+    from os.path import isfile, join
+    path = join("game", "entities")
+    files = (f for f in listdir(path) if isfile(join(path, f)))
+    for file in files:
+        if (not file.endswith(".py")):
+            continue
+        spec = importlib.util.spec_from_file_location(file, join(path, file))
+        foo = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(foo)
 
 
 loadEntities()

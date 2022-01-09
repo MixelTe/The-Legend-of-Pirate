@@ -12,8 +12,8 @@ class Tile:
         self.speed = speed # множитель скорости клетки
         self.digable = digable # можно ли копать на этой клетке
         self.solid = solid # плотная ли клетка (стена)
-        key = image[:image.index(".")]
-        Tile.tileIds[key] = self
+        self.id = image[:image.index(".")]
+        Tile.tileIds[self.id] = self
 
     @staticmethod
     def fromId(id: str) -> Tile:

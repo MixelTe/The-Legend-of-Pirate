@@ -23,9 +23,6 @@ class EntityCrab(EntityAlive):
     def update(self):
         collisions = super().update()
         for rect, collision in collisions:
-            if (rect is None):
-                return
-
             pos = self.get_relPos(rect)
             if (pos[0] > 0):
                 self.speedX = self.speed
@@ -35,3 +32,5 @@ class EntityCrab(EntityAlive):
                 self.speedY = self.speed
             if (pos[1] < 0):
                 self.speedY = -self.speed
+
+EntityAlive.registerEntity("crab", EntityCrab)
