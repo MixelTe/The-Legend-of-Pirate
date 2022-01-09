@@ -22,13 +22,11 @@ class Entity:
         from game.screen import Screen
         self.screen: Screen = screen  # экран, для доступа к списку сущностей и к клеткам мира
         # группа к которой пренадлежит сущность, для определения нужно ли наносить урон (присваивать значение только с помощью полей класса EntityGroups)
-        self.group = EntityGroups.neutral
         self.animator: Animator = None
         self.x: float = 0
         self.y: float = 0
         self.width: float = 1
         self.height: float = 1
-        self.speed: float = 0
         self.speedX: float = 0
         self.speedY: float = 0
         self.image: pygame.Surface = None
@@ -59,7 +57,8 @@ class Entity:
         rect = (self.x * Settings.tileSize, self.y * Settings.tileSize,
                 self.width * Settings.tileSize, self.height * Settings.tileSize)
         if (self.image is None):
-            pygame.draw.rect(surface, "green", rect)
+            if (Settings.drawNoneImgs):
+                pygame.draw.rect(surface, "green", rect)
         else:
             surface.blit(self.image, (rect[0] + self.imagePos[0] * Settings.tileSize,
                          rect[1] + self.imagePos[1] * Settings.tileSize))
@@ -78,7 +77,7 @@ class Entity:
             rect = (x, y, 1, 1)
             if (not rectIntersection(newRect, rect)):
                 continue
-            if (tile.solid):
+            if (tile.solid or not self.canGoOn(tile)):
                 pos = self.move_toEdge(rect)
                 colision.append((rect, tile))
                 if (not rectIntersection((nX, self.y, self.width, self.height), rect)):
@@ -191,8 +190,29 @@ class Entity:
     def get_rect(self):
         return (self.x, self.y, self.width, self.height)
 
+    def canGoOn(self, tile: Tile) -> bool:
+        return True
+
     def remove(self):
         self.screen.removeEntity(self)
+
+    def get_tile(self, dx=0, dy=0) -> Union[Tile, None]:
+        x = int(self.x + self.width / 2) + dx
+        y = int(self.y + self.height / 2) + dy
+        if (x < 0 or y < 0 or x >= Settings.screen_width or y >= Settings.screen_height):
+            return None
+        return self.screen.tiles[y][x]
+
+    def get_entities(self, rect: tuple[float, float, float, float]) -> list[Entity]:
+        rectSelf = self.get_rect()
+        entities = []
+        for entity in self.screen.entities:
+            if (entity == self):
+                continue
+            rect = entity.get_rect()
+            if (rectIntersection(rectSelf, rect)):
+                entities.append(entity)
+        return entities
 
 
 class EntityGroups:
@@ -205,9 +225,10 @@ class EntityGroups:
 class EntityAlive(Entity):
     def __init__(self, screen, data: dict = None):
         super().__init__(screen, data)
+        self.group = EntityGroups.neutral
         self.health = 1
         self.damageDelay = 0  # при вызове update уменьшается на 1000 / Settings.fps
-        self.strength = 1
+        self.strength = 0
         self.alive = True
         self.immortal = False
 
@@ -227,19 +248,32 @@ class EntityAlive(Entity):
         if (self.damageDelay > 0):
             self.damageDelay -= 1000 / Settings.fps
         for rect, collision in collisions:
-            if (self.group == EntityGroups.player and isinstance(collision, EntityAlive)):
+            if (not isinstance(collision, EntityAlive) or not collision.alive):
+                continue
+            if (self.group == EntityGroups.playerSelf):
                 if (collision.group == EntityGroups.enemy or
                         collision.group == EntityGroups.neutral):
                     collision.takeDamage(self.strength)
-            if (self.group == EntityGroups.enemy and isinstance(collision, EntityAlive)):
+                    self.takeDamage(collision.strength)
+            elif (self.group == EntityGroups.player):
+                if (collision.group == EntityGroups.enemy or
+                        collision.group == EntityGroups.neutral):
+                    collision.takeDamage(self.strength)
+                    self.takeDamage(collision.strength)
+            elif (self.group == EntityGroups.enemy):
                 if (collision.group == EntityGroups.player or
                         collision.group == EntityGroups.playerSelf):
                     collision.takeDamage(self.strength)
-            if (isinstance(collision, EntityAlive) and collision.group == EntityGroups.neutral):
-                if (self.group == EntityGroups.playerSelf or
-                    self.group == EntityGroups.player or
-                        self.group == EntityGroups.enemy):
                     self.takeDamage(collision.strength)
+                if (collision.group == EntityGroups.neutral):
+                    self.takeDamage(collision.strength)
+            elif (self.group == EntityGroups.neutral):
+                if (collision.group == EntityGroups.player or
+                        collision.group == EntityGroups.playerSelf):
+                    collision.takeDamage(self.strength)
+                    self.takeDamage(collision.strength)
+                if (collision.group == EntityGroups.enemy):
+                    collision.takeDamage(self.strength)
         return collisions
 
 

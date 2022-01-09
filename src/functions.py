@@ -25,8 +25,10 @@ def load_image(name: str, color_key=None):
 
     return image
 
+
 def load_tile(name: str):
     return load_image(joinPath(Settings.folder_tiles, name))
+
 
 def load_entity(name: str, folder: str=None):
     if (folder is None):
@@ -34,6 +36,15 @@ def load_entity(name: str, folder: str=None):
     else:
         path = joinPath(Settings.folder_entities, folder, name)
     return load_image(path)
+
+
+def load_entityImg(name: str, w: float, h: float):
+    return pygame.transform.scale(load_entity(name), (Settings.tileSize * w, Settings.tileSize * h))
+
+
+def load_entityStay(name: str, orig_w: float, orig_h: float, w: float, h: float):
+    return pygame.transform.scale(load_entity("stay.png", name).subsurface(0, 0, orig_w, orig_h), (Settings.tileSize * w, Settings.tileSize * h))
+
 
 def joinPath(*path: list[str]):
     return str(os.path.join(*path))

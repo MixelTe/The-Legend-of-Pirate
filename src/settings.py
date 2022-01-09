@@ -21,6 +21,7 @@ class Settings:
     fullscreen = False
     tileSize = 1
     drawHitboxes = False
+    drawNoneImgs = False
 
 
 Settings.tileSize = Settings.width / Settings.screen_width
