@@ -217,13 +217,14 @@
 		2. applyData(data: dict) - установка значений полей из соответствующих полей данных
 		3. update()
 		4. draw(surface: pygame.Surface)
-		5. move() -> None | Entity | Tile - просчёт движения с учётом карты и сущностей. При столкновении с сущностью или клеткой возвращает эту сущность или клетку
-		6. remove() - удаляет себя из списка сущностей
-		7. static fromData(data: dict, screen: Screen) - создание сущности по данным
-		8. static registerEntity(id: str, entityClass) - добавляет сущность в entityDict
-		9. canGoOn(tile: Tile) -> bool - может ли сущность наступить на эту клетку
-		10. get_tile(dx: int = 0, dy: int = 0) -> Tile | None - клетка относительно сущности
-		11. get_entities(rect: tuple[float, float, float, float]) -> list\[Entity] - сущности попадающие в область
+		5. draw_dev(self, surface: pygame.Surface) - рисует вспомогательную информацию
+		6. move() -> None | Entity | Tile - просчёт движения с учётом карты и сущностей. При столкновении с сущностью или клеткой возвращает эту сущность или клетку
+		7. remove() - удаляет себя из списка сущностей
+		8. static fromData(data: dict, screen: Screen) - создание сущности по данным
+		9. static registerEntity(id: str, entityClass) - добавляет сущность в entityDict
+		10. canGoOn(tile: Tile) -> bool - может ли сущность наступить на эту клетку
+		11. get_tile(dx: int = 0, dy: int = 0) -> Tile | None - клетка относительно сущности
+		12. get_entities(rect: tuple[float, float, float, float]) -> list\[Entity] - сущности попадающие в область
 	* Класс EntityGroups:
 		* Группы сущностей
 		* Поля:
@@ -342,6 +343,7 @@
 		* speed: float - множитель скорости клетки
 		* digable: bool - можно ли копать на этой клетке
 		* solid: bool - плотная ли клетка (стена)
+		* id: str
 	* Методы:
 		* init(image: str, solid: bool = False, digable: bool = False, speed: float = 1) - добавляет себя в tileIds по ключу image отрезав расширение файла (всё после первой точки)
 		* static fromId(id: str) -> Tile - получить клетку по id из tileIds
