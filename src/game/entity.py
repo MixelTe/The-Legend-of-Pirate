@@ -225,6 +225,18 @@ class Entity:
                 entities.append(entity)
         return entities
 
+    def get_entitiesD(self, rect: tuple[float, float, float, float]) -> list[Entity]:
+        rectSelf = self.get_rect()
+        rectNew = (rectSelf[0] + rect[0], rectSelf[1] + rect[1], rect[2], rect[3])
+        entities = []
+        for entity in self.screen.entities:
+            if (entity == self):
+                continue
+            rect = entity.get_rect()
+            if (rectIntersection(rectNew, rect)):
+                entities.append(entity)
+        return entities
+
 
 class EntityGroups:
     neutral = 0
