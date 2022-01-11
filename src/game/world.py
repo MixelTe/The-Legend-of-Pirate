@@ -57,3 +57,4 @@ class ScreenData:
 
 World("test")
 World("test2")
+World("island")
