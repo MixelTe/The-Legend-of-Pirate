@@ -39,11 +39,15 @@ def load_entity(name: str, folder: str=None):
 
 
 def load_entityImg(name: str, w: float, h: float):
-    return pygame.transform.scale(load_entity(name), (Settings.tileSize * w, Settings.tileSize * h))
+    return scaleImg(load_entity(name), w, h)
 
 
 def load_entityStay(name: str, orig_w: float, orig_h: float, w: float, h: float):
-    return pygame.transform.scale(load_entity("stay.png", name).subsurface(0, 0, orig_w, orig_h), (Settings.tileSize * w, Settings.tileSize * h))
+    return scaleImg(load_entity("stay.png", name).subsurface(0, 0, orig_w, orig_h), w, h)
+
+
+def scaleImg(img: pygame.Surface, w: float, h: float):
+    return pygame.transform.scale(img, (Settings.tileSize * w, Settings.tileSize * h))
 
 
 def joinPath(*path: list[str]):

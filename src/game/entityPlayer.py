@@ -33,7 +33,7 @@ class EntityPlayer(EntityAlive):
         self.group = EntityGroups.playerSelf
         self.weapon: Entity = None
         self.message = ""
-        self.speed = 0.1
+        self.speed = 0.07
         self.width = 0.75
         self.height = 1
         self.imagePos = (0, -0.5)
@@ -42,6 +42,7 @@ class EntityPlayer(EntityAlive):
         self.animator = Animator(animatorData, "stay")
         self.direction = None
         self.shovel = None
+        self.digging = False
 
     def onKeyDown(self, key):
         if (key == pygame.K_w or key == pygame.K_UP):
@@ -53,8 +54,9 @@ class EntityPlayer(EntityAlive):
         if (key == pygame.K_a or key == pygame.K_LEFT):
             self.buttonPressed.append("left")
         if (key == pygame.K_SPACE):
-            if (self.shovel is None):
-                self.attack()
+            self.attack()
+        if (key == pygame.K_e):
+            self.dig()
 
         if (key == pygame.K_KP_4):
             self.screen.tryGoTo("left")
@@ -147,7 +149,7 @@ class EntityPlayer(EntityAlive):
     def setSpeed(self):
         self.speedX = 0
         self.speedY = 0
-        if (self.shovel is not None):
+        if (self.shovel is not None or self.digging):
             return
         if (len(self.buttonPressed) > 0):
             if (self.buttonPressed[-1] == "up"):
@@ -166,6 +168,8 @@ class EntityPlayer(EntityAlive):
             self.direction = None
 
     def attack(self):
+        if (self.shovel is not None or self.digging):
+            return
         self.shovel = Entity.createById("shovel", self.screen)
         self.screen.addEntity(self.shovel)
         self.shovel.startX = self.x
@@ -173,11 +177,39 @@ class EntityPlayer(EntityAlive):
         self.shovel.direction = self.direction
         self.shovel.nextStage()
 
+    def dig(self):
+        if (self.shovel is not None or self.digging):
+            return
+        tile = self.get_tile(1, pos=(0.5, 0.7))
+        if (tile.digable):
+            self.digging = True
+
+    def afterDig(self):
+        coin = Entity.createById("coin", self.screen)
+        self.screen.addEntity(coin)
+        coin.x = self.x + 1.25
+        coin.y = self.y + 0.5
+
     def update(self):
         self.setSpeed()
         super().update()
 
-        if (self.shovel is None):
+        if (self.digging):
+            self.animator.setAnimation("dig")
+            if (self.animator.lastState[1]):
+                self.digging = False
+                self.afterDig()
+        elif (self.shovel is not None):
+            if (self.direction):
+                self.animator.setAnimation("attack" + self.direction)
+            else:
+                self.animator.setAnimation("attackS")
+            if (self.animator.lastState[1]):
+                self.shovel.remove()
+                self.shovel = None
+            elif (self.animator.lastState[0]):
+                self.shovel.nextStage()
+        else:
             tile = self.get_tile(pos=(0.5, 0.7))
             if (tile and "water" in tile.tags):
                 if (self.direction):
@@ -189,16 +221,6 @@ class EntityPlayer(EntityAlive):
                     self.animator.setAnimation("going" + self.direction)
                 else:
                     self.animator.setAnimation("stay")
-        else:
-            if (self.direction):
-                self.animator.setAnimation("attack" + self.direction)
-            else:
-                self.animator.setAnimation("attackS")
-            if (self.animator.lastState[1]):
-                self.shovel.remove()
-                self.shovel = None
-            elif (self.animator.lastState[0]):
-                self.shovel.nextStage()
 
     def preUpdate(self):
         self.message = ""
