@@ -52,9 +52,13 @@ class Animator:
     def getImage(self) -> tuple[pygame.Surface, tuple[int, int]]:
         return self.data.get_image(self.anim, self.frame)
 
-    def setAnimation(self, animation: str):
+    def setAnimation(self, animation: str, frame: int=None):
+        if (frame is None):
+            if (animation != self.anim):
+                self.frame = 0
+        else:
+            self.frame = frame
         self.anim = animation
-        self.frame = 0
 
     def curAnimation(self) -> str:
         return self.anim

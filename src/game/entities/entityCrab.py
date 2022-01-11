@@ -21,6 +21,7 @@ class EntityCrab(EntityAlive):
         self.image = image
 
     def update(self):
+        return
         collisions = super().update()
         for rect, collision in collisions:
             pos = self.get_relPos(rect)

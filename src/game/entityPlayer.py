@@ -15,7 +15,11 @@ animatorData = AnimatorData("pirate", [
     ("attackA.png", 50, (21, 18), (-0.9, -0.5, 1.75, 1.5)),
     ("attackD.png", 50, (21, 18), (0, -0.5, 1.75, 1.5)),
     ("dig.png", 200, (21, 18), (0, -0.5, 1.75, 1.5)),
-    ("swimS.png", 100, (16, 24), (0, -0.5, 1, 1.5)),
+    ("swim.png", 150, (16, 24), (-0.1, -0.6, 1, 1.5)),
+    ("swimW.png", 150, (16, 24), (-0.1, -0.6, 1, 1.5)),
+    ("swimS.png", 150, (16, 24), (-0.1, -0.6, 1, 1.5)),
+    ("swimA.png", 150, (16, 18), (-0.2, -0.5, 1.33, 1.5)),
+    ("swimD.png", 150, (16, 18), (-0.2, -0.5, 1.33, 1.5)),
 ])
 
 
@@ -36,6 +40,7 @@ class EntityPlayer(EntityAlive):
         self.x = saveData.checkPointX + (1 - self.width) / 2
         self.y = saveData.checkPointY + (1 - self.height) / 2
         self.animator = Animator(animatorData, "stay")
+        self.direction = None
 
     def onKeyDown(self, key):
         if (key == pygame.K_w or key == pygame.K_UP):
@@ -80,18 +85,18 @@ class EntityPlayer(EntityAlive):
         if (len(self.buttonPressed) > 0):
             if (self.buttonPressed[-1] == "up"):
                 self.speedY = -self.speed
-                self.animator.setAnimation("goingW")
+                self.direction = "W"
             if (self.buttonPressed[-1] == "down"):
                 self.speedY = self.speed
-                self.animator.setAnimation("goingS")
+                self.direction = "S"
             if (self.buttonPressed[-1] == "right"):
                 self.speedX = self.speed
-                self.animator.setAnimation("goingD")
+                self.direction = "D"
             if (self.buttonPressed[-1] == "left"):
                 self.speedX = -self.speed
-                self.animator.setAnimation("goingA")
+                self.direction = "A"
         else:
-            self.animator.setAnimation("stay")
+            self.direction = None
 
     def onJoyHat(self, value):
         if (value[1] > 0):
@@ -161,7 +166,19 @@ class EntityPlayer(EntityAlive):
         pass
 
     def update(self):
-        return super().update()
+        super().update()
+
+        tile = self.get_tile(pos=(0.5, 0.7))
+        if (tile and "water" in tile.tags):
+            if (self.direction):
+                self.animator.setAnimation("swim" + self.direction)
+            else:
+                self.animator.setAnimation("swim")
+        else:
+            if (self.direction):
+                self.animator.setAnimation("going" + self.direction)
+            else:
+                self.animator.setAnimation("stay")
 
     def preUpdate(self):
         self.message = ""

@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Union
+from typing import Literal, Union
 import pygame
 from functions import GameExeption, multRect, rectIntersection
 from game.animator import Animator
@@ -215,9 +215,10 @@ class Entity:
     def remove(self):
         self.screen.removeEntity(self)
 
-    def get_tile(self, dx=0, dy=0) -> Union[Tile, None]:
-        x = int(self.x + self.width / 2) + dx
-        y = int(self.y + self.height / 2) + dy
+    def get_tile(self, dx=0, dy=0, pos: tuple[float, float]=(0.5, 0.5)) -> Union[Tile, None]:
+        x = self.x + dx + self.width * pos[0]
+        y = self.y + dy + self.height * pos[1]
+        x, y = int(x), int(y)
         if (x < 0 or y < 0 or x >= Settings.screen_width or y >= Settings.screen_height):
             return None
         return self.screen.tiles[y][x]
