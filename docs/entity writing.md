@@ -264,6 +264,8 @@ class EntityCoolName(Entity):
 
 * self.get_entities(rect: tuple[float, float, float, float]) - получить сущностей попадающих в данную область
 
+* self.createById(id: str, screen: pygame.Surface) - создать сущность по id
+
 * self.remove() - удалить эту сущность
 
 * self.screen.addEntity(entity: Entity) - добавить сущность в мир
