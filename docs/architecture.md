@@ -223,7 +223,7 @@
 		8. static fromData(data: dict, screen: Screen) - создание сущности по данным
 		9. static registerEntity(id: str, entityClass) - добавляет сущность в entityDict
 		10. canGoOn(tile: Tile) -> bool - может ли сущность наступить на эту клетку
-		11. get_tile(dx: int = 0, dy: int = 0) -> Tile | None - клетка относительно сущности
+		11. get_tile(dx: int = 0, dy: int = 0, pos: tuple[float, float] = (0.5, 0.5)) -> Tile | None - клетка относительно сущности. pos - позиция точки проверки в сущности, где 0 - левый верхний угол, 1 - правый нижний
 		12. get_entities(rect: tuple[float, float, float, float]) -> list\[Entity] - сущности попадающие в область
 		13. get_entitiesD(rect: tuple[float, float, float, float]) -> list\[Entity] - сущности попадающие в область, относительную сущности
 ---
@@ -311,7 +311,7 @@
 			* Был ли переключён кадр
 			* Поледний ли был кадр анимации
 		* getImage() -> tuple[pygame.Surface, tuple[int, int]] - возвращает текущий кадр и его позицию относительно сущности
-		* setAnimation(animation: str) - устанавливает текущую анимацию по её названию
+		* setAnimation(animation: str, frame: int=None) - устанавливает текущую анимацию по её названию, устанавливает кадр в 0 если анимация изменилась, или frame не None
 		* curAnimation() -> str - название текущей анимации
 ## Класс AnimatorData
 * Хранит картинки для аниматора сущностей
@@ -344,6 +344,7 @@
 		* speed: float - множитель скорости клетки
 		* digable: bool - можно ли копать на этой клетке
 		* solid: bool - плотная ли клетка (стена)
+		* tags: list\[str] - тэги, например "water"
 		* id: str
 	* Методы:
 		* init(image: str, solid: bool = False, digable: bool = False, speed: float = 1) - добавляет себя в tileIds по ключу image отрезав расширение файла (всё после первой точки)
