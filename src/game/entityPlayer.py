@@ -2,6 +2,7 @@ import pygame
 from game.animator import Animator, AnimatorData
 from game.entity import Entity, EntityAlive, EntityGroups
 from game.saveData import SaveData
+from settings import Settings
 
 
 animatorData = AnimatorData("pirate", [
@@ -42,7 +43,7 @@ class EntityPlayer(EntityAlive):
         self.animator = Animator(animatorData, "stay")
         self.direction = None
         self.shovel = None
-        self.digging = False
+        self.state = "normal"
 
     def onKeyDown(self, key):
         if (key == pygame.K_w or key == pygame.K_UP):
@@ -58,14 +59,15 @@ class EntityPlayer(EntityAlive):
         if (key == pygame.K_e):
             self.dig()
 
-        if (key == pygame.K_KP_4):
-            self.screen.tryGoTo("left")
-        if (key == pygame.K_KP_8):
-            self.screen.tryGoTo("up")
-        if (key == pygame.K_KP_6):
-            self.screen.tryGoTo("right")
-        if (key == pygame.K_KP_2):
-            self.screen.tryGoTo("down")
+        if (Settings.moveScreenOnNumpad):
+            if (key == pygame.K_KP_4):
+                self.screen.tryGoTo("left")
+            if (key == pygame.K_KP_8):
+                self.screen.tryGoTo("up")
+            if (key == pygame.K_KP_6):
+                self.screen.tryGoTo("right")
+            if (key == pygame.K_KP_2):
+                self.screen.tryGoTo("down")
 
     def onKeyUp(self, key):
         if (key == pygame.K_w or key == pygame.K_UP):
@@ -161,7 +163,7 @@ class EntityPlayer(EntityAlive):
     def setSpeed(self):
         self.speedX = 0
         self.speedY = 0
-        if (self.shovel is not None or self.digging):
+        if (self.state != "normal" and self.state != "swim"):
             return
         if (len(self.buttonPressed) > 0):
             if (self.buttonPressed[-1] == "up"):
@@ -180,10 +182,11 @@ class EntityPlayer(EntityAlive):
             self.direction = None
 
     def attack(self, d=None):
-        if (self.shovel is not None or self.digging):
+        if (self.state != "normal"):
             return
         if (d is not None):
             self.direction = d
+        self.state = "attack"
         self.shovel = Entity.createById("shovel", self.screen)
         self.screen.addEntity(self.shovel)
         self.shovel.startX = self.x
@@ -192,8 +195,9 @@ class EntityPlayer(EntityAlive):
         self.shovel.nextStage()
 
     def dig(self):
-        if (self.shovel is not None or self.digging):
+        if (self.state != "normal"):
             return
+        self.state = "dig"
         tile = self.get_tile(1, pos=(0.5, 0.7))
         if (tile.digable):
             self.digging = True
@@ -208,33 +212,51 @@ class EntityPlayer(EntityAlive):
         self.setSpeed()
         super().update()
 
-        if (self.digging):
+        if (self.state == "dig"):
             self.animator.setAnimation("dig")
             if (self.animator.lastState[1]):
                 self.digging = False
                 self.afterDig()
-        elif (self.shovel is not None):
-            if (self.direction):
-                self.animator.setAnimation("attack" + self.direction)
-            else:
-                self.animator.setAnimation("attackS")
-            if (self.animator.lastState[1]):
-                self.shovel.remove()
-                self.shovel = None
-            elif (self.animator.lastState[0]):
-                self.shovel.nextStage()
+                self.state = "normal"
+        elif (self.state == "attack"):
+            if (self.shovel is not None):
+                if (self.direction):
+                    self.animator.setAnimation("attack" + self.direction)
+                else:
+                    self.animator.setAnimation("attackS")
+                if (self.animator.lastState[1]):
+                    self.shovel.remove()
+                    self.shovel = None
+                    self.state = "normal"
+                elif (self.animator.lastState[0]):
+                    self.shovel.nextStage()
         else:
             tile = self.get_tile(pos=(0.5, 0.7))
             if (tile and "water" in tile.tags):
+                self.state = "swim"
                 if (self.direction):
                     self.animator.setAnimation("swim" + self.direction)
                 else:
                     self.animator.setAnimation("swim")
             else:
+                self.state = "normal"
                 if (self.direction):
                     self.animator.setAnimation("going" + self.direction)
                 else:
                     self.animator.setAnimation("stay")
+
+        if (self.x <= 0.05):
+            if (self.screen.tryGoTo("left")):
+                self.x = Settings.screen_width - self.width - 0.1
+        elif (self.x + self.width >= Settings.screen_width - 0.05):
+            if (self.screen.tryGoTo("right")):
+                self.x = 0.1
+        elif (self.y <= 0.05):
+            if (self.screen.tryGoTo("up")):
+                self.y = Settings.screen_height - self.height - 0.1
+        elif (self.y + self.height >= Settings.screen_height - 0.05):
+            if (self.screen.tryGoTo("down")):
+                self.y = 0.1
 
     def preUpdate(self):
         self.message = ""
