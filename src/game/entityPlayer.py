@@ -124,8 +124,7 @@ class EntityPlayer(EntityAlive):
                     self.buttonPressed.remove("right")
                 while "left" in self.buttonPressed:
                     self.buttonPressed.remove("left")
-        if (axis == 1):
-            print(value)
+        elif (axis == 1):
             if (value > 0.5):
                 while "up" in self.buttonPressed:
                     self.buttonPressed.remove("up")
@@ -139,9 +138,22 @@ class EntityPlayer(EntityAlive):
                     self.buttonPressed.remove("up")
                 while "down" in self.buttonPressed:
                     self.buttonPressed.remove("down")
+        elif (axis == 2):
+            if (value > 0.5):
+                self.attack("D")
+            elif (value < -0.5):
+                self.attack("A")
+        elif (axis == 3):
+            if (value > 0.5):
+                self.attack("S")
+            elif (value < -0.5):
+                self.attack("W")
 
     def onJoyButonDown(self, button):
-        pass
+        if (button == 2):
+            self.attack()
+        if (button == 1):
+            self.dig()
 
     def onJoyButonUp(self, button):
         pass
@@ -167,9 +179,11 @@ class EntityPlayer(EntityAlive):
         else:
             self.direction = None
 
-    def attack(self):
+    def attack(self, d=None):
         if (self.shovel is not None or self.digging):
             return
+        if (d is not None):
+            self.direction = d
         self.shovel = Entity.createById("shovel", self.screen)
         self.screen.addEntity(self.shovel)
         self.shovel.startX = self.x
