@@ -221,11 +221,12 @@
 		6. move() -> None | Entity | Tile - просчёт движения с учётом карты и сущностей. При столкновении с сущностью или клеткой возвращает эту сущность или клетку
 		7. remove() - удаляет себя из списка сущностей
 		8. static fromData(data: dict, screen: Screen) - создание сущности по данным
-		9. static registerEntity(id: str, entityClass) - добавляет сущность в entityDict
-		10. canGoOn(tile: Tile) -> bool - может ли сущность наступить на эту клетку
-		11. get_tile(dx: int = 0, dy: int = 0, pos: tuple[float, float] = (0.5, 0.5)) -> Tile | None - клетка относительно сущности. pos - позиция точки проверки в сущности, где 0 - левый верхний угол, 1 - правый нижний
-		12. get_entities(rect: tuple[float, float, float, float]) -> list\[Entity] - сущности попадающие в область
-		13. get_entitiesD(rect: tuple[float, float, float, float]) -> list\[Entity] - сущности попадающие в область, относительную сущности
+		9. static createById(id: str, screen: pygame.Surface) - создание сущности по id
+		10. static registerEntity(id: str, entityClass) - добавляет сущность в entityDict
+		11. canGoOn(tile: Tile) -> bool - может ли сущность наступить на эту клетку
+		12. get_tile(dx: int = 0, dy: int = 0, pos: tuple[float, float] = (0.5, 0.5)) -> Tile | None - клетка относительно сущности. pos - позиция точки проверки в сущности, где 0 - левый верхний угол, 1 - правый нижний
+		13. get_entities(rect: tuple[float, float, float, float]) -> list\[Entity] - сущности попадающие в область
+		14. get_entitiesD(rect: tuple[float, float, float, float]) -> list\[Entity] - сущности попадающие в область, относительную сущности
 ---
 16. ## Класс EntityAlive(Entity)
 	* Поля:
