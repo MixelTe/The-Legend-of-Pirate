@@ -187,6 +187,8 @@ class EntityCoolName(Entity):
 Методы, которые вызываются автоматически:
 * get_image() -> tuple[pygame.Surface, tuple[int, int]] - текущий кадр и его положение относительно сущности
 * update() -> tuple[bool, bool] - (Был ли переключён кадр, Поледний ли был кадр анимации)
+И поле:
+* lastState: tuple[bool, bool] - последнее значение, возвращенное методом update
 
 
 # Сущность с "кодом"
