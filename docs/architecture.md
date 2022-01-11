@@ -208,6 +208,7 @@
 		* height: int
 		* speedX: float - текущая скорость
 		* speedY: float
+		* ghost: bool - если True, то остальные сущности перестают проверять столкновения с этой сущностью
 		* animator: Animator
 		* image: pygame.Surface
 		* imagePos: tuple[int, int] - положение картинки относительно сущности
