@@ -41,8 +41,8 @@ class EntityTrader(Entity):
         super().__init__(screen, data)
         self.image = EntityTrader.image
         self.width = 0.75
-        self.height = 1
-        self.imagePos = (0, -0.5)
+        self.height = 0.7
+        self.imagePos = (0, -0.8)
 Entity.registerEntity("trader", EntityTrader)
 
 
@@ -61,9 +61,10 @@ class EntityTrainer(EntityAlive):
     def __init__(self, screen, data: dict=None):
         super().__init__(screen, data)
         self.image = EntityTrainer.image
+        self.immortal = True
         self.width = 0.75
-        self.height = 1
-        self.imagePos = (0, -0.5)
+        self.height = 0.7
+        self.imagePos = (0, -0.8)
         self.group = EntityGroups.enemy
 Entity.registerEntity("trainer", EntityTrainer)
 

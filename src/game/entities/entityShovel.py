@@ -26,12 +26,12 @@ class EntityShovel(EntityAlive):
             self.width = 0.4 + 0.18 * self.stage
             self.height = 0.7
             self.x = self.startX + self.screen.player.width
-            self.y = self.startY + self.screen.player.height * 0.15
+            self.y = self.startY
         elif (self.direction == "A"):
             self.width = 0.4 + 0.18 * self.stage
             self.height = 0.7
             self.x = self.startX - self.width
-            self.y = self.startY + self.screen.player.height * 0.15
+            self.y = self.startY
         elif (self.direction == "W"):
             self.width = self.screen.player.width
             self.height = 0.5 + 0.15 * self.stage
