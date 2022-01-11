@@ -11,7 +11,7 @@ class EntityCactus(EntityAlive):
         self.height = 1
         self.strength = 1
         self.group = EntityGroups.neutral
-EntityAlive.registerEntity("cactus", EntityCactus)
+Entity.registerEntity("cactus", EntityCactus)
 
 
 class EntityDoor(Entity):
@@ -21,7 +21,7 @@ class EntityDoor(Entity):
         self.image = EntityDoor.image
         self.width = 1
         self.height = 1
-EntityAlive.registerEntity("door", EntityDoor)
+Entity.registerEntity("door", EntityDoor)
 
 
 class EntityPalm(Entity):
@@ -32,7 +32,7 @@ class EntityPalm(Entity):
         self.width = 0.45
         self.height = 0.7
         self.imagePos = (-0.45, -0.8)
-EntityAlive.registerEntity("palm", EntityPalm)
+Entity.registerEntity("palm", EntityPalm)
 
 
 class EntityTrader(Entity):
@@ -43,7 +43,7 @@ class EntityTrader(Entity):
         self.width = 0.75
         self.height = 1
         self.imagePos = (0, -0.5)
-EntityAlive.registerEntity("trader", EntityTrader)
+Entity.registerEntity("trader", EntityTrader)
 
 
 class EntityCannon(Entity):
@@ -53,7 +53,7 @@ class EntityCannon(Entity):
         self.image = EntityCannon.image
         self.width = 1
         self.height = 1
-EntityAlive.registerEntity("cannon", EntityCannon)
+Entity.registerEntity("cannon", EntityCannon)
 
 
 class EntityTrainer(EntityAlive):
@@ -65,5 +65,5 @@ class EntityTrainer(EntityAlive):
         self.height = 1
         self.imagePos = (0, -0.5)
         self.group = EntityGroups.enemy
-EntityAlive.registerEntity("trainer", EntityTrainer)
+Entity.registerEntity("trainer", EntityTrainer)
 

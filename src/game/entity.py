@@ -31,15 +31,24 @@ class Entity:
         self.speedY: float = 0
         self.image: pygame.Surface = None
         self.imagePos: tuple[float, float] = (0, 0)
+        self.hidden = False # если True, то остальные сущности перестают проверять столкновения с этой сущностью
+        self.ghostE = False # если True, то на движение сущности не влияют другие
+        self.ghostT = False # если True, то на движение сущности не влияют клетки
         if (data):
             self.applyData(data)
 
     @staticmethod
-    def fromData(data: dict, screen: pygame.Surface):
+    def fromData(data: dict, screen: pygame.Surface) -> Entity:
         clas = data["className"]
         if (clas in Entity.entityDict):
             return Entity.entityDict[clas](screen, data)
         raise GameExeption(f"Entity.fromData: no Entity with className: {clas}")
+
+    @staticmethod
+    def createById(id: str, screen: pygame.Surface) -> Entity:
+        if (id in Entity.entityDict):
+            return Entity.entityDict[id](screen)
+        raise GameExeption(f"Entity.fromData: no Entity with className: {id}")
 
     @staticmethod
     def registerEntity(id: str, entityClass):
@@ -97,8 +106,10 @@ class Entity:
             if (not rectIntersection(newRect, rect)):
                 continue
             if (tile.solid or not self.canGoOn(tile)):
-                pos = self.move_toEdge(rect)
                 colision.append((rect, tile))
+                if (self.ghostT):
+                    continue
+                pos = self.move_toEdge(rect)
                 if (not rectIntersection((nX, self.y, self.width, self.height), rect)):
                     nY = self.y
                     moveY = 0
@@ -117,12 +128,14 @@ class Entity:
                 nY = self.y + self.speedY * tile.speed * moveY
 
         for entity in self.screen.entities:
-            if (entity == self):
+            if (entity == self or entity.hidden):
                 continue
             rect = entity.get_rect()
             if (rectIntersection(newRect, rect)):
-                pos = self.move_toEdge(rect)
                 colision.append((rect, entity))
+                if (self.ghostE):
+                    continue
+                pos = self.move_toEdge(rect)
                 if (not rectIntersection((nX, self.y, self.width, self.height), rect)):
                     nY = self.y
                     newRect = (nX, nY, self.width, self.height)
@@ -265,18 +278,19 @@ class EntityAlive(Entity):
         self.immortal = False
 
     def takeDamage(self, damage: int):
-        if (self.immortal):
+        if (self.immortal or damage == 0):
             return
         if (self.damageDelay <= 0):
             self.damageDelay = Settings.demageDelay
             self.health -= damage
             if (self.health <= 0):
                 self.alive = False
+                self.hidden = True
 
     def update(self):
-        if (not self.alive):
-            return []
         collisions = super().update()
+        if (not self.alive):
+            return collisions
         if (self.damageDelay > 0):
             self.damageDelay -= 1000 / Settings.fps
         for rect, collision in collisions:

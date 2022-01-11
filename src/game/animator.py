@@ -1,6 +1,6 @@
 import pygame
 
-from functions import load_entity
+from functions import GameExeption, load_entity
 from settings import Settings
 
 
@@ -36,6 +36,7 @@ class Animator:
         self.anim = anim # текущая анимация
         self.frame = 0 # текущий кадр
         self.counter = 0 # счетчик для переключения кадров с определённой скоростью
+        self.lastState = (False, False)
 
     def update(self) -> tuple[bool, bool]:
         self.counter += 1000 / Settings.fps
@@ -43,21 +44,27 @@ class Animator:
             self.counter = 0
             self.frame += 1
             self.frame = self.frame % self.data.get_len(self.anim)
-            return (True, self.frame == 0)
+            self.lastState = (True, self.frame == 0)
+            return self.lastState
         # Возвращает два значения:
         # Был ли переключён кадр
         # Поледний ли был кадр анимации
-        return (False, False)
+        self.lastState = (False, False)
+        return self.lastState
 
     def getImage(self) -> tuple[pygame.Surface, tuple[int, int]]:
         return self.data.get_image(self.anim, self.frame)
 
     def setAnimation(self, animation: str, frame: int=None):
+        if (animation not in self.data.frames):
+            raise GameExeption(f"Animator.setAnimation: No such animation: {animation}")
         if (frame is None):
             if (animation != self.anim):
                 self.frame = 0
+                self.lastState = (False, self.frame == self.data.get_len(animation) - 1)
         else:
             self.frame = frame
+            self.lastState = (True, self.frame == self.data.get_len(animation) - 1)
         self.anim = animation
 
     def curAnimation(self) -> str:

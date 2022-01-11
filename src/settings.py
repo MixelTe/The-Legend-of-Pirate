@@ -20,7 +20,7 @@ class Settings:
     demageDelay = 400
     fullscreen = False
     tileSize = 1
-    drawHitboxes = False
+    drawHitboxes = True
     drawNoneImgs = False
 
 

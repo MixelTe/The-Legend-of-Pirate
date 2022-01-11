@@ -10,10 +10,10 @@ animatorData = AnimatorData("pirate", [
     ("goingW.png", 150, (12, 24), (0, -0.5, 0.75, 1.5)),
     ("goingA.png", 150, (12, 18), (-0.15, -0.5, 1, 1.5)),
     ("goingD.png", 150, (12, 18), (-0.05, -0.5, 1, 1.5)),
-    ("attackS.png", 50, (12, 29), (0, -0.5, 0.75, 1.8)),
-    ("attackW.png", 50, (12, 29), (0, -0.8, 0.75, 1.8)),
-    ("attackA.png", 50, (21, 18), (-0.9, -0.5, 1.75, 1.5)),
-    ("attackD.png", 50, (21, 18), (0, -0.5, 1.75, 1.5)),
+    ("attackS.png", 100, (12, 29), (0, -0.5, 0.75, 1.8)),
+    ("attackW.png", 100, (12, 29), (0, -0.8, 0.75, 1.8)),
+    ("attackA.png", 100, (21, 18), (-0.9, -0.5, 1.75, 1.5)),
+    ("attackD.png", 100, (21, 18), (0, -0.5, 1.75, 1.5)),
     ("dig.png", 200, (21, 18), (0, -0.5, 1.75, 1.5)),
     ("swim.png", 150, (16, 24), (-0.1, -0.6, 1, 1.5)),
     ("swimW.png", 150, (16, 24), (-0.1, -0.6, 1, 1.5)),
@@ -41,6 +41,7 @@ class EntityPlayer(EntityAlive):
         self.y = saveData.checkPointY + (1 - self.height) / 2
         self.animator = Animator(animatorData, "stay")
         self.direction = None
+        self.shovel = None
 
     def onKeyDown(self, key):
         if (key == pygame.K_w or key == pygame.K_UP):
@@ -51,8 +52,9 @@ class EntityPlayer(EntityAlive):
             self.buttonPressed.append("right")
         if (key == pygame.K_a or key == pygame.K_LEFT):
             self.buttonPressed.append("left")
-
-        self.setSpeed()
+        if (key == pygame.K_SPACE):
+            if (self.shovel is None):
+                self.attack()
 
         if (key == pygame.K_KP_4):
             self.screen.tryGoTo("left")
@@ -76,27 +78,6 @@ class EntityPlayer(EntityAlive):
         if (key == pygame.K_a or key == pygame.K_LEFT):
             while "left" in self.buttonPressed:
                 self.buttonPressed.remove("left")
-
-        self.setSpeed()
-
-    def setSpeed(self):
-        self.speedX = 0
-        self.speedY = 0
-        if (len(self.buttonPressed) > 0):
-            if (self.buttonPressed[-1] == "up"):
-                self.speedY = -self.speed
-                self.direction = "W"
-            if (self.buttonPressed[-1] == "down"):
-                self.speedY = self.speed
-                self.direction = "S"
-            if (self.buttonPressed[-1] == "right"):
-                self.speedX = self.speed
-                self.direction = "D"
-            if (self.buttonPressed[-1] == "left"):
-                self.speedX = -self.speed
-                self.direction = "A"
-        else:
-            self.direction = None
 
     def onJoyHat(self, value):
         if (value[1] > 0):
@@ -125,7 +106,6 @@ class EntityPlayer(EntityAlive):
                 self.buttonPressed.remove("right")
             while "left" in self.buttonPressed:
                 self.buttonPressed.remove("left")
-        self.setSpeed()
 
     def onJoyAxis(self, axis, value):
         if (axis == 0):
@@ -157,7 +137,6 @@ class EntityPlayer(EntityAlive):
                     self.buttonPressed.remove("up")
                 while "down" in self.buttonPressed:
                     self.buttonPressed.remove("down")
-        self.setSpeed()
 
     def onJoyButonDown(self, button):
         pass
@@ -165,20 +144,61 @@ class EntityPlayer(EntityAlive):
     def onJoyButonUp(self, button):
         pass
 
+    def setSpeed(self):
+        self.speedX = 0
+        self.speedY = 0
+        if (self.shovel is not None):
+            return
+        if (len(self.buttonPressed) > 0):
+            if (self.buttonPressed[-1] == "up"):
+                self.speedY = -self.speed
+                self.direction = "W"
+            if (self.buttonPressed[-1] == "down"):
+                self.speedY = self.speed
+                self.direction = "S"
+            if (self.buttonPressed[-1] == "right"):
+                self.speedX = self.speed
+                self.direction = "D"
+            if (self.buttonPressed[-1] == "left"):
+                self.speedX = -self.speed
+                self.direction = "A"
+        else:
+            self.direction = None
+
+    def attack(self):
+        self.shovel = Entity.createById("shovel", self.screen)
+        self.screen.addEntity(self.shovel)
+        self.shovel.startX = self.x
+        self.shovel.startY = self.y
+        self.shovel.direction = self.direction
+        self.shovel.nextStage()
+
     def update(self):
+        self.setSpeed()
         super().update()
 
-        tile = self.get_tile(pos=(0.5, 0.7))
-        if (tile and "water" in tile.tags):
-            if (self.direction):
-                self.animator.setAnimation("swim" + self.direction)
+        if (self.shovel is None):
+            tile = self.get_tile(pos=(0.5, 0.7))
+            if (tile and "water" in tile.tags):
+                if (self.direction):
+                    self.animator.setAnimation("swim" + self.direction)
+                else:
+                    self.animator.setAnimation("swim")
             else:
-                self.animator.setAnimation("swim")
+                if (self.direction):
+                    self.animator.setAnimation("going" + self.direction)
+                else:
+                    self.animator.setAnimation("stay")
         else:
             if (self.direction):
-                self.animator.setAnimation("going" + self.direction)
+                self.animator.setAnimation("attack" + self.direction)
             else:
-                self.animator.setAnimation("stay")
+                self.animator.setAnimation("attackS")
+            if (self.animator.lastState[1]):
+                self.shovel.remove()
+                self.shovel = None
+            elif (self.animator.lastState[0]):
+                self.shovel.nextStage()
 
     def preUpdate(self):
         self.message = ""

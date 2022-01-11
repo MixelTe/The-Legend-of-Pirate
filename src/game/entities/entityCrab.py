@@ -15,14 +15,14 @@ class EntityCrab(EntityAlive):
         self.strength = 1
         self.width = 1
         self.height = 0.55
-        self.speed = 0.04
-        self.speedX = self.speed
-        self.speedY = self.speed
+        # self.speed = 0.04
+        # self.speedX = self.speed
+        # self.speedY = self.speed
         self.image = image
 
     def update(self):
-        return
         collisions = super().update()
+        return
         for rect, collision in collisions:
             pos = self.get_relPos(rect)
             if (pos[0] > 0):
