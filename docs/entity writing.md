@@ -58,12 +58,12 @@ width  | ширина        | float          | 1
 height | высота        | float          | 1
 speedX | скорость по x | float          | 0
 speedY | скорость по y | float          | 0
-ghost  | призрачность  | bool           | False
+hidden | если True, то остальные сущности перестают проверять столкновения с этой сущностью | bool | False
+ghostE | если True, то на движение сущности не влияют другие |  bool | False
+ghostT | если True, то на движение сущности не влияют клетки | bool | False
 image  | картинка      | pygame.Surface | None
 imagePos | позиция картинки относительно сущности | tuple[float, float] | (0, 0)
 animator | анимации | Animator | None
-
-ghost - если True, то остальные сущности перестают проверять столкновения с этой сущностью
 
 Дополнительные настраиваемые поля для живой сущности (EntityAlive):
 
