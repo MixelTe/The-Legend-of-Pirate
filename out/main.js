@@ -44,8 +44,9 @@ const camera_speed = () => {
 };
 let penEntity = null;
 let selectedEntity = null;
-let worldFileName = "worldData.json";
+let worldFileName = localStorage.getItem("WorldEditor-world-filename") || "worldData.json";
 let mousePos = { x: 0, y: 0 };
+let mousePosCanvas = { x: 0, y: 0 };
 class World {
     map = [];
     width;
@@ -753,6 +754,7 @@ inp_load.addEventListener("input", async () => {
     }
     const file = curFiles[0];
     worldFileName = file.name;
+    localStorage.setItem("WorldEditor-world-filename", worldFileName);
     const data = await file.text();
     World.loadData(data);
 });
@@ -762,6 +764,8 @@ btn_new.addEventListener("click", async () => {
             return;
     }
     world = new World(inp_width.valueAsNumber, inp_height.valueAsNumber);
+    worldFileName = "worldData.json";
+    localStorage.setItem("WorldEditor-world-filename", worldFileName);
 });
 inp_tilesize.addEventListener("change", () => TileSize = inp_tilesize.valueAsNumber);
 inp_mode_entity.addEventListener("change", () => setPalete());
@@ -769,18 +773,16 @@ canvas.addEventListener("wheel", e => {
     const moveSpeed = camera_speed();
     if (e.ctrlKey) {
         e.preventDefault();
+        const x = (mousePosCanvas.x - camera_x) / TileSize;
+        const y = (mousePosCanvas.y - camera_y) / TileSize;
         const v = 1.4;
-        if (e.deltaY > 0) {
+        if (e.deltaY > 0)
             TileSize /= v;
-            camera_x /= v;
-            camera_y /= v;
-        }
-        else {
+        else
             TileSize *= v;
-            camera_x *= v;
-            camera_y *= v;
-        }
         TileSize = Math.max(Math.round(TileSize), 2);
+        camera_x = -x * TileSize + mousePosCanvas.x;
+        camera_y = -y * TileSize + mousePosCanvas.y;
         inp_tilesize.valueAsNumber = TileSize;
         normalizeCamera();
     }
@@ -860,6 +862,8 @@ canvas.addEventListener("mousedown", e => {
     }
 });
 canvas.addEventListener("mousemove", e => {
+    mousePosCanvas.x = e.offsetX;
+    mousePosCanvas.y = e.offsetY;
     setCursor("none");
     if (inp_mode_view.checked) {
         world.setCursor(e.offsetX - camera_x, e.offsetY - camera_y);
