@@ -35,6 +35,7 @@ class Screen:
         player.screen = self
 
     def update(self) -> Union[None, ScreenGoTo]:
+        self.entities.sort(key=lambda e: e.y)
         self.player.preUpdate()
         for entity in self.entities:
             entity.update()
