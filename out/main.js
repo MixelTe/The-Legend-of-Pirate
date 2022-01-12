@@ -18,6 +18,8 @@ const inp_mode_entity = getInput("inp-mode-entity");
 const div_viewport = getDiv("viewport");
 const div_palette = getDiv("palette");
 const div_fast_palette = getDiv("fast-palette");
+const div_palette_group = getDiv("palette-group");
+const div_palette_group_imgs = getDiv("palette-group-imgs");
 const canvas = getCanvas("canvas");
 const ctx = getCanvasContext(canvas);
 const localStorageKey = "WorldEditor-world-data";
@@ -40,7 +42,6 @@ let camera_y = 0;
 const camera_speed = () => {
     return Math.round(TileSize * inp_cameraSpeed.valueAsNumber / 2);
 };
-let pen = "sand1";
 let penEntity = null;
 let selectedEntity = null;
 let worldFileName = "worldData.json";
@@ -406,7 +407,7 @@ class View {
             return;
         if (this.tiles[y][x].id != tile)
             return;
-        this.tiles[y][x].id = pen;
+        this.tiles[y][x].id = pen.getTile();
         const key = (x, y) => y * ViewWidth + x;
         path.push(key(x, y));
         if (path.indexOf(key(x + 1, y)) == -1)
@@ -421,13 +422,12 @@ class View {
     pen(x, y) {
         const X = Math.floor(x / TileSize);
         const Y = Math.floor(y / TileSize);
-        this.tiles[Y][X].id = pen;
+        this.tiles[Y][X].id = pen.getTile();
     }
     pick(x, y) {
         const X = Math.floor(x / TileSize);
         const Y = Math.floor(y / TileSize);
-        pen = this.tiles[Y][X].id;
-        fastPalette.addTile(pen);
+        pen.setPen(this.tiles[Y][X].id);
     }
     setCursor(x, y) {
         if (rectPointIntersect(icon_trash_rect(), { x, y })) {
@@ -565,7 +565,7 @@ class FastPalette {
     opened = false;
     closedByClick = false;
     imgs = [];
-    tiles = [pen];
+    tiles = [pen.getTile()];
     entity = [penEntity];
     hovered = null;
     addtileI = 1;
@@ -635,7 +635,7 @@ class FastPalette {
         if (inp_mode_entity.checked)
             penEntity = this.entity.length > this.hovered ? this.entity[this.hovered] : this.entity[0];
         else
-            pen = this.tiles.length > this.hovered ? this.tiles[this.hovered] : this.tiles[0];
+            pen.setPen(this.tiles.length > this.hovered ? this.tiles[this.hovered] : this.tiles[0]);
     }
     addTile(tileid) {
         if (this.tiles.indexOf(tileid) != -1)
@@ -650,6 +650,70 @@ class FastPalette {
         this.addentityI = (this.addentityI + 1) % this.imgs.length;
     }
 }
+class PenTiles {
+    pen = "sand1";
+    group = null;
+    groupTiles = ["sand1"];
+    constructor() {
+        div_palette_group.addEventListener("click", () => {
+            div_palette_group.classList.remove("fast-palette-visible");
+        });
+    }
+    setPen(tile, resetGroup = true) {
+        if (resetGroup)
+            this.group = null;
+        this.pen = tile;
+        fastPalette.addTile(this.pen);
+    }
+    getTile() {
+        if (!this.group?.random)
+            return this.pen;
+        if (this.groupTiles.length == 0)
+            return this.group.key;
+        return this.groupTiles[Math.floor(Math.random() * this.groupTiles.length)];
+    }
+    openGroup(group) {
+        if (group == undefined) {
+            if (this.group) {
+                div_palette_group.classList.add("fast-palette-visible");
+            }
+            return;
+        }
+        this.group = group;
+        if (group.random) {
+            this.groupTiles = [];
+            for (const k in tileGroups[group.key].tiles)
+                this.groupTiles.push(k);
+            return;
+        }
+        div_palette_group.classList.add("fast-palette-visible");
+        div_palette_group_imgs.innerHTML = "";
+        for (const k in tileGroups[group.key].tiles) {
+            const key = k;
+            function addImg() {
+                if (inp_mode_entity.checked)
+                    return;
+                const img = tileImages[key];
+                if (img) {
+                    const imgNew = document.createElement("img");
+                    imgNew.src = img.src;
+                    imgNew.title = key;
+                    div_palette_group_imgs.appendChild(imgNew);
+                    imgNew.addEventListener("click", () => {
+                        pen.setPen(key, false);
+                        div_palette_group.classList.remove("fast-palette-visible");
+                    });
+                }
+                else
+                    setTimeout(addImg, 100);
+            }
+            addImg();
+        }
+    }
+    close() {
+    }
+}
+const pen = new PenTiles();
 let world = new World(0, 0);
 const minimap = new MiniMap();
 const fastPalette = new FastPalette();
@@ -878,6 +942,9 @@ window.addEventListener("keypress", e => {
             inp_mode_entity.checked = !inp_mode_entity.checked;
             setPalete();
             break;
+        case "KeyE":
+            pen.openGroup();
+            break;
         // case "KeyC": endEntityMove()?.center(); break;
     }
 });
@@ -1006,8 +1073,8 @@ function setPalete() {
     }
     else {
         selectedEntity = null;
-        for (const k in tileImages) {
-            const key = k;
+        for (const k of tileList) {
+            const key = k.key;
             function addImg() {
                 if (inp_mode_entity.checked)
                     return;
@@ -1016,8 +1083,12 @@ function setPalete() {
                     img.title = key;
                     div_palette.appendChild(img);
                     img.addEventListener("click", () => {
-                        pen = key;
-                        fastPalette.addTile(pen);
+                        if (k.group) {
+                            pen.openGroup(k);
+                        }
+                        else {
+                            pen.setPen(key);
+                        }
                     });
                 }
                 else

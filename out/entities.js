@@ -9,8 +9,8 @@ createNewEntityClass_Auto("crab-kolobok", false, 13, 11, 0.8, 0.677, 0, 0, 0.8, 
     { type: "tile", name: "favoriteTile", value: { x: 1, y: 4 }, displayColor: "pink" },
     { type: "tiles", name: "killingTiles", value: [{ x: 13, y: 2 }, { x: 13, y: 3 }], displayColor: "tomato" },
 ]);
-createNewEntityClass_Auto("crab", false, 20, 11, 1, 0.55);
-createNewEntityClass_Auto("cactus", false, 16, 16, 1, 1);
+createNewEntityClass_Auto("crab", true, 20, 11, 1, 0.55);
+createNewEntityClass_Auto("cactus", false, 16, 16, 0.85, 0.85, -0.075, -0.075, 1, 1);
 createNewEntityClass_Auto("door", false, 11, 12, 1, 1);
 createNewEntityClass_Auto("palm", false, 20, 22, 0.45, 0.7, -0.45, -0.8, 1.5, 1.5);
 createNewEntityClass_Auto("trader", true, 14, 24, 0.75, 0.7, 0, -0.8, 0.75, 1.5);
