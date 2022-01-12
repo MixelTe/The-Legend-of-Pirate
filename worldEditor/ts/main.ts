@@ -865,6 +865,8 @@ btn_new.addEventListener("click", async () =>
 		if (!await askForSure("создать пустой мир")) return;
 	}
 	world = new World(inp_width.valueAsNumber, inp_height.valueAsNumber)
+	worldFileName = "worldData.json";
+	localStorage.setItem("WorldEditor-world-filename", worldFileName);
 });
 inp_tilesize.addEventListener("change", () => TileSize = inp_tilesize.valueAsNumber);
 inp_mode_entity.addEventListener("change", () => setPalete());
