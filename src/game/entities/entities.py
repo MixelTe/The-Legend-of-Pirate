@@ -11,6 +11,7 @@ class EntityCactus(EntityAlive):
         self.width = 0.85
         self.height = 0.85
         self.strength = 1
+        self.imagePos = (-0.075, -0.075)
         self.group = EntityGroups.neutral
 
 
