@@ -17,6 +17,8 @@ const inp_mode_entity = getInput("inp-mode-entity");
 const div_viewport = getDiv("viewport");
 const div_palette = getDiv("palette");
 const div_fast_palette = getDiv("fast-palette");
+const div_palette_group = getDiv("palette-group");
+const div_palette_group_imgs = getDiv("palette-group-imgs");
 const canvas = getCanvas("canvas");
 const ctx = getCanvasContext(canvas);
 
@@ -42,7 +44,6 @@ const camera_speed = () =>
 {
 	return Math.round(TileSize * inp_cameraSpeed.valueAsNumber / 2);
 };
-let pen: keyof (typeof tileIds) = "sand1";
 let penEntity: typeof Entity | null = null;
 let selectedEntity: Entity | null = null;
 let worldFileName = "worldData.json";
@@ -455,12 +456,12 @@ class View
 		const tile = this.tiles[Y][X].id;
 		this.fillR(X, Y, tile, []);
 	}
-	private fillR(x: number, y: number, tile: Tiles, path: number[])
+	private fillR(x: number, y: number, tile: string, path: number[])
 	{
 		if (x < 0 || y < 0 || x >= ViewWidth || y >= ViewHeight) return;
 		if (this.tiles[y][x].id != tile) return;
 
-		this.tiles[y][x].id = pen;
+		this.tiles[y][x].id = pen.getTile();
 		const key = (x: number, y: number) => y * ViewWidth + x;
 		path.push(key(x, y));
 		if (path.indexOf(key(x + 1, y)) == -1) this.fillR(x + 1, y, tile, path);
@@ -472,14 +473,13 @@ class View
 	{
 		const X = Math.floor(x / TileSize);
 		const Y = Math.floor(y / TileSize);
-		this.tiles[Y][X].id = pen;
+		this.tiles[Y][X].id = pen.getTile();
 	}
 	public pick(x: number, y: number)
 	{
 		const X = Math.floor(x / TileSize);
 		const Y = Math.floor(y / TileSize);
-		pen = this.tiles[Y][X].id;
-		fastPalette.addTile(pen);
+		pen.setPen(this.tiles[Y][X].id);
 	}
 	public setCursor(x: number, y: number)
 	{
@@ -547,7 +547,7 @@ class View
 		}
 		for (let y = 0; y < ViewHeight; y++)
 		{
-			const row: Tiles[] = [];
+			const row: string[] = [];
 			for (let x = 0; x < ViewWidth; x++)
 			{
 				row.push(this.tiles[y][x].id);
@@ -578,8 +578,8 @@ class View
 }
 class Tile
 {
-	id: Tiles = "sand1";
-	constructor(id?: Tiles)
+	id = "sand1";
+	constructor(id?: string)
 	{
 		if (id) this.id = id;
 	}
@@ -647,7 +647,7 @@ class FastPalette
 	private opened = false;
 	private closedByClick = false;
 	private imgs: HTMLDivElement[] = [];
-	private tiles: Tiles[] = [pen];
+	private tiles: string[] = [pen.getTile()];
 	private entity: (typeof Entity | null)[] = [penEntity];
 	private hovered: number | null = null;
 	private addtileI = 1;
@@ -721,9 +721,9 @@ class FastPalette
 		if (this.closedByClick || this.hovered == null) return;
 		this.closedByClick = closedByClick;
 		if (inp_mode_entity.checked) penEntity = this.entity.length > this.hovered ? this.entity[this.hovered] : this.entity[0];
-		else pen = this.tiles.length > this.hovered ? this.tiles[this.hovered] : this.tiles[0];
+		else pen.setPen(this.tiles.length > this.hovered ? this.tiles[this.hovered] : this.tiles[0]);
 	}
-	public addTile(tileid: Tiles)
+	public addTile(tileid: string)
 	{
 		if (this.tiles.indexOf(tileid) != -1) return;
 		this.tiles[this.addtileI] = tileid;
@@ -736,7 +736,80 @@ class FastPalette
 		this.addentityI = (this.addentityI + 1) % this.imgs.length;
 	}
 }
+class PenTiles
+{
+	pen = "sand1"
+	group: TileGroup | null = null;
+	groupTiles: string[] = ["sand1"];
+	constructor()
+	{
+		div_palette_group.addEventListener("click", () =>
+		{
+			div_palette_group.classList.remove("fast-palette-visible");
+		});
+	}
+	public setPen(tile: string)
+	{
+		this.group = null;
+		this.pen = tile;
+		fastPalette.addTile(this.pen);
+	}
+	public getTile()
+	{
+		if (!this.group?.random) return this.pen;
+		if (this.groupTiles.length == 0) return this.group.key;
+		return this.groupTiles[Math.floor(Math.random() * this.groupTiles.length)];
+	}
+	public openGroup(group?: TileGroup)
+	{
+		if (group == undefined)
+		{
+			if (this.group)
+			{
+				div_palette_group.classList.add("fast-palette-visible");
+			}
+			return;
+		}
+		this.group = group;
+		if (group.random)
+		{
+			this.groupTiles = []
+			for (const k in tileGroups[group.key].tiles) this.groupTiles.push(k)
+			return;
+		}
+		div_palette_group.classList.add("fast-palette-visible");
+		div_palette_group_imgs.innerHTML = "";
+		for (const k in tileGroups[group.key].tiles)
+		{
+			const key = k;
+			function addImg()
+			{
+				if (inp_mode_entity.checked) return;
+				const img = tileImages[key];
+				if (img)
+				{
+					const imgNew = document.createElement("img");
+					imgNew.src = img.src
+					imgNew.title = key;
+					div_palette_group_imgs.appendChild(imgNew);
+					imgNew.addEventListener("click", () =>
+					{
+						pen.setPen(key);
+						div_palette_group.classList.remove("fast-palette-visible");
+					});
+				}
+				else setTimeout(addImg, 100);
+			}
+			addImg();
+		}
+	}
+	public close()
+	{
 
+	}
+}
+
+const pen = new PenTiles();
 let world = new World(0, 0);
 const minimap = new MiniMap();
 const fastPalette = new FastPalette();
@@ -981,6 +1054,7 @@ window.addEventListener("keypress", e =>
 		case "KeyS": inp_mode_pen.checked = true; break;
 		case "KeyA": inp_mode_view.checked = !inp_mode_view.checked; break;
 		case "KeyD": inp_mode_entity.checked = !inp_mode_entity.checked; setPalete(); break;
+		case "KeyE": pen.openGroup(); break;
 		// case "KeyC": endEntityMove()?.center(); break;
 	}
 });
@@ -1017,7 +1091,7 @@ function loadImages()
 	}
 	for (const k in tileIds)
 	{
-		const key = <Tiles>k;
+		const key = k;
 		const path = tileIds[key];
 		tileImages[key] = undefined;
 		loadImage("../../src/data/images/tiles/" + path, img => tileImages[key] = img);
@@ -1113,9 +1187,9 @@ function setPalete()
 	else
 	{
 		selectedEntity = null;
-		for (const k in tileImages)
+		for (const k of tileList)
 		{
-			const key = <keyof TileImages>k;
+			const key = k.key;
 			function addImg()
 			{
 				if (inp_mode_entity.checked) return;
@@ -1126,8 +1200,14 @@ function setPalete()
 					div_palette.appendChild(img);
 					img.addEventListener("click", () =>
 					{
-						pen = key;
-						fastPalette.addTile(pen);
+						if (k.group)
+						{
+							pen.openGroup(k);
+						}
+						else
+						{
+							pen.setPen(key);
+						}
 					});
 				}
 				else setTimeout(addImg, 100);
@@ -1214,9 +1294,8 @@ function loop()
 
 type TileImages =
 {
-	[Property in Tiles]?: HTMLImageElement;
+	[Property in string]?: HTMLImageElement;
 }
-type Tiles = keyof typeof tileIds;
 
 interface WorldData
 {
@@ -1226,7 +1305,7 @@ interface WorldData
 }
 interface ViewData
 {
-	tiles: Tiles[][];
+	tiles: string[][];
 	entity: EntitySaveData[];
 }
 interface EntitySaveData

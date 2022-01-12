@@ -246,3 +246,39 @@ canvas {
 	image-rendering: pixelated;
 	border-radius: 40%;
 }
+
+.palette-group {
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	display: none;
+	width: 100%;
+	height: 100%;
+	justify-content: center;
+	align-items: center;
+}
+.fast-palette-visible {
+	display: flex;
+}
+.palette-group-imgs {
+	position: relative;
+	max-width: min(500px, 100%);
+	/* height: 300px; */
+	background-color: rgba(0, 0, 0, 0.4);
+	border-radius: 1em;
+	overflow: hidden;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	padding: 0.5em;
+}
+.palette-group-imgs img {
+	width: 65px;
+	height: 65px;
+	image-rendering: pixelated;
+	border-radius: 0.3em;
+	margin: 0.2em;
+}
+.palette-group-imgs img:hover {
+	background-color: rgba(255, 255, 255, 0.2);
+}
