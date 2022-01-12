@@ -46,7 +46,7 @@ const camera_speed = () =>
 };
 let penEntity: typeof Entity | null = null;
 let selectedEntity: Entity | null = null;
-let worldFileName = "worldData.json";
+let worldFileName = localStorage.getItem("WorldEditor-world-filename") || "worldData.json";
 let mousePos = { x: 0, y: 0 };
 
 
@@ -853,6 +853,7 @@ inp_load.addEventListener("input", async () =>
 	}
 	const file = curFiles[0];
 	worldFileName = file.name;
+	localStorage.setItem("WorldEditor-world-filename", worldFileName);
 	const data = await file.text();
 	World.loadData(data);
 });
