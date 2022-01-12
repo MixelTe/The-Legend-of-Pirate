@@ -748,9 +748,9 @@ class PenTiles
 			div_palette_group.classList.remove("fast-palette-visible");
 		});
 	}
-	public setPen(tile: string)
+	public setPen(tile: string, resetGroup=true)
 	{
-		this.group = null;
+		if (resetGroup) this.group = null;
 		this.pen = tile;
 		fastPalette.addTile(this.pen);
 	}
@@ -794,7 +794,7 @@ class PenTiles
 					div_palette_group_imgs.appendChild(imgNew);
 					imgNew.addEventListener("click", () =>
 					{
-						pen.setPen(key);
+						pen.setPen(key, false);
 						div_palette_group.classList.remove("fast-palette-visible");
 					});
 				}
