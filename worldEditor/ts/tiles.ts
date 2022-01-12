@@ -1,7 +1,6 @@
 const tileIds: TileIds = {
 	water_deep: "water_deep.png",
 	water_low: "water_low.png",
-	water_sand: "water_sand.png",
 }
 const tileList: TileGroup[] = []
 
@@ -41,6 +40,31 @@ const tileGroups: { [_: string]: { tiles: TileIds, random: boolean } } = {
 			DigB: "DigB.png",
 			S: "S.png",
 			W: "W.png",
+		},
+		random: false
+	},
+	water_sand_t: {
+		tiles: {
+			water_sand_t: "water_sand_t.png",
+			water_sand_r: "water_sand_r.png",
+			water_sand_b: "water_sand_b.png",
+			water_sand_l: "water_sand_l.png",
+			water_sand_tl: "water_sand_tl.png",
+			water_sand_tr: "water_sand_tr.png",
+			water_sand_bl: "water_sand_bl.png",
+			water_sand_br: "water_sand_br.png",
+			water_sand_tbl: "water_sand_tbl.png",
+			water_sand_tbr: "water_sand_tbr.png",
+			water_sand_tlr: "water_sand_tlr.png",
+			water_sand_blr: "water_sand_blr.png",
+			water_sand_tl2: "water_sand_tl2.png",
+			water_sand_tr2: "water_sand_tr2.png",
+			water_sand_bl2: "water_sand_bl2.png",
+			water_sand_br2: "water_sand_br2.png",
+			water_sand_tl_tl: "water_sand_tl_tl.png",
+			water_sand_tl_tr: "water_sand_tl_tr.png",
+			water_sand_tr_br: "water_sand_tr_br.png",
+			water_sand_bl_br: "water_sand_bl_br.png",
 		},
 		random: false
 	},
