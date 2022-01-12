@@ -93,7 +93,7 @@ class EntityPirate2(EntityAlive):
 
     def __init__(self, screen, data: dict = None):
         super().__init__(screen, data)
-        self.image = EntityTrainer.image
+        self.image = EntityPirate2.image
         self.immortal = True
         self.width = 0.75
         self.height = 0.7

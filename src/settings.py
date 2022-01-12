@@ -22,7 +22,7 @@ class Settings:
     tileSize = 1
     drawHitboxes = True
     drawNoneImgs = False
-    moveScreenOnNumpad = False
+    moveScreenOnNumpad = True
 
 
 Settings.tileSize = Settings.width / Settings.screen_width
