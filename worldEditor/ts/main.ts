@@ -48,6 +48,7 @@ let penEntity: typeof Entity | null = null;
 let selectedEntity: Entity | null = null;
 let worldFileName = localStorage.getItem("WorldEditor-world-filename") || "worldData.json";
 let mousePos = { x: 0, y: 0 };
+let mousePosCanvas = { x: 0, y: 0 };
 
 
 class World
@@ -873,20 +874,14 @@ canvas.addEventListener("wheel", e =>
 	if (e.ctrlKey)
 	{
 		e.preventDefault();
+		const x = (mousePosCanvas.x - camera_x) / TileSize;
+		const y = (mousePosCanvas.y - camera_y) / TileSize;
 		const v = 1.4
-		if (e.deltaY > 0)
-		{
-			TileSize /= v;
-			camera_x /= v;
-			camera_y /= v;
-		}
-		else
-		{
-			TileSize *= v;
-			camera_x *= v;
-			camera_y *= v;
-		}
+		if (e.deltaY > 0) TileSize /= v;
+		else TileSize *= v;
 		TileSize = Math.max(Math.round(TileSize), 2);
+		camera_x = -x * TileSize + mousePosCanvas.x;
+		camera_y = -y * TileSize + mousePosCanvas.y;
 		inp_tilesize.valueAsNumber = TileSize;
 		normalizeCamera();
 	}
@@ -980,6 +975,8 @@ canvas.addEventListener("mousedown", e =>
 });
 canvas.addEventListener("mousemove", e =>
 {
+	mousePosCanvas.x = e.offsetX;
+	mousePosCanvas.y = e.offsetY;
 	setCursor("none")
 	if (inp_mode_view.checked)
 	{
