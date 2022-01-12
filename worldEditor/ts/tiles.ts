@@ -68,6 +68,31 @@ const tileGroups: { [_: string]: { tiles: TileIds, random: boolean } } = {
 		},
 		random: false
 	},
+	water_deep_sand_t: {
+		tiles: {
+			water_deep_sand_t: "water_deep_sand_t.png",
+			water_deep_sand_r: "water_deep_sand_r.png",
+			water_deep_sand_b: "water_deep_sand_b.png",
+			water_deep_sand_l: "water_deep_sand_l.png",
+			water_deep_sand_tl: "water_deep_sand_tl.png",
+			water_deep_sand_tr: "water_deep_sand_tr.png",
+			water_deep_sand_bl: "water_deep_sand_bl.png",
+			water_deep_sand_br: "water_deep_sand_br.png",
+			water_deep_sand_tbl: "water_deep_sand_tbl.png",
+			water_deep_sand_tbr: "water_deep_sand_tbr.png",
+			water_deep_sand_tlr: "water_deep_sand_tlr.png",
+			water_deep_sand_blr: "water_deep_sand_blr.png",
+			water_deep_sand_tl2: "water_deep_sand_tl2.png",
+			water_deep_sand_tr2: "water_deep_sand_tr2.png",
+			water_deep_sand_bl2: "water_deep_sand_bl2.png",
+			water_deep_sand_br2: "water_deep_sand_br2.png",
+			water_deep_sand_tl_tl: "water_deep_sand_tl_tl.png",
+			water_deep_sand_tl_tr: "water_deep_sand_tl_tr.png",
+			water_deep_sand_tr_br: "water_deep_sand_tr_br.png",
+			water_deep_sand_bl_br: "water_deep_sand_bl_br.png",
+		},
+		random: false
+	},
 }
 
 for (const key in tileIds) tileList.push({ key, group: false, random: false });
