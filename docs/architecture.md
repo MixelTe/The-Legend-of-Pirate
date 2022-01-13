@@ -230,6 +230,8 @@
 		12. get_tile(dx: int = 0, dy: int = 0, pos: tuple[float, float] = (0.5, 0.5)) -> Tile | None - клетка относительно сущности. pos - позиция точки проверки в сущности, где 0 - левый верхний угол, 1 - правый нижний
 		13. get_entities(rect: tuple[float, float, float, float]) -> list\[Entity] - сущности попадающие в область
 		14. get_entitiesD(rect: tuple[float, float, float, float]) -> list\[Entity] - сущности попадающие в область, относительную сущности
+		15. is_inRect(rect: tuple[float, float, float, float]) -> проверка попадает ли эта сущность в область
+		16. is_inRectD(rect: tuple[float, float, float, float], entity: Entity) -> проверка попадает ли сущность в область, относительную этой
 ---
 16. ## Класс EntityAlive(Entity)
 	* Поля:
