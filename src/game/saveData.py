@@ -6,13 +6,12 @@ class SaveData:
     def __init__(self, save: int):
         self.saveFile = save
         self.saveVersion = "1"
-        self.checkPointX = 8
-        self.checkPointY = 4
-        # self.world = "start"
-        self.world = "test"  # Temp
-        self.screen = (0, 0)
+        self.checkPointX = 3
+        self.checkPointY = 3
+        self.world = "island"
+        self.screen = (1, 4)
         self.coins = 0
-        self.health = 3
+        self.health = 6
         self.bullets = 0
         self.time = 0
         self.tags: list[str] = []
