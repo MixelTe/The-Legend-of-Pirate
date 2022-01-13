@@ -324,17 +324,10 @@ class EntityAlive(Entity):
 
 
 def loadEntities():
-    import importlib.util
-    from os import listdir
-    from os.path import isfile, join
-    path = join("game", "entities")
-    files = (f for f in listdir(path) if isfile(join(path, f)))
-    for file in files:
-        if (not file.endswith(".py")):
-            continue
-        spec = importlib.util.spec_from_file_location(file, join(path, file))
-        foo = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(foo)
+    import game.entities.entities
+    import game.entities.shovel
+    import game.entities.crab
+    import game.entities.coin
 
 
 loadEntities()
