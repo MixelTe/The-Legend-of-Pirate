@@ -2,10 +2,8 @@ from ntpath import join
 
 
 class Settings:
-    # width = 1920
-    # height = 1080
-    width = 720
-    height = 405
+    width = 720 # 1920
+    height = 405 # 1080
     fps = 60
     overlay_height = 184
     folder_data = "data"
