@@ -242,7 +242,7 @@ class Entity:
         for entity in self.screen.entities:
             if (entity == self):
                 continue
-            if (entity.is_inRect(rectNew)):
+            if (entity.is_inRect(rectSelf)):
                 entities.append(entity)
         return entities
 
