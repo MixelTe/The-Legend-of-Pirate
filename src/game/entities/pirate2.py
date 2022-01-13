@@ -17,7 +17,7 @@ class EntityPirate2(EntityAlive):
         self.width = 0.75
         self.height = 0.7
         self.talkZone = (-1, -1, 2, 2)
-        self.speech = "Привет, Пират! Рад тебя видеть! Помоги открыть дверь - принеси ядро для пушки."
+        self.speech = ""
 
     def applyData(self, data: dict):
         super().applyData(data)
