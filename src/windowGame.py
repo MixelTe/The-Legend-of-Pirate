@@ -58,6 +58,8 @@ class WindowGame(Window):
     def update(self):
         exitNow = self.overlay.update()
         if (exitNow):
+            self.saveData.health = self.player.health
+            self.saveData.time += datetime.now() - self.time
             self.saveData.save()
             from windowStart import WindowStart
             return WindowStart()
@@ -93,7 +95,8 @@ class WindowGame(Window):
                 self.screenAnim = ScreenAnimationBlur(goTo.image, self.screen.draw())
 
         if (self.player.health <= 0):
-            self.saveData.health = SaveData(0).health
+            self.saveData.health = SaveData(-1).health
+            self.saveData.time += datetime.now() - self.time
             self.saveData.save()
             from windowEnd import WindowEnd
             return WindowEnd(self.save)

@@ -30,7 +30,7 @@ class EntityPlayer(EntityAlive):
         self.saveData = saveData
         self.buttonPressed = []
         # нажаты ли кнопки движения в направлениях: вверх, вправо, вниз, влево (для корректного изменения направления движения)
-        self.health = 6
+        self.health = saveData.health
         self.group = EntityGroups.playerSelf
         self.weapon: Entity = None
         self.message = ""
