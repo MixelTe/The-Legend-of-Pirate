@@ -273,6 +273,10 @@ class EntityCoolName(Entity):
 
 * self.remove() - удалить эту сущность
 
+* self.is_inRect(rect: tuple[float, float, float, float]) - проверка попадает ли эта сущность в область
+
+* self.is_inRectD(rect: tuple[float, float, float, float], entity: Entity) - проверка попадает ли сущность в область, относительную этой
+
 * self.screen.addEntity(entity: Entity) - добавить сущность в мир
 
 * self.screen.removeEntity(entity: Entity) - удалить сущность из мира
