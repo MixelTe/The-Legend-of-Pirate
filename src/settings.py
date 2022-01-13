@@ -1,3 +1,4 @@
+import sys
 from ntpath import join
 
 
@@ -22,6 +23,13 @@ class Settings:
     drawNoneImgs = False
     moveScreenOnNumpad = True
 
+
+try:
+    # Если программа запущена как exe файл, то данные храняться по такому пути
+    newPath = join(sys._MEIPASS, Settings.folder_data)
+    Settings.folder_data = newPath
+except Exception:
+    pass
 
 Settings.tileSize = Settings.width / Settings.screen_width
 Settings.overlay_height = Settings.height - Settings.screen_height * Settings.tileSize

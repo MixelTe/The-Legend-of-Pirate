@@ -18,7 +18,7 @@ class SaveData:
         self.tags: list[str] = []
 
     def load(self):
-        path = joinPath(Settings.folder_data, Settings.folder_saves, f"{self.saveFile}.txt")
+        path = joinPath(Settings.folder_saves, f"{self.saveFile}.txt")
         if (not os.path.isfile(path)):
             return self
         with open(path, "r", encoding="utf-8") as f:
@@ -39,7 +39,9 @@ class SaveData:
         return self
 
     def save(self):
-        path = joinPath(Settings.folder_data, Settings.folder_saves, f"{self.saveFile}.txt")
+        path = joinPath(Settings.folder_saves, f"{self.saveFile}.txt")
+        if (not os.path.isdir(Settings.folder_saves)):
+            os.makedirs(Settings.folder_saves)
         with open(path, "w", encoding="utf-8") as f:
             f.write(f"{self.saveVersion}\n")
             f.write(f"{self.checkPointX} {self.checkPointY}\n")
