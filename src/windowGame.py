@@ -59,7 +59,7 @@ class WindowGame(Window):
         exitNow = self.overlay.update()
         if (exitNow):
             self.saveData.health = self.player.health
-            self.saveData.time += datetime.now() - self.time
+            self.saveData.time += int((datetime.now() - self.time).total_seconds())
             self.saveData.save()
             from windowStart import WindowStart
             return WindowStart()
