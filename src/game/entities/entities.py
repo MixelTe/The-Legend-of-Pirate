@@ -86,19 +86,3 @@ class EntityTrainer(EntityAlive):
 
 
 Entity.registerEntity("trainer", EntityTrainer)
-
-
-class EntityPirate2(EntityAlive):
-    image = load_entityStay("pirate2", 11, 22, 0.75, 1.5)
-
-    def __init__(self, screen, data: dict = None):
-        super().__init__(screen, data)
-        self.image = EntityPirate2.image
-        self.immortal = True
-        self.width = 0.75
-        self.height = 0.7
-        self.imagePos = (0, -0.8)
-        self.group = EntityGroups.enemy
-
-
-Entity.registerEntity("pirate2", EntityPirate2)
