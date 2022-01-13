@@ -242,8 +242,7 @@ class Entity:
         for entity in self.screen.entities:
             if (entity == self):
                 continue
-            rect = entity.get_rect()
-            if (rectIntersection(rectSelf, rect)):
+            if (entity.is_inRect(rectNew)):
                 entities.append(entity)
         return entities
 
@@ -254,10 +253,17 @@ class Entity:
         for entity in self.screen.entities:
             if (entity == self):
                 continue
-            rect = entity.get_rect()
-            if (rectIntersection(rectNew, rect)):
+            if (entity.is_inRect(rectNew)):
                 entities.append(entity)
         return entities
+
+    def is_inRect(self, rect: tuple[float, float, float, float]):
+        return rectIntersection(self.get_rect(), rect)
+
+    def is_inRectD(self, rect: tuple[float, float, float, float], entity: Entity):
+        rectSelf = self.get_rect()
+        rectNew = (rectSelf[0] + rect[0], rectSelf[1] + rect[1], rect[2], rect[3])
+        return entity.is_inRect(rectNew)
 
 
 class EntityGroups:
@@ -328,6 +334,7 @@ def loadEntities():
     import game.entities.shovel
     import game.entities.crab
     import game.entities.coin
+    import game.entities.pirate2
 
 
 loadEntities()
