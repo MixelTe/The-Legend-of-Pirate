@@ -256,7 +256,7 @@ class EntityPlayer(EntityAlive):
         else:
             tile = self.get_tile(pos=(0.5, 0.7))
             if (tile and "water" in tile.tags):
-                self.state = "swiming"
+                self.state = "swim"
                 anim = "swim" if self.speedX == 0 and self.speedY == 0 else "swiming"
                 self.animator.setAnimation(anim + self.direction)
             else:
