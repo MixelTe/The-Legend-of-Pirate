@@ -11,13 +11,13 @@ animatorData = AnimatorData("pirate2", [
 
 class EntityPirate2(EntityAlive):
     def __init__(self, screen, data: dict = None):
+        self.speech = ""
         super().__init__(screen, data)
         self.animator = Animator(animatorData, "stay")
         self.immortal = True
         self.width = 0.75
         self.height = 0.7
         self.talkZone = (-1, -1, 2, 2)
-        self.speech = ""
 
     def applyData(self, data: dict):
         super().applyData(data)
