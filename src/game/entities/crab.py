@@ -1,26 +1,28 @@
 from game.animator import Animator, AnimatorData
 from game.entity import EntityAlive, EntityGroups
+from random import randint
 
 
 animatorData = AnimatorData("crab", [
     ("stay.png", 0, (20, 11), (0, 0, 1, 0.55)),
     ("attack.png", 150, (20, 11), (0, 0, 1, 0.55)),
-    ("agr.png", 150, (20, 21), (0, 0, 1, 1.5)),
-    ("sleep.png", 150, (20, 21), (0, 0, 1, 1.5)),
+    ("agr.png", 150, (20, 21), (0, -0.5, 1, 1.05)),
+    ("sleep.png", 800, (20, 21), (0, -0.5, 1, 1.05)),
 ])
 
 
 class EntityCrab(EntityAlive):
     def __init__(self, screen, data: dict = None):
         super().__init__(screen, data)
-        self.animator = Animator(animatorData, "attack")
+        self.animator = Animator(animatorData, "sleep")
+        self.animator.setAnimation("sleep", randint(0, 3))
         self.group = EntityGroups.enemy
         self.strength = 1
         self.width = 1
         self.height = 0.55
         self.speed = 0.04
-        self.speedX = self.speed
-        self.speedY = self.speed
+        # self.speedX = self.speed
+        # self.speedY = self.speed
 
     def update(self):
         collisions = super().update()
