@@ -294,6 +294,7 @@
 		* weapon: Entity | None - оружие при ударе
 		* message: str - сообщение, которое выведится игроку
 		* saveData: SaveData
+		* action: (() -> None) | None - функция, которая будет вызвана, при нажатии кнопки действия
 	* Методы:
 		* init(saveData: SaveData) - присваивает None в screen
 		* update() - пропускается если screen == None
