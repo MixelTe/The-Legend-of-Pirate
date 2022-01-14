@@ -306,4 +306,6 @@ class EntityCoolName(Entity):
 
 * self.screen.player - игрок (EntityPlayer)
 
-* **W** self.screen.player.message - сообщение, которое выводиться игроку
+* **W** self.screen.player.message - сообщение, которое выводится игроку
+
+* **W** self.screen.player.action - функция, которая будет вызвана, при нажатии кнопки действия. Например, когда игрок подходит к предмету торговца, в это поле присваиватся функция покупки.
