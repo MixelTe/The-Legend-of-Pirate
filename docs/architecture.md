@@ -315,6 +315,7 @@
 		* frame: int - текущий кадр
 		* counter: int - счетчик для переключения кадров с определённой скоростью
 		* lastState: tuple[bool, bool] - последнее значение, возвращенное методом update
+		* damageAnimFinished: bool - закончилась ли анимация мигания
 	* Методы:
 		* init(data: AnimatorData, anim: str)
 		* update() -> tuple[bool, bool] - прибавляет счётчик, и переключает кадр, если прошло достаточно времени. После последнего кадра идёт первый.
@@ -325,6 +326,7 @@
 		* getImage() -> tuple[pygame.Surface, tuple[int, int]] - возвращает текущий кадр и его позицию относительно сущности
 		* setAnimation(animation: str, frame: int=None) - устанавливает текущую анимацию по её названию, устанавливает кадр в 0 если анимация изменилась, или frame не None
 		* curAnimation() -> str - название текущей анимации
+		* startDamageAnim() - запустить анимацию мигания на время Settings.demageDelay
 ## Класс AnimatorData
 * Хранит картинки для аниматора сущностей
 * Поля:
