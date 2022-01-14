@@ -288,6 +288,7 @@ class EntityAlive(Entity):
         self.immortal = False
         self.removeOnDeath = True
         self.damageAnimCounter = 0
+        self.DamageDelay = Settings.damageDelay
 
     def takeDamage(self, damage: int):
         if (self.immortal or damage == 0):
@@ -295,7 +296,7 @@ class EntityAlive(Entity):
         if (self.alive and self.animator):
             self.animator.startDamageAnim()
         if (self.damageDelay <= 0):
-            self.damageDelay = Settings.demageDelay
+            self.damageDelay = self.DamageDelay
             self.health -= damage
             if (self.health <= 0):
                 self.alive = False

@@ -39,12 +39,14 @@ class Animator:
         self.damageAnim = False
         self.damageAnimFinished = False
         self.damageAnimCounter = 0
+        self.damageAnimCount = 1
+        self.DamageDelay = Settings.damageDelay
 
     def update(self) -> tuple[bool, bool]:
         self.counter += 1000 / Settings.fps
         if (self.damageAnim):
             self.damageAnimCounter = self.damageAnimCounter + 1000 // Settings.fps
-            if (self.damageAnimCounter >= Settings.demageDelay):
+            if (self.damageAnimCounter >= self.DamageDelay):
                 self.damageAnimCounter = 0
                 self.damageAnim = False
                 self.damageAnimFinished = True
@@ -64,7 +66,7 @@ class Animator:
         imgD = self.data.get_image(self.anim, self.frame)
         if (not self.damageAnim):
             return imgD
-        if (self.damageAnimCounter % (Settings.demageDelay // 2) < Settings.demageDelay // 4):
+        if (self.damageAnimCounter % (self.DamageDelay // self.damageAnimCount) < self.DamageDelay // (self.damageAnimCount * 2)):
             return imgD
         img = imgD[0].copy()
         v = 128

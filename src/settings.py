@@ -16,7 +16,8 @@ class Settings:
     path_font = None
     screen_width = 15
     screen_height = 7
-    demageDelay = 400
+    damageDelay = 400
+    damageDelayPlayer = 2000
     fullscreen = False
     tileSize = 1
     drawHitboxes = False
