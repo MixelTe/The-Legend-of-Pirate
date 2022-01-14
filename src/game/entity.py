@@ -280,6 +280,7 @@ class EntityAlive(Entity):
         super().__init__(screen, data)
         self.group = EntityGroups.neutral
         self.health = 1
+        self.healthMax = 1
         self.damageDelay = 0  # при вызове update уменьшается на 1000 / Settings.fps
         self.strength = 0
         self.alive = True
@@ -294,6 +295,10 @@ class EntityAlive(Entity):
             if (self.health <= 0):
                 self.alive = False
                 self.hidden = True
+
+    def heal(self, v: int):
+        self.health += v
+        self.health = min(self.health, self.healthMax)
 
     def update(self):
         collisions = super().update()

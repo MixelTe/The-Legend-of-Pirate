@@ -38,6 +38,7 @@ class EntityPlayer(EntityAlive):
         self.buttonPressed = []
         # нажаты ли кнопки движения в направлениях: вверх, вправо, вниз, влево (для корректного изменения направления движения)
         self.health = saveData.health
+        self.healthMax = 6
         self.group = EntityGroups.playerSelf
         self.weapon: Entity = None
         self.message = ""
@@ -278,7 +279,3 @@ class EntityPlayer(EntityAlive):
 
     def preUpdate(self):
         self.message = ""
-
-    def heal(self, v: int):
-        self.health += v
-        self.health = min(int(self.health), 6)
