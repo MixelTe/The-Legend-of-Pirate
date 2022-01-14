@@ -36,9 +36,16 @@ class Animator:
         self.frame = 0  # текущий кадр
         self.counter = 0  # счетчик для переключения кадров с определённой скоростью
         self.lastState = (False, False)
+        self.damageAnim = False
+        self.damageAnimCounter = 0
 
     def update(self) -> tuple[bool, bool]:
         self.counter += 1000 / Settings.fps
+        if (self.damageAnim):
+            self.damageAnimCounter = self.damageAnimCounter + 1000 // Settings.fps
+            if (self.damageAnimCounter >= Settings.demageDelay):
+                self.damageAnimCounter = 0
+                self.damageAnim = False
         if (self.counter > self.data.get_speed(self.anim)):
             self.counter = 0
             self.frame += 1
@@ -52,7 +59,15 @@ class Animator:
         return self.lastState
 
     def getImage(self) -> tuple[pygame.Surface, tuple[int, int]]:
-        return self.data.get_image(self.anim, self.frame)
+        imgD = self.data.get_image(self.anim, self.frame)
+        if (not self.damageAnim):
+            return imgD
+        if (self.damageAnimCounter % (Settings.demageDelay // 2) < Settings.demageDelay // 4):
+            return imgD
+        img = imgD[0].copy()
+        v = 128
+        img.fill((v, v, v), special_flags=pygame.BLEND_RGB_ADD)
+        return (img, imgD[1])
 
     def setAnimation(self, animation: str, frame: int = None):
         if (animation not in self.data.frames):
@@ -68,3 +83,6 @@ class Animator:
 
     def curAnimation(self) -> str:
         return self.anim
+
+    def startDamageAnim(self):
+        self.damageAnim = True

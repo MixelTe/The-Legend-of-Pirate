@@ -286,10 +286,13 @@ class EntityAlive(Entity):
         self.strength = 0
         self.alive = True
         self.immortal = False
+        self.damageAnimCounter = 0
 
     def takeDamage(self, damage: int):
         if (self.immortal or damage == 0):
             return
+        if (self.alive and self.animator):
+            self.animator.startDamageAnim()
         if (self.damageDelay <= 0):
             self.damageDelay = Settings.demageDelay
             self.health -= damage
