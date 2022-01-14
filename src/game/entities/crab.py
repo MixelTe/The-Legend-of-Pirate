@@ -1,28 +1,34 @@
-import pygame
-from functions import load_entity
+from game.animator import Animator, AnimatorData
 from game.entity import EntityAlive, EntityGroups
-from settings import Settings
 
 
-image = load_entity("stay.png", "crab")
-image = pygame.transform.scale(image, (Settings.tileSize * 1, Settings.tileSize * 0.55))
+animatorData = AnimatorData("crab", [
+    ("stay.png", 0, (20, 11), (0, 0, 1, 0.55)),
+    ("attack.png", 150, (20, 11), (0, 0, 1, 0.55)),
+    ("agr.png", 150, (20, 21), (0, 0, 1, 1.5)),
+    ("sleep.png", 150, (20, 21), (0, 0, 1, 1.5)),
+])
 
 
 class EntityCrab(EntityAlive):
     def __init__(self, screen, data: dict = None):
         super().__init__(screen, data)
+        self.animator = Animator(animatorData, "attack")
         self.group = EntityGroups.enemy
         self.strength = 1
         self.width = 1
         self.height = 0.55
-        # self.speed = 0.04
-        # self.speedX = self.speed
-        # self.speedY = self.speed
-        self.image = image
+        self.speed = 0.04
+        self.speedX = self.speed
+        self.speedY = self.speed
 
     def update(self):
         collisions = super().update()
-        return
+        if (not self.alive):
+            self.animator.setAnimation("stay")
+            self.speedX = 0
+            self.speedY = 0
+            return
         for rect, collision in collisions:
             pos = self.get_relPos(rect)
             if (pos[0] > 0):
