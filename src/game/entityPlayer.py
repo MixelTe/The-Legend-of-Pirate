@@ -55,7 +55,7 @@ class EntityPlayer(EntityAlive):
         self.action = None
         self.DamageDelay = Settings.damageDelayPlayer
         self.animator.DamageDelay = Settings.damageDelayPlayer
-        self.animator.damageAnimCount = 5
+        self.animator.damageAnimCount = 4
 
     def onKeyDown(self, key):
         if (key == pygame.K_w or key == pygame.K_UP):

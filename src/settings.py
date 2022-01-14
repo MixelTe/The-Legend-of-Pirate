@@ -17,7 +17,7 @@ class Settings:
     screen_width = 15
     screen_height = 7
     damageDelay = 400
-    damageDelayPlayer = 2000
+    damageDelayPlayer = 1600
     fullscreen = False
     tileSize = 1
     drawHitboxes = False
