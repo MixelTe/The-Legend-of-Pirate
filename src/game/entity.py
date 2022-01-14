@@ -286,6 +286,7 @@ class EntityAlive(Entity):
         self.strength = 0
         self.alive = True
         self.immortal = False
+        self.removeOnDeath = True
         self.damageAnimCounter = 0
 
     def takeDamage(self, damage: int):
@@ -307,6 +308,12 @@ class EntityAlive(Entity):
     def update(self):
         collisions = super().update()
         if (not self.alive):
+            if (self.removeOnDeath):
+                if (self.animator):
+                    if (self.animator.damageAnimFinished or not self.animator.damageAnim):
+                        self.remove()
+                else:
+                    self.remove()
             return collisions
         if (self.damageDelay > 0):
             self.damageDelay -= 1000 / Settings.fps

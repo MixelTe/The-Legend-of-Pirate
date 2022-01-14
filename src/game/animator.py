@@ -37,6 +37,7 @@ class Animator:
         self.counter = 0  # счетчик для переключения кадров с определённой скоростью
         self.lastState = (False, False)
         self.damageAnim = False
+        self.damageAnimFinished = False
         self.damageAnimCounter = 0
 
     def update(self) -> tuple[bool, bool]:
@@ -46,6 +47,7 @@ class Animator:
             if (self.damageAnimCounter >= Settings.demageDelay):
                 self.damageAnimCounter = 0
                 self.damageAnim = False
+                self.damageAnimFinished = True
         if (self.counter > self.data.get_speed(self.anim)):
             self.counter = 0
             self.frame += 1
@@ -86,3 +88,4 @@ class Animator:
 
     def startDamageAnim(self):
         self.damageAnim = True
+        self.damageAnimFinished = False
