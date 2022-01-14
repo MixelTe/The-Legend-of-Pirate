@@ -52,6 +52,7 @@ class EntityPlayer(EntityAlive):
         self.direction = "S"
         self.shovel = None
         self.state = "normal"
+        self.action = None
 
     def onKeyDown(self, key):
         if (key == pygame.K_w or key == pygame.K_UP):
@@ -66,6 +67,9 @@ class EntityPlayer(EntityAlive):
             self.attack()
         if (key == pygame.K_e):
             self.dig()
+        if (key == pygame.K_LSHIFT):
+            if (self.action):
+                self.action()
 
         if (Settings.moveScreenOnNumpad):
             if (key == pygame.K_KP_4):
@@ -279,3 +283,4 @@ class EntityPlayer(EntityAlive):
 
     def preUpdate(self):
         self.message = ""
+        self.action = None

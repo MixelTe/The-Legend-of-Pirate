@@ -10,6 +10,7 @@ font = pygame.font.Font(Settings.path_font, int(Settings.tileSize * 0.4) + 1)
 class EntityMarket(Entity):
     def __init__(self, screen, data: dict = None):
         self.item = None
+        self.itemId = None
         self.priceImg = None
         self.price = 0
         super().__init__(screen, data)
@@ -25,10 +26,11 @@ class EntityMarket(Entity):
         if ("price" in data):
             self.price = data["price"]
         if ("item id" in data):
-            self.setItem(data["item id"])
+            self.itemId = data["item id"]
+            self.setItem()
 
-    def setItem(self, id: str):
-        self.item = Entity.createById(id, self.screen).image
+    def setItem(self):
+        self.item = Entity.createById(self.itemId, self.screen).image
         self.priceImg = renderText(font, 1, (Settings.tileSize, Settings.tileSize), str(self.price), "black")
 
     def draw(self, surface: pygame.Surface):
@@ -47,9 +49,20 @@ class EntityMarket(Entity):
 
     def update(self):
         super().update()
-        if (self.is_inRectD(self.buyZone, self.screen.player)):
-            pass
-            # self.screen.player.message = self.speech
+        if (self.item and self.is_inRectD(self.buyZone, self.screen.player)):
+            self.screen.player.action = self.buy
+
+    def buy(self):
+        if (self.screen.saveData.coins >= self.price):
+            for e in self.screen.entities:
+                if (e.id == "trader"):
+                    e.somethingBought()
+            self.screen.saveData.coins -= self.price
+            if (self.itemId == "coin"):
+                self.screen.saveData.coins += 1
+            elif (self.itemId == "heart"):
+                self.screen.player.heal(1)
+            self.item = None
 
 
 Entity.registerEntity("market", EntityMarket)

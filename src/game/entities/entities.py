@@ -46,20 +46,6 @@ class EntityPalm(Entity):
 Entity.registerEntity("palm", EntityPalm)
 
 
-class EntityTrader(Entity):
-    image = load_entityStay("trader", 14, 24, 0.75, 1.5)
-
-    def __init__(self, screen, data: dict = None):
-        super().__init__(screen, data)
-        self.image = EntityTrader.image
-        self.width = 0.75
-        self.height = 0.7
-        self.imagePos = (0, -0.8)
-
-
-Entity.registerEntity("trader", EntityTrader)
-
-
 class EntityCannon(Entity):
     image = load_entityStay("cannon", 11, 12, 1, 1)
 

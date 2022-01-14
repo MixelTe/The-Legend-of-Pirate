@@ -344,6 +344,7 @@ def loadEntities():
     import game.entities.pirate2
     import game.entities.heart
     import game.entities.market
+    import game.entities.trader
 
 
 loadEntities()
