@@ -48,6 +48,7 @@ class EntityCoolName(Entity):
         super().__init__(screen, data)
         self.свойство = значение
 ```
+
 Все настраиваемые поля обычной сущности (Entity):
 
 Поле   | Описание      | Значение       | По умолчанию
@@ -67,13 +68,14 @@ animator | анимации | Animator | None
 
 Дополнительные настраиваемые поля для живой сущности (EntityAlive):
 
-Поле     | Описание           | Значение | По умолчанию
----------|--------------------|----------|-------------
-health   | hp                 | int      | 1
-strength | сила удара         | int      | 0
-alive    | жива ли            | bool     | True
-immortal | игноририет ли урон | bool     | False
-group    | группа             |          | EntityGroups.neutral
+Поле      | Описание           | Значение | По умолчанию
+----------|--------------------|----------|-------------
+health    | hp                 | int      | 1
+healthMax | максимальное hp    | int      | 1
+strength  | сила удара         | int      | 0
+alive     | жива ли            | bool     | True
+immortal  | игноририет ли урон | bool     | False
+group     | группа             |          | EntityGroups.neutral
 
 alive - если False, то начинается анимация гибели, после которой сущность удаляется.
 
@@ -86,6 +88,7 @@ EntityGroups.player     | Все союзники    | enemy, neutral
 EntityGroups.enemy      | Все противники  | player, playerSelf
 EntityGroups.playerSelf | Игрок           |
 
+У каждой сущности есть поле id
 
 ## Картинка сущности
 Для добавления картинки её необходимо положить в папку **src/data/images/entities**
