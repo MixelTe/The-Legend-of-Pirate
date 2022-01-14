@@ -9,6 +9,7 @@ class EntityCactus(EntityAlive):
     def __init__(self, screen, data: dict = None):
         super().__init__(screen, data)
         self.image = EntityCactus.image
+        self.immortal = True
         self.width = 0.85
         self.height = 0.85
         self.strength = 1
