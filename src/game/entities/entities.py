@@ -84,6 +84,7 @@ class EntityDigPlace(Entity):
         self.hidden = True
         self.ghostE = True
         self.ghostT = True
+        self.drawPriority = 0
         self.width = 1
         self.height = 1
         self.imagePos = (random() * 0.5 + 0.2, random() * 0.5 + 0.2)

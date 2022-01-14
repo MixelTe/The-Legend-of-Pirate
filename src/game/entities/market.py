@@ -13,13 +13,18 @@ class EntityMarket(Entity):
         self.itemId = None
         self.priceImg = None
         self.price = 0
+        self.marketId = None
         super().__init__(screen, data)
         self.hidden = True
         self.ghostE = True
         self.ghostT = True
+        self.drawPriority = 0
         self.width = 1
         self.height = 1
         self.buyZone = (0, 0, 1, 2)
+        if (self.marketId is not None):
+            if (self.marketId in self.screen.saveData.tags):
+                self.item = None
 
     def applyData(self, data: dict):
         super().applyData(data)
@@ -28,6 +33,10 @@ class EntityMarket(Entity):
         if ("item id" in data):
             self.itemId = data["item id"]
             self.setItem()
+        if ("market id" in data):
+            id = data["market id"]
+            if (id is not None):
+                self.marketId = self.screen.world.name + "-market" + id
 
     def setItem(self):
         self.item = Entity.createById(self.itemId, self.screen).image
@@ -57,6 +66,8 @@ class EntityMarket(Entity):
             for e in self.screen.entities:
                 if (e.id == "trader"):
                     e.somethingBought()
+            if (self.marketId is not None):
+                self.screen.saveData.tags.append(self.marketId)
             self.screen.saveData.coins -= self.price
             if (self.itemId == "coin"):
                 self.screen.saveData.coins += 1
