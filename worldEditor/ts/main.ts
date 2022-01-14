@@ -260,7 +260,7 @@ class World
 		}
 	}
 
-	private getView(x: number, y: number)
+	public getView(x: number, y: number)
 	{
 		const width = TileSize * ViewWidth;
 		const height = TileSize * ViewHeight;
@@ -1060,6 +1060,7 @@ window.addEventListener("keypress", e =>
 });
 window.addEventListener("keydown", e =>
 {
+	if (Popup.Opened) return;
 	switch (e.code) {
 		case "ArrowUp": world.up(); break;
 		case "ArrowRight": world.right(); break;
@@ -1068,10 +1069,28 @@ window.addEventListener("keydown", e =>
 		case "KeyQ": fastPalette.open(); break;
 	}
 });
-window.addEventListener("keyup", e =>
+window.addEventListener("keyup", async e =>
 {
+	if (Popup.Opened) return;
 	switch (e.code) {
 		case "KeyQ": fastPalette.close(); break;
+		case "Delete":
+			{
+				if (!selectedEntity) return;
+				let popup = new Popup();
+				popup.focusOn = "cancel";
+				popup.content.appendChild(Div([], [], "Вы уверены, что хотите удалить сущность?"));
+				let r = await popup.openAsync();
+				if (!r) return
+				const { view } = world.getView(selectedEntity.x, selectedEntity.y);
+				if (!view) return;
+				const i = view.entity.indexOf(selectedEntity);
+				if (i >= 0)
+				{
+					view.entity.splice(i, 1);
+				}
+			}
+			break;
 	}
 });
 window.addEventListener("mousemove", e =>

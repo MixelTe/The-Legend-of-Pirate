@@ -225,7 +225,7 @@ function createNewEntityClass(name: string, imgUrl: string, width: number, heigh
 		protected static override readonly widthImg = widthImg;
 		protected static override readonly heightImg = heightImg;
 		public static override readonly className = name
-		public override objData: ObjData = objData;
+		public override objData: ObjData = JSON.parse(JSON.stringify(objData));
 	}
 	EntityDict[name] = Entity_New;
 }
