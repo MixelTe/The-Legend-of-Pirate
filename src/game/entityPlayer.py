@@ -6,7 +6,10 @@ from settings import Settings
 
 
 animatorData = AnimatorData("pirate", [
-    ("stay.png", 0, (12, 24), (0, -0.8, 0.75, 1.5)),
+    ("stayS.png", 0, (12, 24), (0, -0.8, 0.75, 1.5)),
+    ("stayW.png", 0, (12, 24), (0, -0.8, 0.75, 1.5)),
+    ("stayA.png", 0, (12, 18), (-0.15, -0.8, 1, 1.5)),
+    ("stayD.png", 0, (12, 18), (-0.05, -0.8, 1, 1.5)),
     ("goingS.png", 150, (12, 24), (0, -0.8, 0.75, 1.5)),
     ("goingW.png", 150, (12, 24), (0, -0.8, 0.75, 1.5)),
     ("goingA.png", 150, (12, 18), (-0.15, -0.8, 1, 1.5)),
@@ -16,11 +19,14 @@ animatorData = AnimatorData("pirate", [
     ("attackA.png", 100, (21, 18), (-0.9, -0.8, 1.75, 1.5)),
     ("attackD.png", 100, (21, 18), (0, -0.8, 1.75, 1.5)),
     ("dig.png", 200, (21, 18), (0, -0.8, 1.75, 1.5)),
-    ("swim.png", 150, (16, 24), (-0.1, -0.9, 1, 1.5)),
-    ("swimW.png", 150, (16, 24), (-0.1, -0.9, 1, 1.5)),
-    ("swimS.png", 150, (16, 24), (-0.1, -0.9, 1, 1.5)),
-    ("swimA.png", 150, (16, 18), (-0.2, -0.8, 1.33, 1.5)),
-    ("swimD.png", 150, (16, 18), (-0.2, -0.8, 1.33, 1.5)),
+    ("swimW.png", 0, (16, 24), (-0.1, -0.9, 1, 1.5)),
+    ("swimS.png", 0, (16, 24), (-0.1, -0.9, 1, 1.5)),
+    ("swimA.png", 0, (16, 18), (-0.2, -0.8, 1.33, 1.5)),
+    ("swimD.png", 0, (16, 18), (-0.2, -0.8, 1.33, 1.5)),
+    ("swimingW.png", 150, (16, 24), (-0.1, -0.9, 1, 1.5)),
+    ("swimingS.png", 150, (16, 24), (-0.1, -0.9, 1, 1.5)),
+    ("swimingA.png", 150, (16, 18), (-0.2, -0.8, 1.33, 1.5)),
+    ("swimingD.png", 150, (16, 18), (-0.2, -0.8, 1.33, 1.5)),
 ])
 
 
@@ -40,8 +46,8 @@ class EntityPlayer(EntityAlive):
         self.imagePos = (0, -0.5)
         self.x = saveData.checkPointX + (1 - self.width) / 2
         self.y = saveData.checkPointY + (1 - self.height) / 2
-        self.animator = Animator(animatorData, "stay")
-        self.direction = None
+        self.animator = Animator(animatorData, "stayS")
+        self.direction = "S"
         self.shovel = None
         self.state = "normal"
 
@@ -178,8 +184,6 @@ class EntityPlayer(EntityAlive):
             if (self.buttonPressed[-1] == "left"):
                 self.speedX = -self.speed
                 self.direction = "A"
-        else:
-            self.direction = None
 
     def attack(self, d=None):
         if (self.state != "normal"):
@@ -233,17 +237,13 @@ class EntityPlayer(EntityAlive):
         else:
             tile = self.get_tile(pos=(0.5, 0.7))
             if (tile and "water" in tile.tags):
-                self.state = "swim"
-                if (self.direction):
-                    self.animator.setAnimation("swim" + self.direction)
-                else:
-                    self.animator.setAnimation("swim")
+                self.state = "swiming"
+                anim = "swim" if self.speedX == 0 and self.speedY == 0 else "swiming"
+                self.animator.setAnimation(anim + self.direction)
             else:
                 self.state = "normal"
-                if (self.direction):
-                    self.animator.setAnimation("going" + self.direction)
-                else:
-                    self.animator.setAnimation("stay")
+                anim = "stay" if self.speedX == 0 and self.speedY == 0 else "going"
+                self.animator.setAnimation(anim + self.direction)
 
         if (self.x <= 0.05):
             if (self.screen.tryGoTo("left")):
