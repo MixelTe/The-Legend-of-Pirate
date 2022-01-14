@@ -41,7 +41,7 @@ class EntityMarket(Entity):
         if (not self.item):
             return
         itemX = self.x * Settings.tileSize + (self.width * Settings.tileSize - self.item.get_width()) / 2
-        itemY = self.y * Settings.tileSize
+        itemY = self.y * Settings.tileSize + (self.height * 0.7 * Settings.tileSize - self.item.get_height()) / 2
         surface.blit(self.item, (itemX, itemY))
         surface.blit(coinImg, multPos((self.x, self.y + self.height * 0.7), Settings.tileSize))
         if (self.priceImg):
