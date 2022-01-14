@@ -1,3 +1,4 @@
+from random import choices
 import pygame
 from game.animator import Animator, AnimatorData
 from game.entity import Entity, EntityAlive, EntityGroups
@@ -201,16 +202,34 @@ class EntityPlayer(EntityAlive):
     def dig(self):
         if (self.state != "normal"):
             return
-        self.state = "dig"
         tile = self.get_tile(1, pos=(0.5, 0.7))
         if (tile.digable):
-            self.digging = True
+            self.state = "dig"
 
     def afterDig(self):
-        coin = Entity.createById("coin", self.screen)
-        self.screen.addEntity(coin)
-        coin.x = self.x + 1.25
-        coin.y = self.y + 0.5
+        entities = self.get_entitiesD((1.1, 0.4, 0.4, 0.3))
+        dig_place = False
+        for e in entities:
+            if e.id == "dig_place":
+                dig_place = True
+                break
+        if (dig_place):
+            found = choices(["coin", "heart", "crab"], [0.5, 0.4, 0.1])[0]
+            if (found == "coin"):
+                coin = Entity.createById("coin", self.screen)
+                self.screen.addEntity(coin)
+                coin.x = self.x + 1.25
+                coin.y = self.y + 0.5
+            elif (found == "heart"):
+                heart = Entity.createById("heart", self.screen)
+                self.screen.addEntity(heart)
+                heart.x = self.x + 1.25
+                heart.y = self.y + 0.5
+            elif (found == "crab"):
+                crab = Entity.createById("crab", self.screen)
+                self.screen.addEntity(crab)
+                crab.x = self.x + 1.25
+                crab.y = self.y + 0.5
 
     def update(self):
         self.setSpeed()
@@ -219,7 +238,6 @@ class EntityPlayer(EntityAlive):
         if (self.state == "dig"):
             self.animator.setAnimation("dig")
             if (self.animator.lastState[1]):
-                self.digging = False
                 self.afterDig()
                 self.state = "normal"
         elif (self.state == "attack"):
@@ -260,3 +278,7 @@ class EntityPlayer(EntityAlive):
 
     def preUpdate(self):
         self.message = ""
+
+    def heal(self, v: int):
+        self.health += v
+        self.health = min(int(self.health), 6)

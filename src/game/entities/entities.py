@@ -1,5 +1,6 @@
 from functions import load_entityImg, load_entityStay
 from game.entity import Entity, EntityAlive, EntityGroups
+from random import random
 
 
 class EntityCactus(EntityAlive):
@@ -86,3 +87,20 @@ class EntityTrainer(EntityAlive):
 
 
 Entity.registerEntity("trainer", EntityTrainer)
+
+
+class EntityDigPlace(Entity):
+    image = load_entityImg("dig_place.png", 0.3, 0.3)
+
+    def __init__(self, screen, data: dict = None):
+        super().__init__(screen, data)
+        self.image = EntityDigPlace.image
+        self.hidden = True
+        self.ghostE = True
+        self.ghostT = True
+        self.width = 1
+        self.height = 1
+        self.imagePos = (random() * 0.5 + 0.2, random() * 0.5 + 0.2)
+
+
+Entity.registerEntity("dig_place", EntityDigPlace)

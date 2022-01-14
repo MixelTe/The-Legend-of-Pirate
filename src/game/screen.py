@@ -9,6 +9,7 @@ from game.tile import Tile
 from game.world import ScreenData, World
 from game.saveData import SaveData
 from settings import Settings
+from random import randint, choices
 
 
 class Screen:
@@ -33,6 +34,21 @@ class Screen:
             self.entities.append(Entity.fromData(eData, self))
         self.entities.append(player)
         player.screen = self
+
+        self.onCreate()
+
+    def onCreate(self):
+        places = []
+        for tile, x, y in self.getTiles():
+            if (tile.id.startswith("sand")):
+                if (x - 1 >= 0 and not self.tiles[y][x - 1].solid):
+                    places.append((x, y))
+
+        for x, y in choices(places, k=min(randint(0, 3), len(places))):
+            e = Entity.createById("dig_place", self)
+            e.x = x
+            e.y = y
+            self.addEntity(e)
 
     def update(self) -> Union[None, ScreenGoTo]:
         self.entities.sort(key=lambda e: e.y)

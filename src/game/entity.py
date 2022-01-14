@@ -17,6 +17,7 @@ screenBorders = [
 
 class Entity:
     entityDict: dict[str, Entity] = {}  # словарь всех Entity для метода Entity.fromData
+    id = "entity"
 
     def __init__(self, screen, data: dict = None):
         from game.screen import Screen
@@ -55,6 +56,7 @@ class Entity:
         if (id in Entity.entityDict):
             raise GameExeption(f"Entity.registerEntity: id is already taken: {id}")
         Entity.entityDict[id] = entityClass
+        entityClass.id = id
 
     def applyData(self, data: dict):
         self.x = data["x"]
@@ -335,6 +337,7 @@ def loadEntities():
     import game.entities.crab
     import game.entities.coin
     import game.entities.pirate2
+    import game.entities.heart
 
 
 loadEntities()
