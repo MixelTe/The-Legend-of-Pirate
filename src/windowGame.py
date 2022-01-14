@@ -96,7 +96,7 @@ class WindowGame(Window):
 
         if (self.player.health <= 0):
             self.saveData.health = SaveData(-1).health
-            self.saveData.time += datetime.now() - self.time
+            self.saveData.time += int((datetime.now() - self.time).total_seconds())
             self.saveData.save()
             from windowEnd import WindowEnd
             return WindowEnd(self.save)
