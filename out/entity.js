@@ -163,7 +163,7 @@ function createNewEntityClass(name, imgUrl, width, height, widthHitbox, heightHi
         static widthImg = widthImg;
         static heightImg = heightImg;
         static className = name;
-        objData = objData;
+        objData = JSON.parse(JSON.stringify(objData));
     }
     EntityDict[name] = Entity_New;
 }
