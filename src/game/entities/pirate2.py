@@ -1,6 +1,6 @@
 import pygame
 from game.animator import Animator, AnimatorData
-from game.entity import EntityAlive
+from game.entity import Entity
 from settings import Settings
 
 
@@ -9,12 +9,11 @@ animatorData = AnimatorData("pirate2", [
 ])
 
 
-class EntityPirate2(EntityAlive):
+class EntityPirate2(Entity):
     def __init__(self, screen, data: dict = None):
         self.speech = ""
         super().__init__(screen, data)
         self.animator = Animator(animatorData, "stay")
-        self.immortal = True
         self.width = 0.75
         self.height = 0.7
         self.talkZone = (-1, -1, 2, 2)
@@ -35,4 +34,4 @@ class EntityPirate2(EntityAlive):
             self.screen.player.message = self.speech
 
 
-EntityAlive.registerEntity("pirate2", EntityPirate2)
+Entity.registerEntity("pirate2", EntityPirate2)
