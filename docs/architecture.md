@@ -215,6 +215,7 @@
 		* image: pygame.Surface
 		* imagePos: tuple[int, int] - положение картинки относительно сущности
 		* static entityDict: dict[str, class] - словарь всех Entity для метода Entity.fromData
+		* static id: str - id сущности, присваетвается в registerEntity
 	* Методы:
 		1. init(screen: Screen, data: dict=None) - если data не None, вызывает applyData(data)
 		2. applyData(data: dict) - установка значений полей из соответствующих полей данных
@@ -225,7 +226,7 @@
 		7. remove() - удаляет себя из списка сущностей
 		8. static fromData(data: dict, screen: Screen) - создание сущности по данным
 		9. static createById(id: str, screen: pygame.Surface) - создание сущности по id
-		10. static registerEntity(id: str, entityClass) - добавляет сущность в entityDict
+		10. static registerEntity(id: str, entityClass) - добавляет сущность в entityDict и присваевает id в entityClass.id
 		11. canGoOn(tile: Tile) -> bool - может ли сущность наступить на эту клетку
 		12. get_tile(dx: int = 0, dy: int = 0, pos: tuple[float, float] = (0.5, 0.5)) -> Tile | None - клетка относительно сущности. pos - позиция точки проверки в сущности, где 0 - левый верхний угол, 1 - правый нижний
 		13. get_entities(rect: tuple[float, float, float, float]) -> list\[Entity] - сущности попадающие в область
@@ -237,10 +238,12 @@
 	* Поля:
 		* group: int - группа к которой пренадлежит сущность, для определения нужно ли наносить урон (присваивать значение только с помощью полей класса EntityGroups)
 		* health: int
+		* healthMax: int
 		* damageDelay: int - при вызове update уменьшается на 1000 / Settings.fps
 		* alive: bool - жива ли сущность
 	* Методы:
 		* takeDamage(damage: int) - Уменьшение здоровья и установка damageDelay в Settings.damageDelay, если damageDelay <= 0
+		* heal(v: int) - Увеличение здоровья в приделах healthMax
 	* Класс EntityGroups:
 		* Группы сущностей
 		* Поля:
