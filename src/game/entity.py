@@ -343,6 +343,7 @@ def loadEntities():
     import game.entities.coin
     import game.entities.pirate2
     import game.entities.heart
+    import game.entities.market
 
 
 loadEntities()

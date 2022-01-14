@@ -1,6 +1,6 @@
 from typing import Union
 import pygame
-from functions import getPosMult, getRectMult, load_image
+from functions import getPosMult, getRectMult, load_image, renderText
 from game.entityPlayer import EntityPlayer
 from game.gameDialog import GameDialog, GameDialog_exit
 from settings import Settings
@@ -45,10 +45,10 @@ class Overlay:
     def update(self) -> bool:
         if (self.text_past != self.player.message):
             self.text_past = self.player.message
-            self.text_img = renderText(self.fontM, int(Settings.tileSize * 0.27) + 1, self.msgBox_text, self.player.message, pygame.Color(81, 44, 40))
+            self.text_img = renderText(self.fontM, int(Settings.tileSize * 0.27) + 1, self.msgBox_text.size, self.player.message, pygame.Color(81, 44, 40))
         if (self.text_coin_past != self.player.saveData.coins):
             self.text_coin_past = self.player.saveData.coins
-            self.text_coin = renderText(self.fontL, int(Settings.tileSize * 0.44) + 1, self.msgBox_text, str(self.text_coin_past), "black")
+            self.text_coin = renderText(self.fontL, int(Settings.tileSize * 0.44) + 1, self.msgBox_text.size, str(self.text_coin_past), "black")
         return self.exit
 
     def draw(self) -> pygame.Surface:
@@ -87,35 +87,3 @@ class Overlay:
     def onMouseMove(self, pos: tuple[int, int]):
         self.exitBtn_hover = self.exitBtn.collidepoint(pos)
 
-
-def renderText(font: pygame.font.Font, lineHeight: int, rect: pygame.Rect, text: str, color: Union[str, pygame.Color]):
-    lines = []
-    line = ""
-    for word in text.split():
-        newLine = line + " " + word
-        if (font.size(newLine)[0] <= rect.width):
-            line = newLine
-        else:
-            lines.append(line)
-            line = word
-    if (line != ""):
-        lines.append(line)
-    if (len(lines) >= 1):
-        lines[0] = lines[0][1:]
-    surface = pygame.Surface(rect.size, pygame.SRCALPHA)
-    surface.fill(pygame.Color(0, 0, 0, 0))
-    displayLines(surface, font, lineHeight, (0, 0), lines, color)
-    return surface
-
-
-def displayLines(surface: pygame.Surface, font: pygame.font.Font, lineHeight: int, pos: tuple[int, int], lines: list[str], color: Union[str, pygame.Color]):
-    y = pos[1]
-
-    def writeLine(text: str):
-        nonlocal y
-        text_img = font.render(text, True, color)
-        surface.blit(text_img, (pos[0], y))
-        y += lineHeight
-
-    for line in lines:
-        writeLine(line)

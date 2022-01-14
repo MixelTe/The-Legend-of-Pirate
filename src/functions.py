@@ -1,3 +1,4 @@
+from typing import Union
 import pygame
 import os
 import json
@@ -98,3 +99,36 @@ def getPosMult(vw: float, vh: float=None):
     def mult(pos: tuple[float, float]):
         return multPos(pos, vw, vh)
     return mult
+
+
+def renderText(font: pygame.font.Font, lineHeight: int, size: tuple[int, int], text: str, color: Union[str, pygame.Color]):
+    lines = []
+    line = ""
+    for word in text.split():
+        newLine = line + " " + word
+        if (font.size(newLine)[0] <= size[0]):
+            line = newLine
+        else:
+            lines.append(line)
+            line = word
+    if (line != ""):
+        lines.append(line)
+    if (len(lines) >= 1):
+        lines[0] = lines[0][1:]
+    surface = pygame.Surface(size, pygame.SRCALPHA)
+    surface.fill(pygame.Color(0, 0, 0, 0))
+    displayLines(surface, font, lineHeight, (0, 0), lines, color)
+    return surface
+
+
+def displayLines(surface: pygame.Surface, font: pygame.font.Font, lineHeight: int, pos: tuple[int, int], lines: list[str], color: Union[str, pygame.Color]):
+    y = pos[1]
+
+    def writeLine(text: str):
+        nonlocal y
+        text_img = font.render(text, True, color)
+        surface.blit(text_img, (pos[0], y))
+        y += lineHeight
+
+    for line in lines:
+        writeLine(line)

@@ -20,3 +20,7 @@ createNewEntityClass_Auto("trainer", false, 9, 18, 0.75, 0.7, 0, -0.8, 0.75, 1.5
 createNewEntityClass_Auto("pirate2", true, 11, 22, 0.75, 0.7, 0, -0.8, 0.75, 1.5, [
 	{ type: "text", name: "speech", value: "" },
 ])
+createNewEntityClass_Auto("market", false, 39, 39, 1, 1, 0, 0, 1, 1, [
+	{ type: "text", name: "item id", value: "coin", displayColor: "black" },
+	{ type: "number", name: "price", value: 1, displayColor: "lime" },
+])
