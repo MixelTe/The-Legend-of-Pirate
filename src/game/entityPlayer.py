@@ -225,12 +225,12 @@ class EntityPlayer(EntityAlive):
                 heart = Entity.createById("heart", self.screen)
                 self.screen.addEntity(heart)
                 heart.x = self.x + 1.25
-                heart.y = self.y + 0.5
+                heart.y = self.y + 0.2
             elif (found == "crab"):
                 crab = Entity.createById("crab", self.screen)
                 self.screen.addEntity(crab)
                 crab.x = self.x + 1.25
-                crab.y = self.y + 0.5
+                crab.y = self.y + 0.25
 
     def update(self):
         self.setSpeed()
