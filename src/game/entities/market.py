@@ -36,7 +36,7 @@ class EntityMarket(Entity):
         if ("market id" in data):
             id = data["market id"]
             if (id is not None):
-                self.marketId = self.screen.world.name + "-market" + id
+                self.marketId = self.screen.world.name + "-market" + str(id)
 
     def setItem(self):
         self.item = Entity.createById(self.itemId, self.screen).image
