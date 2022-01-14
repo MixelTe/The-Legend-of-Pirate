@@ -31,7 +31,7 @@ def load_tile(name: str):
     return load_image(joinPath(Settings.folder_tiles, name))
 
 
-def load_entity(name: str, folder: str=None):
+def load_entity(name: str, folder: str = None):
     if (folder is None):
         path = joinPath(Settings.folder_entities, name)
     else:
@@ -77,25 +77,25 @@ def rectIntersection(rect1: tuple[float, float, float, float], rect2: tuple[floa
     )
 
 
-def multRect(rect: tuple[float, float, float, float], vw: float, vh: float=None):
+def multRect(rect: tuple[float, float, float, float], vw: float, vh: float = None):
     if (vh is None):
         vh = vw
     return pygame.Rect(rect[0] * vw, rect[1] * vh, rect[2] * vw, rect[3] * vh)
 
 
-def multPos(pos: tuple[float, float], vw: float, vh: float=None):
+def multPos(pos: tuple[float, float], vw: float, vh: float = None):
     if (vh is None):
         vh = vw
     return (pos[0] * vw, pos[1] * vh)
 
 
-def getRectMult(vw: float, vh: float=None):
+def getRectMult(vw: float, vh: float = None):
     def mult(rect: tuple[float, float, float, float]):
         return multRect(rect, vw, vh)
     return mult
 
 
-def getPosMult(vw: float, vh: float=None):
+def getPosMult(vw: float, vh: float = None):
     def mult(pos: tuple[float, float]):
         return multPos(pos, vw, vh)
     return mult

@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Literal, Union
+from typing import Union
 import pygame
 from functions import GameExeption, multRect, rectIntersection
 from game.animator import Animator
@@ -24,7 +24,7 @@ class Entity:
         self.screen: Screen = screen  # экран, для доступа к списку сущностей и к клеткам мира
         # группа к которой пренадлежит сущность, для определения нужно ли наносить урон (присваивать значение только с помощью полей класса EntityGroups)
         self.animator: Animator = None
-        self.drawPriority = 1 # Чем больше, тем позже рисуется
+        self.drawPriority = 1  # Чем больше, тем позже рисуется
         self.x: float = 0
         self.y: float = 0
         self.width: float = 1
@@ -33,9 +33,9 @@ class Entity:
         self.speedY: float = 0
         self.image: pygame.Surface = None
         self.imagePos: tuple[float, float] = (0, 0)
-        self.hidden = False # если True, то остальные сущности перестают проверять столкновения с этой сущностью
-        self.ghostE = False # если True, то на движение сущности не влияют другие
-        self.ghostT = False # если True, то на движение сущности не влияют клетки
+        self.hidden = False  # если True, то остальные сущности перестают проверять столкновения с этой сущностью
+        self.ghostE = False  # если True, то на движение сущности не влияют другие
+        self.ghostT = False  # если True, то на движение сущности не влияют клетки
         if (data):
             self.applyData(data)
 
@@ -231,7 +231,7 @@ class Entity:
     def remove(self):
         self.screen.removeEntity(self)
 
-    def get_tile(self, dx=0, dy=0, pos: tuple[float, float]=(0.5, 0.5)) -> Union[Tile, None]:
+    def get_tile(self, dx=0, dy=0, pos: tuple[float, float] = (0.5, 0.5)) -> Union[Tile, None]:
         x = self.x + dx + self.width * pos[0]
         y = self.y + dy + self.height * pos[1]
         x, y = int(x), int(y)

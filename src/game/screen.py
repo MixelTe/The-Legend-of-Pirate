@@ -4,7 +4,6 @@ import pygame
 from functions import GameExeption
 from game.entity import Entity
 from game.entityPlayer import EntityPlayer
-from game.gameDialog import GameDialog
 from game.tile import Tile
 from game.world import ScreenData, World
 from game.saveData import SaveData
@@ -107,7 +106,7 @@ class ScreenGoTo:
     def __init__(self, world: str, screen: tuple[int, int], image: pygame.Surface):
         self.world = world
         self.screen = screen
-        self.image = image # изображение последнего кадра этого экрана
+        self.image = image  # изображение последнего кадра этого экрана
 
 
 class TileIterator:

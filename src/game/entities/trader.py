@@ -29,7 +29,6 @@ class EntityTrader(Entity):
         if (Settings.drawHitboxes):
             self.draw_rect(surface, "pink", self.talkZone, False, True, True)
 
-
     def update(self):
         super().update()
         if (self.is_inRectD(self.talkZone, self.screen.player)):

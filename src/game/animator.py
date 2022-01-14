@@ -1,5 +1,4 @@
 import pygame
-
 from functions import GameExeption, load_entity
 from settings import Settings
 
@@ -32,10 +31,10 @@ class AnimatorData:
 
 class Animator:
     def __init__(self, data: AnimatorData, anim: str):
-        self.data = data # все анимации и их кадры
-        self.anim = anim # текущая анимация
-        self.frame = 0 # текущий кадр
-        self.counter = 0 # счетчик для переключения кадров с определённой скоростью
+        self.data = data  # все анимации и их кадры
+        self.anim = anim  # текущая анимация
+        self.frame = 0  # текущий кадр
+        self.counter = 0  # счетчик для переключения кадров с определённой скоростью
         self.lastState = (False, False)
 
     def update(self) -> tuple[bool, bool]:
@@ -55,7 +54,7 @@ class Animator:
     def getImage(self) -> tuple[pygame.Surface, tuple[int, int]]:
         return self.data.get_image(self.anim, self.frame)
 
-    def setAnimation(self, animation: str, frame: int=None):
+    def setAnimation(self, animation: str, frame: int = None):
         if (animation not in self.data.frames):
             raise GameExeption(f"Animator.setAnimation: No such animation: {animation}")
         if (frame is None):

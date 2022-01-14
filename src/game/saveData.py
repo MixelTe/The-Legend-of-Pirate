@@ -2,6 +2,7 @@ from functions import GameExeption, joinPath
 from settings import Settings
 import os
 
+
 class SaveData:
     def __init__(self, save: int):
         self.saveFile = save

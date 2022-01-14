@@ -1,8 +1,7 @@
-from typing import Union
 import pygame
 from functions import getPosMult, getRectMult, load_image, renderText
 from game.entityPlayer import EntityPlayer
-from game.gameDialog import GameDialog, GameDialog_exit
+from game.gameDialog import GameDialog_exit
 from settings import Settings
 
 
@@ -18,6 +17,7 @@ exitBtn = multRect((0.8, 0.15, 0.18, 0.7))
 img_exitBtn = pygame.transform.scale(load_image("quit.png"), (exitBtn[2], exitBtn[3]))
 img_exitBtn_active = pygame.transform.scale(load_image("quit_active.png"), (exitBtn[2], exitBtn[3]))
 img_msgBox = pygame.transform.scale(load_image("msgBox.png"), multPos((0.5, 1)))
+
 
 class Overlay:
     def __init__(self, player: EntityPlayer):
@@ -45,10 +45,12 @@ class Overlay:
     def update(self) -> bool:
         if (self.text_past != self.player.message):
             self.text_past = self.player.message
-            self.text_img = renderText(self.fontM, int(Settings.tileSize * 0.27) + 1, self.msgBox_text.size, self.player.message, pygame.Color(81, 44, 40))
+            self.text_img = renderText(self.fontM, int(Settings.tileSize * 0.27) + 1,
+                                       self.msgBox_text.size, self.player.message, pygame.Color(81, 44, 40))
         if (self.text_coin_past != self.player.saveData.coins):
             self.text_coin_past = self.player.saveData.coins
-            self.text_coin = renderText(self.fontL, int(Settings.tileSize * 0.44) + 1, self.msgBox_text.size, str(self.text_coin_past), "black")
+            self.text_coin = renderText(self.fontL, int(Settings.tileSize * 0.44) + 1,
+                                        self.msgBox_text.size, str(self.text_coin_past), "black")
         return self.exit
 
     def draw(self) -> pygame.Surface:
@@ -86,4 +88,3 @@ class Overlay:
 
     def onMouseMove(self, pos: tuple[int, int]):
         self.exitBtn_hover = self.exitBtn.collidepoint(pos)
-

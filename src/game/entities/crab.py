@@ -9,7 +9,7 @@ image = pygame.transform.scale(image, (Settings.tileSize * 1, Settings.tileSize 
 
 
 class EntityCrab(EntityAlive):
-    def __init__(self, screen, data: dict=None):
+    def __init__(self, screen, data: dict = None):
         super().__init__(screen, data)
         self.group = EntityGroups.enemy
         self.strength = 1
@@ -33,5 +33,6 @@ class EntityCrab(EntityAlive):
                 self.speedY = self.speed
             if (pos[1] < 0):
                 self.speedY = -self.speed
+
 
 EntityAlive.registerEntity("crab", EntityCrab)

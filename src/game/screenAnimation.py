@@ -25,7 +25,7 @@ class ScreenAnimationMove(ScreenAnimation):
         self.dy = direction[1]
         self.counterX = 0
         self.counterY = 0
-        time = 250 # ms
+        time = 250  # ms
         self.speedX = direction[0] / time
         self.speedY = direction[1] / time
 
@@ -54,7 +54,7 @@ class ScreenAnimationBlur(ScreenAnimation):
         self.blurState = 0
         self.counter = 0
         self.speed = 1 / 500
-        self.pause = 200 # ms
+        self.pause = 200  # ms
 
     def update(self) -> bool:
         if (self.blurState == 0 or self.blurState == 2):

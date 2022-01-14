@@ -12,7 +12,7 @@ from windowGame import WindowGame
 class Main:
     def __init__(self):
         # self.window: Window = WindowStart()
-        self.window: Window = WindowGame(0) # Temp
+        self.window: Window = WindowGame(0)  # Temp
 
     def start(self):
         clock = pygame.time.Clock()
