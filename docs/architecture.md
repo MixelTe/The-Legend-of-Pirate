@@ -242,6 +242,7 @@
 		* healthMax: int
 		* damageDelay: int - при вызове update уменьшается на 1000 / Settings.fps
 		* alive: bool - жива ли сущность
+		* removeOnDeath: bool - удалять ли сущность при её смерти
 	* Методы:
 		* takeDamage(damage: int) - Уменьшение здоровья и установка damageDelay в Settings.damageDelay, если damageDelay <= 0
 		* heal(v: int) - Увеличение здоровья в приделах healthMax
