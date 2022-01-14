@@ -17,6 +17,7 @@ class EntityMarket(Entity):
         self.hidden = True
         self.ghostE = True
         self.ghostT = True
+        self.drawPriority = 0
         self.width = 1
         self.height = 1
         self.buyZone = (0, 0, 1, 2)
