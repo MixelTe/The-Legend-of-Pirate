@@ -289,8 +289,11 @@ class EntityAlive(Entity):
         self.removeOnDeath = True
         self.damageAnimCounter = 0
         self.DamageDelay = Settings.damageDelay
+        self.attackPushbackX = 0
+        self.attackPushbackY = 0
+        self.attackPushbackA = 0.002
 
-    def takeDamage(self, damage: int):
+    def takeDamage(self, damage: int, attacker: Entity = None):
         if (self.immortal or damage == 0):
             return
         if (self.alive and self.animator):
@@ -298,16 +301,33 @@ class EntityAlive(Entity):
         if (self.damageDelay <= 0):
             self.damageDelay = self.DamageDelay
             self.health -= damage
+            if (attacker):
+                dx = (attacker.x + attacker.width / 2) - (self.x + self.width / 2)
+                dy = (attacker.y + attacker.height / 2) - (self.y + self.height / 2)
+                self.attackPushbackX = -0.1 * (dx / (self.width + attacker.width))
+                self.attackPushbackY = -0.1 * (dy / (self.height + attacker.height))
             if (self.health <= 0):
                 self.alive = False
                 self.hidden = True
+                self.speedX = 0
+                self.speedY = 0
+                if (self.animator and "stay" in self.animator.data.frames):
+                    self.animator.setAnimation("stay")
 
     def heal(self, v: int):
         self.health += v
         self.health = min(self.health, self.healthMax)
 
     def update(self):
+        self.attackPushbackX = max((abs(self.attackPushbackX) - self.attackPushbackA), 0) * (1 if self.attackPushbackX >= 0 else -1)
+        self.attackPushbackY = max((abs(self.attackPushbackY) - self.attackPushbackA), 0) * (1 if self.attackPushbackY >= 0 else -1)
+        speedX = self.speedX
+        speedY = self.speedY
+        self.speedX += self.attackPushbackX
+        self.speedY += self.attackPushbackY
         collisions = super().update()
+        self.speedX = speedX
+        self.speedY = speedY
         if (not self.alive):
             if (self.removeOnDeath):
                 if (self.animator):
@@ -324,27 +344,27 @@ class EntityAlive(Entity):
             if (self.group == EntityGroups.playerSelf):
                 if (collision.group == EntityGroups.enemy or
                         collision.group == EntityGroups.neutral):
-                    collision.takeDamage(self.strength)
-                    self.takeDamage(collision.strength)
+                    collision.takeDamage(self.strength, self)
+                    self.takeDamage(collision.strength, collision)
             elif (self.group == EntityGroups.player):
                 if (collision.group == EntityGroups.enemy or
                         collision.group == EntityGroups.neutral):
-                    collision.takeDamage(self.strength)
-                    self.takeDamage(collision.strength)
+                    collision.takeDamage(self.strength, self)
+                    self.takeDamage(collision.strength, collision)
             elif (self.group == EntityGroups.enemy):
                 if (collision.group == EntityGroups.player or
                         collision.group == EntityGroups.playerSelf):
-                    collision.takeDamage(self.strength)
-                    self.takeDamage(collision.strength)
+                    collision.takeDamage(self.strength, self)
+                    self.takeDamage(collision.strength, collision)
                 if (collision.group == EntityGroups.neutral):
-                    self.takeDamage(collision.strength)
+                    self.takeDamage(collision.strength, collision)
             elif (self.group == EntityGroups.neutral):
                 if (collision.group == EntityGroups.player or
                         collision.group == EntityGroups.playerSelf):
-                    collision.takeDamage(self.strength)
-                    self.takeDamage(collision.strength)
+                    collision.takeDamage(self.strength, self)
+                    self.takeDamage(collision.strength, collision)
                 if (collision.group == EntityGroups.enemy):
-                    collision.takeDamage(self.strength)
+                    collision.takeDamage(self.strength, self)
         return collisions
 
 
