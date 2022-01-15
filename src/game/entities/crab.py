@@ -21,6 +21,8 @@ class EntityCrab(EntityAlive):
         self.animator.setAnimation("sleep", randint(0, 3))
         self.group = EntityGroups.enemy
         self.strength = 1
+        self.healthMax = 2
+        self.health = 2
         self.width = 1
         self.height = 0.55
         self.state = "sleep"
