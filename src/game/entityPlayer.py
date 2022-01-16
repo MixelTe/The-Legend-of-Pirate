@@ -16,7 +16,7 @@ animatorData = AnimatorData("pirate", [
     ("goingW.png", 150, (12, 24), (0, -0.8, 0.75, 1.5)),
     ("goingA.png", 150, (12, 18), (-0.15, -0.8, 1, 1.5)),
     ("goingD.png", 150, (12, 18), (-0.05, -0.8, 1, 1.5)),
-    ("attackS.png", 100, (12, 29), (0, -0.8, 0.75, 1.8)),
+    ("attackS.png", 100, (12, 33), (0, -0.8, 0.75, 2.0625)),
     ("attackW.png", 100, (12, 29), (0, -1.1, 0.75, 1.8)),
     ("attackA.png", 100, (21, 18), (-0.9, -0.8, 1.75, 1.5)),
     ("attackD.png", 100, (21, 18), (0, -0.8, 1.75, 1.5)),
@@ -252,10 +252,7 @@ class EntityPlayer(EntityAlive):
                 self.state = "normal"
         elif (self.state == "attack"):
             if (self.shovel is not None):
-                if (self.direction):
-                    self.animator.setAnimation("attack" + self.direction)
-                else:
-                    self.animator.setAnimation("attackS")
+                self.animator.setAnimation("attack" + self.direction)
                 if (self.animator.lastState[1]):
                     self.shovel.remove()
                     self.shovel = None

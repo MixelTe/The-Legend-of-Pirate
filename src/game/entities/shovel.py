@@ -39,7 +39,7 @@ class EntityShovel(EntityAlive):
             self.y = self.startY - self.height
         else:
             self.width = self.screen.player.width
-            self.height = 0.2 + 0.1 * self.stage
+            self.height = 0.4 + 0.1 * self.stage
             self.x = self.startX
             self.y = self.startY + self.screen.player.height
         self.stage += 1
