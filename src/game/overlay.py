@@ -1,7 +1,7 @@
 import pygame
 from functions import getPosMult, getRectMult, load_image, renderText
 from game.entityPlayer import EntityPlayer
-from game.gameDialog import GameDialog_exit
+from game.dialogs.exit import GameDialog_exit
 from settings import Settings
 
 
