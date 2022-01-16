@@ -24,7 +24,7 @@ class EntityTrainer(EntityAlive):
         if (attacker != self.screen.player):
             if (self.animator.curAnimation() != "attacked"):
                 self.animator.setAnimation("attacked")
-                self.speech = choice(["Ой!", "Ай!", "Ух!", "Верчуусь!", "Вжух!"])
+                self.speech = choice(["Ой!", "Ай!", "Эй, я всего лишь манекен!"])
 
     def update(self):
         super().update()
