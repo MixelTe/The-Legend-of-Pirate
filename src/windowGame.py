@@ -1,4 +1,5 @@
 import pygame
+from game.dialogs.start import GameDialog_start
 from game.entityPlayer import EntityPlayer
 from game.gameDialog import GameDialog
 from game.overlay import Overlay
@@ -22,6 +23,8 @@ class WindowGame(Window):
         self.overlay = Overlay(self.player)
         self.dialog: GameDialog = None
         self.time = datetime.now()
+        if (self.saveData.time == 0):
+            self.dialog = GameDialog_start()
 
     def on_event(self, event: pygame.event.Event):
         if (self.dialog is None):

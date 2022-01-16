@@ -7,11 +7,11 @@ class GameDialog:
         self.onClose = onClose
         self.rect = pygame.Rect(0, 0, w, h)
         self.rect.x = (Settings.width - self.rect.width) / 2
-        self.rect.y = (Settings.height - Settings.overlay_height - self.rect.height) / 2
+        self.rect.y = (Settings.height - self.rect.height) / 2
         self.surface = pygame.Surface(self.rect.size)
         self.closed = False
         self.surface.fill("gray")
-        border = int(Settings.tileSize * 0.4) + 1
+        border = int(Settings.width * 0.04) + 1
         pygame.draw.rect(self.surface, pygame.Color(194, 133, 105), (0, 0, self.rect.width, self.rect.height), border)
 
     def draw(self) -> pygame.Surface:
