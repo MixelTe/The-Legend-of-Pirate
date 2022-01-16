@@ -39,8 +39,8 @@ class EntityCrab(EntityAlive):
             self.draw_rect(surface, "red", self.lookZone, False, True, True)
 
     def update(self):
-        collisions = super().update()
-        if (not self.alive):
+        super().update()
+        if (not self.alive or Settings.disableAI):
             return
         if (self.state == "sleep"):
             if (self.is_inRectD(self.lookZone, self.screen.player)):

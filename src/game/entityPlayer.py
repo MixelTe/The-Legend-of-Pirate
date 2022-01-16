@@ -1,5 +1,6 @@
 from random import choices
 import pygame
+from functions import rectPointIntersection
 from game.animator import Animator, AnimatorData
 from game.entity import Entity, EntityAlive, EntityGroups
 from game.saveData import SaveData
@@ -56,6 +57,7 @@ class EntityPlayer(EntityAlive):
         self.DamageDelay = Settings.damageDelayPlayer
         self.animator.DamageDelay = Settings.damageDelayPlayer
         self.animator.damageAnimCount = 4
+        self.zone = (0, 0, 1, 1)
 
     def onKeyDown(self, key):
         if (key == pygame.K_w or key == pygame.K_UP):
@@ -262,7 +264,23 @@ class EntityPlayer(EntityAlive):
                     self.shovel.nextStage()
         else:
             tile = self.get_tile(pos=(0.5, 0.7))
+            swim = False
             if (tile and "water" in tile.tags):
+                x, y = self.x + self.width * 0.5, self.y + self.height * 0.7
+                zone = [int(x), int(y), 1, 1]
+                if ("water-t" in tile.tags):
+                    zone[1] += 0.4
+                    zone[3] -= 0.4
+                if ("water-b" in tile.tags):
+                    zone[3] -= 0.4
+                if ("water-l" in tile.tags):
+                    zone[0] += 0.4
+                    zone[2] -= 0.4
+                if ("water-r" in tile.tags):
+                    zone[2] -= 0.4
+                self.zone = zone
+                swim = rectPointIntersection(zone, (x, y))
+            if (swim):
                 self.state = "swim"
                 anim = "swim" if self.speedX == 0 and self.speedY == 0 else "swiming"
                 self.animator.setAnimation(anim + self.direction)
@@ -287,3 +305,7 @@ class EntityPlayer(EntityAlive):
     def preUpdate(self):
         self.message = ""
         self.action = None
+
+    def draw(self, surface: pygame.Surface):
+        super().draw(surface)
+        self.draw_rect(surface, "lightblue", self.zone, False, True)

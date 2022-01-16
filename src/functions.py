@@ -77,6 +77,15 @@ def rectIntersection(rect1: tuple[float, float, float, float], rect2: tuple[floa
     )
 
 
+def rectPointIntersection(rect1: tuple[float, float, float, float], point: tuple[float, float]):
+    return (
+        rect1[0] + rect1[2] > point[0] and
+        rect1[1] + rect1[3] > point[1] and
+        point[0] > rect1[0] and
+        point[1] > rect1[1]
+    )
+
+
 def multRect(rect: tuple[float, float, float, float], vw: float, vh: float = None):
     if (vh is None):
         vh = vw
