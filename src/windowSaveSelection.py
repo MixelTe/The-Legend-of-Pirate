@@ -23,7 +23,7 @@ class WindowSaveSelection(Window):
         self.all_sprites.draw(screen)
 
     def on_event(self, event: pygame.event.Event):
-        if event.type == pygame.MOUSEBUTTONDOWN:
+        if event.type == pygame.MOUSEBUTTONUP:
             if self.save1.rect.collidepoint(event.pos):
                 self.startSave = 1
             if self.save2.rect.collidepoint(event.pos):

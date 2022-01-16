@@ -21,7 +21,7 @@ class WindowStart(Window):
         self.all_sprites.draw(screen)
 
     def on_event(self, event: pygame.event.Event):
-        if event.type == pygame.MOUSEBUTTONDOWN:
+        if event.type == pygame.MOUSEBUTTONUP:
             if self.quit.rect.collidepoint(event.pos):
                 pygame.event.post(pygame.event.Event(pygame.QUIT))
             if self.start.rect.collidepoint(event.pos):
