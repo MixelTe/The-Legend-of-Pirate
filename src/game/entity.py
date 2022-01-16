@@ -295,7 +295,7 @@ class EntityAlive(Entity):
 
     def takeDamage(self, damage: int, attacker: Entity = None):
         if (self.immortal or damage == 0):
-            return
+            return False
         if (self.alive and self.animator):
             self.animator.startDamageAnim()
         if (self.damageDelay <= 0):
@@ -313,6 +313,8 @@ class EntityAlive(Entity):
                 self.speedY = 0
                 if (self.animator and "stay" in self.animator.data.frames):
                     self.animator.setAnimation("stay")
+            return False
+        return True
 
     def heal(self, v: int):
         self.health += v
@@ -377,6 +379,7 @@ def loadEntities():
     import game.entities.heart
     import game.entities.market
     import game.entities.trader
+    import game.entities.trainer
 
 
 loadEntities()
