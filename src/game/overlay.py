@@ -84,6 +84,7 @@ class Overlay:
         if (self.exitBtn.collidepoint(pos)):
             def onClose(r: bool):
                 self.exit = r
+            self.exitBtn_hover = False
             self.player.screen.openDialog(GameDialog_exit(onClose))
 
     def onMouseMove(self, pos: tuple[int, int]):
