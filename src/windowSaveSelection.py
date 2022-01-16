@@ -1,10 +1,12 @@
 import pygame
+from settings import Settings
 from window import Window
 from functions import createSprite, load_image
 from windowGame import WindowGame
 
 
 class WindowSaveSelection(Window):
+    background = pygame.transform.scale(load_image("background.png"), (Settings.width, Settings.height))
     img_save1 = load_image("save1.png")
     img_save2 = load_image("save2.png")
     img_save3 = load_image("save3.png")
@@ -20,6 +22,7 @@ class WindowSaveSelection(Window):
         self.startSave = None
 
     def draw(self, screen: pygame.Surface):
+        screen.blit(self.background, (0, 0))
         self.all_sprites.draw(screen)
 
     def on_event(self, event: pygame.event.Event):

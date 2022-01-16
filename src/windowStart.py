@@ -1,10 +1,12 @@
 import pygame
+from settings import Settings
 from window import Window
 from functions import createSprite, load_image
 from windowSaveSelection import WindowSaveSelection
 
 
 class WindowStart(Window):
+    background = pygame.transform.scale(load_image("background.png"), (Settings.width, Settings.height))
     image_start = load_image("start.png")
     image_quit = load_image("quit.png")
 
@@ -18,6 +20,7 @@ class WindowStart(Window):
         self.starting = False
 
     def draw(self, screen: pygame.Surface):
+        screen.blit(self.background, (0, 0))
         self.all_sprites.draw(screen)
 
     def on_event(self, event: pygame.event.Event):
