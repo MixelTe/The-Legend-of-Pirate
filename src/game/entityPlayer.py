@@ -57,7 +57,6 @@ class EntityPlayer(EntityAlive):
         self.DamageDelay = Settings.damageDelayPlayer
         self.animator.DamageDelay = Settings.damageDelayPlayer
         self.animator.damageAnimCount = 4
-        self.zone = (0, 0, 1, 1)
 
     def onKeyDown(self, key):
         if (key == pygame.K_w or key == pygame.K_UP):
@@ -71,10 +70,10 @@ class EntityPlayer(EntityAlive):
         if (key == pygame.K_SPACE):
             self.attack()
         if (key == pygame.K_e):
-            self.dig()
-        if (key == pygame.K_LSHIFT):
             if (self.action):
                 self.action()
+            else:
+                self.dig()
 
         if (Settings.moveScreenOnNumpad):
             if (key == pygame.K_KP_4):
@@ -172,7 +171,10 @@ class EntityPlayer(EntityAlive):
         if (button == 2):
             self.attack()
         if (button == 1):
-            self.dig()
+            if (self.action):
+                self.action()
+            else:
+                self.dig()
 
     def onJoyButonUp(self, button):
         pass
@@ -218,12 +220,13 @@ class EntityPlayer(EntityAlive):
 
     def afterDig(self):
         entities = self.get_entitiesD((1.1, 0.4, 0.4, 0.3))
-        dig_place = False
+        dig_place = None
         for e in entities:
             if e.id == "dig_place":
-                dig_place = True
+                dig_place = e
                 break
         if (dig_place):
+            dig_place.remove()
             found = choices(["coin", "heart", "crab"], [0.5, 0.4, 0.1])[0]
             if (found == "coin"):
                 coin = Entity.createById("coin", self.screen)
@@ -275,7 +278,6 @@ class EntityPlayer(EntityAlive):
                     zone[2] -= 0.4
                 if ("water-r" in tile.tags):
                     zone[2] -= 0.4
-                self.zone = zone
                 swim = rectPointIntersection(zone, (x, y))
             if (swim):
                 self.state = "swim"
@@ -302,7 +304,3 @@ class EntityPlayer(EntityAlive):
     def preUpdate(self):
         self.message = ""
         self.action = None
-
-    def draw(self, surface: pygame.Surface):
-        super().draw(surface)
-        self.draw_rect(surface, "lightblue", self.zone, False, True)
