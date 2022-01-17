@@ -57,7 +57,6 @@ class EntityPlayer(EntityAlive):
         self.DamageDelay = Settings.damageDelayPlayer
         self.animator.DamageDelay = Settings.damageDelayPlayer
         self.animator.damageAnimCount = 4
-        self.zone = (0, 0, 1, 1)
 
     def onKeyDown(self, key):
         if (key == pygame.K_w or key == pygame.K_UP):
@@ -279,7 +278,6 @@ class EntityPlayer(EntityAlive):
                     zone[2] -= 0.4
                 if ("water-r" in tile.tags):
                     zone[2] -= 0.4
-                self.zone = zone
                 swim = rectPointIntersection(zone, (x, y))
             if (swim):
                 self.state = "swim"
@@ -306,7 +304,3 @@ class EntityPlayer(EntityAlive):
     def preUpdate(self):
         self.message = ""
         self.action = None
-
-    def draw(self, surface: pygame.Surface):
-        super().draw(surface)
-        self.draw_rect(surface, "lightblue", self.zone, False, True)
