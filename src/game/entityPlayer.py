@@ -20,15 +20,21 @@ animatorData = AnimatorData("pirate", [
     ("attackW.png", 100, (12, 29), (0, -1.1, 0.75, 1.8)),
     ("attackA.png", 100, (21, 18), (-0.9, -0.8, 1.75, 1.5)),
     ("attackD.png", 100, (21, 18), (0, -0.8, 1.75, 1.5)),
+    ("attack_swimS.png", 100, (18, 32), (-0.17, -0.9, 1.125, 2)),
+    ("attack_swimW.png", 100, (18, 29), (-0.17, -1.1, 1.125, 1.8)),
+    ("attack_swimA.png", 100, (21, 20), (-0.67, -0.9, 1.743, 1.66)),
+    ("attack_swimD.png", 100, (20, 20), (-0.27, -0.9, 1.66, 1.66)),
     ("dig.png", 200, (21, 18), (0, -0.8, 1.75, 1.5)),
-    ("swimW.png", 0, (16, 24), (-0.1, -0.9, 1, 1.5)),
-    ("swimS.png", 0, (16, 24), (-0.1, -0.9, 1, 1.5)),
-    ("swimA.png", 0, (16, 18), (-0.2, -0.8, 1.33, 1.5)),
-    ("swimD.png", 0, (16, 18), (-0.2, -0.8, 1.33, 1.5)),
-    ("swimingW.png", 150, (16, 24), (-0.1, -0.9, 1, 1.5)),
-    ("swimingS.png", 150, (16, 24), (-0.1, -0.9, 1, 1.5)),
-    ("swimingA.png", 150, (16, 18), (-0.2, -0.8, 1.33, 1.5)),
-    ("swimingD.png", 150, (16, 18), (-0.2, -0.8, 1.33, 1.5)),
+    ("swimW.png", 0, (18, 24), (-0.17, -0.8, 1.125, 1.5)),
+    ("swimS.png", 0, (18, 24), (-0.17, -0.8, 1.125, 1.5)),
+    ("swimA.png", 0, (16, 18), (-0.27, -0.8, 1.33, 1.5)),
+    ("swimD.png", 0, (16, 18), (-0.27, -0.8, 1.33, 1.5)),
+    # ("swimingW.png", 150, (16, 24), (-0.1, -0.9, 1, 1.5)),
+    # ("swimingS.png", 150, (16, 24), (-0.1, -0.9, 1, 1.5)),
+    ("swimmingW.png", 150, (18, 24), (-0.17, -0.8, 1.125, 1.5)),
+    ("swimmingS.png", 150, (18, 24), (-0.17, -0.8, 1.125, 1.5)),
+    ("swimmingA.png", 150, (16, 18), (-0.27, -0.8, 1.33, 1.5)),
+    ("swimmingD.png", 150, (16, 18), (-0.27, -0.8, 1.33, 1.5)),
 ])
 
 
@@ -199,11 +205,14 @@ class EntityPlayer(EntityAlive):
                 self.direction = "A"
 
     def attack(self, d=None):
-        if (self.state != "normal"):
+        if (self.state != "normal" and self.state != "swim"):
             return
         if (d is not None):
             self.direction = d
-        self.state = "attack"
+        if (self.state == "swim"):
+            self.state = "attack_swim"
+        else:
+            self.state = "attack"
         self.shovel = Entity.createById("shovel", self.screen)
         self.screen.addEntity(self.shovel)
         self.shovel.startX = self.x
@@ -253,9 +262,9 @@ class EntityPlayer(EntityAlive):
             if (self.animator.lastState[1]):
                 self.afterDig()
                 self.state = "normal"
-        elif (self.state == "attack"):
+        elif (self.state == "attack" or self.state == "attack_swim"):
             if (self.shovel is not None):
-                self.animator.setAnimation("attack" + self.direction)
+                self.animator.setAnimation(self.state + self.direction)
                 if (self.animator.lastState[1]):
                     self.shovel.remove()
                     self.shovel = None
@@ -281,7 +290,7 @@ class EntityPlayer(EntityAlive):
                 swim = rectPointIntersection(zone, (x, y))
             if (swim):
                 self.state = "swim"
-                anim = "swim" if self.speedX == 0 and self.speedY == 0 else "swiming"
+                anim = "swim" if self.speedX == 0 and self.speedY == 0 else "swimming"
                 self.animator.setAnimation(anim + self.direction)
             else:
                 self.state = "normal"
@@ -300,6 +309,8 @@ class EntityPlayer(EntityAlive):
         elif (self.y + self.height >= Settings.screen_height - 0.05):
             if (self.screen.tryGoTo("down")):
                 self.y = 0.1
+
+        # self.animator.setAnimation("attack_swimS")
 
     def preUpdate(self):
         self.message = ""
