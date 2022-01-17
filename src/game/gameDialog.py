@@ -10,6 +10,7 @@ class GameDialog:
         self.rect.y = (Settings.height - self.rect.height) / 2
         self.surface = pygame.Surface(self.rect.size)
         self.closed = False
+        self.exitFromGame = False
         self.surface.fill("gray")
         border = int(Settings.width * 0.04) + 1
         pygame.draw.rect(self.surface, pygame.Color(194, 133, 105), (0, 0, self.rect.width, self.rect.height), border)

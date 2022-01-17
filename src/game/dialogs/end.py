@@ -1,5 +1,5 @@
 import pygame
-from functions import getPosMult, getRectMult, load_image, renderText, scaleImg
+from functions import getPosMult, getRectMult, load_image, renderText
 from game.gameDialog import GameDialog
 from settings import Settings
 
@@ -22,3 +22,5 @@ class GameDialog_end(GameDialog):
 
     def onMouseUp(self, pos: tuple[int, int]):
         super().onMouseUp(pos)
+        self.closed = True
+        self.exitFromGame = True

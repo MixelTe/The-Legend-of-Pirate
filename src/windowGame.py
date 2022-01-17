@@ -61,15 +61,17 @@ class WindowGame(Window):
     def update(self):
         exitNow = self.overlay.update()
         if (exitNow):
-            self.saveData.health = self.player.health
-            self.saveData.time += int((datetime.now() - self.time).total_seconds())
-            self.saveData.save()
+            self.saveAll()
             from windowStart import WindowStart
             return WindowStart()
 
         if (self.dialog is not None):
             r = self.dialog.update()
             if (r):
+                if (self.dialog.exitFromGame):
+                    self.saveAll()
+                    from windowStart import WindowStart
+                    return WindowStart()
                 self.dialog = None
             return
         if (self.screenAnim):
@@ -100,9 +102,7 @@ class WindowGame(Window):
                 self.screenAnim = ScreenAnimationBlur(goTo.image, self.screen.draw())
 
         if (self.player.health <= 0):
-            self.saveData.health = SaveData(-1).health
-            self.saveData.time += int((datetime.now() - self.time).total_seconds())
-            self.saveData.save()
+            self.saveAll()
             from windowEnd import WindowEnd
             return WindowEnd(self.save)
 
@@ -119,3 +119,12 @@ class WindowGame(Window):
 
     def openDialog(self, dialog: GameDialog):
         self.dialog = dialog
+
+    def saveAll(self):
+        self.saveData.health = self.player.health
+        if (self.player.health <= 0):
+            self.saveData.health = SaveData(-1).health
+        now = datetime.now()
+        self.saveData.time += int((now - self.time).total_seconds())
+        self.time = now
+        self.saveData.save()
