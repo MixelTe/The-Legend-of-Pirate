@@ -166,7 +166,7 @@ class EntityEditor
 		const inpY = Input("inp-short", "number");
 		const inpW = Input("inp-short", "number");
 		const inpH = Input("inp-short", "number");
-		let rect = { x: addD ? 0.5 : 0, y: addD ? 0.5 : 0, w: 1, h: 1 };
+		let rect: Rect = [addD ? 0.5 : 0, addD ? 0.5 : 0, 1, 1 ];
 		const inpNone = Input([], "checkbox");
 		td.appendChild(Div([], [
 			initEl("label", [], [
@@ -209,10 +209,10 @@ class EntityEditor
 				inpH.disabled = false;
 			}
 		});
-		inpX.addEventListener("change", () => rect.x = inpX.valueAsNumber);
-		inpY.addEventListener("change", () => rect.y = inpY.valueAsNumber);
-		inpW.addEventListener("change", () => rect.w = inpW.valueAsNumber);
-		inpH.addEventListener("change", () => rect.h = inpH.valueAsNumber);
+		inpX.addEventListener("change", () => rect[0] = inpX.valueAsNumber);
+		inpY.addEventListener("change", () => rect[1] = inpY.valueAsNumber);
+		inpW.addEventListener("change", () => rect[2] = inpW.valueAsNumber);
+		inpH.addEventListener("change", () => rect[3] = inpH.valueAsNumber);
 		if (data.value == null)
 		{
 			inpX.disabled = true;
@@ -225,10 +225,10 @@ class EntityEditor
 		{
 			rect = data.value;
 		}
-		inpX.valueAsNumber = rect.x;
-		inpY.valueAsNumber = rect.y;
-		inpW.valueAsNumber = rect.w;
-		inpH.valueAsNumber = rect.h;
+		inpX.valueAsNumber = rect[0];
+		inpY.valueAsNumber = rect[1];
+		inpW.valueAsNumber = rect[2];
+		inpH.valueAsNumber = rect[3];
 	}
 	private createValueEdit_aura(data: EntityData<"aura">, td: HTMLTableCellElement)
 	{
@@ -243,7 +243,7 @@ class EntityEditor
 		const inpNone = Input([], "checkbox");
 		const span = Span([], [], "0;0 ");
 		const btn = Button([], "Изменить");
-		let point = { x: 0, y: 0 };
+		let point: Point = [0, 0];
 		td.appendChild(Div([], [
 			span,
 			btn,
@@ -261,7 +261,7 @@ class EntityEditor
 		else
 		{
 			point = data.value;
-			span.innerText = `${point.x}:${point.y} `;
+			span.innerText = `${point[0]}:${point[1]} `;
 		}
 		inpNone.addEventListener("change", () =>
 		{
@@ -275,7 +275,7 @@ class EntityEditor
 			{
 				data.value = point;
 				btn.disabled = false;
-				span.innerText = `${point.x}:${point.y} `;
+				span.innerText = `${point[0]}:${point[1]} `;
 			}
 		});
 		btn.addEventListener("click", async () =>
@@ -283,7 +283,7 @@ class EntityEditor
 			const r = await new EntityEditor_TileSeclector(vx, vy, true).get();
 			if (r) point = r[0];
 			data.value = point;
-			span.innerText = `${point.x}:${point.y} `;
+			span.innerText = `${point[0]}:${point[1]} `;
 		});
 	}
 	private createValueEdit_tiles(data: EntityData<"tiles">, td: HTMLTableCellElement, vx: number, vy: number)
@@ -374,7 +374,7 @@ class EntityEditor_TileSeclector
 		{
 			const x = Math.floor(e.offsetX / this.tileSize);
 			const y = Math.floor(e.offsetY / this.tileSize);
-			this.cursor = { x, y };
+			this.cursor = [x, y];
 			if (x < 0 || x >= ViewWidth || y < 0 || y >= ViewHeight)
 			{
 				this.cursor = undefined;
@@ -384,7 +384,7 @@ class EntityEditor_TileSeclector
 			{
 				if (drawing)
 				{
-					if (i == null) this.selected.push({ x, y });
+					if (i == null) this.selected.push([x, y]);
 				}
 				else
 				{
@@ -411,7 +411,7 @@ class EntityEditor_TileSeclector
 			const i = this.pointSelected(x, y);
 			if (drawing == true)
 			{
-				this.selected.push({ x, y });
+				this.selected.push([x, y]);
 				if (this.oneTile) this.popup.close(true);
 			}
 			else if (drawing == false)
@@ -458,7 +458,7 @@ class EntityEditor_TileSeclector
 				drawTile(x, y);
 			}
 		}
-		if (this.cursor) drawTile(this.cursor.x, this.cursor.y, true);
+		if (this.cursor) drawTile(this.cursor[0], this.cursor[1], true);
 	}
 	private pointSelected(x: number, y: number, selected?: Point[])
 	{
@@ -466,7 +466,7 @@ class EntityEditor_TileSeclector
 		for (let i = 0; i < selected.length; i++)
 		{
 			const point = selected[i];
-			if (point.x == x && point.y == y) return i;
+			if (point[0] == x && point[0] == y) return i;
 		}
 		return null;
 	}
@@ -477,7 +477,7 @@ class EntityEditor_TileSeclector
 		if (!r || this.selected.length == 0) return null;
 		this.selected.forEach(el =>
 		{
-			if (!this.pointSelected(el.x, el.y, selected))
+			if (!this.pointSelected(el[0], el[1], selected))
 			{
 				selected.push(el);
 			}

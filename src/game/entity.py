@@ -381,6 +381,7 @@ def loadEntities():
     import game.entities.trader
     import game.entities.trainer
     import game.entities.cannon
+    import game.entities.trigger
 
 
 loadEntities()

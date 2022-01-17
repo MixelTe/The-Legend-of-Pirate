@@ -70,16 +70,16 @@ class Entity
 				{
 					const rect = <Rect>data.value;
 					if (rect == null) continue;
-					ctx.strokeRect(rect.x * TileSize, rect.y * TileSize, rect.w * TileSize, rect.h * TileSize);
+					ctx.strokeRect(rect[0] * TileSize, rect[1] * TileSize, rect[2] * TileSize, rect[3] * TileSize);
 				}
 				else if (data.type == "aura")
 				{
 					const rect = <Rect>data.value;
 					if (rect == null) continue;
 					ctx.strokeRect(
-						this.x * TileSize + obj.widthHitbox * TileSize / 2 - rect.x * TileSize,
-						this.y * TileSize + obj.heightHitbox * TileSize / 2 - rect.y * TileSize,
-						rect.w * TileSize, rect.h * TileSize);
+						this.x * TileSize + obj.widthHitbox * TileSize / 2 - rect[0] * TileSize,
+						this.y * TileSize + obj.heightHitbox * TileSize / 2 - rect[1] * TileSize,
+						rect[2] * TileSize, rect[3] * TileSize);
 				}
 				else if (data.type == 'tile')
 				{
@@ -87,7 +87,7 @@ class Entity
 					if (point == null) continue;
 					ctx.save();
 					ctx.globalAlpha = 0.6;
-					ctx.fillRect(point.x * TileSize, point.y * TileSize, TileSize, TileSize);
+					ctx.fillRect(point[0] * TileSize, point[1] * TileSize, TileSize, TileSize);
 					ctx.restore();
 				}
 				else if (data.type == 'tiles')
@@ -99,7 +99,7 @@ class Entity
 					for (let j = 0; j < points.length; j++)
 					{
 						const point = points[j];
-						ctx.fillRect(point.x * TileSize, point.y * TileSize, TileSize, TileSize);
+						ctx.fillRect(point[0] * TileSize, point[1] * TileSize, TileSize, TileSize);
 					}
 					ctx.restore();
 				}
@@ -186,18 +186,8 @@ interface EntityDataType
 	"tile": Point | null,
 	"tiles": Point[] | null,
 };
-interface Rect
-{
-	x: number,
-	y: number,
-	w: number,
-	h: number
-}
-interface Point
-{
-	x: number,
-	y: number,
-}
+type Rect = [number, number, number, number]
+type Point = [number, number]
 interface EntityData<T extends keyof EntityDataType>
 {
 	type: T;

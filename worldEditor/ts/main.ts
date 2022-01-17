@@ -1043,7 +1043,11 @@ canvas.addEventListener("dblclick", e =>
 	if (inp_mode_entity.checked && e.button == 0)
 	{
 		const { entity, vx, vy } = world.getEntity(e.offsetX - camera_x, e.offsetY - camera_y);
-		if (entity) entity.openMenu(vx, vy);
+		if (entity)
+		{
+			selectedEntity = entity;
+			entity.openMenu(vx, vy);
+		}
 	}
 });
 window.addEventListener("keypress", e =>
