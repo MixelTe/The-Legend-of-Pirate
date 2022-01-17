@@ -71,10 +71,10 @@ class EntityPlayer(EntityAlive):
         if (key == pygame.K_SPACE):
             self.attack()
         if (key == pygame.K_e):
-            self.dig()
-        if (key == pygame.K_LSHIFT):
             if (self.action):
                 self.action()
+            else:
+                self.dig()
 
         if (Settings.moveScreenOnNumpad):
             if (key == pygame.K_KP_4):
@@ -172,7 +172,10 @@ class EntityPlayer(EntityAlive):
         if (button == 2):
             self.attack()
         if (button == 1):
-            self.dig()
+            if (self.action):
+                self.action()
+            else:
+                self.dig()
 
     def onJoyButonUp(self, button):
         pass
@@ -218,12 +221,13 @@ class EntityPlayer(EntityAlive):
 
     def afterDig(self):
         entities = self.get_entitiesD((1.1, 0.4, 0.4, 0.3))
-        dig_place = False
+        dig_place = None
         for e in entities:
             if e.id == "dig_place":
-                dig_place = True
+                dig_place = e
                 break
         if (dig_place):
+            dig_place.remove()
             found = choices(["coin", "heart", "crab"], [0.5, 0.4, 0.1])[0]
             if (found == "coin"):
                 coin = Entity.createById("coin", self.screen)
