@@ -2,6 +2,7 @@ import pygame
 from game.animator import Animator, AnimatorData
 from game.entity import EntityAlive, EntityGroups
 from random import randint
+from game.tile import Tile
 
 from settings import Settings
 
@@ -32,6 +33,10 @@ class EntityCrab(EntityAlive):
         self.attackCounter = 0
         self.aX = 0
         self.aY = 0
+        self.target = (0, 0)
+
+    def canGoOn(self, tile: Tile) -> bool:
+        return "water" not in tile.tags
 
     def draw(self, surface: pygame.Surface):
         super().draw(surface)
@@ -47,14 +52,14 @@ class EntityCrab(EntityAlive):
                 self.state = "agr"
                 self.animator.setAnimation("agr")
         elif (self.state == "agr"):
-            if (not self.is_inRectD(self.lookZone, self.screen.player)):
-                self.state = "sleep"
-                self.animator.setAnimation("sleep")
-            elif (self.animator.lastState[1]):
+            if (self.is_inRectD(self.lookZone, self.screen.player)):
+                self.target = (self.screen.player.x + self.screen.player.width / 2,
+                               self.screen.player.y + self.screen.player.height / 2)
+            if (self.animator.lastState[1]):
                 self.state = "attack"
                 self.animator.setAnimation("attack")
-                dx = (self.screen.player.x + self.screen.player.width / 2) - (self.x + self.width / 2)
-                dy = (self.screen.player.y + self.screen.player.height / 2) - (self.y + self.height / 2)
+                dx = (self.target[0]) - (self.x + self.width / 2)
+                dy = (self.target[1]) - (self.y + self.height / 2)
                 self.speedX = dx / self.attackTime
                 self.speedY = dy / self.attackTime
                 self.attackCounter = 0
