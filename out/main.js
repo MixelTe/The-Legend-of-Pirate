@@ -1195,3 +1195,40 @@ function loop() {
     minimap.draw();
     requestAnimationFrame(loop);
 }
+function saveScreenImg(x = 0, y = 0, w, h) {
+    let tileSize = TileSize;
+    if (w == undefined) {
+        w = 1920;
+        tileSize = Math.floor(w / ViewWidth);
+    }
+    if (h == undefined)
+        h = tileSize * ViewHeight;
+    const canvas = document.createElement("canvas");
+    document.body.appendChild(canvas);
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = getCanvasContext(canvas);
+    ctx.imageSmoothingEnabled = false;
+    const view = world.map[y][x];
+    if (view == undefined) {
+        console.log("view == undefined");
+        return;
+    }
+    for (let y = 0; y < ViewHeight; y++) {
+        for (let x = 0; x < ViewWidth; x++) {
+            let tile = view.tiles[y][x];
+            const img = tileImages[tile.id];
+            if (!img)
+                continue;
+            ctx.drawImage(img, x * tileSize, y * tileSize, tileSize, tileSize);
+        }
+    }
+    canvas.addEventListener("click", () => {
+        document.body.removeChild(canvas);
+    });
+    // const img = canvas.toDataURL("image/png");
+    // var image = new Image();
+    // image.src = img;
+    // const W = window.open("");
+    // W?.document.write(image.outerHTML);
+}
