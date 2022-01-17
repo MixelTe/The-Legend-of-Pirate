@@ -15,7 +15,7 @@ class SaveData:
         self.health = 6
         self.bullets = 0
         self.time = 1
-        self.tags: list[str] = ["island-market-cannonball"]
+        self.tags: list[str] = []
 
     def load(self):
         path = joinPath(Settings.folder_saves, f"{self.saveFile}.txt")
