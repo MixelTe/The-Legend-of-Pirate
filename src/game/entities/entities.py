@@ -15,6 +15,13 @@ class EntityCactus(EntityAlive):
         self.strength = 1
         self.imagePos = (-0.075, -0.075)
         self.group = EntityGroups.neutral
+        self.damageAura = (-0.075, -0.075, 1, 1)
+
+    def update(self):
+        super().update()
+        for e in self.get_entitiesD(self.damageAura):
+            if (isinstance(e, EntityAlive)):
+                e.takeDamage(self.strength, self)
 
 
 Entity.registerEntity("cactus", EntityCactus)
