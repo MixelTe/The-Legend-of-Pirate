@@ -169,7 +169,7 @@ class EntityEditor {
         const inpY = Input("inp-short", "number");
         const inpW = Input("inp-short", "number");
         const inpH = Input("inp-short", "number");
-        let rect = { x: addD ? 0.5 : 0, y: addD ? 0.5 : 0, w: 1, h: 1 };
+        let rect = [addD ? 0.5 : 0, addD ? 0.5 : 0, 1, 1];
         const inpNone = Input([], "checkbox");
         td.appendChild(Div([], [
             initEl("label", [], [
@@ -209,10 +209,10 @@ class EntityEditor {
                 inpH.disabled = false;
             }
         });
-        inpX.addEventListener("change", () => rect.x = inpX.valueAsNumber);
-        inpY.addEventListener("change", () => rect.y = inpY.valueAsNumber);
-        inpW.addEventListener("change", () => rect.w = inpW.valueAsNumber);
-        inpH.addEventListener("change", () => rect.h = inpH.valueAsNumber);
+        inpX.addEventListener("change", () => rect[0] = inpX.valueAsNumber);
+        inpY.addEventListener("change", () => rect[1] = inpY.valueAsNumber);
+        inpW.addEventListener("change", () => rect[2] = inpW.valueAsNumber);
+        inpH.addEventListener("change", () => rect[3] = inpH.valueAsNumber);
         if (data.value == null) {
             inpX.disabled = true;
             inpY.disabled = true;
@@ -223,10 +223,10 @@ class EntityEditor {
         else {
             rect = data.value;
         }
-        inpX.valueAsNumber = rect.x;
-        inpY.valueAsNumber = rect.y;
-        inpW.valueAsNumber = rect.w;
-        inpH.valueAsNumber = rect.h;
+        inpX.valueAsNumber = rect[0];
+        inpY.valueAsNumber = rect[1];
+        inpW.valueAsNumber = rect[2];
+        inpH.valueAsNumber = rect[3];
     }
     createValueEdit_aura(data, td) {
         this.createValueEdit_rect(data, td, true);
@@ -238,7 +238,7 @@ class EntityEditor {
         const inpNone = Input([], "checkbox");
         const span = Span([], [], "0;0 ");
         const btn = Button([], "Изменить");
-        let point = { x: 0, y: 0 };
+        let point = [0, 0];
         td.appendChild(Div([], [
             span,
             btn,
@@ -254,7 +254,7 @@ class EntityEditor {
         }
         else {
             point = data.value;
-            span.innerText = `${point.x}:${point.y} `;
+            span.innerText = `${point[0]}:${point[1]} `;
         }
         inpNone.addEventListener("change", () => {
             if (inpNone.checked) {
@@ -265,7 +265,7 @@ class EntityEditor {
             else {
                 data.value = point;
                 btn.disabled = false;
-                span.innerText = `${point.x}:${point.y} `;
+                span.innerText = `${point[0]}:${point[1]} `;
             }
         });
         btn.addEventListener("click", async () => {
@@ -273,7 +273,7 @@ class EntityEditor {
             if (r)
                 point = r[0];
             data.value = point;
-            span.innerText = `${point.x}:${point.y} `;
+            span.innerText = `${point[0]}:${point[1]} `;
         });
     }
     createValueEdit_tiles(data, td, vx, vy) {
@@ -354,7 +354,7 @@ class EntityEditor_TileSeclector {
         canvas.addEventListener("mousemove", e => {
             const x = Math.floor(e.offsetX / this.tileSize);
             const y = Math.floor(e.offsetY / this.tileSize);
-            this.cursor = { x, y };
+            this.cursor = [x, y];
             if (x < 0 || x >= ViewWidth || y < 0 || y >= ViewHeight) {
                 this.cursor = undefined;
             }
@@ -362,7 +362,7 @@ class EntityEditor_TileSeclector {
             if (!this.oneTile && drawing != null) {
                 if (drawing) {
                     if (i == null)
-                        this.selected.push({ x, y });
+                        this.selected.push([x, y]);
                 }
                 else {
                     if (i != null)
@@ -388,7 +388,7 @@ class EntityEditor_TileSeclector {
             const y = Math.floor(e.offsetY / this.tileSize);
             const i = this.pointSelected(x, y);
             if (drawing == true) {
-                this.selected.push({ x, y });
+                this.selected.push([x, y]);
                 if (this.oneTile)
                     this.popup.close(true);
             }
@@ -433,14 +433,14 @@ class EntityEditor_TileSeclector {
             }
         }
         if (this.cursor)
-            drawTile(this.cursor.x, this.cursor.y, true);
+            drawTile(this.cursor[0], this.cursor[1], true);
     }
     pointSelected(x, y, selected) {
         if (selected == undefined)
             selected = this.selected;
         for (let i = 0; i < selected.length; i++) {
             const point = selected[i];
-            if (point.x == x && point.y == y)
+            if (point[0] == x && point[0] == y)
                 return i;
         }
         return null;
@@ -451,7 +451,7 @@ class EntityEditor_TileSeclector {
         if (!r || this.selected.length == 0)
             return null;
         this.selected.forEach(el => {
-            if (!this.pointSelected(el.x, el.y, selected)) {
+            if (!this.pointSelected(el[0], el[1], selected)) {
                 selected.push(el);
             }
         });
