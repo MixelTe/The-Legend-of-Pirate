@@ -374,6 +374,8 @@
 	* Диалоговое окно, при его открытии игра останавливается
 	* Поля:
 		* rect: pygame.Rect
+		* closed: bool - если True, то диалог закрывается, а игра продолжается
+		* exitFromGame: bool - если True, то при закрытии диалога, включается WindowStart
 	* Метды:
 		* init()
 		* draw() -> pygame.Surface
