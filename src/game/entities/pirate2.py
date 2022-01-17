@@ -31,7 +31,9 @@ class EntityPirate2(Entity):
     def update(self):
         super().update()
         if (self.is_inRectD(self.talkZone, self.screen.player)):
-            self.screen.player.message = self.speech
-
+            if ("island-door" in self.screen.saveData.tags):
+                self.screen.player.message = "Ничего себе! А ключом было никак?"
+            else:
+                self.screen.player.message = self.speech
 
 Entity.registerEntity("pirate2", EntityPirate2)

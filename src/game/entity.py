@@ -380,6 +380,7 @@ def loadEntities():
     import game.entities.market
     import game.entities.trader
     import game.entities.trainer
+    import game.entities.cannon
 
 
 loadEntities()

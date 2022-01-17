@@ -1,4 +1,4 @@
-from functions import load_entityImg, load_entityStay
+from functions import load_entityImg
 from game.entity import Entity, EntityAlive, EntityGroups
 from random import random
 
@@ -36,6 +36,11 @@ class EntityDoor(Entity):
         self.width = 1
         self.height = 1
 
+    def update(self):
+        if ("island-door" in self.screen.saveData.tags):
+            self.remove()
+        return super().update()
+
 
 Entity.registerEntity("door", EntityDoor)
 
@@ -54,17 +59,30 @@ class EntityPalm(Entity):
 Entity.registerEntity("palm", EntityPalm)
 
 
-class EntityCannon(Entity):
-    image = load_entityStay("cannon", 11, 12, 1, 1)
+class EntityCannonball(EntityAlive):
+    image = load_entityImg("cannonball.png", 0.4, 0.4)
 
     def __init__(self, screen, data: dict = None):
         super().__init__(screen, data)
-        self.image = EntityCannon.image
-        self.width = 1
-        self.height = 1
+        self.image = EntityCannonball.image
+        self.group = EntityGroups.enemy
+        self.strength = 100
+        self.hidden = True
+        self.ghostE = True
+        self.width = 0.4
+        self.height = 0.4
+
+    def update(self):
+        collisions =  super().update()
+        for rect, collision in collisions:
+            if (isinstance(collision, EntityDoor)):
+                self.screen.saveData.tags.append("island-door")
+                self.remove()
+                collision.remove()
 
 
-Entity.registerEntity("cannon", EntityCannon)
+
+Entity.registerEntity("cannonball", EntityCannonball)
 
 
 class EntityDigPlace(Entity):
