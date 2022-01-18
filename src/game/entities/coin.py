@@ -1,5 +1,7 @@
-from functions import load_image, scaleImg
+from functions import load_image, load_sound, scaleImg
 from game.entity import Entity
+
+sound_coin = load_sound("coin.wav")
 
 
 class EntityCoin(Entity):
@@ -24,6 +26,7 @@ class EntityCoin(Entity):
         for rect, collision in collisions:
             if (collision == self.screen.player):
                 self.screen.saveData.coins += 1
+                sound_coin.play()
                 self.remove()
 
 

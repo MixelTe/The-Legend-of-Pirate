@@ -1,5 +1,5 @@
 import pygame
-from functions import getPosMult, getRectMult, load_image, renderText
+from functions import getPosMult, getRectMult, load_image, load_sound, renderText
 from game.entityPlayer import EntityPlayer
 from game.dialogs.exit import GameDialog_exit
 from settings import Settings
@@ -17,6 +17,9 @@ exitBtn = multRect((0.8, 0.15, 0.18, 0.7))
 img_exitBtn = pygame.transform.scale(load_image("quit.png"), (exitBtn[2], exitBtn[3]))
 img_exitBtn_active = pygame.transform.scale(load_image("quit_active.png"), (exitBtn[2], exitBtn[3]))
 img_msgBox = pygame.transform.scale(load_image("msgBox.png"), multPos((0.5, 1)))
+
+sound_btn = load_sound("btn.mp3")
+sound_btn2 = load_sound("btn2.wav")
 
 
 class Overlay:
@@ -81,6 +84,7 @@ class Overlay:
         return self.surface
 
     def openDialog(self):
+        sound_btn.play()
         def onClose(r: bool):
             self.exit = r
         self.exitBtn_hover = False
@@ -91,7 +95,10 @@ class Overlay:
             self.openDialog()
 
     def onMouseMove(self, pos: tuple[int, int]):
-        self.exitBtn_hover = self.exitBtn.collidepoint(pos)
+        hover = self.exitBtn.collidepoint(pos)
+        if (hover and not self.exitBtn_hover):
+            sound_btn2.play()
+        self.exitBtn_hover = hover
 
     def onKeyUp(self, key):
         if (key == pygame.K_ESCAPE):

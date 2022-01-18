@@ -1,6 +1,6 @@
 from random import choices
 import pygame
-from functions import rectPointIntersection
+from functions import load_sound, rectPointIntersection
 from game.animator import Animator, AnimatorData
 from game.entity import Entity, EntityAlive, EntityGroups
 from game.saveData import SaveData
@@ -37,6 +37,9 @@ animatorData = AnimatorData("pirate", [
     ("swimmingD.png", 150, (16, 18), (-0.27, -0.8, 1.33, 1.5)),
 ])
 
+sound_hit = load_sound("hit.wav")
+sound_walk = load_sound("walk.wav")
+
 
 class EntityPlayer(EntityAlive):
     def __init__(self, saveData: SaveData):
@@ -64,6 +67,7 @@ class EntityPlayer(EntityAlive):
         self.animator.DamageDelay = Settings.damageDelayPlayer
         self.animator.damageAnimCount = 4
         self.lastAttaker = ""
+        self.walkSoundCounter = 0
 
     def onKeyDown(self, key):
         if (key == pygame.K_w or key == pygame.K_UP):
@@ -192,6 +196,14 @@ class EntityPlayer(EntityAlive):
         if (self.state != "normal" and self.state != "swim" and self.state != "dig"):
             return
         if (len(self.buttonPressed) > 0):
+            if (self.walkSoundCounter == 0):
+                tile = self.get_tile(1, pos=(0.5, 0.7))
+                if (tile and "water" not in tile.tags):
+                    sound_walk.play()
+            self.walkSoundCounter += 1000 / Settings.fps
+            if (self.walkSoundCounter >= 400):
+                self.walkSoundCounter = 0
+
             if (self.state == "dig"):
                 self.state = "normal"
             if (self.buttonPressed[-1] == "up"):
@@ -206,6 +218,8 @@ class EntityPlayer(EntityAlive):
             if (self.buttonPressed[-1] == "left"):
                 self.speedX = -self.speed
                 self.direction = "A"
+        else:
+            self.walkSoundCounter = 100
 
     def attack(self, d=None):
         if (self.state != "normal" and self.state != "swim"):
@@ -216,6 +230,7 @@ class EntityPlayer(EntityAlive):
             self.state = "attack_swim"
         else:
             self.state = "attack"
+        sound_hit.play()
         self.shovel = Entity.createById("shovel", self.screen)
         self.screen.addEntity(self.shovel)
         self.shovel.startX = self.x
@@ -227,7 +242,7 @@ class EntityPlayer(EntityAlive):
         if (self.state != "normal"):
             return
         tile = self.get_tile(1, pos=(0.5, 0.7))
-        if (tile.digable):
+        if (tile and tile.digable):
             self.state = "dig"
 
     def afterDig(self):

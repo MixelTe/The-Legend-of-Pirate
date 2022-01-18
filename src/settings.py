@@ -13,6 +13,7 @@ class Settings:
     folder_entities = "entities"
     folder_tiles = "tiles"
     folder_worlds = "worlds"
+    folder_sounds = "sounds"
     path_font = None
     screen_width = 15
     screen_height = 7

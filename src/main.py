@@ -1,8 +1,10 @@
 import pygame
+from functions import joinPath
 from settings import Settings
 
 pygame.init()
 screen = pygame.display.set_mode((Settings.width, Settings.height), pygame.FULLSCREEN if Settings.fullscreen else 0)
+pygame.mixer.init()
 
 from window import Window
 from windowStart import WindowStart
@@ -11,8 +13,8 @@ from windowGame import WindowGame
 
 class Main:
     def __init__(self):
-        # self.window: Window = WindowStart()
-        self.window: Window = WindowGame(0)  # Temp
+        self.window: Window = WindowStart()
+        # self.window: Window = WindowGame(0)  # Temp
 
     def start(self):
         clock = pygame.time.Clock()
@@ -40,9 +42,12 @@ class Main:
 
             clock.tick(Settings.fps)
 
-        pygame.quit()
-
 
 pygame.joystick.init()
 pygame.display.set_caption('The Legend of Pirate')
+pygame.mixer.music.load(joinPath(Settings.folder_data, Settings.folder_sounds, "background2.mp3"))
+pygame.mixer.music.set_volume(0.5)
+# pygame.mixer.music.play(-1)
 Main().start()
+pygame.mixer.quit()
+pygame.quit()

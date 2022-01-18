@@ -1,10 +1,11 @@
 import pygame
-from functions import load_image, multPos, renderText, scaleImg
+from functions import load_image, load_sound, multPos, renderText, scaleImg
 from game.entity import Entity
 from settings import Settings
 
 coinImg = scaleImg(load_image("coin.png"), 0.25, 0.3)
 font = pygame.font.Font(Settings.path_font, int(Settings.tileSize * 0.4) + 1)
+sound_coin = load_sound("coin.wav")
 
 
 class EntityMarket(Entity):
@@ -80,6 +81,7 @@ class EntityMarket(Entity):
     def buy(self):
         if (self.screen.saveData.coins >= self.price):
             self.trader.somethingBought(self.onBuySpeech)
+            sound_coin.play()
             if (self.marketId is not None):
                 self.screen.saveData.tags.append(self.marketId)
             self.screen.saveData.coins -= self.price

@@ -1,12 +1,15 @@
 import pygame
 from typing import Callable
-from functions import getPosMult, getRectMult, load_image, multPos as multPosFull
+from functions import getPosMult, getRectMult, load_image, load_sound, multPos as multPosFull
 from game.gameDialog import GameDialog
 from settings import Settings
 
 
 multRect = getRectMult(Settings.width, Settings.height - Settings.overlay_height)
 multPos = getPosMult(Settings.width, Settings.height - Settings.overlay_height)
+
+sound_btn = load_sound("btn.mp3")
+sound_btn2 = load_sound("btn2.wav")
 
 
 class GameDialog_exit(GameDialog):
@@ -39,18 +42,24 @@ class GameDialog_exit(GameDialog):
         if (self.selected == 0):
             self.closed = True
             self.onClose(True)
+            sound_btn.play()
         if (self.selected == 1):
             self.close()
 
     def close(self):
+        sound_btn.play()
         self.closed = True
         self.onClose(False)
 
     def onMove(self, pos: tuple[int, int]):
         pos = super().onMove(pos)
         if (self.yes_rect.collidepoint(pos)):
+            if (self.selected != 0):
+                sound_btn2.play()
             self.selected = 0
         if (self.no_rect.collidepoint(pos)):
+            if (self.selected != 1):
+                sound_btn2.play()
             self.selected = 1
 
     def onMouseUp(self, pos: tuple[int, int]):
@@ -59,8 +68,10 @@ class GameDialog_exit(GameDialog):
     def onKeyUp(self, key):
         if (key == pygame.K_d or key == pygame.K_RIGHT):
             self.selected = ((self.selected + 1) + 2) % 2
+            sound_btn2.play()
         if (key == pygame.K_a or key == pygame.K_LEFT):
             self.selected = ((self.selected - 1) + 2) % 2
+            sound_btn2.play()
         if (key == pygame.K_RETURN or key == pygame.K_SPACE):
             self.action()
         if (key == pygame.K_ESCAPE):
@@ -69,8 +80,10 @@ class GameDialog_exit(GameDialog):
     def onJoyHat(self, value):
         if (value[0] > 0):
             self.selected = ((self.selected + 1) + 2) % 2
+            sound_btn2.play()
         if (value[0] < 0):
             self.selected = ((self.selected - 1) + 2) % 2
+            sound_btn2.play()
 
     def onJoyButonUp(self, button):
         if (button == 0):

@@ -55,6 +55,10 @@ def joinPath(*path: list[str]):
     return str(os.path.join(*path))
 
 
+def load_sound(name: str):
+    return pygame.mixer.Sound(joinPath(Settings.folder_data, Settings.folder_sounds, name))
+
+
 class Button(pygame.sprite.Sprite):
     def __init__(self, group, img, img_a):
         super().__init__(group)

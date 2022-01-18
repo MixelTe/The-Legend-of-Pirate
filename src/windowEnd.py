@@ -1,9 +1,12 @@
 import pygame
 from settings import Settings
 from window import WindowWithButtons
-from functions import createButton
+from functions import createButton, load_sound
 from windowGame import WindowGame
 from windowStart import WindowStart
+
+
+sound_over = load_sound("gameover.mp3")
 
 
 class WindowEnd(WindowWithButtons):
@@ -22,6 +25,7 @@ class WindowEnd(WindowWithButtons):
 
         self.restart = False
         self.quit = False
+        sound_over.play()
 
     def action(self):
         if (self.selected == 0):
