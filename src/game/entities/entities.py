@@ -87,6 +87,7 @@ Entity.registerEntity("cannonball", EntityCannonball)
 
 class EntityDigPlace(Entity):
     image = load_entityImg("dig_place.png", 0.3, 0.3)
+    image2 = load_entityImg("dig_place2.png", 1, 1)
 
     def __init__(self, screen, data: dict = None):
         super().__init__(screen, data)
@@ -98,6 +99,12 @@ class EntityDigPlace(Entity):
         self.width = 1
         self.height = 1
         self.imagePos = (random() * 0.5 + 0.2, random() * 0.5 + 0.2)
+        self.digged = False
+
+    def dig(self):
+        self.image = EntityDigPlace.image2
+        self.imagePos = (self.imagePos[0] - 0.35, self.imagePos[1] - 0.35)
+        self.digged = True
 
 
 Entity.registerEntity("dig_place", EntityDigPlace)

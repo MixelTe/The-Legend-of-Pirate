@@ -234,8 +234,8 @@ class EntityPlayer(EntityAlive):
             if e.id == "dig_place":
                 dig_place = e
                 break
-        if (dig_place):
-            dig_place.remove()
+        if (dig_place and not dig_place.digged):
+            dig_place.dig()
             found = choices(["coin", "heart", "crab"], [0.5, 0.4, 0.1])[0]
             if (found == "coin"):
                 coin = Entity.createById("coin", self.screen)
