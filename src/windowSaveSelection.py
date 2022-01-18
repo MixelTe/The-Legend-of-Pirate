@@ -1,39 +1,26 @@
 import pygame
-from settings import Settings
-from window import Window
-from functions import createSprite, load_image
+from window import WindowWithButtons
+from functions import createButton
 from windowGame import WindowGame
 
 
-class WindowSaveSelection(Window):
-    background = pygame.transform.scale(load_image("background.png"), (Settings.width, Settings.height))
-    img_save1 = load_image("save1.png")
-    img_save2 = load_image("save2.png")
-    img_save3 = load_image("save3.png")
-
+class WindowSaveSelection(WindowWithButtons):
     def __init__(self):
+        super().__init__()
         self.all_sprites = pygame.sprite.Group()
         scale = 0.4
 
-        self.save1 = createSprite(WindowSaveSelection.img_save1, scale, self.all_sprites, 0.3, 0.05)
-        self.save2 = createSprite(WindowSaveSelection.img_save2, scale, self.all_sprites, 0.3, 0.37)
-        self.save3 = createSprite(WindowSaveSelection.img_save3, scale, self.all_sprites, 0.3, 0.7)
+        createButton("save1", scale, self.all_sprites, 0.3, 0.05)
+        createButton("save2", scale, self.all_sprites, 0.3, 0.37)
+        createButton("save3", scale, self.all_sprites, 0.3, 0.7)
 
         self.startSave = None
 
-    def draw(self, screen: pygame.Surface):
-        screen.blit(self.background, (0, 0))
-        self.all_sprites.draw(screen)
-
-    def on_event(self, event: pygame.event.Event):
-        if event.type == pygame.MOUSEBUTTONUP:
-            if self.save1.rect.collidepoint(event.pos):
-                self.startSave = 1
-            if self.save2.rect.collidepoint(event.pos):
-                self.startSave = 2
-            if self.save3.rect.collidepoint(event.pos):
-                self.startSave = 3
+    def action(self):
+        if (self.selected >= 0):
+            self.startSave = self.selected + 1
 
     def update(self):
+        super().update()
         if (self.startSave is not None):
             return WindowGame(self.startSave)

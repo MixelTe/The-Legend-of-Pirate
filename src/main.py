@@ -1,10 +1,10 @@
 import pygame
 from settings import Settings
-from window import Window
 
 pygame.init()
 screen = pygame.display.set_mode((Settings.width, Settings.height), pygame.FULLSCREEN if Settings.fullscreen else 0)
 
+from window import Window
 from windowStart import WindowStart
 from windowGame import WindowGame
 

@@ -55,11 +55,28 @@ def joinPath(*path: list[str]):
     return str(os.path.join(*path))
 
 
-def createSprite(img: pygame.Surface, scale: int, group: pygame.sprite.Group, x=0, y=0):
-    sprite = pygame.sprite.Sprite(group)
+class Button(pygame.sprite.Sprite):
+    def __init__(self, group, img, img_a):
+        super().__init__(group)
+        self.img = img
+        self.img_a = img_a
+        self.active = False
+        self.image = self.img
+
+    def update(self, *args, **kwargs):
+        super().update(*args, **kwargs)
+        self.image = self.img_a if (self.active) else self.img
+
+
+def createButton(imgName: str, scale: int, group: pygame.sprite.Group, x=0, y=0):
+    img = load_image(imgName + ".png")
+    img_a = load_image(imgName + "_active.png")
     scale = Settings.width * scale / img.get_width()
-    sprite.rect = pygame.Rect(x * Settings.width, y * Settings.height, img.get_width() * scale, img.get_height() * scale)
-    sprite.image = pygame.transform.scale(img, (sprite.rect.width, sprite.rect.height))
+    w, h = img.get_width() * scale, img.get_height() * scale
+    img = pygame.transform.scale(img, (w, h))
+    img_a = pygame.transform.scale(img_a, (w, h))
+    sprite = Button(group, img, img_a)
+    sprite.rect = pygame.Rect(x * Settings.width, y * Settings.height, w,  h)
     return sprite
 
 

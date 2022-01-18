@@ -1,35 +1,26 @@
 import pygame
-from settings import Settings
-from window import Window
-from functions import createSprite, load_image
+from window import WindowWithButtons
+from functions import createButton
 from windowSaveSelection import WindowSaveSelection
 
 
-class WindowStart(Window):
-    background = pygame.transform.scale(load_image("background.png"), (Settings.width, Settings.height))
-    image_start = load_image("start.png")
-    image_quit = load_image("quit.png")
-
+class WindowStart(WindowWithButtons):
     def __init__(self):
-        self.all_sprites = pygame.sprite.Group()
+        super().__init__()
         scale = 0.4
 
-        self.start = createSprite(WindowStart.image_start, scale, self.all_sprites, 0.3, 0.15)
-        self.quit = createSprite(WindowStart.image_quit, scale, self.all_sprites, 0.3, 0.55)
+        createButton("start", scale, self.all_sprites, 0.3, 0.15)
+        createButton("quit", scale, self.all_sprites, 0.3, 0.55)
 
         self.starting = False
 
-    def draw(self, screen: pygame.Surface):
-        screen.blit(self.background, (0, 0))
-        self.all_sprites.draw(screen)
-
-    def on_event(self, event: pygame.event.Event):
-        if event.type == pygame.MOUSEBUTTONUP:
-            if self.quit.rect.collidepoint(event.pos):
-                pygame.event.post(pygame.event.Event(pygame.QUIT))
-            if self.start.rect.collidepoint(event.pos):
-                self.starting = True
+    def action(self):
+        if (self.selected == 0):
+            self.starting = True
+        elif (self.selected == 1):
+            pygame.event.post(pygame.event.Event(pygame.QUIT))
 
     def update(self):
+        super().update()
         if self.starting:
             return WindowSaveSelection()
