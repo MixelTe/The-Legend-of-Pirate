@@ -246,6 +246,7 @@
 	* Методы:
 		* takeDamage(damage: int) -> bool - Уменьшение здоровья и установка damageDelay в Settings.damageDelay, если damageDelay <= 0. Возвращает был ли нанесён урон
 		* heal(v: int) - Увеличение здоровья в приделах healthMax
+		* onDeath() - Вызывается перед удалением
 	* Класс EntityGroups:
 		* Группы сущностей
 		* Поля:
