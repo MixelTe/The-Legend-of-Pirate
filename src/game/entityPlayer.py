@@ -49,7 +49,7 @@ class EntityPlayer(EntityAlive):
         self.group = EntityGroups.playerSelf
         self.weapon: Entity = None
         self.message = ""
-        self.speed = 0.07
+        self.speed = 0.06
         self.width = 0.75
         self.height = 0.7
         self.imagePos = (0, -0.5)

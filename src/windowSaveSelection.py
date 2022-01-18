@@ -38,7 +38,7 @@ class WindowSaveSelection(WindowWithButtons):
 
     def onDialogClose(self, v):
         if (v):
-            SaveData.delete(self.dialog.save)
+            SaveData.delete(self.dialog.save + 1)
             if (self.dialog.save in self.btn_delete):
                 btn = self.btn_delete[self.dialog.save]
                 self.btn_delete[self.dialog.save] = None
