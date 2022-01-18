@@ -23,3 +23,11 @@ class GameDialog_start(GameDialog):
     def onMouseUp(self, pos: tuple[int, int]):
         super().onMouseUp(pos)
         self.closed = True
+
+    def onKeyUp(self, key):
+        if (key == pygame.K_ESCAPE or key == pygame.K_SPACE or key == pygame.K_RETURN):
+            self.closed = True
+
+    def onJoyButonUp(self, button):
+        if (button == 0):
+            self.closed = True
