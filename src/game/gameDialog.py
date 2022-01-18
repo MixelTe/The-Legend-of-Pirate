@@ -11,18 +11,21 @@ class GameDialog:
         self.surface = pygame.Surface(self.rect.size)
         self.closed = False
         self.exitFromGame = False
-        self.surface.fill("gray")
-        border = int(Settings.width * 0.04) + 1
-        pygame.draw.rect(self.surface, pygame.Color(194, 133, 105), (0, 0, self.rect.width, self.rect.height), border)
+        self.drawBack()
 
     def draw(self) -> pygame.Surface:
         return self.surface
+
+    def drawBack(self):
+        self.surface.fill("gray")
+        border = int(Settings.width * 0.04) + 1
+        pygame.draw.rect(self.surface, pygame.Color(194, 133, 105), (0, 0, self.rect.width, self.rect.height), border)
 
     def update(self) -> bool:
         return self.closed
 
     def onMove(self, pos: tuple[int, int]):
-        pass
+        return (pos[0] - self.rect.x, pos[1] - self.rect.y)
 
     def onMouseUp(self, pos: tuple[int, int]):
         if (not self.rect.collidepoint(pos)):

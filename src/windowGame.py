@@ -44,6 +44,10 @@ class WindowGame(Window):
                 self.overlay.onClick(event.pos)
             if (event.type == pygame.MOUSEMOTION):
                 self.overlay.onMouseMove(event.pos)
+            if (event.type == pygame.JOYBUTTONUP):
+                self.overlay.onJoyButonUp(event.button)
+            if (event.type == pygame.KEYUP):
+                self.overlay.onKeyUp(event.key)
         else:
             if (event.type == pygame.MOUSEMOTION):
                 self.dialog.onMove(event.pos)
@@ -51,7 +55,7 @@ class WindowGame(Window):
                 self.dialog.onMouseUp(event.pos)
             if (event.type == pygame.KEYUP):
                 self.dialog.onKeyUp(event.key)
-            if (event.type == pygame.JOYBUTTONDOWN):
+            if (event.type == pygame.JOYBUTTONUP):
                 self.dialog.onJoyButonUp(event.button)
             if (event.type == pygame.JOYHATMOTION):
                 self.dialog.onJoyHat(event.value)

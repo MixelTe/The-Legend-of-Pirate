@@ -80,12 +80,23 @@ class Overlay:
 
         return self.surface
 
+    def openDialog(self):
+        def onClose(r: bool):
+            self.exit = r
+        self.exitBtn_hover = False
+        self.player.screen.openDialog(GameDialog_exit(onClose))
+
     def onClick(self, pos: tuple[int, int]):
         if (self.exitBtn.collidepoint(pos)):
-            def onClose(r: bool):
-                self.exit = r
-            self.exitBtn_hover = False
-            self.player.screen.openDialog(GameDialog_exit(onClose))
+            self.openDialog()
 
     def onMouseMove(self, pos: tuple[int, int]):
         self.exitBtn_hover = self.exitBtn.collidepoint(pos)
+
+    def onKeyUp(self, key):
+        if (key == pygame.K_ESCAPE):
+            self.openDialog()
+
+    def onJoyButonUp(self, button):
+        if (button == 6):
+            self.openDialog()
