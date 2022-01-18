@@ -17,6 +17,17 @@ class SaveData:
         self.time = 1
         self.tags: list[str] = []
 
+    @staticmethod
+    def exist(save):
+        path = joinPath(Settings.folder_saves, f"{save}.txt")
+        return os.path.isfile(path)
+
+    @staticmethod
+    def delete(save):
+        path = joinPath(Settings.folder_saves, f"{save}.txt")
+        if (os.path.isfile(path)):
+            os.remove(path)
+
     def load(self):
         path = joinPath(Settings.folder_saves, f"{self.saveFile}.txt")
         if (not os.path.isfile(path)):
