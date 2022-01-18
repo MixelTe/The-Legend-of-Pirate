@@ -43,7 +43,7 @@ class Screen:
                 if (x - 1 >= 0 and not self.tiles[y][x - 1].solid):
                     places.append((x, y))
 
-        for x, y in choices(places, k=min(randint(0, 3), len(places))):
+        for x, y in choices(places, k=min(randint(0, 2), len(places))):
             e = Entity.createById("dig_place", self)
             e.x = x
             e.y = y

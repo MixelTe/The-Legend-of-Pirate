@@ -1,6 +1,7 @@
 from random import choice
 from game.entity import Entity, EntityAlive, EntityGroups
 from game.animator import Animator, AnimatorData
+from settings import Settings
 
 
 animatorData = AnimatorData("trainer", [
@@ -18,6 +19,7 @@ class EntityTrainer(EntityAlive):
         self.height = 0.7
         self.group = EntityGroups.enemy
         self.speech = ""
+        self.speechCounter = 0
 
     def takeDamage(self, damage: int, attacker: Entity = None):
         super().takeDamage(damage, attacker)
@@ -30,9 +32,12 @@ class EntityTrainer(EntityAlive):
         super().update()
         if (self.speech != ""):
             self.screen.player.message = self.speech
+            self.speechCounter += 1000 / Settings.fps
+            if (self.speechCounter >= 1500):
+                self.speech = ""
+                self.speechCounter = 0
         if (self.animator.curAnimation() == "attacked" and self.animator.lastState[1]):
             self.animator.setAnimation("stay")
-            self.speech = ""
 
 
 EntityAlive.registerEntity("trainer", EntityTrainer)
