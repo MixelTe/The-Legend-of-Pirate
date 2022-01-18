@@ -5,7 +5,7 @@ from settings import Settings
 
 animatorData = AnimatorData("trader", [
     ("stay.png", 0, (14, 24), (0, -0.8, 0.75, 1.5)),
-    ("trade.png", 1000, (14, 24), (0, -0.8, 0.75, 1.5)),
+    ("trade.png", 2500, (14, 24), (0, -0.8, 0.75, 1.5)),
 ])
 
 
@@ -17,17 +17,25 @@ class EntityTrader(Entity):
         self.height = 0.7
         self.imagePos = (0, -0.8)
         self.talkZone = (-1, 0, 3, 3)
-        self.speeches = ["Извини капитан, теперь каждый сам за себя!", "Спасибо за покупку!"]
+        self.speeches = ["Извини капитан, теперь каждый сам за себя!"]
         self.speech = self.speeches[0]
 
-    def somethingBought(self):
+    def somethingBought(self, speech):
         self.animator.setAnimation("trade")
-        self.speech = self.speeches[1]
+        self.speech = speech
 
     def draw(self, surface: pygame.Surface):
         super().draw(surface)
         if (Settings.drawHitboxes):
             self.draw_rect(surface, "pink", self.talkZone, False, True, True)
+
+    def setSpeech(self, speech):
+        if (self.animator.anim != "trade"):
+            self.speech = speech
+
+    def preUpdate(self):
+        if (self.animator.anim != "trade"):
+            self.speech = self.speeches[0]
 
     def update(self):
         super().update()

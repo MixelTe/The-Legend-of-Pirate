@@ -51,7 +51,8 @@ class Screen:
 
     def update(self) -> Union[None, ScreenGoTo]:
         self.entities.sort(key=lambda e: (e.drawPriority, e.y))
-        self.player.preUpdate()
+        for entity in self.entities:
+            entity.preUpdate()
         for entity in self.entities:
             entity.update()
         return self.goToVar

@@ -63,6 +63,9 @@ class Entity:
         self.x = data["x"]
         self.y = data["y"]
 
+    def preUpdate(self):
+        pass
+
     def update(self):
         if (self.animator is not None):
             self.animator.update()

@@ -14,6 +14,8 @@ class EntityMarket(Entity):
         self.priceImg = None
         self.price = 0
         self.marketId = None
+        self.onBuySpeech = "Спасибо за покупку!"
+        self.speech = None
         super().__init__(screen, data)
         self.hidden = True
         self.ghostE = True
@@ -22,6 +24,7 @@ class EntityMarket(Entity):
         self.width = 1
         self.height = 1
         self.buyZone = (0, 0, 1, 2)
+        self.trader = None
         if (self.marketId is not None):
             if (self.marketId in self.screen.saveData.tags):
                 self.item = None
@@ -37,6 +40,12 @@ class EntityMarket(Entity):
             id = data["market id"]
             if (id is not None):
                 self.marketId = self.screen.world.name + "-market-" + str(id)
+        if ("on buy speech" in data):
+            speech = data["on buy speech"]
+            if (speech is not None):
+                self.onBuySpeech = speech
+        if ("speech" in data):
+            self.speech = data["speech"]
 
     def setItem(self):
         self.item = Entity.createById(self.itemId, self.screen).image
@@ -58,14 +67,19 @@ class EntityMarket(Entity):
 
     def update(self):
         super().update()
+        if (self.trader is None):
+            for e in self.screen.entities:
+                if (e.id == "trader"):
+                    self.trader = e
+                    break
         if (self.item and self.is_inRectD(self.buyZone, self.screen.player)):
             self.screen.player.action = self.buy
+            if (self.trader and self.speech is not None):
+                self.trader.setSpeech(self.speech)
 
     def buy(self):
         if (self.screen.saveData.coins >= self.price):
-            for e in self.screen.entities:
-                if (e.id == "trader"):
-                    e.somethingBought()
+            self.trader.somethingBought(self.onBuySpeech)
             if (self.marketId is not None):
                 self.screen.saveData.tags.append(self.marketId)
             self.screen.saveData.coins -= self.price
