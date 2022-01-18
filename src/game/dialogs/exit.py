@@ -47,6 +47,7 @@ class GameDialog_exit(GameDialog):
         self.onClose(False)
 
     def onMove(self, pos: tuple[int, int]):
+        pos = super().onMove(pos)
         if (self.yes_rect.collidepoint(pos)):
             self.selected = 0
         if (self.no_rect.collidepoint(pos)):
