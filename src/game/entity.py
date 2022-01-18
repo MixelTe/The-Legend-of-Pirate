@@ -320,6 +320,9 @@ class EntityAlive(Entity):
         self.health += v
         self.health = min(self.health, self.healthMax)
 
+    def onDeath(self):
+        pass
+
     def update(self):
         self.attackPushbackX = max((abs(self.attackPushbackX) - self.attackPushbackA), 0) * (1 if self.attackPushbackX >= 0 else -1)
         self.attackPushbackY = max((abs(self.attackPushbackY) - self.attackPushbackA), 0) * (1 if self.attackPushbackY >= 0 else -1)
@@ -334,8 +337,10 @@ class EntityAlive(Entity):
             if (self.removeOnDeath):
                 if (self.animator):
                     if (self.animator.damageAnimFinished or not self.animator.damageAnim):
+                        self.onDeath()
                         self.remove()
                 else:
+                    self.onDeath()
                     self.remove()
             return collisions
         if (self.damageDelay > 0):

@@ -43,6 +43,12 @@ class EntityCrab(EntityAlive):
         if (Settings.drawHitboxes):
             self.draw_rect(surface, "red", self.lookZone, False, True, True)
 
+    def onDeath(self):
+        coin = EntityAlive.createById("coin", self.screen)
+        self.screen.addEntity(coin)
+        coin.x = self.x + self.width / 2
+        coin.y = self.y + self.height / 2
+
     def update(self):
         super().update()
         if (not self.alive or Settings.disableAI):
