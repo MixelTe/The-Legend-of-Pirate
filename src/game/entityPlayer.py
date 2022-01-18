@@ -63,6 +63,7 @@ class EntityPlayer(EntityAlive):
         self.DamageDelay = Settings.damageDelayPlayer
         self.animator.DamageDelay = Settings.damageDelayPlayer
         self.animator.damageAnimCount = 4
+        self.lastAttaker = ""
 
     def onKeyDown(self, key):
         if (key == pygame.K_w or key == pygame.K_UP):
@@ -317,3 +318,7 @@ class EntityPlayer(EntityAlive):
     def preUpdate(self):
         self.message = ""
         self.action = None
+
+    def takeDamage(self, damage: int, attacker: Entity = None):
+        if (super().takeDamage(damage, attacker)):
+            self.lastAttaker = attacker.id

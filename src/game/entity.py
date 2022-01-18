@@ -301,22 +301,22 @@ class EntityAlive(Entity):
             return False
         if (self.alive and self.animator):
             self.animator.startDamageAnim()
-        if (self.damageDelay <= 0):
-            self.damageDelay = self.DamageDelay
-            self.health -= damage
-            if (attacker):
-                dx = (attacker.x + attacker.width / 2) - (self.x + self.width / 2)
-                dy = (attacker.y + attacker.height / 2) - (self.y + self.height / 2)
-                self.attackPushbackX = -0.1 * (dx / (self.width + attacker.width))
-                self.attackPushbackY = -0.1 * (dy / (self.height + attacker.height))
-            if (self.health <= 0):
-                self.alive = False
-                self.hidden = True
-                self.speedX = 0
-                self.speedY = 0
-                if (self.animator and "stay" in self.animator.data.frames):
-                    self.animator.setAnimation("stay")
+        if (self.damageDelay > 0):
             return False
+        self.damageDelay = self.DamageDelay
+        self.health -= damage
+        if (attacker):
+            dx = (attacker.x + attacker.width / 2) - (self.x + self.width / 2)
+            dy = (attacker.y + attacker.height / 2) - (self.y + self.height / 2)
+            self.attackPushbackX = -0.1 * (dx / (self.width + attacker.width))
+            self.attackPushbackY = -0.1 * (dy / (self.height + attacker.height))
+        if (self.health <= 0):
+            self.alive = False
+            self.hidden = True
+            self.speedX = 0
+            self.speedY = 0
+            if (self.animator and "stay" in self.animator.data.frames):
+                self.animator.setAnimation("stay")
         return True
 
     def heal(self, v: int):

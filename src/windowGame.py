@@ -108,7 +108,7 @@ class WindowGame(Window):
         if (self.player.health <= 0):
             self.saveAll()
             from windowEnd import WindowEnd
-            return WindowEnd(self.save)
+            return WindowEnd(self.save, self.player.lastAttaker)
 
     def draw(self, screen: pygame.Surface):
         if (self.screenAnim):
