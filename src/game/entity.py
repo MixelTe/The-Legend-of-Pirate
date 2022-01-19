@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import Union
 import pygame
-from functions import GameExeption, multRect, rectIntersection
+from functions import GameExeption, load_sound, multRect, rectIntersection
 from game.animator import Animator
 from game.tile import Tile
 from settings import Settings
@@ -279,6 +279,9 @@ class EntityGroups:
     enemy = 3
 
 
+sound_hit = load_sound("hit.wav")
+
+
 class EntityAlive(Entity):
     def __init__(self, screen, data: dict = None):
         super().__init__(screen, data)
@@ -303,6 +306,7 @@ class EntityAlive(Entity):
             self.animator.startDamageAnim()
         if (self.damageDelay > 0):
             return False
+        sound_hit.play()
         self.damageDelay = self.DamageDelay
         self.health -= damage
         if (attacker):
