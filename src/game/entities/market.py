@@ -5,7 +5,7 @@ from settings import Settings
 
 coinImg = scaleImg(load_image("coin.png"), 0.25, 0.3)
 font = pygame.font.Font(Settings.path_font, int(Settings.tileSize * 0.4) + 1)
-sound_coin = load_sound("coin.wav")
+sound_coin = load_sound("coin.wav", "coin")
 
 
 class EntityMarket(Entity):

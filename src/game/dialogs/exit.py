@@ -8,8 +8,8 @@ from settings import Settings
 multRect = getRectMult(Settings.width, Settings.height - Settings.overlay_height)
 multPos = getPosMult(Settings.width, Settings.height - Settings.overlay_height)
 
-sound_btn = load_sound("btn.mp3")
-sound_btn2 = load_sound("btn2.wav")
+sound_btn = load_sound("btn.mp3", "btn")
+sound_btn2 = load_sound("btn2.wav", "btn")
 
 
 class GameDialog_exit(GameDialog):

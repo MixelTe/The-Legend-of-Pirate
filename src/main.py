@@ -45,7 +45,7 @@ class Main:
 
 pygame.joystick.init()
 pygame.display.set_caption('The Legend of Pirate')
-pygame.mixer.music.load(joinPath(Settings.folder_data, Settings.folder_sounds, "background2.mp3"))
+pygame.mixer.music.load(joinPath(Settings.folder_data, Settings.folder_sounds, "back", "background2.mp3"))
 pygame.mixer.music.set_volume(0.5)
 # pygame.mixer.music.play(-1)
 Main().start()

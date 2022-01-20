@@ -1,7 +1,7 @@
 from functions import load_image, load_sound, scaleImg
 from game.entity import Entity
 
-sound_coin = load_sound("coin.wav")
+sound_coin = load_sound("coin.wav", "coin")
 
 
 class EntityCoin(Entity):

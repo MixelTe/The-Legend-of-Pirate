@@ -41,7 +41,7 @@ animatorData = AnimatorData("pirate", [
 # sound_walk = load_sound("walk.wav")
 sound_hit = load_sound("attack_shovel.mp3")
 sound_hit.set_volume(1.2)
-sound_walk = load_sound("walk.wav")
+sound_walk = load_sound("walk.wav", "walk")
 sound_walk.set_volume(0.7)
 
 

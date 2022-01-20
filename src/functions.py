@@ -55,8 +55,12 @@ def joinPath(*path: list[str]):
     return str(os.path.join(*path))
 
 
-def load_sound(name: str):
-    return pygame.mixer.Sound(joinPath(Settings.folder_data, Settings.folder_sounds, name))
+def load_sound(name: str, folder: str = None):
+    if (folder):
+        path = joinPath(Settings.folder_data, Settings.folder_sounds, folder, name)
+    else:
+        path = joinPath(Settings.folder_data, Settings.folder_sounds, name)
+    return pygame.mixer.Sound(path)
 
 
 class Button(pygame.sprite.Sprite):
