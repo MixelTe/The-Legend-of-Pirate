@@ -279,7 +279,7 @@ class EntityGroups:
     enemy = 3
 
 
-sound_hit = load_sound("hit1.wav", "hit")
+sound_hit = load_sound("hit2.mp3", "hit")
 
 
 class EntityAlive(Entity):
