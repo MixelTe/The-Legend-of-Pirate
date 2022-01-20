@@ -23,6 +23,8 @@ createNewEntityClass_Auto("market", false, 39, 39, 1, 1, 0, 0, 1, 1, [
     { type: "text", name: "item id", value: "coin", displayColor: "black" },
     { type: "number", name: "price", value: 1, displayColor: "lime" },
     { type: "text", name: "market id", value: null, displayColor: "lime" },
+    { type: "text", name: "on buy speech", value: null },
+    { type: "text", name: "speech", value: null },
 ]);
 createNewEntityClass_Auto("trigger", false, 50, 50, 1, 1, 0, 0, 1, 1, [
     { type: "text", name: "dialog", value: null, displayColor: "lime" },
