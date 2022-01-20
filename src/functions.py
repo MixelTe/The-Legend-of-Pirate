@@ -131,7 +131,7 @@ def getPosMult(vw: float, vh: float = None):
     return mult
 
 
-def renderText(font: pygame.font.Font, lineHeight: int, size: tuple[int, int], text: str, color: Union[str, pygame.Color]):
+def renderText(font: pygame.font.Font, lineHeight: int, size: tuple[int, int], text: str, color: Union[str, pygame.Color], centerX=False, centerY=False):
     lines = []
     line = ""
     for word in text.split():
@@ -147,17 +147,19 @@ def renderText(font: pygame.font.Font, lineHeight: int, size: tuple[int, int], t
         lines[0] = lines[0][1:]
     surface = pygame.Surface(size, pygame.SRCALPHA)
     surface.fill(pygame.Color(0, 0, 0, 0))
-    displayLines(surface, font, lineHeight, (0, 0), lines, color)
+    displayLines(surface, font, lineHeight, (0, 0), lines, color, centerX, centerY)
     return surface
 
 
-def displayLines(surface: pygame.Surface, font: pygame.font.Font, lineHeight: int, pos: tuple[int, int], lines: list[str], color: Union[str, pygame.Color]):
-    y = pos[1]
+def displayLines(surface: pygame.Surface, font: pygame.font.Font, lineHeight: int, pos: tuple[int, int], lines: list[str], color: Union[str, pygame.Color], centerX=False, centerY=False):
+    dy = (surface.get_height() - len(lines) * lineHeight) // 2 if centerY else 0
+    y = pos[1] + dy
 
     def writeLine(text: str):
         nonlocal y
         text_img = font.render(text, True, color)
-        surface.blit(text_img, (pos[0], y))
+        dx = (surface.get_width() - text_img.get_width()) // 2 if centerX else 0
+        surface.blit(text_img, (pos[0] + dx, y))
         y += lineHeight
 
     for line in lines:
