@@ -18,7 +18,7 @@ img_exitBtn = pygame.transform.scale(load_image("quit.png"), (exitBtn[2], exitBt
 img_exitBtn_active = pygame.transform.scale(load_image("quit_active.png"), (exitBtn[2], exitBtn[3]))
 img_msgBox = pygame.transform.scale(load_image("msgBox.png"), multPos((0.5, 1)))
 
-sound_btn = load_sound("btn.mp3", "btn")
+sound_btn = load_sound("btn1.mp3", "btn")
 sound_btn2 = load_sound("btn2.wav", "btn")
 
 

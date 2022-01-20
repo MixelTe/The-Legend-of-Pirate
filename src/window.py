@@ -15,7 +15,7 @@ class Window():
         pass
 
 
-sound_btn = load_sound("btn.mp3", "btn")
+sound_btn = load_sound("btn1.mp3", "btn")
 sound_btn2 = load_sound("btn2.wav", "btn")
 
 
