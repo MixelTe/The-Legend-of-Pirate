@@ -11,7 +11,7 @@ animatorData = AnimatorData("pirate2", [
 
 class EntityPirate2(Entity):
     def __init__(self, screen, data: dict = None):
-        self.speech = ""
+        self.speech = "Эй, Капитан! Тут какая-то странная дверь, за ней, должно быть, наш корабль или то, что от него осталось, хехе!"
         super().__init__(screen, data)
         self.animator = Animator(animatorData, "stay")
         self.width = 0.75
@@ -20,8 +20,8 @@ class EntityPirate2(Entity):
 
     def applyData(self, data: dict):
         super().applyData(data)
-        if ("speech" in data):
-            self.speech = data["speech"]
+        # if ("speech" in data):
+        #     self.speech = data["speech"]
 
     def draw(self, surface: pygame.Surface):
         super().draw(surface)

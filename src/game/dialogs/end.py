@@ -7,7 +7,7 @@ from settings import Settings
 multRect = getRectMult(Settings.width, Settings.height)
 multPos = getPosMult(Settings.width, Settings.height)
 font = pygame.font.Font(Settings.path_font, int(Settings.width * 0.053) + 1)
-Text = "За таинственной дверью пирата его ждал полностью целый корабль. Капитан собрал свою команду и продолжил свой путь."
+Text = "За таинственной дверью пирата ждал полностью целый корабль. Капитан собрал команду и продолжил свой путь."
 background = pygame.transform.scale(load_image("background2.png"), (Settings.width, Settings.height))
 # img = load_image("background.png")
 
