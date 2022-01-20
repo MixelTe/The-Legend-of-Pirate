@@ -1,5 +1,5 @@
 import pygame
-from functions import getPosMult, getRectMult, load_image, renderText, scaleImg
+from functions import TextAnimator, getPosMult, getRectMult, load_image, renderText, scaleImg
 from game.gameDialog import GameDialog
 from settings import Settings
 
@@ -16,18 +16,32 @@ class GameDialog_start(GameDialog):
     def __init__(self):
         super().__init__(lambda: None, Settings.width, Settings.height)
         self.surface.blit(background, (0, 0))
-        text = renderText(font, int(Settings.width * 0.0415) + 1, (Settings.width *
+        self.text = TextAnimator(font, int(Settings.width * 0.0415) + 1, (Settings.width *
                           0.84, Settings.height), Text, pygame.Color(81, 44, 40))
-        self.surface.blit(text, multPos((0.08, 0.08)))
+
+    def close(self):
+        if (self.text.stop):
+            self.closed = True
+        else:
+            self.text.toEnd()
 
     def onMouseUp(self, pos: tuple[int, int]):
         super().onMouseUp(pos)
-        self.closed = True
+        self.close()
 
     def onKeyUp(self, key):
         if (key == pygame.K_ESCAPE or key == pygame.K_SPACE or key == pygame.K_RETURN):
-            self.closed = True
+            self.close()
 
     def onJoyButonUp(self, button):
         if (button == 0):
-            self.closed = True
+            self.close()
+
+    def update(self):
+        self.text.update()
+        return super().update()
+
+    def draw(self):
+        self.surface.blit(background, (0, 0))
+        self.surface.blit(self.text.draw(), multPos((0.08, 0.08)))
+        return self.surface

@@ -136,6 +136,14 @@ def getPosMult(vw: float, vh: float = None):
 
 
 def renderText(font: pygame.font.Font, lineHeight: int, size: tuple[int, int], text: str, color: Union[str, pygame.Color], centerX=False, centerY=False):
+    lines = renderText_split(font, size, text)
+    surface = pygame.Surface(size, pygame.SRCALPHA)
+    surface.fill(pygame.Color(0, 0, 0, 0))
+    displayLines(surface, font, lineHeight, (0, 0), lines, color, centerX, centerY)
+    return surface
+
+
+def renderText_split(font: pygame.font.Font, size: tuple[int, int], text: str):
     lines = []
     line = ""
     for word in text.split():
@@ -149,10 +157,7 @@ def renderText(font: pygame.font.Font, lineHeight: int, size: tuple[int, int], t
         lines.append(line)
     if (len(lines) >= 1):
         lines[0] = lines[0][1:]
-    surface = pygame.Surface(size, pygame.SRCALPHA)
-    surface.fill(pygame.Color(0, 0, 0, 0))
-    displayLines(surface, font, lineHeight, (0, 0), lines, color, centerX, centerY)
-    return surface
+    return lines
 
 
 def displayLines(surface: pygame.Surface, font: pygame.font.Font, lineHeight: int, pos: tuple[int, int], lines: list[str], color: Union[str, pygame.Color], centerX=False, centerY=False):
@@ -168,3 +173,53 @@ def displayLines(surface: pygame.Surface, font: pygame.font.Font, lineHeight: in
 
     for line in lines:
         writeLine(line)
+
+
+class TextAnimator:
+    def __init__(self, font: pygame.font.Font, lineHeight: int, size: tuple[int, int], text: str, color: Union[str, pygame.Color], centerX=False, centerY=False):
+        self.font = font
+        self.lineHeight = lineHeight
+        self.color = color
+        self.centerX = centerX
+        self.centerY = centerY
+        self.lines = renderText_split(font, size, text)
+        self.curLines = []
+        self.curLine = 0
+        self.surface = pygame.Surface(size, pygame.SRCALPHA)
+        self.counter = 0
+        self.stop = False
+
+    def draw(self):
+        self.surface.fill(pygame.Color(0, 0, 0, 0))
+        displayLines(self.surface, self.font, self.lineHeight, (0, 0), self.curLines, self.color, self.centerX, self.centerY)
+        return self.surface
+
+    def update(self):
+        if (self.stop):
+            return
+        self.counter -= 1000 / Settings.fps
+
+        if (self.counter <= 0):
+            if (len(self.curLines) <= self.curLine):
+                self.curLines.append("")
+            curL = len(self.curLines[self.curLine])
+            if (len(self.lines[self.curLine]) > curL):
+                ch = self.lines[self.curLine][curL]
+                self.curLines[self.curLine] += ch
+                if (ch == " "):
+                    self.counter = 80
+                elif (ch == ","):
+                    self.counter = 300
+                elif (ch == "."):
+                    self.counter = 400
+                else:
+                    self.counter = 50
+            else:
+                self.curLine += 1
+                curL = 0
+                if (len(self.lines) <= self.curLine):
+                    self.stop = True
+
+    def toEnd(self):
+        self.stop == True
+        self.curLines = self.lines

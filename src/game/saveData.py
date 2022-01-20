@@ -14,7 +14,7 @@ class SaveData:
         self.coins = 1000
         self.health = 6
         self.bullets = 0
-        self.time = 1
+        self.time = 0
         self.tags: list[str] = []
 
     @staticmethod
