@@ -1,4 +1,5 @@
 import pygame
+from backMusic import onMusicEnd, setBackMusic
 from functions import joinPath
 from settings import Settings
 
@@ -30,6 +31,8 @@ class Main:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
+                if event.type == musicEndEvent:
+                    onMusicEnd()
                 self.window.on_event(event)
 
             result = self.window.update()
@@ -45,9 +48,9 @@ class Main:
 
 pygame.joystick.init()
 pygame.display.set_caption('The Legend of Pirate')
-pygame.mixer.music.load(joinPath(Settings.folder_data, Settings.folder_sounds, "back", "background2.mp3"))
-pygame.mixer.music.set_volume(0.5)
-# pygame.mixer.music.play(-1)
+musicEndEvent = pygame.event.custom_type() + 1
+pygame.mixer.music.set_endevent(musicEndEvent)
+setBackMusic(joinPath(Settings.folder_data, Settings.folder_sounds, "back", "background.mp3"))
 Main().start()
 pygame.mixer.quit()
 pygame.quit()

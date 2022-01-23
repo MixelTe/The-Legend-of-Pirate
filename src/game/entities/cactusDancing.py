@@ -1,6 +1,9 @@
-from functions import load_sound
+import pygame
+from backMusic import getCurMusic, startMusicBreak
+from functions import joinPath, load_sound
 from game.entity import Entity, EntityAlive, EntityGroups
 from game.animator import Animator, AnimatorData
+from settings import Settings
 
 
 animatorData = AnimatorData("cactusDancing", [
@@ -9,14 +12,13 @@ animatorData = AnimatorData("cactusDancing", [
     ("cactus.png", 0, (16, 16), (-0.075, -0.075, 1, 1)),
     ("dancing.png", 200, (20, 24), (-0.3625, -0.9, 1.25, 1.5)),
 ])
-
-sound = load_sound("background2.mp3", "back")
-sound.set_volume(0.5)
-sound.get_num_channels()
+musicPath = joinPath(Settings.folder_data, Settings.folder_sounds, "back", "background2.mp3")
 
 
 class EntityCactusDancing(EntityAlive):
     def __init__(self, screen, data: dict = None):
+        self.X = 0
+        self.Y = 0
         super().__init__(screen, data)
         self.animator = Animator(animatorData, "cactus")
         self.immortal = True
@@ -25,10 +27,12 @@ class EntityCactusDancing(EntityAlive):
         self.group = EntityGroups.enemy
         self.speech = ""
         self.speechCounter = 0
-        self.X = 0
-        self.Y = 0
-        if (sound.get_num_channels() != 0):
+        if (getCurMusic() == musicPath):
             self.animator.setAnimation("dancing")
+
+    def applyData(self, data: dict):
+        self.X = data["x"]
+        self.Y = data["y"]
 
     def takeDamage(self, damage: int, attacker: Entity = None):
         if (self.animator.curAnimation() == "cactus" and attacker.id == "shovel"):
@@ -42,9 +46,9 @@ class EntityCactusDancing(EntityAlive):
             self.x = self.X + 0.17
             self.y = self.Y + 0.59
         if (self.animator.curAnimation() == "stay"):
-            if (sound.get_num_channels() == 0):
+            if (getCurMusic() != musicPath):
                 self.animator.setAnimation("dancing")
-                sound.play()
+                startMusicBreak(musicPath)
 
     def update(self):
         super().update()
@@ -55,8 +59,8 @@ class EntityCactusDancing(EntityAlive):
                 self.x = self.X + 0.17
                 self.y = self.Y + 0.59 - 0.4
                 self.animator.setAnimation("dancing")
-                if (sound.get_num_channels() == 0):
-                    sound.play()
+                if (getCurMusic() != musicPath):
+                    startMusicBreak(musicPath)
         elif (self.animator.curAnimation() == "cactus"):
             self.x = self.X
             self.y = self.Y
@@ -64,7 +68,7 @@ class EntityCactusDancing(EntityAlive):
             self.x = self.X + 0.17
             self.y = self.Y + 0.59 - 0.4
         if (self.animator.curAnimation() == "dancing"):
-            if (sound.get_num_channels() == 0):
+            if (getCurMusic() != musicPath):
                 self.animator.setAnimation("stay")
 
 
