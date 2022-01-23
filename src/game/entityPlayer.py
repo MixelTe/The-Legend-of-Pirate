@@ -8,41 +8,43 @@ from settings import Settings
 
 
 animatorData = AnimatorData("pirate", [
-    ("stayS.png", 0, (12, 24), (0, -0.8, 0.75, 1.5)),
-    ("stayW.png", 0, (12, 24), (0, -0.8, 0.75, 1.5)),
-    ("stayA.png", 0, (12, 18), (-0.15, -0.8, 1, 1.5)),
-    ("stayD.png", 0, (12, 18), (-0.05, -0.8, 1, 1.5)),
-    ("goingS.png", 150, (12, 24), (0, -0.8, 0.75, 1.5)),
-    ("goingW.png", 150, (12, 24), (0, -0.8, 0.75, 1.5)),
-    ("goingA.png", 150, (12, 18), (-0.15, -0.8, 1, 1.5)),
-    ("goingD.png", 150, (12, 18), (-0.05, -0.8, 1, 1.5)),
-    ("attackS.png", 100, (12, 32), (0, -0.8, 0.75, 2)),
-    ("attackW.png", 100, (12, 29), (0, -1.1, 0.75, 1.8)),
-    ("attackA.png", 100, (21, 18), (-0.9, -0.8, 1.75, 1.5)),
-    ("attackD.png", 100, (21, 18), (0, -0.8, 1.75, 1.5)),
-    ("attack_swimS.png", 100, (18, 32), (-0.17, -0.9, 1.125, 2)),
-    ("attack_swimW.png", 100, (18, 29), (-0.17, -1.1, 1.125, 1.8)),
-    ("attack_swimA.png", 100, (21, 20), (-0.67, -0.9, 1.743, 1.66)),
-    ("attack_swimD.png", 100, (20, 20), (-0.27, -0.9, 1.66, 1.66)),
-    ("dig.png", 200, (21, 18), (0, -0.8, 1.75, 1.5)),
-    ("swimW.png", 0, (18, 24), (-0.17, -0.8, 1.125, 1.5)),
-    ("swimS.png", 0, (18, 24), (-0.17, -0.8, 1.125, 1.5)),
-    ("swimA.png", 0, (16, 18), (-0.27, -0.8, 1.33, 1.5)),
-    ("swimD.png", 0, (16, 18), (-0.27, -0.8, 1.33, 1.5)),
+    ("stayS.png", 0, (12, 24), (-0.1, -0.8, 0.75, 1.5)),
+    ("stayW.png", 0, (12, 24), (-0.1, -0.8, 0.75, 1.5)),
+    ("stayA.png", 0, (12, 18), (-0.25, -0.8, 1, 1.5)),
+    ("stayD.png", 0, (12, 18), (-0.15, -0.8, 1, 1.5)),
+    ("goingS.png", 150, (12, 24), (-0.1, -0.8, 0.75, 1.5)),
+    ("goingW.png", 150, (12, 24), (-0.1, -0.8, 0.75, 1.5)),
+    ("goingA.png", 150, (12, 18), (-0.25, -0.8, 1, 1.5)),
+    ("goingD.png", 150, (12, 18), (-0.15, -0.8, 1, 1.5)),
+    ("attackS.png", 100, (12, 32), (-0.1, -0.8, 0.75, 2)),
+    ("attackW.png", 100, (12, 29), (-0.1, -1.1, 0.75, 1.8)),
+    ("attackA.png", 100, (21, 18), (-1, -0.8, 1.75, 1.5)),
+    ("attackD.png", 100, (21, 18), (-0.1, -0.8, 1.75, 1.5)),
+    ("attack_swimS.png", 100, (18, 32), (-0.27, -0.9, 1.125, 2)),
+    ("attack_swimW.png", 100, (18, 29), (-0.27, -1.1, 1.125, 1.8)),
+    ("attack_swimA.png", 100, (21, 20), (-0.77, -0.9, 1.743, 1.66)),
+    ("attack_swimD.png", 100, (20, 20), (-0.37, -0.9, 1.66, 1.66)),
+    ("dig.png", 200, (21, 18), (-0.1, -0.8, 1.75, 1.5)),
+    ("swimW.png", 0, (18, 24), (-0.27, -0.8, 1.125, 1.5)),
+    ("swimS.png", 0, (18, 24), (-0.27, -0.8, 1.125, 1.5)),
+    ("swimA.png", 0, (16, 18), (-0.37, -0.8, 1.33, 1.5)),
+    ("swimD.png", 0, (16, 18), (-0.37, -0.8, 1.33, 1.5)),
     # ("swimingW.png", 150, (16, 24), (-0.1, -0.9, 1, 1.5)),
     # ("swimingS.png", 150, (16, 24), (-0.1, -0.9, 1, 1.5)),
-    ("swimmingW.png", 150, (18, 24), (-0.17, -0.8, 1.125, 1.5)),
-    ("swimmingS.png", 150, (18, 24), (-0.17, -0.8, 1.125, 1.5)),
-    ("swimmingA.png", 150, (16, 18), (-0.27, -0.8, 1.33, 1.5)),
-    ("swimmingD.png", 150, (16, 18), (-0.27, -0.8, 1.33, 1.5)),
+    ("swimmingW.png", 150, (18, 24), (-0.27, -0.8, 1.125, 1.5)),
+    ("swimmingS.png", 150, (18, 24), (-0.27, -0.8, 1.125, 1.5)),
+    ("swimmingA.png", 150, (16, 18), (-0.37, -0.8, 1.33, 1.5)),
+    ("swimmingD.png", 150, (16, 18), (-0.37, -0.8, 1.33, 1.5)),
 ])
 
 # sound_hit = load_sound("hit.wav")
 # sound_walk = load_sound("walk.wav")
 sound_hit = load_sound("attack_shovel.mp3")
 sound_hit.set_volume(1.2)
-sound_walk = load_sound("walk1.wav", "walk")
+sound_walk_sand = load_sound("walk1.wav", "walk")
+sound_walk = load_sound("walk3.mp3", "walk")
 sound_walk.set_volume(0.7)
+sound_swim = load_sound("swing3.mp3", "swim")
 
 
 class EntityPlayer(EntityAlive):
@@ -57,7 +59,7 @@ class EntityPlayer(EntityAlive):
         self.weapon: Entity = None
         self.message = ""
         self.speed = 0.06
-        self.width = 0.75
+        self.width = 0.55
         self.height = 0.7
         self.imagePos = (0, -0.5)
         self.x = saveData.checkPointX + (1 - self.width) / 2
@@ -201,9 +203,14 @@ class EntityPlayer(EntityAlive):
             return
         if (len(self.buttonPressed) > 0):
             if (self.walkSoundCounter == 0):
-                tile = self.get_tile(1, pos=(0.5, 0.7))
-                if (tile and "water" not in tile.tags):
-                    sound_walk.play()
+                tile = self.get_tile(pos=(0.5, 0.7))
+                if (tile):
+                    if ("water" in tile.tags):
+                        sound_swim.play()
+                    elif ("sand" in tile.tags):
+                        sound_walk_sand.play()
+                    else:
+                        sound_walk.play()
             self.walkSoundCounter += 1000 / Settings.fps
             if (self.walkSoundCounter >= 350):
                 self.walkSoundCounter = 0
@@ -224,6 +231,7 @@ class EntityPlayer(EntityAlive):
                 self.direction = "A"
         else:
             self.walkSoundCounter = 250
+            sound_walk.stop()
 
     def attack(self, d=None):
         if (self.state != "normal" and self.state != "swim"):

@@ -17,7 +17,7 @@ class EntityTrader(Entity):
         self.height = 0.7
         self.imagePos = (0, -0.8)
         self.talkZone = (-1, 0, 3, 3)
-        self.speeches = ["Извини капитан, теперь каждый сам за себя!"]
+        self.speeches = ["Извини, Капитан, теперь каждый сам за себя!"]
         self.speech = self.speeches[0]
 
     def somethingBought(self, speech):

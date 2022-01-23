@@ -29,9 +29,9 @@ class Tile:
         surface.blit(self.image, (x * Settings.tileSize, y * Settings.tileSize))
 
 
-Tile("sand1.png", digable=True)
-Tile("sand2.png", digable=True)
-Tile("sand3.png", digable=True)
+Tile("sand1.png", digable=True, tags=["sand"])
+Tile("sand2.png", digable=True, tags=["sand"])
+Tile("sand3.png", digable=True, tags=["sand"])
 Tile("grass1.png")
 Tile("grass2.png")
 Tile("grass3.png")

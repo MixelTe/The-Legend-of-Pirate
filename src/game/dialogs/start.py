@@ -7,7 +7,7 @@ from settings import Settings
 multRect = getRectMult(Settings.width, Settings.height)
 multPos = getPosMult(Settings.width, Settings.height)
 font = pygame.font.Font(Settings.path_font, int(Settings.width * 0.053) + 1)
-Text = "Однажны юный капитан собрал свою команду и отправился в море за богатсвом и славой. Но по пути их ждал страшный ураган, во время которого капитан выпал за борт, а корабль помчался прямиком на рифы. К счатью его вынесло на берег ближайшего острова, где его ждали невероятные приключения."
+Text = "Однажды юный капитан собрал свою команду и отправился в море за богатством и славой. Но по пути их ждал страшный ураган, во время которого капитан выпал за борт, а корабль помчался прямиком на рифы. К счатью, его вынесло на берег ближайшего острова, где его ждали невероятные приключения."
 background = pygame.transform.scale(load_image("background2.png"), (Settings.width, Settings.height))
 # img = load_image("background.png")
 
