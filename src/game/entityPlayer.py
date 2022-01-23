@@ -41,10 +41,11 @@ animatorData = AnimatorData("pirate", [
 # sound_walk = load_sound("walk.wav")
 sound_hit = load_sound("attack_shovel.mp3")
 sound_hit.set_volume(1.2)
-sound_walk_sand = load_sound("walk1.wav", "walk")
-sound_walk = load_sound("walk3.mp3", "walk")
+sound_walk_sand = load_sound("walk3.mp3", "walk")
+sound_walk = load_sound("walk2.wav", "walk")
 sound_walk.set_volume(0.7)
 sound_swim = load_sound("swing3.mp3", "swim")
+sound_dig = load_sound("dig.mp3")
 
 
 class EntityPlayer(EntityAlive):
@@ -232,6 +233,7 @@ class EntityPlayer(EntityAlive):
         else:
             self.walkSoundCounter = 250
             sound_walk.stop()
+            sound_walk_sand.stop()
 
     def attack(self, d=None):
         if (self.state != "normal" and self.state != "swim"):
@@ -256,6 +258,7 @@ class EntityPlayer(EntityAlive):
         tile = self.get_tile(1, pos=(0.5, 0.7))
         if (tile and tile.digable):
             self.state = "dig"
+            sound_dig.play()
 
     def afterDig(self):
         entities = self.get_entitiesD((1.1, 0.4, 0.4, 0.3))
