@@ -394,6 +394,7 @@ def loadEntities():
     import game.entities.trainer
     import game.entities.cannon
     import game.entities.trigger
+    import game.entities.cactusDancing
 
 
 loadEntities()

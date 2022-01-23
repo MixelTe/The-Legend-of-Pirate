@@ -31,3 +31,4 @@ createNewEntityClass_Auto("trigger", false, 50, 50, 1, 1, 0, 0, 1, 1, [
 	{ type: "text", name: "dialog", value: null, displayColor: "lime" },
 	{ type: "area", name: "zone", value: null, displayColor: "orange" },
 ])
+createNewEntityClass_Auto("cactusDancing", true, 18, 24, 0.85, 0.85, -0.075, -0.475, 1, 1.33)

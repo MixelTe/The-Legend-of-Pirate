@@ -47,9 +47,7 @@ class Animator:
         if (self.damageAnim):
             self.damageAnimCounter = self.damageAnimCounter + 1000 // Settings.fps
             if (self.damageAnimCounter >= self.DamageDelay):
-                self.damageAnimCounter = 0
-                self.damageAnim = False
-                self.damageAnimFinished = True
+                self.endDamageAnim()
         if (self.counter > self.data.get_speed(self.anim)):
             self.counter = 0
             self.frame += 1
@@ -89,5 +87,11 @@ class Animator:
         return self.anim
 
     def startDamageAnim(self):
+        self.damageAnimCounter = 0
         self.damageAnim = True
         self.damageAnimFinished = False
+
+    def endDamageAnim(self):
+        self.damageAnimCounter = 0
+        self.damageAnim = False
+        self.damageAnimFinished = True
