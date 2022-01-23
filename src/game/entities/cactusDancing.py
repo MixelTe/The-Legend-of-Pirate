@@ -48,7 +48,7 @@ class EntityCactusDancing(EntityAlive):
         if (self.animator.curAnimation() == "stay"):
             if (getCurMusic() != musicPath):
                 self.animator.setAnimation("dancing")
-                startMusicBreak(musicPath)
+                startMusicBreak(musicPath, 0.5)
 
     def update(self):
         super().update()
@@ -60,7 +60,7 @@ class EntityCactusDancing(EntityAlive):
                 self.y = self.Y + 0.59 - 0.4
                 self.animator.setAnimation("dancing")
                 if (getCurMusic() != musicPath):
-                    startMusicBreak(musicPath)
+                    startMusicBreak(musicPath, 0.5)
         elif (self.animator.curAnimation() == "cactus"):
             self.x = self.X
             self.y = self.Y
