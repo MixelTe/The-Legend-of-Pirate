@@ -15,6 +15,7 @@ createNewEntityClass_Auto("door", false, 11, 12, 1, 1);
 createNewEntityClass_Auto("palm", false, 20, 22, 0.45, 0.7, -0.45, -0.8, 1.5, 1.5);
 createNewEntityClass_Auto("trader", true, 14, 24, 0.75, 0.7, 0, -0.8, 0.75, 1.5);
 createNewEntityClass_Auto("cannon", true, 11, 12, 1, 1);
+createNewEntityClass_Auto("dig_place", false, 11, 12, 1, 1);
 createNewEntityClass_Auto("trainer", true, 9, 18, 0.75, 0.7, 0, -0.8, 0.75, 1.5);
 createNewEntityClass_Auto("pirate2", true, 11, 22, 0.75, 0.7, 0, -0.8, 0.75, 1.5, [
     { type: "text", name: "speech", value: "" },
@@ -30,3 +31,4 @@ createNewEntityClass_Auto("trigger", false, 50, 50, 1, 1, 0, 0, 1, 1, [
     { type: "text", name: "dialog", value: null, displayColor: "lime" },
     { type: "area", name: "zone", value: null, displayColor: "orange" },
 ]);
+createNewEntityClass_Auto("cactusDancing", true, 18, 24, 0.85, 0.85, -0.075, -0.475, 1, 1.33);
