@@ -11,10 +11,10 @@ class SaveData:
         self.checkPointY = 3
         self.world = "island"
         self.screen = (1, 4)
-        self.coins = 1000
+        self.coins = 0
         self.health = 6
         self.bullets = 0
-        self.time = 1
+        self.time = 0
         self.tags: list[str] = []
 
     @staticmethod

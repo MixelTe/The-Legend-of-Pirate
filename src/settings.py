@@ -3,9 +3,9 @@ from ntpath import join
 
 
 class Settings:
-    width = 720  # 1920
-    height = 405  # 1080
     version = "v1.0"
+    width = 1920
+    height = 1080
     fps = 60
     overlay_height = 184
     folder_data = "data"
@@ -20,12 +20,12 @@ class Settings:
     screen_height = 7
     damageDelay = 400
     damageDelayPlayer = 1600
-    fullscreen = False
+    fullscreen = True
     tileSize = 1
     drawHitboxes = False
     drawNoneImgs = False
     disableAI = False
-    moveScreenOnNumpad = True
+    moveScreenOnNumpad = False
 
 
 try:
