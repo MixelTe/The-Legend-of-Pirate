@@ -50,7 +50,7 @@ pygame.joystick.init()
 pygame.display.set_caption('The Legend of Pirate')
 musicEndEvent = pygame.event.custom_type() + 1
 pygame.mixer.music.set_endevent(musicEndEvent)
-setBackMusic(joinPath(Settings.folder_data, Settings.folder_sounds, "back", "background.mp3"))
+setBackMusic()
 Main().start()
 pygame.mixer.quit()
 pygame.quit()
