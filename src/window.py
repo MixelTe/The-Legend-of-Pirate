@@ -24,7 +24,7 @@ class WindowWithButtons(Window):
 
     def __init__(self):
         self.all_sprites = pygame.sprite.Group()
-        self.selected = -1
+        self.selected = 0
 
     def update(self):
         for sprite in self.all_sprites:

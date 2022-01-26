@@ -18,7 +18,7 @@ class WindowSaveSelection(WindowWithButtons):
         createButton("save3", scale, self.all_sprites, 0.3, 0.7)
 
         scale = 0.4 / 25 * 9
-        self.btn_delete = {}
+        self.btn_delete = {0: None, 1: None, 2: None}
         if (SaveData.exist(1)):
             self.btn_delete[0] = createButton("cross", scale, self.all_sprites, 0.72, 0.05)
         if (SaveData.exist(2)):
@@ -32,7 +32,15 @@ class WindowSaveSelection(WindowWithButtons):
         if (0 <= self.selected < 3):
             self.startSave = self.selected + 1
         if (3 <= self.selected):
-            self.selected -= 3
+            btn = self.all_sprites.sprites()[self.selected]
+            if (btn == self.btn_delete[0]):
+                self.selected = 0
+            elif (btn == self.btn_delete[1]):
+                self.selected = 1
+            elif (btn == self.btn_delete[2]):
+                self.selected = 2
+            else:
+                return
             super().update()
             self.dialog = DialogDelete(self.selected, self.onDialogClose)
 
