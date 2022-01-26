@@ -1,5 +1,5 @@
 import pygame
-from functions import TextAnimator, getPosMult, getRectMult, load_image, renderText
+from functions import TextAnimator, getPosMult, getRectMult, load_image
 from game.gameDialog import GameDialog
 from settings import Settings
 
@@ -9,7 +9,6 @@ multPos = getPosMult(Settings.width, Settings.height)
 font = pygame.font.Font(Settings.path_font, int(Settings.width * 0.053) + 1)
 Text = "За таинственной дверью пирата ждал полностью целый корабль. Капитан собрал команду и продолжил свой путь."
 background = pygame.transform.scale(load_image("background2.png"), (Settings.width, Settings.height))
-# img = load_image("background.png")
 
 
 class GameDialog_end(GameDialog):

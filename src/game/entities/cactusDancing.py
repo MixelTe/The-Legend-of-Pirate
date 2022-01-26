@@ -1,6 +1,5 @@
-import pygame
 from backMusic import getCurMusic, startMusicBreak
-from functions import joinPath, load_sound
+from functions import joinPath
 from game.entity import Entity, EntityAlive, EntityGroups
 from game.animator import Animator, AnimatorData
 from settings import Settings

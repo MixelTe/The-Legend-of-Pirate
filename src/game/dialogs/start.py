@@ -1,5 +1,5 @@
 import pygame
-from functions import TextAnimator, getPosMult, getRectMult, load_image, renderText, scaleImg
+from functions import TextAnimator, getPosMult, getRectMult, load_image
 from game.gameDialog import GameDialog
 from settings import Settings
 
@@ -9,7 +9,6 @@ multPos = getPosMult(Settings.width, Settings.height)
 font = pygame.font.Font(Settings.path_font, int(Settings.width * 0.053) + 1)
 Text = "Однажды юный капитан собрал свою команду и отправился в море за богатством и славой. Но по пути их ждал страшный ураган, во время которого капитан выпал за борт, а корабль помчался прямиком на рифы. К счатью, его вынесло на берег ближайшего острова, где его ждали невероятные приключения."
 background = pygame.transform.scale(load_image("background2.png"), (Settings.width, Settings.height))
-# img = load_image("background.png")
 
 
 class GameDialog_start(GameDialog):
