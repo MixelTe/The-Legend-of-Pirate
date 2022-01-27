@@ -1,4 +1,4 @@
-from functions import load_entityImg
+from functions import load_entityImg, load_sound
 from game.entity import Entity, EntityAlive, EntityGroups
 from random import random
 
@@ -61,6 +61,7 @@ Entity.registerEntity("palm", EntityPalm)
 
 class EntityCannonball(EntityAlive):
     image = load_entityImg("cannonball.png", 0.4, 0.4)
+    sound_boom = load_sound("doorBoom.wav")
 
     def __init__(self, screen, data: dict = None):
         super().__init__(screen, data)
@@ -79,6 +80,7 @@ class EntityCannonball(EntityAlive):
                 self.screen.saveData.tags.append("island-door")
                 self.remove()
                 collision.remove()
+                EntityCannonball.sound_boom.play()
 
 
 
