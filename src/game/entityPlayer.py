@@ -176,10 +176,18 @@ class EntityPlayer(EntityAlive):
 
     def addKeyToPressed(self, key):
         self.buttonPressed.append(key)
+        if (key == "up" or key == "down"):
+            self.x = round(self.x * 4) / 4
+        if (key == "left" or key == "right"):
+            self.y = round(self.y * 4) / 4
 
     def removeKeyFromPressed(self, key):
         while key in self.buttonPressed:
             self.buttonPressed.remove(key)
+        if (key == "up" or key == "down"):
+            self.y = round(self.y * 4) / 4
+        if (key == "left" or key == "right"):
+            self.x = round(self.x * 4) / 4
 
     def onJoyButonUp(self, button):
         pass
