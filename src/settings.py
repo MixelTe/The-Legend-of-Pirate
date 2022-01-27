@@ -1,5 +1,5 @@
 import sys
-from ntpath import join
+from os.path import join
 
 
 class Settings:
