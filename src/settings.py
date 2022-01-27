@@ -3,7 +3,7 @@ from os.path import join
 
 
 class Settings:
-    version = "v1.0"
+    version = "v1.1"
     width = 1920
     height = 1080
     fps = 60
