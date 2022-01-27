@@ -78,13 +78,13 @@ class EntityPlayer(EntityAlive):
 
     def onKeyDown(self, key):
         if (key == pygame.K_w or key == pygame.K_UP):
-            self.buttonPressed.append("up")
+            self.addKeyToPressed("up")
         if (key == pygame.K_s or key == pygame.K_DOWN):
-            self.buttonPressed.append("down")
+            self.addKeyToPressed("down")
         if (key == pygame.K_d or key == pygame.K_RIGHT):
-            self.buttonPressed.append("right")
+            self.addKeyToPressed("right")
         if (key == pygame.K_a or key == pygame.K_LEFT):
-            self.buttonPressed.append("left")
+            self.addKeyToPressed("left")
         if (key == pygame.K_SPACE):
             self.attack()
         if (key == pygame.K_e):
@@ -105,75 +105,55 @@ class EntityPlayer(EntityAlive):
 
     def onKeyUp(self, key):
         if (key == pygame.K_w or key == pygame.K_UP):
-            while "up" in self.buttonPressed:
-                self.buttonPressed.remove("up")
+            self.removeKeyFromPressed("up")
         if (key == pygame.K_s or key == pygame.K_DOWN):
-            while "down" in self.buttonPressed:
-                self.buttonPressed.remove("down")
+            self.removeKeyFromPressed("down")
         if (key == pygame.K_d or key == pygame.K_RIGHT):
-            while "right" in self.buttonPressed:
-                self.buttonPressed.remove("right")
+            self.removeKeyFromPressed("right")
         if (key == pygame.K_a or key == pygame.K_LEFT):
-            while "left" in self.buttonPressed:
-                self.buttonPressed.remove("left")
+            self.removeKeyFromPressed("left")
 
     def onJoyHat(self, value):
         if (value[1] > 0):
-            while "down" in self.buttonPressed:
-                self.buttonPressed.remove("down")
-            self.buttonPressed.append("up")
+            self.removeKeyFromPressed("down")
+            self.addKeyToPressed("up")
         elif (value[1] < 0):
-            while "up" in self.buttonPressed:
-                self.buttonPressed.remove("up")
-            self.buttonPressed.append("down")
+            self.removeKeyFromPressed("up")
+            self.addKeyToPressed("down")
         else:
-            while "up" in self.buttonPressed:
-                self.buttonPressed.remove("up")
-            while "down" in self.buttonPressed:
-                self.buttonPressed.remove("down")
+            self.removeKeyFromPressed("up")
+            self.removeKeyFromPressed("down")
         if (value[0] > 0):
-            while "left" in self.buttonPressed:
-                self.buttonPressed.remove("left")
-            self.buttonPressed.append("right")
+            self.removeKeyFromPressed("left")
+            self.addKeyToPressed("right")
         elif (value[0] < 0):
-            while "right" in self.buttonPressed:
-                self.buttonPressed.remove("right")
-            self.buttonPressed.append("left")
+            self.removeKeyFromPressed("right")
+            self.addKeyToPressed("left")
         else:
-            while "right" in self.buttonPressed:
-                self.buttonPressed.remove("right")
-            while "left" in self.buttonPressed:
-                self.buttonPressed.remove("left")
+            self.removeKeyFromPressed("right")
+            self.removeKeyFromPressed("left")
 
     def onJoyAxis(self, axis, value):
         if (axis == 0):
             if (value > 0.5):
-                while "left" in self.buttonPressed:
-                    self.buttonPressed.remove("left")
-                self.buttonPressed.append("right")
+                self.removeKeyFromPressed("left")
+                self.addKeyToPressed("right")
             elif (value < -0.5):
-                while "right" in self.buttonPressed:
-                    self.buttonPressed.remove("right")
-                self.buttonPressed.append("left")
+                self.removeKeyFromPressed("right")
+                self.addKeyToPressed("left")
             else:
-                while "right" in self.buttonPressed:
-                    self.buttonPressed.remove("right")
-                while "left" in self.buttonPressed:
-                    self.buttonPressed.remove("left")
+                self.removeKeyFromPressed("right")
+                self.removeKeyFromPressed("left")
         elif (axis == 1):
             if (value > 0.5):
-                while "up" in self.buttonPressed:
-                    self.buttonPressed.remove("up")
-                self.buttonPressed.append("down")
+                self.removeKeyFromPressed("up")
+                self.addKeyToPressed("down")
             elif (value < -0.5):
-                while "down" in self.buttonPressed:
-                    self.buttonPressed.remove("down")
-                self.buttonPressed.append("up")
+                self.removeKeyFromPressed("down")
+                self.addKeyToPressed("up")
             else:
-                while "up" in self.buttonPressed:
-                    self.buttonPressed.remove("up")
-                while "down" in self.buttonPressed:
-                    self.buttonPressed.remove("down")
+                self.removeKeyFromPressed("up")
+                self.removeKeyFromPressed("down")
         elif (axis == 2):
             if (value > 0.5):
                 self.attack("D")
@@ -193,6 +173,13 @@ class EntityPlayer(EntityAlive):
                 self.action()
             else:
                 self.dig()
+
+    def addKeyToPressed(self, key):
+        self.buttonPressed.append(key)
+
+    def removeKeyFromPressed(self, key):
+        while key in self.buttonPressed:
+            self.buttonPressed.remove(key)
 
     def onJoyButonUp(self, button):
         pass
