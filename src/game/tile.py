@@ -9,7 +9,7 @@ class Tile:
 
     def __init__(self, image: str, solid: bool = False, digable: bool = False, speed: float = 1, tags=None):
         self.image = load_tile(image)
-        self.image = pygame.transform.scale(self.image, (Settings.tileSize, Settings.tileSize))
+        self.image = pygame.transform.scale(self.image, (int(Settings.tileSize), int(Settings.tileSize)))
         self.speed = speed  # множитель скорости клетки
         self.digable = digable  # можно ли копать на этой клетке
         self.solid = solid  # плотная ли клетка (стена)

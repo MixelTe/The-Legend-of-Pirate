@@ -15,7 +15,7 @@ class AnimatorData:
             count = allFrames.get_width() // frameSize[0]
             for x in range(count):
                 frame = allFrames.subsurface(x * frameSize[0], 0, *frameSize)
-                frame = pygame.transform.scale(frame, (imgRect[2] * Settings.tileSize, imgRect[3] * Settings.tileSize))
+                frame = pygame.transform.scale(frame, (int(imgRect[2] * Settings.tileSize), int(imgRect[3] * Settings.tileSize)))
                 frames.append(frame)
             self.frames[animName] = (frames, speed, (imgRect[0], imgRect[1]))
 

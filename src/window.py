@@ -20,7 +20,7 @@ sound_btn2 = load_sound("btn2.wav", "btn")
 
 
 class WindowWithButtons(Window):
-    background = pygame.transform.scale(load_image("background.png"), (Settings.width, Settings.height))
+    background = pygame.transform.scale(load_image("background.png"), (int(Settings.width), int(Settings.height)))
 
     def __init__(self):
         self.all_sprites = pygame.sprite.Group()

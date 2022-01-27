@@ -8,15 +8,15 @@ from settings import Settings
 multRect = getRectMult(Settings.width, Settings.overlay_height)
 multPos = getPosMult(Settings.width, Settings.overlay_height)
 
-heartSize = Settings.tileSize * 0.8
+heartSize = int(Settings.tileSize * 0.8)
 img_heart = pygame.transform.scale(load_image("hpF.png"), (heartSize, heartSize))
 img_heartHalf = pygame.transform.scale(load_image("hp.png"), (heartSize, heartSize))
 img_heartEmpty = pygame.transform.scale(load_image("hpE.png"), (heartSize, heartSize))
-img_coin = pygame.transform.scale(load_image("coin.png"), (Settings.tileSize * 0.333, Settings.tileSize * 0.4))
+img_coin = pygame.transform.scale(load_image("coin.png"), (int(Settings.tileSize * 0.333), int(Settings.tileSize * 0.4)))
 exitBtn = multRect((0.8, 0.15, 0.18, 0.7))
-img_exitBtn = pygame.transform.scale(load_image("quit.png"), (exitBtn[2], exitBtn[3]))
-img_exitBtn_active = pygame.transform.scale(load_image("quit_active.png"), (exitBtn[2], exitBtn[3]))
-img_msgBox = pygame.transform.scale(load_image("msgBox.png"), multPos((0.5, 1)))
+img_exitBtn = pygame.transform.scale(load_image("quit.png"), (int(exitBtn[2]), int(exitBtn[3])))
+img_exitBtn_active = pygame.transform.scale(load_image("quit_active.png"), (int(exitBtn[2]), int(exitBtn[3])))
+img_msgBox = pygame.transform.scale(load_image("msgBox.png"), (int(0.5 * Settings.width), int(1 * Settings.overlay_height)))
 
 sound_btn = load_sound("btn1.mp3", "btn")
 sound_btn2 = load_sound("btn2.wav", "btn")

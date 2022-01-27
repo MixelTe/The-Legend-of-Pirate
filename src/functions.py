@@ -48,7 +48,7 @@ def load_entityStay(name: str, orig_w: float, orig_h: float, w: float, h: float)
 
 
 def scaleImg(img: pygame.Surface, w: float, h: float):
-    return pygame.transform.scale(img, (Settings.tileSize * w, Settings.tileSize * h))
+    return pygame.transform.scale(img, (int(Settings.tileSize * w), int(Settings.tileSize * h)))
 
 
 def joinPath(*path: list[str]):
@@ -80,7 +80,7 @@ def createButton(imgName: str, scale: int, group: pygame.sprite.Group, x=0, y=0)
     img = load_image(imgName + ".png")
     img_a = load_image(imgName + "_active.png")
     scale = Settings.width * scale / img.get_width()
-    w, h = img.get_width() * scale, img.get_height() * scale
+    w, h = int(img.get_width() * scale), int(img.get_height() * scale)
     img = pygame.transform.scale(img, (w, h))
     img_a = pygame.transform.scale(img_a, (w, h))
     sprite = Button(group, img, img_a)

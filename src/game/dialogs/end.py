@@ -8,7 +8,7 @@ multRect = getRectMult(Settings.width, Settings.height)
 multPos = getPosMult(Settings.width, Settings.height)
 font = pygame.font.Font(Settings.path_font, int(Settings.width * 0.053) + 1)
 Text = "За таинственной дверью пирата ждал полностью целый корабль. Капитан собрал команду и продолжил свой путь."
-background = pygame.transform.scale(load_image("background2.png"), (Settings.width, Settings.height))
+background = pygame.transform.scale(load_image("background2.png"), (int(Settings.width), int(Settings.height)))
 
 
 class GameDialog_end(GameDialog):

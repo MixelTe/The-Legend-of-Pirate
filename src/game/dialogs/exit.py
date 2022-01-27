@@ -15,6 +15,7 @@ sound_btn2 = load_sound("btn2.wav", "btn")
 class GameDialog_exit(GameDialog):
     multRectInner = getRectMult(*multPos((0.3, 0.5)))
     btnSize = multPosFull((1.6, 0.96), Settings.tileSize)
+    btnSize = (int(btnSize[0]), int(btnSize[1]))
     yes_img = pygame.transform.scale(load_image("yes.png"), btnSize)
     no_img = pygame.transform.scale(load_image("no.png"), btnSize)
     yes_img_a = pygame.transform.scale(load_image("yes_active.png"), btnSize)
