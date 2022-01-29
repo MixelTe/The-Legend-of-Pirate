@@ -13,6 +13,7 @@ const inp_mode_pen = getInput("inp-mode-pen");
 const inp_mode_fill = getInput("inp-mode-fill");
 const inp_mode_view = getInput("inp-mode-view");
 const inp_mode_entity = getInput("inp-mode-entity");
+const inp_highlight_tiles = getInput("inp-highlight-tiles");
 // const world_map = getTable("world-map")
 const div_viewport = getDiv("viewport");
 const div_palette = getDiv("palette");
@@ -258,6 +259,20 @@ class World
 			if (view) view.draw();
 			ctx.restore();
 		}
+		else if (inp_highlight_tiles.checked && !inp_mode_view.checked)
+		{
+			ctx.save();
+			const { view, X, Y, vx, vy } = this.getView(mousePosCanvas.x - camera_x, mousePosCanvas.y - camera_y);
+			if (vx >= this.width || vy >= this.height) return;
+			const tilex = Math.floor(X / TileSize);
+			const tiley = Math.floor(Y / TileSize);
+			ctx.strokeStyle = "black";
+			ctx.lineWidth = 2;
+			ctx.strokeRect((vx * ViewWidth + tilex) * TileSize, (vy * ViewHeight + tiley) * TileSize, TileSize, TileSize)
+			ctx.strokeStyle = "orange";
+			ctx.strokeRect((vx * ViewWidth + tilex) * TileSize + 1, (vy * ViewHeight + tiley) * TileSize + 1, TileSize - 2, TileSize - 2)
+			ctx.restore();
+		}
 	}
 
 	public getView(x: number, y: number)
@@ -401,7 +416,15 @@ class View
 			{
 				if (x == 0 || x == ViewWidth - 1 || y == 0 || y == ViewHeight - 1)
 				{
-					line.push(new Tile("water_deep"))
+					if (x == 0 && y == 0) line.push(new Tile("water_deep_sand_br2"))
+					else if (x == 0 && y == ViewHeight - 1) line.push(new Tile("water_deep_sand_tr2"))
+					else if (x == ViewWidth - 1 && y == 0) line.push(new Tile("water_deep_sand_bl2"))
+					else if (x == ViewWidth - 1 && y == ViewHeight - 1) line.push(new Tile("water_deep_sand_tl2"))
+					else if (x == 0) line.push(new Tile("water_deep_sand_r"))
+					else if (x == ViewWidth - 1) line.push(new Tile("water_deep_sand_l"))
+					else if (y == 0) line.push(new Tile("water_deep_sand_b"))
+					else if (y == ViewHeight - 1) line.push(new Tile("water_deep_sand_t"))
+					else line.push(new Tile("water_deep"))
 				}
 				else
 				{
@@ -1057,6 +1080,7 @@ window.addEventListener("keypress", e =>
 		case "KeyW": inp_mode_fill.checked = true; break;
 		case "KeyS": inp_mode_pen.checked = true; break;
 		case "KeyA": inp_mode_view.checked = !inp_mode_view.checked; break;
+		case "KeyH": inp_highlight_tiles.checked = !inp_highlight_tiles.checked; break;
 		case "KeyD": inp_mode_entity.checked = !inp_mode_entity.checked; setPalete(); break;
 		case "KeyE": pen.openGroup(); break;
 		// case "KeyC": endEntityMove()?.center(); break;
