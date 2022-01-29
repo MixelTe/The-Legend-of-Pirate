@@ -55,6 +55,4 @@ class ScreenData:
         self.entity: list[dict] = data["entity"]
 
 
-World("test")
-World("test2")
 World("island")

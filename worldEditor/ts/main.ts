@@ -24,8 +24,8 @@ const canvas = getCanvas("canvas");
 const ctx = getCanvasContext(canvas);
 
 const localStorageKey = "WorldEditor-world-data";
-const ViewWidth = 15;
-const ViewHeight = 7;
+const ViewWidth = 20;
+const ViewHeight = 9;
 let TileSize = 16 * 2;
 // let TileSize = 16 * 4; // Temp
 
@@ -585,9 +585,9 @@ class View
 	{
 		const view = new View();
 
-		for (let y = 0; y < ViewHeight; y++)
+		for (let y = 0; y < ViewHeight && y < data.tiles.length; y++)
 		{
-			for (let x = 0; x < ViewWidth; x++)
+			for (let x = 0; x < ViewWidth && x < data.tiles[y].length; x++)
 			{
 				view.tiles[y][x] = new Tile(data.tiles[y][x]);
 			}

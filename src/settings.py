@@ -3,9 +3,9 @@ from os.path import join
 
 
 class Settings:
-    version = "v1.1"
-    width = 1920
-    height = 1080
+    version = "v2.0.0 (dev)"
+    width = 720  # 1920
+    height = 405  # 1080
     fps = 60
     overlay_height = 184
     folder_data = "data"
@@ -16,16 +16,16 @@ class Settings:
     folder_worlds = "worlds"
     folder_sounds = "sounds"
     path_font = None
-    screen_width = 15
-    screen_height = 7
+    screen_width = 20
+    screen_height = 9
     damageDelay = 400
     damageDelayPlayer = 1600
-    fullscreen = True
+    fullscreen = False
     tileSize = 1
     drawHitboxes = False
     drawNoneImgs = False
     disableAI = False
-    moveScreenOnNumpad = False
+    moveScreenOnNumpad = True
 
 
 try:

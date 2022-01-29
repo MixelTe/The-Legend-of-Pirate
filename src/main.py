@@ -9,11 +9,13 @@ pygame.mixer.init()
 
 from window import Window
 from windowStart import WindowStart
+from windowGame import WindowGame
 
 
 class Main:
     def __init__(self):
-        self.window: Window = WindowStart()
+        # self.window: Window = WindowStart()
+        self.window: Window = WindowGame(0)
 
     def start(self):
         clock = pygame.time.Clock()
