@@ -14,6 +14,7 @@ const inp_mode_pen = getInput("inp-mode-pen");
 const inp_mode_fill = getInput("inp-mode-fill");
 const inp_mode_view = getInput("inp-mode-view");
 const inp_mode_entity = getInput("inp-mode-entity");
+const inp_highlight_tiles = getInput("inp-highlight-tiles");
 // const world_map = getTable("world-map")
 const div_viewport = getDiv("viewport");
 const div_palette = getDiv("palette");
@@ -23,8 +24,8 @@ const div_palette_group_imgs = getDiv("palette-group-imgs");
 const canvas = getCanvas("canvas");
 const ctx = getCanvasContext(canvas);
 const localStorageKey = "WorldEditor-world-data";
-const ViewWidth = 15;
-const ViewHeight = 7;
+const ViewWidth = 20;
+const ViewHeight = 9;
 let TileSize = 16 * 2;
 // let TileSize = 16 * 4; // Temp
 const entity = [];
@@ -223,6 +224,20 @@ class World {
                 view.draw();
             ctx.restore();
         }
+        else if (inp_highlight_tiles.checked && !inp_mode_view.checked) {
+            ctx.save();
+            const { view, X, Y, vx, vy } = this.getView(mousePosCanvas.x - camera_x, mousePosCanvas.y - camera_y);
+            if (vx >= this.width || vy >= this.height)
+                return;
+            const tilex = Math.floor(X / TileSize);
+            const tiley = Math.floor(Y / TileSize);
+            ctx.strokeStyle = "black";
+            ctx.lineWidth = 2;
+            ctx.strokeRect((vx * ViewWidth + tilex) * TileSize, (vy * ViewHeight + tiley) * TileSize, TileSize, TileSize);
+            ctx.strokeStyle = "orange";
+            ctx.strokeRect((vx * ViewWidth + tilex) * TileSize + 1, (vy * ViewHeight + tiley) * TileSize + 1, TileSize - 2, TileSize - 2);
+            ctx.restore();
+        }
     }
     getView(x, y) {
         const width = TileSize * ViewWidth;
@@ -351,7 +366,24 @@ class View {
             const line = [];
             for (let x = 0; x < ViewWidth; x++) {
                 if (x == 0 || x == ViewWidth - 1 || y == 0 || y == ViewHeight - 1) {
-                    line.push(new Tile("water_deep"));
+                    if (x == 0 && y == 0)
+                        line.push(new Tile("water_deep_sand_br2"));
+                    else if (x == 0 && y == ViewHeight - 1)
+                        line.push(new Tile("water_deep_sand_tr2"));
+                    else if (x == ViewWidth - 1 && y == 0)
+                        line.push(new Tile("water_deep_sand_bl2"));
+                    else if (x == ViewWidth - 1 && y == ViewHeight - 1)
+                        line.push(new Tile("water_deep_sand_tl2"));
+                    else if (x == 0)
+                        line.push(new Tile("water_deep_sand_r"));
+                    else if (x == ViewWidth - 1)
+                        line.push(new Tile("water_deep_sand_l"));
+                    else if (y == 0)
+                        line.push(new Tile("water_deep_sand_b"));
+                    else if (y == ViewHeight - 1)
+                        line.push(new Tile("water_deep_sand_t"));
+                    else
+                        line.push(new Tile("water_deep"));
                 }
                 else {
                     const random = Math.floor(Math.random() * 3);
@@ -497,8 +529,8 @@ class View {
     }
     static fromData(data) {
         const view = new View();
-        for (let y = 0; y < ViewHeight; y++) {
-            for (let x = 0; x < ViewWidth; x++) {
+        for (let y = 0; y < ViewHeight && y < data.tiles.length; y++) {
+            for (let x = 0; x < ViewWidth && x < data.tiles[y].length; x++) {
                 view.tiles[y][x] = new Tile(data.tiles[y][x]);
             }
         }
@@ -943,6 +975,9 @@ window.addEventListener("keypress", e => {
             break;
         case "KeyA":
             inp_mode_view.checked = !inp_mode_view.checked;
+            break;
+        case "KeyH":
+            inp_highlight_tiles.checked = !inp_highlight_tiles.checked;
             break;
         case "KeyD":
             inp_mode_entity.checked = !inp_mode_entity.checked;
