@@ -373,6 +373,17 @@
 		Tile("img.png", False, True, 1)
 		Tile("img.png")
 		```
+## Класс TileAnimated(Tile)
+	* Анимированная клетка
+	* Методы:
+		* init(image: str, solid: bool = False, digable: bool = False, speed: float = 1, tags=None, damage: int = 0, tileSize=16, animSpeed=100)
+		* s_del(x: int, y: int) -> self - установить задержку анимации в зависимости от координат
+		* s_dmg(damage: list[int]) -> self - установить урон для кадров
+		* s_dmgD(damage: dict[int, int]) -> self
+		* s_dmgL(indexes: list[int], damage: int) -> self
+		* s_spd(speed: list[int]) -> self - установить скорость анимации
+		* s_spdD(speed: dict[int, int]) -> self
+		* s_spdL(indexes: list[int], speed: int) -> self
 ---
 22. ## Класс GameDialog
 	* Диалоговое окно, при его открытии игра останавливается
