@@ -229,7 +229,7 @@
 		9. static createById(id: str, screen: pygame.Surface) - создание сущности по id
 		10. static registerEntity(id: str, entityClass) - добавляет сущность в entityDict и присваевает id в entityClass.id
 		11. canGoOn(tile: Tile) -> bool - может ли сущность наступить на эту клетку
-		12. get_tile(dx: int = 0, dy: int = 0, pos: tuple[float, float] = (0.5, 0.5)) -> Tile | None - клетка относительно сущности. pos - позиция точки проверки в сущности, где 0 - левый верхний угол, 1 - правый нижний
+		12. get_tile(dx: int = 0, dy: int = 0, pos: tuple[float, float] = (0.5, 0.5)) -> tuple[Tile, tuple[int, int]] | tuple[None, None] - клетка относительно сущности и её координаты. pos - позиция точки проверки в сущности, где 0 - левый верхний угол, 1 - правый нижний
 		13. get_entities(rect: tuple[float, float, float, float]) -> list\[Entity] - сущности попадающие в область
 		14. get_entitiesD(rect: tuple[float, float, float, float]) -> list\[Entity] - сущности попадающие в область, относительную сущности
 		15. is_inRect(rect: tuple[float, float, float, float]) -> проверка попадает ли эта сущность в область
@@ -244,7 +244,7 @@
 		* alive: bool - жива ли сущность
 		* removeOnDeath: bool - удалять ли сущность при её смерти
 	* Методы:
-		* takeDamage(damage: int) -> bool - Уменьшение здоровья и установка damageDelay в Settings.damageDelay, если damageDelay <= 0. Возвращает был ли нанесён урон
+		* takeDamage(damage: int, attacker: Entity | str | None) -> bool - Уменьшение здоровья и установка damageDelay в Settings.damageDelay, если damageDelay <= 0. Возвращает был ли нанесён урон
 		* heal(v: int) - Увеличение здоровья в приделах healthMax
 		* onDeath() - Вызывается перед удалением
 	* Класс EntityGroups:
@@ -360,11 +360,14 @@
 		* speed: float - множитель скорости клетки
 		* digable: bool - можно ли копать на этой клетке
 		* solid: bool - плотная ли клетка (стена)
+		* \_damage: int - урон при наступании на клетку
 		* tags: list\[str] - тэги, например "water"
 		* id: str
 	* Методы:
-		* init(image: str, solid: bool = False, digable: bool = False, speed: float = 1) - добавляет себя в tileIds по ключу image отрезав расширение файла (всё после первой точки)
+		* init(image: str, solid: bool = False, digable: bool = False, speed: float = 1, tags=None, damage: int = 0) - добавляет себя в tileIds по ключу image отрезав расширение файла (всё после первой точки)
 		* static fromId(id: str) -> Tile - получить клетку по id из tileIds
+		* draw(surface: pygame.Surface, x: int, y: int)
+		* damage(x: int, y: int) - получить урон от клетки
 	* Создаёт все клетки на старте программы:
 		```
 		Tile("img.png", False, True, 1)
