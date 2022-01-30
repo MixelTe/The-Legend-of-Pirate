@@ -1043,6 +1043,7 @@ window.addEventListener("mousemove", e => {
     mousePos.y = e.pageY;
 });
 function loadImages() {
+    const imagesFolder = "./images/";
     function loadImage(url, onload) {
         const img = new Image();
         img.src = url;
@@ -1050,15 +1051,20 @@ function loadImages() {
     }
     for (const k in tileIds) {
         const key = k;
-        const path = tileIds[key];
+        const imgName = tileIds[key];
         tileImages[key] = undefined;
-        loadImage("./images/tiles/" + path, img => tileImages[key] = img);
+        let path;
+        if (imgName[0] == "/")
+            path = "./imgs/" + imgName.substring(1);
+        else
+            path = imagesFolder + "tiles/" + imgName;
+        loadImage(path, img => tileImages[key] = img);
     }
     loadImage("./imgs/icon-move.png", img => icon_move = img);
     loadImage("./imgs/icon-trash.png", img => icon_trash = img);
     loadImage("./imgs/icon-plus.png", img => icon_plus = img);
     entity.forEach(e => {
-        loadImage("./images/entities/" + e.imgUrl, img => e.img = img);
+        loadImage(imagesFolder + "entities/" + e.imgUrl, img => e.img = img);
     });
 }
 function centerView(x, y) {

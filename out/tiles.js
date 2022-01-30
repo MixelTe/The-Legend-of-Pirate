@@ -2,6 +2,7 @@
 const tileIds = {
     water_deep: "water_deep.png",
     water_low: "water_low.png",
+    stone: "stone.png",
 };
 const tileList = [];
 // Название группы должно совпадать с названием одного из тайлов, этот тайл будет использоваться для обложки
@@ -123,6 +124,14 @@ const tileGroups = {
         },
         random: false
     },
+    lava: {
+        tiles: {
+            lava: "lava.png",
+            lavaAct: "lavaAct.png",
+            lavaAnim: "/lava.png",
+        },
+        random: false
+    }
 };
 for (const key in tileIds)
     tileList.push({ key, group: false, random: false });
