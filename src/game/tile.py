@@ -118,12 +118,16 @@ Tile("sand3.png", digable=True, tags=["sand"])
 Tile("grass1.png")
 Tile("grass2.png")
 Tile("grass3.png")
+Tile("stone.png")
+
 Tile("water_deep.png", solid=True)
 Tile("water_low.png", speed=0.6, tags=["water"])
+
 Tile("mountain.png", solid=True)
 Tile("mountain2.png", solid=True)
 Tile("mountain_sand.png", solid=True)
 Tile("mountain_sand2.png", solid=True)
+
 Tile("A.png", digable=True)
 Tile("D.png", digable=True)
 Tile("S.png", digable=True)

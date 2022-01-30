@@ -1,6 +1,7 @@
 const tileIds: TileIds = {
 	water_deep: "water_deep.png",
 	water_low: "water_low.png",
+	stone: "stone.png",
 }
 const tileList: TileGroup[] = []
 
@@ -124,6 +125,14 @@ const tileGroups: { [_: string]: { tiles: TileIds, random: boolean } } = {
 		},
 		random: false
 	},
+	lava: {
+		tiles: {
+			lava: "lava.png",
+			lavaAct: "lavaAct.png",
+			lavaAnim: "/lava.png",
+		},
+		random: false
+	}
 }
 
 for (const key in tileIds) tileList.push({ key, group: false, random: false });

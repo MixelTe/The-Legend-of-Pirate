@@ -110,3 +110,36 @@ class EntityDigPlace(Entity):
 
 
 Entity.registerEntity("dig_place", EntityDigPlace)
+
+
+class EntityBush(Entity):
+    image = load_entityImg("bush.png", 1, 1)
+
+    def __init__(self, screen, data: dict = None):
+        super().__init__(screen, data)
+        self.image = EntityBush.image
+
+
+Entity.registerEntity("bush", EntityBush)
+
+
+class EntityStone(Entity):
+    image = load_entityImg("stone.png", 1, 1)
+
+    def __init__(self, screen, data: dict = None):
+        super().__init__(screen, data)
+        self.image = EntityStone.image
+
+
+Entity.registerEntity("stone", EntityStone)
+
+
+class EntityStoneBar(Entity):
+    image = load_entityImg("stoneBar.png", 1, 1)
+
+    def __init__(self, screen, data: dict = None):
+        super().__init__(screen, data)
+        self.image = EntityStoneBar.image
+
+
+Entity.registerEntity("stoneBar", EntityStoneBar)
