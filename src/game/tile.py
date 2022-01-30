@@ -7,12 +7,13 @@ from settings import Settings
 class Tile:
     tileIds: dict[str, Tile] = {}
 
-    def __init__(self, image: str, solid: bool = False, digable: bool = False, speed: float = 1, tags=None):
+    def __init__(self, image: str, solid: bool = False, digable: bool = False, speed: float = 1, tags=None, damage: int = 0):
         self.image = load_tile(image)
         self.image = pygame.transform.scale(self.image, (int(Settings.tileSize), int(Settings.tileSize)))
         self.speed = speed  # множитель скорости клетки
         self.digable = digable  # можно ли копать на этой клетке
         self.solid = solid  # плотная ли клетка (стена)
+        self._damage = damage  # урон при наступании на клетку
         self.id = image[:image.index(".")]
         self.tags = []
         if (tags):
@@ -27,6 +28,9 @@ class Tile:
 
     def draw(self, surface: pygame.Surface, x: int, y: int):
         surface.blit(self.image, (x * Settings.tileSize, y * Settings.tileSize))
+
+    def damage(self, x: int, y: int):
+        return self._damage
 
 
 Tile("sand1.png", digable=True, tags=["sand"])
@@ -110,3 +114,6 @@ Tile("grass_sand_tl_bl.png")
 Tile("grass_sand_tl_tr.png")
 Tile("grass_sand_tr_br.png")
 Tile("grass_sand_bl_br.png")
+
+Tile("lava.png")
+Tile("lavaAct.png", damage=1)

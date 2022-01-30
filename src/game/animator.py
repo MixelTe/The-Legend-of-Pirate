@@ -87,9 +87,10 @@ class Animator:
         return self.anim
 
     def startDamageAnim(self):
-        self.damageAnimCounter = 0
-        self.damageAnim = True
-        self.damageAnimFinished = False
+        if (not self.damageAnim):
+            self.damageAnimCounter = 0
+            self.damageAnim = True
+            self.damageAnimFinished = False
 
     def endDamageAnim(self):
         self.damageAnimCounter = 0

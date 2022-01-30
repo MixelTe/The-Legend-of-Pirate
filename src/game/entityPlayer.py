@@ -1,4 +1,5 @@
 from random import choices
+from typing import Union
 import pygame
 from functions import load_sound, rectPointIntersection
 from game.animator import Animator, AnimatorData
@@ -191,7 +192,7 @@ class EntityPlayer(EntityAlive):
             return
         if (len(self.buttonPressed) > 0):
             if (self.walkSoundCounter == 0):
-                tile = self.get_tile(pos=(0.5, 0.7))
+                tile, _ = self.get_tile(pos=(0.5, 0.7))
                 if (tile):
                     if ("water" in tile.tags):
                         sound_swim.play()
@@ -242,7 +243,7 @@ class EntityPlayer(EntityAlive):
     def dig(self):
         if (self.state != "normal"):
             return
-        tile = self.get_tile(1, pos=(0.5, 0.7))
+        tile, _ = self.get_tile(1, pos=(0.5, 0.7))
         if (tile and tile.digable):
             self.state = "dig"
             sound_dig.play()
@@ -294,7 +295,7 @@ class EntityPlayer(EntityAlive):
                 elif (self.animator.lastState[0]):
                     self.shovel.nextStage()
         else:
-            tile = self.get_tile(pos=(0.5, 0.7))
+            tile, _ = self.get_tile(pos=(0.5, 0.7))
             swim = False
             if (tile and "water" in tile.tags):
                 x, y = self.x + self.width * 0.5, self.y + self.height * 0.7
@@ -338,6 +339,9 @@ class EntityPlayer(EntityAlive):
         self.message = ""
         self.action = None
 
-    def takeDamage(self, damage: int, attacker: Entity = None):
+    def takeDamage(self, damage: int, attacker: Union[Entity, str, None] = None):
         if (super().takeDamage(damage, attacker)):
-            self.lastAttaker = attacker.id
+            if (isinstance(attacker, Entity)):
+                self.lastAttaker = attacker.id
+            if (isinstance(attacker, str)):
+                self.lastAttaker = attacker

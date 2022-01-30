@@ -234,13 +234,13 @@ class Entity:
     def remove(self):
         self.screen.removeEntity(self)
 
-    def get_tile(self, dx=0, dy=0, pos: tuple[float, float] = (0.5, 0.5)) -> Union[Tile, None]:
+    def get_tile(self, dx=0, dy=0, pos: tuple[float, float] = (0.5, 0.5)) -> Union[tuple[Tile, tuple[int, int]], tuple[None, None]]:
         x = self.x + dx + self.width * pos[0]
         y = self.y + dy + self.height * pos[1]
         x, y = int(x), int(y)
         if (x < 0 or y < 0 or x >= Settings.screen_width or y >= Settings.screen_height):
-            return None
-        return self.screen.tiles[y][x]
+            return (None, None)
+        return (self.screen.tiles[y][x], (x, y))
 
     def get_entities(self, rect: tuple[float, float, float, float]) -> list[Entity]:
         rectSelf = self.get_rect()
@@ -299,7 +299,7 @@ class EntityAlive(Entity):
         self.attackPushbackY = 0
         self.attackPushbackA = 0.002
 
-    def takeDamage(self, damage: int, attacker: Entity = None):
+    def takeDamage(self, damage: int, attacker: Union[Entity, str, None] = None):
         if (self.immortal or damage == 0):
             return False
         if (self.alive and self.animator):
@@ -309,7 +309,7 @@ class EntityAlive(Entity):
         sound_hit.play()
         self.damageDelay = self.DamageDelay
         self.health -= damage
-        if (attacker):
+        if (isinstance(attacker, Entity)):
             dx = (attacker.x + attacker.width / 2) - (self.x + self.width / 2)
             dy = (attacker.y + attacker.height / 2) - (self.y + self.height / 2)
             self.attackPushbackX = -0.1 * (dx / (self.width + attacker.width))
@@ -353,6 +353,9 @@ class EntityAlive(Entity):
         if (self.damageDelay > 0):
             self.damageDelay -= 1000 / Settings.fps
         for rect, collision in collisions:
+            if (isinstance(collision, Tile)):
+                self.takeDamage(collision.damage(rect[0], rect[1]), collision.id)
+                continue
             if (not isinstance(collision, EntityAlive) or not collision.alive):
                 continue
             if (self.group == EntityGroups.playerSelf):
@@ -379,6 +382,12 @@ class EntityAlive(Entity):
                     self.takeDamage(collision.strength, collision)
                 if (collision.group == EntityGroups.enemy):
                     collision.takeDamage(self.strength, self)
+
+        tileUnder, pos = self.get_tile(pos=(0.5, 1))
+        if (tileUnder):
+            damage = tileUnder.damage(*pos)
+            if (damage != 0):
+                self.takeDamage(damage, tileUnder.id)
         return collisions
 
 
