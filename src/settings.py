@@ -35,6 +35,6 @@ try:
 except Exception:
     pass
 
-Settings.tileSize = Settings.width / Settings.screen_width
+Settings.tileSize = Settings.width // Settings.screen_width
 Settings.overlay_height = Settings.height - Settings.screen_height * Settings.tileSize
 Settings.path_font = join(Settings.folder_data, "fonts", "Fifaks10Dev1.ttf")
