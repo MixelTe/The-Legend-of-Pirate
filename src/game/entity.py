@@ -111,7 +111,7 @@ class Entity:
             rect = (x, y, 1, 1)
             if (not rectIntersection(newRect, rect)):
                 continue
-            if (tile.solid or not self.canGoOn(tile)):
+            if (not self.canGoOn(tile)):
                 colision.append((rect, tile))
                 if (self.ghostT):
                     continue
@@ -229,7 +229,7 @@ class Entity:
         return (self.x, self.y, self.width, self.height)
 
     def canGoOn(self, tile: Tile) -> bool:
-        return True
+        return not tile.solid
 
     def remove(self):
         self.screen.removeEntity(self)

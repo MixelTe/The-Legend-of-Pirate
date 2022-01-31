@@ -21,7 +21,7 @@ class EntityTentacle(EntityAlive):
         self.height = 1
 
     def canGoOn(self, tile: Tile) -> bool:
-        return "water" in tile.tags
+        return "water" in tile.tags or "water-deep" in tile.tags
 
     def onDeath(self):
         coin = EntityAlive.createById("coin", self.screen)

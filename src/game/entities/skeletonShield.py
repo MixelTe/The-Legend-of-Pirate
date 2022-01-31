@@ -21,7 +21,7 @@ class EntitySkeletonShield(EntityAlive):
         self.height = 1
 
     def canGoOn(self, tile: Tile) -> bool:
-        return "water" not in tile.tags
+        return "water" not in tile.tags and super().canGoOn(tile)
 
     def onDeath(self):
         coin = EntityAlive.createById("coin", self.screen)

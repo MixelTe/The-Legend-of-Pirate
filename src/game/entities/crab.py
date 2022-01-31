@@ -36,7 +36,7 @@ class EntityCrab(EntityAlive):
         self.target = (0, 0)
 
     def canGoOn(self, tile: Tile) -> bool:
-        return "water" not in tile.tags
+        return "water" not in tile.tags and super().canGoOn(tile)
 
     def draw(self, surface: pygame.Surface):
         super().draw(surface)
