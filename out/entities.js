@@ -33,4 +33,8 @@ createNewEntityClass_Auto("trigger", false, 50, 50, 1, 1, 0, 0, 1, 1, [
 ]);
 createNewEntityClass_Auto("cactusDancing", true, 18, 24, 0.85, 0.85, -0.075, -0.475, 1, 1.33);
 createNewEntityClass_Auto("aborigine", true, 15, 16, 0.93, 1);
+createNewEntityClass_Auto("aborigineBow", true, 15, 16, 0.93, 1);
 createNewEntityClass_Auto("skeleton", true, 9, 13, 0.69, 1);
+createNewEntityClass_Auto("skeletonShield", true, 9, 13, 0.69, 1);
+createNewEntityClass_Auto("tentacle", true, 28, 34, 0.82, 1);
+createNewEntityClass_Auto("piranha", true, 35, 32, 1, 0.91);
