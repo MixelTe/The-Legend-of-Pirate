@@ -4,12 +4,12 @@ from game.tile import Tile
 from settings import Settings
 
 
-animatorData = AnimatorData("aborigine", [
+animatorData = AnimatorData("aborigineBow", [
     ("stay.png", 0, (15, 16), (0, 0, 0.93, 1)),
 ])
 
 
-class EntityAborigine(EntityAlive):
+class EntityAborigineBow(EntityAlive):
     def __init__(self, screen, data: dict = None):
         super().__init__(screen, data)
         self.animator = Animator(animatorData, "stay")
@@ -35,4 +35,4 @@ class EntityAborigine(EntityAlive):
             return
 
 
-EntityAlive.registerEntity("aborigine", EntityAborigine)
+EntityAlive.registerEntity("aborigineBow", EntityAborigineBow)

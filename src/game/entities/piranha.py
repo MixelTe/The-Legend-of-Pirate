@@ -1,15 +1,14 @@
 from game.animator import Animator, AnimatorData
 from game.entity import EntityAlive, EntityGroups
-from game.tile import Tile
 from settings import Settings
 
 
-animatorData = AnimatorData("aborigine", [
-    ("stay.png", 0, (15, 16), (0, 0, 0.93, 1)),
+animatorData = AnimatorData("piranha", [
+    ("stay.png", 0, (35, 32), (0, 0, 1, 0.91)),
 ])
 
 
-class EntityAborigine(EntityAlive):
+class EntityPiranha(EntityAlive):
     def __init__(self, screen, data: dict = None):
         super().__init__(screen, data)
         self.animator = Animator(animatorData, "stay")
@@ -17,11 +16,8 @@ class EntityAborigine(EntityAlive):
         self.strength = 1
         self.healthMax = 2
         self.health = 2
-        self.width = 0.93
-        self.height = 1
-
-    def canGoOn(self, tile: Tile) -> bool:
-        return "water" not in tile.tags
+        self.width = 1
+        self.height = 0.91
 
     def onDeath(self):
         coin = EntityAlive.createById("coin", self.screen)
@@ -35,4 +31,4 @@ class EntityAborigine(EntityAlive):
             return
 
 
-EntityAlive.registerEntity("aborigine", EntityAborigine)
+EntityAlive.registerEntity("piranha", EntityPiranha)

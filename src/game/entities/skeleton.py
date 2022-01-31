@@ -17,8 +17,8 @@ class EntitySkeleton(EntityAlive):
         self.strength = 1
         self.healthMax = 2
         self.health = 2
-        self.width = 1
-        self.height = 1.06
+        self.width = 0.69
+        self.height = 1
 
     def canGoOn(self, tile: Tile) -> bool:
         return "water" not in tile.tags

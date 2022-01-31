@@ -405,7 +405,11 @@ def loadEntities():
     import game.entities.trigger
     import game.entities.cactusDancing
     import game.entities.aborigine
+    import game.entities.aborigineBow
     import game.entities.skeleton
+    import game.entities.skeletonShield
+    import game.entities.tentacle
+    import game.entities.piranha
 
 
 loadEntities()

@@ -4,12 +4,12 @@ from game.tile import Tile
 from settings import Settings
 
 
-animatorData = AnimatorData("aborigine", [
-    ("stay.png", 0, (15, 16), (0, 0, 0.93, 1)),
+animatorData = AnimatorData("tentacle", [
+    ("stay.png", 0, (28, 34), (0, 0, 0.82, 1)),
 ])
 
 
-class EntityAborigine(EntityAlive):
+class EntityTentacle(EntityAlive):
     def __init__(self, screen, data: dict = None):
         super().__init__(screen, data)
         self.animator = Animator(animatorData, "stay")
@@ -17,11 +17,11 @@ class EntityAborigine(EntityAlive):
         self.strength = 1
         self.healthMax = 2
         self.health = 2
-        self.width = 0.93
+        self.width = 0.82
         self.height = 1
 
     def canGoOn(self, tile: Tile) -> bool:
-        return "water" not in tile.tags
+        return "water" in tile.tags
 
     def onDeath(self):
         coin = EntityAlive.createById("coin", self.screen)
@@ -35,4 +35,4 @@ class EntityAborigine(EntityAlive):
             return
 
 
-EntityAlive.registerEntity("aborigine", EntityAborigine)
+EntityAlive.registerEntity("tentacle", EntityTentacle)
