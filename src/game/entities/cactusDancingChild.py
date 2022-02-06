@@ -6,21 +6,32 @@ from game.animator import Animator, AnimatorData
 from settings import Settings
 
 
-animatorData = AnimatorData("cactusDancing", [
+animations = [
     ("stay.png", 0, (18, 24), (-0.3, -0.9, 1.125, 1.5)),
-    ("appear.png", 200, (18, 24), (-0.3, -0.9, 1.125, 1.5)),
-    ("cactus.png", 0, (16, 16), (-0.075, -0.075, 1, 1)),
     ("dancing.png", 200, (20, 24), (-0.3625, -0.9, 1.25, 1.5)),
-])
+]
+
+
+def addAnim(id: str):
+    animations.append((f"appear{id}.png", 200, (18, 24), (-0.3, -0.9, 1.125, 1.5)))
+    animations.append((f"cactus{id}.png", 0, (16, 16), (-0.075, -0.075, 1, 1)))
+
+
+for i in range(1, 5):
+    addAnim(i)
+
+animatorData = AnimatorData("cactusDancingChild", animations)
 musicPath = joinPath(Settings.folder_data, Settings.folder_sounds, "back", "background2.mp3")
 
 
-class EntityCactusDancing(EntityAlive):
+class EntityCactusDancingChild(EntityAlive):
     def __init__(self, screen, data: dict = None):
         self.X = 0
         self.Y = 0
+        self.id = None
+        self.color = 1
         super().__init__(screen, data)
-        self.animator = Animator(animatorData, "cactus")
+        self.animator = Animator(animatorData, f"cactus{self.color}")
         self.immortal = True
         self.width = 0.85
         self.height = 0.85
@@ -33,12 +44,16 @@ class EntityCactusDancing(EntityAlive):
     def applyData(self, data: dict):
         self.X = data["x"]
         self.Y = data["y"]
+        if ("id" in data):
+            self.id = data["id"]
+        if ("color" in data):
+            self.color = data["color"]
 
     def takeDamage(self, damage: int, attacker: Union[Entity, str, None] = None):
         if (not isinstance(attacker, Entity)):
             return
-        if (self.animator.curAnimation() == "cactus" and attacker.id == "shovel"):
-            self.animator.setAnimation("appear")
+        if (self.animator.curAnimation().startswith("cactus") and attacker.id == "shovel"):
+            self.animator.setAnimation(f"appear{self.color}")
             self.animator.endDamageAnim()
             self.width = 0.5
             self.height = 0.6
@@ -54,7 +69,7 @@ class EntityCactusDancing(EntityAlive):
 
     def update(self):
         super().update()
-        if (self.animator.curAnimation() == "appear"):
+        if (self.animator.curAnimation().startswith("appear")):
             self.x = self.X + 0.17
             self.y = self.Y + 0.59 - self.animator.frame / 10
             if (self.animator.lastState[1]):
@@ -63,7 +78,7 @@ class EntityCactusDancing(EntityAlive):
                 self.animator.setAnimation("dancing")
                 if (getCurMusic() != musicPath):
                     startMusicBreak(musicPath, 0.3)
-        elif (self.animator.curAnimation() == "cactus"):
+        elif (self.animator.curAnimation().startswith("cactus")):
             self.x = self.X
             self.y = self.Y
         else:
@@ -71,7 +86,7 @@ class EntityCactusDancing(EntityAlive):
             self.y = self.Y + 0.59 - 0.4
         if (self.animator.curAnimation() == "dancing"):
             if (getCurMusic() != musicPath):
-                self.animator.setAnimation("stay")
+                self.animator.setAnimation(f"stay{self.color}")
 
 
-EntityAlive.registerEntity("cactusDancing", EntityCactusDancing)
+EntityAlive.registerEntity("cactusDancingChild", EntityCactusDancingChild)

@@ -20,6 +20,11 @@ class EntityEditor
 				td
 			]);
 			table.appendChild(tr);
+			if (data.options)
+			{
+				this.createValueEdit_select(data, td);
+				return;
+			}
 			switch (data.type) {
 				case "bool": this.createValueEdit_bool(<EntityData<"bool">>data, td); break;
 				case "number": this.createValueEdit_number(<EntityData<"number">>data, td); break;
@@ -335,6 +340,68 @@ class EntityEditor
 			span.innerText = points.length + "шт ";
 		});
 
+	}
+	private createValueEdit_select<T extends keyof EntityDataType>(data: EntityData<T>, td: HTMLTableCellElement)
+	{
+		if (data.type != "text" && data.type != "number" && data.type != "bool" && data.type != "tile")
+		{
+			const inp = document.createElement("select");
+			const el = document.createElement("option");
+			inp.appendChild(el);
+			el.innerText = "type not supported!";
+			inp.disabled = true
+			el.style.color = "tomato";
+			inp.style.color = "tomato";
+			td.appendChild(Div([], [inp]));
+			return;
+		}
+		const inpNone = Input([], "checkbox");
+		const inp = document.createElement("select");
+		td.appendChild(Div([], [
+			inp,
+			initEl("label", [], [
+				inpNone,
+				Span([], [], "None")
+			], undefined),
+		]));
+		if (!data.options) return;
+		for (const elData of data.options)
+		{
+			const el = document.createElement("option");
+			inp.appendChild(el);
+			el.value = `${elData}`;
+			el.innerText = `${elData}`;
+		}
+		if (data.value == null)
+		{
+			inp.disabled = true;
+			inpNone.checked = true;
+		}
+		else
+		{
+			inp.value = `${data.value}`;
+		}
+		function setValue()
+		{
+			if (data.type == "number") data.value = <any>parseFloat(inp.value);
+			else if (data.type == "bool") data.value = <any>(inp.value == "true");
+			else if (data.type == "tile") data.value = <any>(inp.value.split(",").map(v => parseInt(v)));
+			else data.value = <any>inp.value;
+		}
+		inpNone.addEventListener("change", () =>
+		{
+			if (inpNone.checked)
+			{
+				data.value = null;
+				inp.disabled = true;
+			}
+			else
+			{
+				setValue();
+				inp.disabled = false;
+			}
+		});
+		inp.addEventListener("change", () => setValue());
 	}
 
 	public show()
