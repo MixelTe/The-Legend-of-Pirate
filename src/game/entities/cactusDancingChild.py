@@ -28,7 +28,6 @@ class EntityCactusDancingChild(EntityAlive):
     def __init__(self, screen, data: dict = None):
         self.X = 0
         self.Y = 0
-        self.id = None
         self.color = 1
         super().__init__(screen, data)
         self.animator = Animator(animatorData, f"cactus{self.color}")
@@ -44,8 +43,6 @@ class EntityCactusDancingChild(EntityAlive):
     def applyData(self, data: dict):
         self.X = data["x"]
         self.Y = data["y"]
-        if ("id" in data):
-            self.id = data["id"]
         if ("color" in data):
             self.color = data["color"]
 
