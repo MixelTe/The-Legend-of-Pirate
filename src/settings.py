@@ -4,8 +4,8 @@ from os.path import join
 
 class Settings:
     version = "v2.0.0 (dev)"
-    width = 1920
-    height = 1080
+    width = 720  # 1920
+    height = 405  # 1080
     fps = 60
     overlay_height = 184
     folder_data = "data"
