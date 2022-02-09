@@ -1,4 +1,3 @@
-from typing import Union
 from backMusic import getCurMusic, startMusicBreak
 from functions import joinPath
 from game.entity import Entity, EntityAlive, EntityGroups
@@ -34,9 +33,7 @@ class EntityCactusDancing(EntityAlive):
         self.X = data["x"]
         self.Y = data["y"]
 
-    def takeDamage(self, damage: int, attacker: Union[Entity, str, None] = None):
-        if (not isinstance(attacker, Entity)):
-            return
+    def takeDamage(self, damage: int, attacker: Entity = None):
         if (self.animator.curAnimation() == "cactus" and attacker.id == "shovel"):
             self.animator.setAnimation("appear")
             self.animator.endDamageAnim()

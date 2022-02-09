@@ -194,7 +194,6 @@ interface EntityData<T extends keyof EntityDataType>
 	name: string;
 	value: EntityDataType[T];
 	displayColor?: string,
-	options?: EntityDataType[T][],
 }
 type ObjData = EntityData<keyof EntityDataType>[];
 
