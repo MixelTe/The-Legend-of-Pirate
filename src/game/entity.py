@@ -404,6 +404,7 @@ def loadEntities():
     import game.entities.cannon
     import game.entities.trigger
     import game.entities.cactusDancing
+    import game.entities.cactusDancingChild
     import game.entities.aborigine
     import game.entities.aborigineBow
     import game.entities.skeleton
