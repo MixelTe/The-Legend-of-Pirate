@@ -55,4 +55,4 @@ class ScreenData:
         self.entity: list[dict] = data["entity"]
 
 
-World("island")
+World("StartWorld")
