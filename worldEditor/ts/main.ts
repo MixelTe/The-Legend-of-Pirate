@@ -1368,7 +1368,9 @@ interface EntitySaveData
 }
 
 
-function saveScreenImg(x = 0, y = 0, w?: number, h?: number)
+console.log("saveScreenImg(x = 0, y = 0, w?: number)");
+console.log('saveWorldImg(w?: number, back: string | null = "lightblue")');
+function saveScreenImg(x = 0, y = 0, w?: number)
 {
 	let tileSize = TileSize;
 	if (w == undefined)
@@ -1376,7 +1378,7 @@ function saveScreenImg(x = 0, y = 0, w?: number, h?: number)
 		w = 1920;
 		tileSize = Math.floor(w / ViewWidth)
 	}
-	if (h == undefined) h = tileSize * ViewHeight;
+	let h = tileSize * ViewHeight;
 
 	const canvas = document.createElement("canvas");
 	document.body.appendChild(canvas);
@@ -1399,6 +1401,78 @@ function saveScreenImg(x = 0, y = 0, w?: number, h?: number)
 			const img = tileImages[tile.id];
 			if (!img) continue;
 			ctx.drawImage(img, x * tileSize, y * tileSize, tileSize, tileSize);
+		}
+	}
+	for (const entity of view.entity)
+	{
+		const obj = <EntityObj><any>entity.constructor;
+		if (obj.img == undefined) continue;
+		ctx.drawImage(obj.img,
+					  0, 0, obj.width, obj.height,
+					  (entity.x + obj.xImg) * tileSize, (entity.y + obj.yImg) * tileSize, obj.widthImg * tileSize, obj.heightImg * tileSize);
+	}
+	canvas.addEventListener("click", () =>
+	{
+		document.body.removeChild(canvas);
+	})
+	// const img = canvas.toDataURL("image/png");
+	// var image = new Image();
+	// image.src = img;
+
+	// const W = window.open("");
+	// W?.document.write(image.outerHTML);
+
+}
+function saveWorldImg(w?: number, back: string | null = "lightblue")
+{
+	let tileSize = TileSize;
+	let h = 0;
+	if (w != undefined)
+	{
+		tileSize = Math.floor(w / ViewWidth);
+	}
+	w = tileSize * ViewWidth * world.width;
+	h = tileSize * ViewHeight * world.height;
+
+	const canvas = document.createElement("canvas");
+	document.body.appendChild(canvas);
+	canvas.width = w;
+	canvas.height = h;
+	const ctx = getCanvasContext(canvas);
+	ctx.imageSmoothingEnabled = false;
+	if (back != null)
+	{
+		ctx.fillStyle = back;
+		ctx.fillRect(0, 0, w, h);
+	}
+
+
+	for (let Y = 0; Y < world.height; Y++)
+	{
+		for (let X = 0; X < world.width; X++)
+		{
+			const view = world.map[Y][X];
+			if (view == undefined) continue
+			ctx.translate(X * ViewWidth * tileSize, Y * ViewHeight * tileSize)
+			for (let y = 0; y < ViewHeight; y++)
+			{
+				for (let x = 0; x < ViewWidth; x++)
+				{
+					let tile = view.tiles[y][x];
+					const img = tileImages[tile.id];
+					if (!img) continue;
+					ctx.drawImage(img, x * tileSize, y * tileSize, tileSize, tileSize);
+				}
+			}
+			for (const entity of view.entity)
+			{
+				const obj = <EntityObj><any>entity.constructor;
+				if (obj.img == undefined) continue;
+				ctx.drawImage(obj.img,
+							  0, 0, obj.width, obj.height,
+							  (entity.x + obj.xImg) * tileSize, (entity.y + obj.yImg) * tileSize, obj.widthImg * tileSize, obj.heightImg * tileSize);
+			}
+			ctx.translate(-X * ViewWidth * tileSize, -Y * ViewHeight * tileSize)
 		}
 	}
 	canvas.addEventListener("click", () =>
