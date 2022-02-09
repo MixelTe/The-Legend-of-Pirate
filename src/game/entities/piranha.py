@@ -1,5 +1,6 @@
 from game.animator import Animator, AnimatorData
 from game.entity import EntityAlive, EntityGroups
+from game.tile import Tile
 from settings import Settings
 
 
@@ -18,6 +19,9 @@ class EntityPiranha(EntityAlive):
         self.health = 2
         self.width = 1
         self.height = 0.91
+
+    def canGoOn(self, tile: Tile) -> bool:
+        return "water" in tile.tags or "water-deep" in tile.tags
 
     def onDeath(self):
         coin = EntityAlive.createById("coin", self.screen)
