@@ -12,6 +12,7 @@ class Settings:
     folder_saves = "saves"
     folder_images = "images"
     folder_entities = "entities"
+    folder_decor = "decor"
     folder_tiles = "tiles"
     folder_worlds = "worlds"
     folder_sounds = "sounds"

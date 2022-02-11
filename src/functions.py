@@ -39,6 +39,14 @@ def load_entity(name: str, folder: str = None):
     return load_image(path)
 
 
+def load_decor(name: str, folder: str = None):
+    if (folder is None):
+        path = joinPath(Settings.folder_decor, name)
+    else:
+        path = joinPath(Settings.folder_decor, folder, name)
+    return load_image(path)
+
+
 def load_entityImg(name: str, w: float, h: float):
     return scaleImg(load_entity(name), w, h)
 

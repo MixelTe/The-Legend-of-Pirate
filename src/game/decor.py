@@ -13,7 +13,6 @@ class Decor:
         self.y: float = 0
         self.width: float = 0
         self.height: float = 0
-        self.image: pygame.Surface = 0
         self.tags: list[str] = 0
         if (data):
             self.applyData(self.getDataSetter(data), data)
