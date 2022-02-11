@@ -138,13 +138,15 @@
 		* world: World
 		* tiles: list\[list\[Tile]]
 		* entities: list\[Entity]
+		* decor: list\[Decor]
+		* decorAbove: list\[Decor]
 		* goToVar: ScreenGoTo | None
 		* player: EntityPlayer
 		* openDialog: (dialog: GameDialog) -> None
 	* Методы:
 		1. init(world: World, data: ScreenData, pos: tuple[int, int], saveData: SaveData, player: EntityPlayer, openDialog: (dialog: GameDialog) -> None) - добавляет player в список entities
 		2. update() -> None | ScreenGoTo - вызов update у всех entities. Возвращает goToVar.
-		3. draw() -> pygame.Surface - вызов draw у всех entities, возвращает итоговый кадр
+		3. draw() -> pygame.Surface - вызов draw у всех tiles, decor, entities, decorAbove, возвращает итоговый кадр
 		4. addEntity(entity: Entity) - добавляет entity в их список
 		5. removeEntity(entity: Entity) - удаляет entity из списка
 		6. goTo(world: str, screen: tuple[int, int]) - создаёт ScreenGoTo и присваивает в goToVar
@@ -266,18 +268,28 @@
 		1. init(name: str) - загрузка ScreenData и size
 		2. screenExist(x, y) -> bool - проверка существует ли экран с такими координатами
 	* Хранение мира:
-		* В папке worlds файл worldName.txt, формат хранения:
+		* В папке worlds файл worldName.json, формат хранения:
 		```
-		map: list[list[ScreenData | None]]
-		width: int
-		height: int
+		{
+			map: list[list[ScreenData | None]]
+			width: int
+			height: int
+		}
 
 		ScreenData
 		{
 			tiles: list[list[string]];
 			entity: list[EntityData];
+			decor: list[DecorData]
 		}
 		EntityData
+		{
+			className: str;
+			x: number;
+			y: number;
+			[a: string]: any;
+		}
+		DecorData
 		{
 			className: str;
 			x: number;
@@ -290,7 +302,8 @@
 	* Хранит информацию об одном экране
 	* Поля:
 		* tiles: list[list[str]] - строка - id Tile`а
-		* entity: list[dict] - словарь с информацией о сущности
+		* entity: list[dict] - список со словарями с информацией о сущности
+		* decor: list[dict] - список со словарями с информацией о декорации
 ---
 19. ## Класс EntityPlayer(EntityAlive)
 	* Поля:
@@ -398,4 +411,20 @@
 		* update() -> bool - закрыт ли диалог
 		* on*() - методы для обработки соответствующих событий
 ---
-
+23. Класс Decor
+	* Декорация. Не влияет на сущностей
+	* Поля:
+		* static decorDict: dict\[str, Decor] - словарь всех Decor для метода Decor.fromData
+		* static aboveAll: bool - находится ли декорация поверх всех сущностей
+		* x: float
+		* y: float
+		* width: float
+		* height: float
+		* image: pygame.Surface
+		* tags: list\[str]
+	* Методы:
+		1. init(data: dict=None) - Присваевает данные из data
+		2. applyData(dataSetter, data: dict) - установка значений полей из соответствующих полей данных
+		3. getDataSetter(data: dict) -> ((field: str, default: any, fieldDest?: str, fun?: (v -> any)) -> None) - возвращает функцию для установки значений из данных
+		4. draw(surface: pygame.Surface)
+---
