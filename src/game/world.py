@@ -53,6 +53,7 @@ class ScreenData:
     def __init__(self, data: dict):
         self.tiles: list[list[str]] = data["tiles"]
         self.entity: list[dict] = data["entity"]
+        self.decor: list[dict] = data["decor"] if ("decor" in data) else []
 
 
 World("StartWorld")

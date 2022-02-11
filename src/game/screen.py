@@ -2,6 +2,7 @@ from __future__ import annotations
 from typing import Callable, Literal, Union
 import pygame
 from functions import GameExeption
+from game.decor import Decor
 from game.entity import Entity
 from game.entityPlayer import EntityPlayer
 from game.tile import Tile
@@ -21,6 +22,8 @@ class Screen:
         self.openDialog = openDialog
         self.tiles: list[list[Tile]] = []
         self.entities: list[Entity] = []
+        self.decor: list[Decor] = []
+        self.decorAbove: list[Decor] = []
         self.goToVar: ScreenGoTo = None
 
         for y in range(Settings.screen_height):
@@ -31,6 +34,14 @@ class Screen:
 
         for eData in data.entity:
             self.entities.append(Entity.fromData(eData, self))
+
+        for dData in data.decor:
+            decor = Decor.fromData(dData)
+            if (decor.aboveAll):
+                self.decorAbove.append(decor)
+            else:
+                self.decor.append(decor)
+
         self.entities.append(player)
         player.screen = self
 
@@ -63,8 +74,14 @@ class Screen:
         for (tile, x, y) in self.getTiles():
             tile.draw(self.surface, x, y)
 
+        for decor in self.decor:
+            decor.draw(self.surface)
+
         for entity in self.entities:
             entity.draw(self.surface)
+
+        for decor in self.decorAbove:
+            decor.draw(self.surface)
 
         return self.surface
 
