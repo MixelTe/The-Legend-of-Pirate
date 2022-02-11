@@ -204,8 +204,8 @@
 		* screen: Screen - экран, для доступа к списку сущностей и к клеткам мира
 		* x: float
 		* y: float
-		* width: int
-		* height: int
+		* width: float
+		* height: float
 		* speedX: float - текущая скорость
 		* speedY: float
 		* drawPriority: int - приоритет при прорисовки. Чем больше, тем позже рисуется
@@ -219,21 +219,22 @@
 		* static id: str - id сущности, присваетвается в registerEntity
 	* Методы:
 		1. init(screen: Screen, data: dict=None) - если data не None, вызывает applyData(data)
-		2. applyData(data: dict) - установка значений полей из соответствующих полей данных
-		3. update()
-		4. draw(surface: pygame.Surface)
-		5. draw_dev(self, surface: pygame.Surface) - рисует вспомогательную информацию
-		6. move() -> None | Entity | Tile - просчёт движения с учётом карты и сущностей. При столкновении с сущностью или клеткой возвращает эту сущность или клетку
-		7. remove() - удаляет себя из списка сущностей
-		8. static fromData(data: dict, screen: Screen) - создание сущности по данным
-		9. static createById(id: str, screen: pygame.Surface) - создание сущности по id
-		10. static registerEntity(id: str, entityClass) - добавляет сущность в entityDict и присваевает id в entityClass.id
-		11. canGoOn(tile: Tile) -> bool - может ли сущность наступить на эту клетку
-		12. get_tile(dx: int = 0, dy: int = 0, pos: tuple[float, float] = (0.5, 0.5)) -> tuple[Tile, tuple[int, int]] | tuple[None, None] - клетка относительно сущности и её координаты. pos - позиция точки проверки в сущности, где 0 - левый верхний угол, 1 - правый нижний
-		13. get_entities(rect: tuple[float, float, float, float]) -> list\[Entity] - сущности попадающие в область
-		14. get_entitiesD(rect: tuple[float, float, float, float]) -> list\[Entity] - сущности попадающие в область, относительную сущности
-		15. is_inRect(rect: tuple[float, float, float, float]) -> проверка попадает ли эта сущность в область
-		16. is_inRectD(rect: tuple[float, float, float, float], entity: Entity) -> проверка попадает ли сущность в область, относительную этой
+		2. applyData(dataSetter, data: dict) - установка значений полей из соответствующих полей данных
+		3. getDataSetter(data: dict) -> ((field: str, default: any, fieldDest?: str, fun?: (v -> any)) -> None) - возвращает функцию для установки значений из данных
+		4. update()
+		5. draw(surface: pygame.Surface)
+		6. draw_dev(self, surface: pygame.Surface) - рисует вспомогательную информацию
+		7. move() -> None | Entity | Tile - просчёт движения с учётом карты и сущностей. При столкновении с сущностью или клеткой возвращает эту сущность или клетку
+		8. remove() - удаляет себя из списка сущностей
+		9. static fromData(data: dict, screen: Screen) - создание сущности по данным
+		10. static createById(id: str, screen: pygame.Surface) - создание сущности по id
+		11. static registerEntity(id: str, entityClass) - добавляет сущность в entityDict и присваевает id в entityClass.id
+		12. canGoOn(tile: Tile) -> bool - может ли сущность наступить на эту клетку
+		13. get_tile(dx: int = 0, dy: int = 0, pos: tuple[float, float] = (0.5, 0.5)) -> tuple[Tile, tuple[int, int]] | tuple[None, None] - клетка относительно сущности и её координаты. pos - позиция точки проверки в сущности, где 0 - левый верхний угол, 1 - правый нижний
+		14. get_entities(rect: tuple[float, float, float, float]) -> list\[Entity] - сущности попадающие в область
+		15. get_entitiesD(rect: tuple[float, float, float, float]) -> list\[Entity] - сущности попадающие в область, относительную сущности
+		16. is_inRect(rect: tuple[float, float, float, float]) -> проверка попадает ли эта сущность в область
+		17. is_inRectD(rect: tuple[float, float, float, float], entity: Entity) -> проверка попадает ли сущность в область, относительную этой
 ---
 16. ## Класс EntityAlive(Entity)
 	* Поля:
@@ -397,13 +398,4 @@
 		* update() -> bool - закрыт ли диалог
 		* on*() - методы для обработки соответствующих событий
 ---
-## Сущности
----
-23. ## Класс EntityShovel(Entity)
-	* Лопата, которой бьёт игрок
-	* Группа: player
----
-24. ## Класс EntityCrab(EntityAlive)
-	* Спит пока к нему не подойдёт игрок, потом ходит за игроком. Может уснуть во время погони.
-	* Группа: enemy
----
+
