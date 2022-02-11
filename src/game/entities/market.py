@@ -1,3 +1,4 @@
+from typing import Any, Callable
 import pygame
 from functions import load_image, load_sound, multPos, renderText, scaleImg
 from game.entity import Entity
@@ -30,10 +31,10 @@ class EntityMarket(Entity):
             if (self.marketId in self.screen.saveData.tags):
                 self.item = None
 
-    def applyData(self, data: dict):
-        super().applyData(data)
-        if ("price" in data):
-            self.price = data["price"]
+    def applyData(self, dataSetter: Callable[[str, Any, str, Callable[[Any], Any]], None], data: dict):
+        super().applyData(dataSetter)
+        dataSetter("price", self.price)
+        dataSetter("speech", self.speech)
         if ("item id" in data):
             self.itemId = data["item id"]
             self.setItem()
@@ -45,8 +46,6 @@ class EntityMarket(Entity):
             speech = data["on buy speech"]
             if (speech is not None):
                 self.onBuySpeech = speech
-        if ("speech" in data):
-            self.speech = data["speech"]
 
     def setItem(self):
         self.item = Entity.createById(self.itemId, self.screen).image

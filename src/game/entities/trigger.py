@@ -1,3 +1,4 @@
+from typing import Any, Callable
 from game.dialogs.end import GameDialog_end
 from game.entity import Entity
 
@@ -10,15 +11,11 @@ class EntityTrigger(Entity):
         self.hidden = True
         self.ghostE = True
         self.ghostT = True
-        self.width = 1
-        self.height = 1
 
-    def applyData(self, data: dict):
+    def applyData(self, dataSetter: Callable[[str, Any, str, Callable[[Any], Any]], None], data: dict):
         super().applyData(data)
-        if ("zone" in data):
-            self.zone = data["zone"]
-        if ("dialog" in data):
-            self.dialog = data["dialog"]
+        dataSetter("zone", self.zone)
+        dataSetter("dialog", self.dialog)
 
     def update(self):
         if (self.screen.player.is_inRect(self.zone)):

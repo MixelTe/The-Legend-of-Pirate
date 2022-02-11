@@ -18,11 +18,6 @@ class EntityPirate2(Entity):
         self.height = 0.7
         self.talkZone = (-1, -1, 2, 2)
 
-    def applyData(self, data: dict):
-        super().applyData(data)
-        # if ("speech" in data):
-        #     self.speech = data["speech"]
-
     def draw(self, surface: pygame.Surface):
         super().draw(surface)
         if (Settings.drawHitboxes):

@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Any, Callable, Union
 from backMusic import getCurMusic, startMusicBreak
 from functions import joinPath
 from game.entity import Entity, EntityAlive, EntityGroups
@@ -40,11 +40,10 @@ class EntityCactusDancingChild(EntityAlive):
         if (getCurMusic() == musicPath):
             self.animator.setAnimation("dancing")
 
-    def applyData(self, data: dict):
-        self.X = data["x"]
-        self.Y = data["y"]
-        if ("color" in data):
-            self.color = data["color"]
+    def applyData(self, dataSetter: Callable[[str, Any, str, Callable[[Any], Any]], None], data: dict):
+        dataSetter("x", self.X, "X")
+        dataSetter("y", self.Y, "Y")
+        dataSetter("color", self.color)
 
     def takeDamage(self, damage: int, attacker: Union[Entity, str, None] = None):
         if (not isinstance(attacker, Entity)):

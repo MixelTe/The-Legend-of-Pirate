@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Union
+from typing import Any, Callable, Union
 import pygame
 from functions import GameExeption, load_sound, multRect, rectIntersection
 from game.animator import Animator
@@ -37,7 +37,7 @@ class Entity:
         self.ghostE = False  # если True, то на движение сущности не влияют другие
         self.ghostT = False  # если True, то на движение сущности не влияют клетки
         if (data):
-            self.applyData(data)
+            self.applyData(self.getDataSetter(data), data)
 
     @staticmethod
     def fromData(data: dict, screen: pygame.Surface) -> Entity:
@@ -59,9 +59,19 @@ class Entity:
         Entity.entityDict[id] = entityClass
         entityClass.id = id
 
-    def applyData(self, data: dict):
-        self.x = data["x"]
-        self.y = data["y"]
+    def applyData(self, dataSetter: Callable[[str, Any, str, Callable[[Any], Any]], None], data: dict):
+        dataSetter("x", self.x)
+        dataSetter("y", self.y)
+
+    def getDataSetter(self, data: dict) -> Callable[[str, Any, str, Callable[[Any], Any]], None]:
+        def setter(field: str, default: Any, fieldDest: str = None, fun: Callable[[Any], Any] = lambda x: x):
+            if (fieldDest is None):
+                fieldDest = field
+            if (field in data):
+                setattr(self, fieldDest, fun(data[field]))
+            else:
+                setattr(self, fieldDest, default)
+        return setter
 
     def preUpdate(self):
         pass
