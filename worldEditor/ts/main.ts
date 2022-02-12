@@ -499,20 +499,30 @@ class View
 		const X = Math.floor(x / TileSize);
 		const Y = Math.floor(y / TileSize);
 		const tile = this.tiles[Y][X].id;
-		this.fillR(X, Y, tile, []);
+		const tiles = []
+		const group = PenTiles.getGroup(tile)
+		if (group && group.random)
+		{
+			for (const k in tileGroups[group.key].tiles) tiles.push(k)
+		}
+		else
+		{
+			tiles.push(tile)
+		}
+		this.fillR(X, Y, tiles, []);
 	}
-	private fillR(x: number, y: number, tile: string, path: number[])
+	private fillR(x: number, y: number, tiles: string[], path: number[])
 	{
 		if (x < 0 || y < 0 || x >= ViewWidth || y >= ViewHeight) return;
-		if (this.tiles[y][x].id != tile) return;
+		if (!tiles.includes(this.tiles[y][x].id)) return;
 
 		this.tiles[y][x].id = pen.getTile();
 		const key = (x: number, y: number) => y * ViewWidth + x;
 		path.push(key(x, y));
-		if (path.indexOf(key(x + 1, y)) == -1) this.fillR(x + 1, y, tile, path);
-		if (path.indexOf(key(x - 1, y)) == -1) this.fillR(x - 1, y, tile, path);
-		if (path.indexOf(key(x, y + 1)) == -1) this.fillR(x, y + 1, tile, path);
-		if (path.indexOf(key(x, y - 1)) == -1) this.fillR(x, y - 1, tile, path);
+		if (path.indexOf(key(x + 1, y)) == -1) this.fillR(x + 1, y, tiles, path);
+		if (path.indexOf(key(x - 1, y)) == -1) this.fillR(x - 1, y, tiles, path);
+		if (path.indexOf(key(x, y + 1)) == -1) this.fillR(x, y + 1, tiles, path);
+		if (path.indexOf(key(x, y - 1)) == -1) this.fillR(x, y - 1, tiles, path);
 	}
 	public pen(x: number, y: number)
 	{
@@ -524,7 +534,9 @@ class View
 	{
 		const X = Math.floor(x / TileSize);
 		const Y = Math.floor(y / TileSize);
-		pen.setPen(this.tiles[Y][X].id);
+		const tile = this.tiles[Y][X].id;
+		pen.setPen(tile);
+		pen.setGroup(PenTiles.getGroup(tile));
 	}
 	public setCursor(x: number, y: number)
 	{
@@ -862,20 +874,25 @@ class PenTiles
 	{
 		if (group == undefined)
 		{
-			if (this.group)
+			if (this.group && !this.group.random)
 			{
 				div_palette_group.classList.add("fast-palette-visible");
 			}
 			return;
 		}
+		this.setGroup(group);
+		if (group.random) return;
+		div_palette_group.classList.add("fast-palette-visible");
+	}
+	public setGroup(group?: TileGroup)
+	{
+		if (!group) return;
 		this.group = group;
+		this.groupTiles = []
 		if (group.random)
 		{
-			this.groupTiles = []
 			for (const k in tileGroups[group.key].tiles) this.groupTiles.push(k)
-			return;
 		}
-		div_palette_group.classList.add("fast-palette-visible");
 		div_palette_group_imgs.innerHTML = "";
 		for (const k in tileGroups[group.key].tiles)
 		{
@@ -901,9 +918,21 @@ class PenTiles
 			addImg();
 		}
 	}
-	public close()
+	public static getGroup(tile: string)
 	{
-
+		for (const group of tileList)
+		{
+			if (group.key == tile) return group;
+			if (group.group)
+			{
+				const tiles = tileGroups[group.key].tiles;
+				for (const key in tiles)
+				{
+					if (key == tile) return group;
+				}
+			}
+		}
+		return undefined;
 	}
 }
 
