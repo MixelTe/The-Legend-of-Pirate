@@ -101,3 +101,13 @@ function rectPointIntersect(rect: {x: number, y: number, w: number, h: number}, 
 		point.y >= rect.y
 	);
 }
+function loadImage(name: string, onload: (img: HTMLImageElement) => void, folder?: string)
+{
+	const imagesFolder = "../../src/data/images/";
+	let path;
+	if (name[0] == "/") path = "./imgs" + name;
+	else path = folder ? imagesFolder + folder + "/" + name : imagesFolder + name;
+	const img = new Image();
+	img.src = path;
+	img.addEventListener("load", () => onload(img));
+}

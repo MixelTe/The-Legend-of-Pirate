@@ -4,7 +4,7 @@ class Entity
 	public y: number;
 	public objData: ObjData = [];
 	public static img: HTMLImageElement | undefined;
-	public static readonly imgUrl: string = "none.png";
+	public static readonly imgUrl: string = "/none.png";
 	public static readonly className: string = "Entity"
 	protected static readonly width: number = 1;
 	protected static readonly height: number = 1;
@@ -194,6 +194,7 @@ interface EntityDataType
 	"area": Rect | null,
 	"tile": Point | null,
 	"tiles": Point[] | null,
+	"any": any | null,
 };
 type Rect = [number, number, number, number]
 type Point = [number, number]

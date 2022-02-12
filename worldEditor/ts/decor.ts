@@ -3,6 +3,7 @@ class Decor
 	public x: number;
 	public y: number;
 	public objData: ObjData = [];
+	protected canvas: HTMLCanvasElement | undefined;
 	public static readonly className: string = "Decor"
 	public static readonly imgUrl: string = "none.png";
 	public static width = 1;
@@ -34,7 +35,14 @@ class Decor
 		if (obj.img == undefined) return;
 		ctx.save();
 		if (decor_moving && decor_moving.decor == this) ctx.translate(decor_moving.dx, decor_moving.dy);
-		ctx.drawImage(obj.img, this.x * TileSize, this.y * TileSize, obj.width * TileSize, obj.height * TileSize);
+		if (this.canvas)
+		{
+			ctx.drawImage(this.canvas, this.x * TileSize, this.y * TileSize, obj.width * TileSize, obj.height * TileSize);
+		}
+		else
+		{
+			ctx.drawImage(obj.img, this.x * TileSize, this.y * TileSize, obj.width * TileSize, obj.height * TileSize);
+		}
 		if (inp_mode_decor.checked)
 		{
 			ctx.strokeStyle = "rgba(0, 0, 0, 0.5)";
@@ -86,10 +94,10 @@ class Decor
 			console.error(`Cant create decor: No such class name "${data.className}"`);
 			return;
 		};
-		const entity = new classObj(data.x, data.y);
-		for (let i = 0; i < entity.objData.length; i++)
+		const decor = new classObj(data.x, data.y);
+		for (let i = 0; i < decor.objData.length; i++)
 		{
-			const dataEl = entity.objData[i];
+			const dataEl = decor.objData[i];
 			const value = data[dataEl.name];
 			if (value === undefined)
 			{
@@ -99,7 +107,12 @@ class Decor
 			}
 			dataEl.value = value;
 		}
-		return entity;
+		decor.afterDataSet();
+		return decor;
+	}
+	protected afterDataSet()
+	{
+
 	}
 }
 

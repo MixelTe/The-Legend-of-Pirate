@@ -282,3 +282,15 @@ canvas {
 .palette-group-imgs img:hover {
 	background-color: rgba(255, 255, 255, 0.2);
 }
+
+.TileEdge-picker {
+	display: flex;
+	justify-content: center;
+}
+.TileEdge-picker td {
+	text-align: center;
+}
+.TileEdge-picker input {
+	width: 2em;
+	height: 2em;
+}

@@ -1361,16 +1361,6 @@ window.addEventListener("mousemove", e =>
 
 function loadImages()
 {
-	const imagesFolder = "../../src/data/images/"
-	function loadImage(name: string, onload: (img: HTMLImageElement) => void, folder?: string)
-	{
-		let path;
-		if (name[0] == "/") path = "./imgs" + name;
-		else path = folder ? imagesFolder + folder + "/" + name : imagesFolder + name;
-		const img = new Image();
-		img.src = path;
-		img.addEventListener("load", () => onload(img));
-	}
 	for (const k in tileIds)
 	{
 		const key = k;
