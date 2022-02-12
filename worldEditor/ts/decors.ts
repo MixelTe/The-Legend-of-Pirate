@@ -1,0 +1,1 @@
+createSimpleDecorClass_Auto("wood", null, 1, 1)

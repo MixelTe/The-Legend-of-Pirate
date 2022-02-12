@@ -13,7 +13,9 @@ const inp_mode_pen = getInput("inp-mode-pen");
 const inp_mode_fill = getInput("inp-mode-fill");
 const inp_mode_view = getInput("inp-mode-view");
 const inp_mode_entity = getInput("inp-mode-entity");
+const inp_mode_decor = getInput("inp-mode-decor");
 const inp_highlight_tiles = getInput("inp-highlight-tiles");
+const inp_highlight_decor = getInput("inp-highlight-decor");
 // const world_map = getTable("world-map")
 const div_viewport = getDiv("viewport");
 const div_palette = getDiv("palette");
@@ -31,6 +33,8 @@ let TileSize = 16 * 2;
 
 const entity: (typeof Entity)[] = [];
 for (const key in EntityDict) entity.push(EntityDict[<keyof typeof EntityDict>key])
+const decor: (typeof Decor)[] = [];
+for (const key in DecorDict) decor.push(DecorDict[<keyof typeof DecorDict>key])
 const tileImages: TileImages = {};
 let icon_move: null | HTMLImageElement = null;
 let icon_plus: null | HTMLImageElement = null;
@@ -46,7 +50,9 @@ const camera_speed = () =>
 	return Math.round(TileSize * inp_cameraSpeed.valueAsNumber / 2);
 };
 let penEntity: typeof Entity | null = null;
+let penDecor: typeof Decor | null = null;
 let selectedEntity: Entity | null = null;
+let selectedDecor: Decor | null = null;
 let worldFileName = localStorage.getItem("WorldEditor-world-filename") || "worldData.json";
 let mousePos = { x: 0, y: 0 };
 let mousePosCanvas = { x: 0, y: 0 };
@@ -333,10 +339,20 @@ class World
 		const { view, X, Y, vx, vy } = this.getView(x, y);
 		return { entity: view && view.getEntity(X, Y) || null, vx, vy };
 	}
+	public getDecor(x: number, y: number)
+	{
+		const { view, X, Y, vx, vy } = this.getView(x, y);
+		return { decor: view && view.getDecor(X, Y) || null, vx, vy };
+	}
 	public entity(x: number, y: number)
 	{
 		const { view, X, Y } = this.getView(x, y);
 		if (view) view.setEntity(X, Y);
+	}
+	public decor(x: number, y: number)
+	{
+		const { view, X, Y } = this.getView(x, y);
+		if (view) view.setDecor(X, Y);
 	}
 	public saveToLocalStarage()
 	{
@@ -407,6 +423,7 @@ class View
 {
 	tiles: Tile[][] = [];
 	entity: Entity[] = [];
+	decor: Decor[] = [];
 	constructor()
 	{
 		for (let y = 0; y < ViewHeight; y++)
@@ -450,6 +467,10 @@ class View
 				ctx.restore();
 			}
 		}
+		ctx.save();
+		if (inp_highlight_decor.checked && !inp_mode_decor.checked) ctx.globalAlpha = 0.2;
+		this.decor.forEach(d => d.draw());
+		ctx.restore();
 		ctx.save();
 		if (!inp_mode_entity.checked) ctx.globalAlpha = 0.5;
 		this.entity.forEach(e => e.draw());
@@ -555,6 +576,15 @@ class View
 		}
 		return null;
 	}
+	public getDecor(x: number, y: number)
+	{
+		for (let i = 0; i < this.decor.length; i++)
+		{
+			const e = this.decor[i];
+			if (e.intersect(x, y)) return e;
+		}
+		return null;
+	}
 	public setEntity(x: number, y: number)
 	{
 		// const X = x / TileSize;
@@ -563,11 +593,20 @@ class View
 		const Y = Math.floor(y / TileSize);
 		if (penEntity) this.entity.push(new penEntity(X, Y));
 	}
+	public setDecor(x: number, y: number)
+	{
+		// const X = x / TileSize;
+		// const Y = y / TileSize;
+		const X = Math.floor(x / TileSize);
+		const Y = Math.floor(y / TileSize);
+		if (penDecor) this.decor.push(new penDecor(X, Y));
+	}
 	public getData()
 	{
 		const data: ViewData = {
 			tiles: [],
 			entity: [],
+			decor: [],
 		}
 		for (let y = 0; y < ViewHeight; y++)
 		{
@@ -579,6 +618,7 @@ class View
 			data.tiles.push(row);
 		}
 		this.entity.forEach(e => data.entity.push(e.getData()));
+		this.decor.forEach(d => data.decor.push(d.getData()));
 		return data;
 	}
 	public static fromData(data: ViewData)
@@ -596,6 +636,11 @@ class View
 		{
 			const entity = Entity.fromData(eData);
 			if (entity) view.entity.push(entity);
+		});
+		data.decor.forEach(dData =>
+		{
+			const decor = Decor.fromData(dData);
+			if (decor) view.decor.push(decor);
 		});
 		return view;
 	}
@@ -673,9 +718,11 @@ class FastPalette
 	private imgs: HTMLDivElement[] = [];
 	private tiles: string[] = [pen.getTile()];
 	private entity: (typeof Entity | null)[] = [penEntity];
+	private decor: (typeof Decor | null)[] = [penDecor];
 	private hovered: number | null = null;
 	private addtileI = 1;
 	private addentityI = 1;
+	private adddecorI = 1;
 	constructor()
 	{
 		const imgs = div_fast_palette.querySelectorAll(".fast-palette-part");
@@ -701,6 +748,7 @@ class FastPalette
 		this.opened = true;
 		this.closedByClick = false;
 		if (inp_mode_entity.checked) this.setPaletteEntity();
+		else if (inp_mode_decor.checked) this.setPaletteDecor();
 		else this.setPaletteTiles();
 		div_fast_palette.style.left = `${mousePos.x}px`;
 		div_fast_palette.style.top = `${mousePos.y}px`;
@@ -738,6 +786,25 @@ class FastPalette
 			imgDiv.appendChild(img);
 		}
 	}
+	private setPaletteDecor()
+	{
+		for (let i = 0; i < this.imgs.length; i++)
+		{
+			const imgDiv = this.imgs[i];
+			imgDiv.innerHTML = "";
+			const d = this.decor.length > i ? this.decor[i] : this.decor[0];
+			if (!d)
+			{
+				const img = document.createElement("img");
+				img.src = "imgs/none.png";
+				imgDiv.appendChild(img);
+				continue;
+			}
+			const img = document.createElement("canvas");
+			d.draw(img, 65);
+			imgDiv.appendChild(img);
+		}
+	}
 	public close(closedByClick = false)
 	{
 		this.opened = false || this.closedByClick;
@@ -745,6 +812,7 @@ class FastPalette
 		if (this.closedByClick || this.hovered == null) return;
 		this.closedByClick = closedByClick;
 		if (inp_mode_entity.checked) penEntity = this.entity.length > this.hovered ? this.entity[this.hovered] : this.entity[0];
+		else if (inp_mode_decor.checked) penDecor = this.decor.length > this.hovered ? this.decor[this.hovered] : this.decor[0];
 		else pen.setPen(this.tiles.length > this.hovered ? this.tiles[this.hovered] : this.tiles[0]);
 	}
 	public addTile(tileid: string)
@@ -758,6 +826,12 @@ class FastPalette
 		if (this.entity.indexOf(entity) != -1) return;
 		this.entity[this.addentityI] = entity;
 		this.addentityI = (this.addentityI + 1) % this.imgs.length;
+	}
+	public addDecor(decor: null | typeof Decor)
+	{
+		if (this.decor.indexOf(decor) != -1) return;
+		this.decor[this.addentityI] = decor;
+		this.adddecorI = (this.adddecorI + 1) % this.imgs.length;
 	}
 }
 class PenTiles
@@ -892,7 +966,14 @@ btn_new.addEventListener("click", async () =>
 	localStorage.setItem("WorldEditor-world-filename", worldFileName);
 });
 inp_tilesize.addEventListener("change", () => TileSize = inp_tilesize.valueAsNumber);
-inp_mode_entity.addEventListener("change", () => setPalete());
+inp_mode_entity.addEventListener("change", () => {
+	if (inp_mode_entity.checked) inp_mode_decor.checked = false;
+	setPalete();
+});
+inp_mode_decor.addEventListener("change", () => {
+	if (inp_mode_decor.checked) inp_mode_entity.checked = false;
+	setPalete();
+});
 canvas.addEventListener("wheel", e =>
 {
 	const moveSpeed = camera_speed();
@@ -927,7 +1008,8 @@ canvas.addEventListener("wheel", e =>
 let camera_moving: null | { x: number, y: number, cx: number, cy: number } = null;
 let view_moving: null | { x: number, y: number, dx: number, dy: number, vx: number, vy: number } = null;
 let entity_moving: null | { x: number, y: number, dx: number, dy: number, entity: Entity } = null;
-let drawing: null | "pen" | "fill" | "entity" = null;
+let decor_moving: null | { x: number, y: number, dx: number, dy: number, decor: Decor } = null;
+let drawing: null | "pen" | "fill" | "entity" | "decor" = null;
 canvas.addEventListener("mousedown", e =>
 {
 	e.preventDefault();
@@ -956,6 +1038,21 @@ canvas.addEventListener("mousedown", e =>
 			{
 				drawing = "entity";
 				selectedEntity = null;
+			}
+		}
+		else if (inp_mode_decor.checked)
+		{
+			const { decor } = world.getDecor(e.offsetX - camera_x, e.offsetY - camera_y);
+			if (decor)
+			{
+				decor_moving = { x: e.offsetX, y: e.offsetY, dx: 0, dy: 0, decor };
+				if (selectedDecor == decor) selectedDecor = null;
+				else selectedDecor = decor;
+			}
+			else
+			{
+				drawing = "decor";
+				selectedDecor = null;
 			}
 		}
 		else
@@ -992,6 +1089,15 @@ canvas.addEventListener("mousedown", e =>
 				fastPalette.addEntity(penEntity);
 			}
 		}
+		else if (inp_mode_decor.checked)
+		{
+			const { decor } = world.getDecor(e.offsetX - camera_x, e.offsetY - camera_y);
+			if (decor)
+			{
+				penDecor = <typeof Decor>decor.constructor;
+				fastPalette.addDecor(penDecor);
+			}
+		}
 		else
 		{
 			world.pick(e.offsetX - camera_x, e.offsetY - camera_y);
@@ -1020,6 +1126,14 @@ canvas.addEventListener("mousemove", e =>
 		entity_moving.dy = Math.floor((e.offsetY - entity_moving.y + TileSize / 2) / TileSize) * TileSize;
 		setCursor("move");
 	}
+	else if (decor_moving)
+	{
+		// entity_moving.dx = e.offsetX - entity_moving.x;
+		// entity_moving.dy = e.offsetY - entity_moving.y;
+		decor_moving.dx = Math.floor((e.offsetX - decor_moving.x + TileSize / 2) / TileSize) * TileSize;
+		decor_moving.dy = Math.floor((e.offsetY - decor_moving.y + TileSize / 2) / TileSize) * TileSize;
+		setCursor("move");
+	}
 	else if (camera_moving)
 	{
 		camera_x = camera_moving.cx + e.offsetX - camera_moving.x;
@@ -1046,11 +1160,14 @@ canvas.addEventListener("mouseup", e =>
 	if (drawing == "pen") world.pen(e.offsetX - camera_x, e.offsetY - camera_y);
 	if (drawing == "fill") world.fill(e.offsetX - camera_x, e.offsetY - camera_y);
 	if (drawing == "entity") world.entity(e.offsetX - camera_x, e.offsetY - camera_y);
+	if (drawing == "decor") world.decor(e.offsetX - camera_x, e.offsetY - camera_y);
 	if (entity_moving) endEntityMove();
+	if (decor_moving) endDecorMove();
 	drawing = null;
 	camera_moving = null;
 	view_moving = null;
 	entity_moving = null;
+	decor_moving = null;
 });
 canvas.addEventListener("mouseleave", () =>
 {
@@ -1072,17 +1189,38 @@ canvas.addEventListener("dblclick", e =>
 			entity.openMenu(vx, vy);
 		}
 	}
+	if (inp_mode_decor.checked && e.button == 0)
+	{
+		const { decor, vx, vy } = world.getDecor(e.offsetX - camera_x, e.offsetY - camera_y);
+		if (decor)
+		{
+			selectedDecor = decor;
+			decor.openMenu(vx, vy);
+		}
+	}
 });
 window.addEventListener("keypress", e =>
 {
 	if (Popup.Opened) return;
 	switch (e.code) {
-		case "KeyW": inp_mode_fill.checked = true; break;
-		case "KeyS": inp_mode_pen.checked = true; break;
-		case "KeyA": inp_mode_view.checked = !inp_mode_view.checked; break;
+		case "KeyF": inp_mode_fill.checked = true; break;
+		case "KeyR": inp_mode_pen.checked = true; break;
+		case "KeyS": inp_mode_view.checked = !inp_mode_view.checked; break;
 		case "KeyH": inp_highlight_tiles.checked = !inp_highlight_tiles.checked; break;
-		case "KeyD": inp_mode_entity.checked = !inp_mode_entity.checked; setPalete(); break;
-		case "KeyE": pen.openGroup(); break;
+		case "KeyJ": inp_highlight_decor.checked = !inp_highlight_decor.checked; break;
+		case "KeyE": {
+			inp_mode_entity.checked = !inp_mode_entity.checked;
+			if (inp_mode_entity.checked) inp_mode_decor.checked = false;
+			setPalete();
+			break;
+		}
+		case "KeyD": {
+			inp_mode_decor.checked = !inp_mode_decor.checked;
+			if (inp_mode_decor.checked) inp_mode_entity.checked = false;
+			setPalete();
+			break;
+		}
+		case "KeyW": pen.openGroup(); break;
 		// case "KeyC": endEntityMove()?.center(); break;
 	}
 });
@@ -1104,18 +1242,27 @@ window.addEventListener("keyup", async e =>
 		case "KeyQ": fastPalette.close(); break;
 		case "Delete":
 			{
-				if (!selectedEntity) return;
-				let popup = new Popup();
-				popup.focusOn = "cancel";
-				popup.content.appendChild(Div([], [], "Вы уверены, что хотите удалить сущность?"));
-				let r = await popup.openAsync();
-				if (!r) return
-				const { view } = world.getView(selectedEntity.x, selectedEntity.y);
-				if (!view) return;
-				const i = view.entity.indexOf(selectedEntity);
-				if (i >= 0)
+				if (selectedDecor)
 				{
-					view.entity.splice(i, 1);
+					const { view } = world.getView(selectedDecor.x, selectedDecor.y);
+					if (!view) return;
+					const i = view.decor.indexOf(selectedDecor);
+					if (i >= 0) view.decor.splice(i, 1);
+				}
+				else if (selectedEntity)
+				{
+					let popup = new Popup();
+					popup.focusOn = "cancel";
+					popup.content.appendChild(Div([], [], "Вы уверены, что хотите удалить сущность?"));
+					let r = await popup.openAsync();
+					if (!r) return
+					const { view } = world.getView(selectedEntity.x, selectedEntity.y);
+					if (!view) return;
+					const i = view.entity.indexOf(selectedEntity);
+					if (i >= 0)
+					{
+						view.entity.splice(i, 1);
+					}
 				}
 			}
 			break;
@@ -1152,6 +1299,9 @@ function loadImages()
 	loadImage("./imgs/icon-plus.png", img => icon_plus = img);
 	entity.forEach(e => {
 		loadImage(imagesFolder + "entities/" + e.imgUrl, img => e.img = img);
+	});
+	decor.forEach(d => {
+		loadImage(imagesFolder + "decor/" + d.imgUrl, img => d.img = img);
 	});
 }
 function centerView(x: number, y: number)
@@ -1235,6 +1385,30 @@ function setPalete()
 			addImg();
 		});
 	}
+	else if (inp_mode_decor.checked)
+	{
+		decor.forEach(d =>
+		{
+			const img = document.createElement("canvas");
+			img.title = d.className;
+			div_palette.appendChild(img);
+			function addImg()
+			{
+				if (!inp_mode_decor.checked) return;
+				if (d.img)
+				{
+					d.draw(img, 48);
+					img.addEventListener("click", () =>
+					{
+						penDecor = d;
+						fastPalette.addDecor(penDecor);
+					});
+				}
+				else setTimeout(addImg, 100);
+			}
+			addImg();
+		});
+	}
 	else
 	{
 		selectedEntity = null;
@@ -1279,6 +1453,20 @@ function endEntityMove()
 		const entity = entity_moving.entity;
 		entity_moving = null;
 		return entity;
+	}
+}
+function endDecorMove()
+{
+	if (decor_moving)
+	{
+		decor_moving.decor.x += decor_moving.dx / TileSize;
+		decor_moving.decor.y += decor_moving.dy / TileSize;
+		decor_moving.decor.x = Math.min(Math.max(decor_moving.decor.x, 0), ViewWidth);
+		decor_moving.decor.y = Math.min(Math.max(decor_moving.decor.y, 0), ViewHeight);
+		decor_moving.decor.center();
+		const decor = decor_moving.decor;
+		decor_moving = null;
+		return decor;
 	}
 }
 async function askForSure(action: string)
@@ -1358,10 +1546,18 @@ interface ViewData
 {
 	tiles: string[][];
 	entity: EntitySaveData[];
+	decor: DecorSaveData[];
 }
 interface EntitySaveData
 {
 	className: keyof typeof EntityDict;
+	x: number;
+	y: number;
+	[a: string]: any;
+}
+interface DecorSaveData
+{
+	className: keyof typeof DecorDict;
 	x: number;
 	y: number;
 	[a: string]: any;

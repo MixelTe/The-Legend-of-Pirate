@@ -1,15 +1,16 @@
-class EntityEditor
+class ObjDataEditor
 {
 	private readonly objDataCopy: ObjData;
 	private readonly popup: Popup;
-	constructor(entity: Entity, vx: number, vy: number)
+	constructor(obj: Entity | Decor, vx: number, vy: number)
 	{
-		this.objDataCopy = this.copyData(entity.objData);
+		this.objDataCopy = this.copyData(obj.objData);
 		this.popup = new Popup();
-		this.popup.title = "Редактирование сущности";
+		if (obj instanceof Entity) this.popup.title = "Редактирование сущности";
+		else this.popup.title = "Редактирование декорации";
 		const table = Table("entity-editor");
 		this.popup.content.appendChild(table);
-		entity.objData.forEach(data =>
+		obj.objData.forEach(data =>
 		{
 			const colorRect = Div("color-rect");
 			if (data.displayColor) colorRect.style.background = data.displayColor;
@@ -38,18 +39,20 @@ class EntityEditor
 		});
 		table.appendChild(TR([], [
 			TD(),
-			TD([], [], "Удалить сущность"),
+			TD([], [], obj instanceof Entity ? "Удалить сущность" : "Удалить декорацию"),
 			TD([], [
 				Button("delete-button", "Удалить", async () =>
 				{
 					let popup = new Popup();
 					popup.focusOn = "cancel";
-					popup.content.appendChild(Div([], [], "Вы уверены, что хотите удалить сущность?"));
+					let text = "Вы уверены, что хотите удалить сущность?"
+					if (obj instanceof Decor) text = "Вы уверены, что хотите удалить декорацию?";
+					popup.content.appendChild(Div([], [], text));
 					let r = await popup.openAsync();
 					if (!r) return
 					const view = world.map[vy][vx];
 					if (!view) return;
-					const i = view.entity.indexOf(entity);
+					const i = view.entity.indexOf(obj);
 					if (i >= 0)
 					{
 						view.entity.splice(i, 1);
@@ -58,7 +61,7 @@ class EntityEditor
 				}),
 			]),
 		]));
-		this.popup.addListener("cancel", () => entity.objData = this.objDataCopy);
+		this.popup.addListener("cancel", () => obj.objData = this.objDataCopy);
 	}
 	private copyData(objData: ObjData)
 	{

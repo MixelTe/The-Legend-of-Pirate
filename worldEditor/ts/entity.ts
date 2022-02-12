@@ -41,8 +41,11 @@ class Entity
 		ctx.save();
 		if (entity_moving && entity_moving.entity == this) ctx.translate(entity_moving.dx, entity_moving.dy);
 		ctx.drawImage(obj.img, 0, 0, obj.width, obj.height, (this.x + obj.xImg) * TileSize, (this.y + obj.yImg) * TileSize, width, height);
-		ctx.strokeStyle = "rgba(0, 0, 0, 0.5)";
-		ctx.strokeRect(this.x * TileSize, this.y * TileSize, obj.widthHitbox * TileSize, obj.heightHitbox * TileSize);
+		if (inp_mode_entity.checked)
+		{
+			ctx.strokeStyle = "rgba(0, 0, 0, 0.5)";
+			ctx.strokeRect(this.x * TileSize, this.y * TileSize, obj.widthHitbox * TileSize, obj.heightHitbox * TileSize);
+		}
 		ctx.restore();
 		if (selectedEntity == this)
 		{
@@ -122,7 +125,7 @@ class Entity
 	}
 	public openMenu(vx: number, vy: number)
 	{
-		new EntityEditor(this, vx, vy).show();
+		new ObjDataEditor(this, vx, vy).show();
 	}
 	public getData(): EntitySaveData
 	{
