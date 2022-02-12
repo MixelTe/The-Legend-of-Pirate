@@ -12,8 +12,11 @@
 	<script defer src="out/controls.js"></script>
 	<script defer src="out/entity.js"></script>
 	<script defer src="out/entities.js"></script>
-	<script defer src="out/entityEditor.js"></script>
+	<script defer src="out/objDataEditor.js"></script>
 	<script defer src="out/tiles.js"></script>
+	<script defer src="out/decor.js"></script>
+	<script defer src="out/decors.js"></script>
+	<script defer src="out/newView.js"></script>
 	<script defer src="out/main.js"></script>
 </head>
 <body>
@@ -48,13 +51,13 @@
 		<div class="line">
 			<span title="Режим рисования">Режим: </span>
 			<span class="margin-left">
-				<label title="Покрасить одну клетку"><span>[S] Ручка:</span><input type="radio" id="inp-mode-pen" name="mode" checked></label>
-				<label title="Покрасить все одинаковые плитки, соприкасающиеся сторонами"><span>[W] Заливка:</span><input type="radio" id="inp-mode-fill" name="mode"></label>
+				<label title="Покрасить одну клетку"><span>[R] Ручка:</span><input type="radio" id="inp-mode-pen" name="mode" checked></label>
+				<label title="Покрасить все одинаковые плитки, соприкасающиеся сторонами"><span>[F] Заливка:</span><input type="radio" id="inp-mode-fill" name="mode"></label>
 			</span>
 		</div>
 		<div class="line" title="Режим настройки экранов: перемещение, добавление, удаление">
 			<label>
-				<span>[A] Режим экранов:</span>
+				<span>[S] Режим экранов:</span>
 				<span class="checkbox-switch">
 					<input type="checkbox" id="inp-mode-view">
 					<span></span>
@@ -63,9 +66,18 @@
 		</div>
 		<div class="line" title="Режим расстановки и настройки сущностей">
 			<label>
-				<span>[D] Режим сущностей:</span>
+				<span>[E] Режим сущностей:</span>
 				<span class="checkbox-switch">
 					<input type="checkbox" id="inp-mode-entity">
+					<span></span>
+				</span>
+			</label>
+		</div>
+		<div class="line" title="Режим расстановки и настройки декораций">
+			<label>
+				<span>[D] Режим декораций:</span>
+				<span class="checkbox-switch">
+					<input type="checkbox" id="inp-mode-decor">
 					<span></span>
 				</span>
 			</label>
@@ -75,6 +87,15 @@
 				<span>[H] Подсвечивать тайлы:</span>
 				<span class="checkbox-switch">
 					<input type="checkbox" id="inp-highlight-tiles">
+					<span></span>
+				</span>
+			</label>
+		</div>
+		<div class="line" title="Подсвечивать тайл под курсором мыши">
+			<label>
+				<span>[J] Скрыть декорации:</span>
+				<span class="checkbox-switch">
+					<input type="checkbox" id="inp-highlight-decor">
 					<span></span>
 				</span>
 			</label>

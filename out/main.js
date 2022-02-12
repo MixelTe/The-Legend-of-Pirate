@@ -14,7 +14,9 @@ const inp_mode_pen = getInput("inp-mode-pen");
 const inp_mode_fill = getInput("inp-mode-fill");
 const inp_mode_view = getInput("inp-mode-view");
 const inp_mode_entity = getInput("inp-mode-entity");
+const inp_mode_decor = getInput("inp-mode-decor");
 const inp_highlight_tiles = getInput("inp-highlight-tiles");
+const inp_highlight_decor = getInput("inp-highlight-decor");
 // const world_map = getTable("world-map")
 const div_viewport = getDiv("viewport");
 const div_palette = getDiv("palette");
@@ -31,12 +33,20 @@ let TileSize = 16 * 2;
 const entity = [];
 for (const key in EntityDict)
     entity.push(EntityDict[key]);
+const decor = [];
+for (const key in DecorDict)
+    decor.push(DecorDict[key]);
 const tileImages = {};
+const startViews_JSON = localStorage.getItem("WorldEditor-startViews");
+const startViews = startViews_JSON ? JSON.parse(startViews_JSON) : [DefaultNewView];
+let startView = 0;
 let icon_move = null;
 let icon_plus = null;
 const icon_center_rect = () => { const size = TileSize * 2; return { x: (ViewWidth * TileSize - size) / 2, y: (ViewHeight * TileSize - size) / 2, w: size, h: size }; };
 let icon_trash = null;
 const icon_trash_rect = () => { const size = TileSize * 0.9; return { x: (ViewWidth - 0.5) * TileSize - size, y: TileSize / 2, w: size, h: size * 1.5 }; };
+let icon_save = null;
+const icon_save_rect = () => { const size = TileSize * 0.9; return { x: 0.5 * TileSize, y: ((ViewHeight - 0.5) * TileSize - size), w: size, h: size }; };
 inp_tilesize.valueAsNumber = TileSize;
 let camera_x = 0;
 let camera_y = 0;
@@ -44,7 +54,10 @@ const camera_speed = () => {
     return Math.round(TileSize * inp_cameraSpeed.valueAsNumber / 2);
 };
 let penEntity = null;
+let penDecor = null;
+let penDecorData = null;
 let selectedEntity = null;
+let selectedDecor = null;
 let worldFileName = localStorage.getItem("WorldEditor-world-filename") || "worldData.json";
 let mousePos = { x: 0, y: 0 };
 let mousePosCanvas = { x: 0, y: 0 };
@@ -203,7 +216,7 @@ class World {
                     ctx.save();
                     if (view_moving && view_moving.vx == x && view_moving.vy == y)
                         ctx.translate(view_moving.dx, view_moving.dy);
-                    view.draw();
+                    view.draw(x, y);
                     ctx.restore();
                 }
                 else {
@@ -248,6 +261,23 @@ class World {
             return { view: null, X, Y, vx: X, vy: Y };
         return { view: this.map[Y][X] || null, X: x - X * width, Y: y - Y * height, vx: X, vy: Y };
     }
+    findView(obj) {
+        for (let y = 0; y < this.height; y++) {
+            for (let x = 0; x < this.width; x++) {
+                const view = this.map[y][x];
+                if (!view)
+                    continue;
+                let i = -1;
+                if (obj instanceof Decor)
+                    i = view.decor.indexOf(obj);
+                else
+                    i = view.entity.indexOf(obj);
+                if (i > -1)
+                    return { view, i };
+            }
+        }
+        return { view: null, i: -1 };
+    }
     fill(x, y) {
         const { view, X, Y } = this.getView(x, y);
         if (view)
@@ -290,17 +320,27 @@ class World {
         if (view)
             view.mouseup(X, Y, vx, vy);
         else {
-            this.map[vy][vx] = new View();
+            const data = JSON.parse(startViews[startView]);
+            this.map[vy][vx] = View.fromData(data);
         }
     }
     getEntity(x, y) {
         const { view, X, Y, vx, vy } = this.getView(x, y);
         return { entity: view && view.getEntity(X, Y) || null, vx, vy };
     }
+    getDecor(x, y) {
+        const { view, X, Y, vx, vy } = this.getView(x, y);
+        return { decor: view && view.getDecor(X, Y) || null, vx, vy };
+    }
     entity(x, y) {
         const { view, X, Y } = this.getView(x, y);
         if (view)
             view.setEntity(X, Y);
+    }
+    decor(x, y) {
+        const { view, X, Y } = this.getView(x, y);
+        if (view)
+            view.setDecor(X, Y);
     }
     saveToLocalStarage() {
         const data = this.getData();
@@ -361,62 +401,66 @@ class World {
 class View {
     tiles = [];
     entity = [];
+    decor = [];
     constructor() {
         for (let y = 0; y < ViewHeight; y++) {
             const line = [];
             for (let x = 0; x < ViewWidth; x++) {
-                if (x == 0 || x == ViewWidth - 1 || y == 0 || y == ViewHeight - 1) {
-                    if (x == 0 && y == 0)
-                        line.push(new Tile("water_deep_sand_br2"));
-                    else if (x == 0 && y == ViewHeight - 1)
-                        line.push(new Tile("water_deep_sand_tr2"));
-                    else if (x == ViewWidth - 1 && y == 0)
-                        line.push(new Tile("water_deep_sand_bl2"));
-                    else if (x == ViewWidth - 1 && y == ViewHeight - 1)
-                        line.push(new Tile("water_deep_sand_tl2"));
-                    else if (x == 0)
-                        line.push(new Tile("water_deep_sand_r"));
-                    else if (x == ViewWidth - 1)
-                        line.push(new Tile("water_deep_sand_l"));
-                    else if (y == 0)
-                        line.push(new Tile("water_deep_sand_b"));
-                    else if (y == ViewHeight - 1)
-                        line.push(new Tile("water_deep_sand_t"));
-                    else
-                        line.push(new Tile("water_deep"));
-                }
-                else {
-                    const random = Math.floor(Math.random() * 3);
-                    if (random == 0)
-                        line.push(new Tile("sand1"));
-                    else if (random == 1)
-                        line.push(new Tile("sand2"));
-                    else
-                        line.push(new Tile("sand3"));
-                }
+                line.push(new Tile("water_deep"));
+                // if (x == 0 || x == ViewWidth - 1 || y == 0 || y == ViewHeight - 1)
+                // {
+                // 	line.push(new Tile("water_deep"))
+                // }
+                // else
+                // {
+                // 	const random = Math.floor(Math.random() * 3);
+                // 	if (random == 0) line.push(new Tile("sand1"));
+                // 	else if (random == 1) line.push(new Tile("sand2"));
+                // 	else line.push(new Tile("sand3"));
+                // 	if (x == 1 || x == ViewWidth - 2 || y == 1 || y == ViewHeight - 2)
+                // 	{
+                // 		const d = new DecorDict["tileEdge_water_deep"](x, y);
+                // 		this.decor.push(d);
+                // 		if (x == 1 && y == 1) d.objData[0].value = [true, false, false, true];
+                // 		else if (x == 1 && y == ViewHeight - 2)  d.objData[0].value = [false, false, true, true];
+                // 		else if (x == ViewWidth - 2 && y == 1)  d.objData[0].value = [true, true, false, false];
+                // 		else if (x == ViewWidth - 2 && y == ViewHeight - 2)  d.objData[0].value = [false, true, true, false];
+                // 		else if (x == 1)  d.objData[0].value = [false, false, false, true];
+                // 		else if (x == ViewWidth - 2)  d.objData[0].value = [false, true, false, false];
+                // 		else if (y == 1)  d.objData[0].value = [true, false, false, false];
+                // 		else if (y == ViewHeight - 2) d.objData[0].value = [false, false, true, false];
+                // 		d.afterDataSet();
+                // 	}
+                // }
             }
             this.tiles.push(line);
         }
     }
-    draw() {
+    draw(x, y) {
         for (let y = 0; y < ViewHeight; y++) {
             for (let x = 0; x < ViewWidth; x++) {
                 let tile = this.tiles[y][x];
                 ctx.save();
                 ctx.translate(x * TileSize, y * TileSize);
-                tile.draw();
+                tile.draw(ctx);
                 ctx.restore();
             }
         }
         ctx.save();
+        if (inp_highlight_decor.checked && !inp_mode_decor.checked)
+            ctx.globalAlpha = 0.2;
+        this.decor.forEach(d => d.draw(ctx));
+        ctx.restore();
+        ctx.save();
         if (!inp_mode_entity.checked)
             ctx.globalAlpha = 0.5;
-        this.entity.forEach(e => e.draw());
+        this.entity.forEach(e => e.draw(ctx));
         ctx.restore();
         ctx.strokeStyle = "black";
         ctx.lineWidth = 1;
         ctx.strokeRect(0, 0, ViewWidth * TileSize, ViewHeight * TileSize);
         if (inp_mode_view.checked) {
+            ctx.save();
             ctx.fillStyle = "rgba(0, 0, 0, 0.3)";
             ctx.fillRect(0, 0, ViewWidth * TileSize, ViewHeight * TileSize);
             if (icon_move) {
@@ -427,30 +471,64 @@ class View {
                 const rect = icon_trash_rect();
                 ctx.drawImage(icon_trash, rect.x, rect.y, rect.w, rect.h);
             }
+            if (icon_save) {
+                const rect = icon_save_rect();
+                ctx.drawImage(icon_save, rect.x, rect.y, rect.w, rect.h);
+            }
+            if (x != undefined && y != undefined) {
+                ctx.save();
+                ctx.font = `${TileSize}px Arial`;
+                ctx.fillStyle = "lime";
+                ctx.fillText(`${x}:${y}`, TileSize * 0.3, TileSize);
+                ctx.restore();
+            }
+            ctx.restore();
         }
+    }
+    drawInd(ctx) {
+        for (let y = 0; y < ViewHeight; y++) {
+            for (let x = 0; x < ViewWidth; x++) {
+                let tile = this.tiles[y][x];
+                ctx.save();
+                ctx.translate(x * TileSize, y * TileSize);
+                tile.draw(ctx);
+                ctx.restore();
+            }
+        }
+        this.decor.forEach(d => d.draw(ctx));
+        this.entity.forEach(e => e.draw(ctx));
     }
     fill(x, y) {
         const X = Math.floor(x / TileSize);
         const Y = Math.floor(y / TileSize);
         const tile = this.tiles[Y][X].id;
-        this.fillR(X, Y, tile, []);
+        const tiles = [];
+        const group = PenTiles.getGroup(tile);
+        if (group && group.random) {
+            for (const k in tileGroups[group.key].tiles)
+                tiles.push(k);
+        }
+        else {
+            tiles.push(tile);
+        }
+        this.fillR(X, Y, tiles, []);
     }
-    fillR(x, y, tile, path) {
+    fillR(x, y, tiles, path) {
         if (x < 0 || y < 0 || x >= ViewWidth || y >= ViewHeight)
             return;
-        if (this.tiles[y][x].id != tile)
+        if (!tiles.includes(this.tiles[y][x].id))
             return;
         this.tiles[y][x].id = pen.getTile();
         const key = (x, y) => y * ViewWidth + x;
         path.push(key(x, y));
         if (path.indexOf(key(x + 1, y)) == -1)
-            this.fillR(x + 1, y, tile, path);
+            this.fillR(x + 1, y, tiles, path);
         if (path.indexOf(key(x - 1, y)) == -1)
-            this.fillR(x - 1, y, tile, path);
+            this.fillR(x - 1, y, tiles, path);
         if (path.indexOf(key(x, y + 1)) == -1)
-            this.fillR(x, y + 1, tile, path);
+            this.fillR(x, y + 1, tiles, path);
         if (path.indexOf(key(x, y - 1)) == -1)
-            this.fillR(x, y - 1, tile, path);
+            this.fillR(x, y - 1, tiles, path);
     }
     pen(x, y) {
         const X = Math.floor(x / TileSize);
@@ -460,10 +538,15 @@ class View {
     pick(x, y) {
         const X = Math.floor(x / TileSize);
         const Y = Math.floor(y / TileSize);
-        pen.setPen(this.tiles[Y][X].id);
+        const tile = this.tiles[Y][X].id;
+        pen.setPen(tile);
+        pen.setGroup(PenTiles.getGroup(tile));
     }
     setCursor(x, y) {
         if (rectPointIntersect(icon_trash_rect(), { x, y })) {
+            setCursor("pointer");
+        }
+        else if (rectPointIntersect(icon_save_rect(), { x, y })) {
             setCursor("pointer");
         }
         else {
@@ -472,6 +555,7 @@ class View {
     }
     mousedown(x, y, rx, ry, vx, vy) {
         if (rectPointIntersect(icon_trash_rect(), { x, y })) { }
+        else if (rectPointIntersect(icon_save_rect(), { x, y })) { }
         else {
             view_moving = { x: rx, y: ry, dx: 0, dy: 0, vx, vy };
         }
@@ -495,6 +579,20 @@ class View {
                 return;
             world.map[vy][vx] = undefined;
         }
+        else if (rectPointIntersect(icon_save_rect(), { x, y })) {
+            const popup = new Popup();
+            popup.focusOn = "cancel";
+            popup.content.appendChild(Div([], [], "Сохранить экран в палитре?"));
+            const r = await popup.openAsync();
+            if (!r)
+                return;
+            const data = JSON.stringify(this.getData());
+            div_palette.children[startView].classList.remove("palette-view-selected");
+            startView = startViews.push(data) - 1;
+            localStorage.setItem("WorldEditor-startViews", JSON.stringify(startViews));
+            setPalete();
+            div_palette.children[startView].classList.add("palette-view-selected");
+        }
     }
     getEntity(x, y) {
         for (let i = 0; i < this.entity.length; i++) {
@@ -504,18 +602,44 @@ class View {
         }
         return null;
     }
+    getDecor(x, y) {
+        for (let i = 0; i < this.decor.length; i++) {
+            const e = this.decor[i];
+            if (e.intersect(x, y))
+                return e;
+        }
+        return null;
+    }
     setEntity(x, y) {
-        // const X = x / TileSize;
-        // const Y = y / TileSize;
-        const X = Math.floor(x / TileSize);
-        const Y = Math.floor(y / TileSize);
-        if (penEntity)
-            this.entity.push(new penEntity(X, Y));
+        if (penEntity) {
+            const e = new penEntity(x / TileSize, y / TileSize);
+            if (ctrl)
+                e.snapToPixels();
+            else
+                e.center();
+            this.entity.push(e);
+            selectedEntity = e;
+        }
+    }
+    setDecor(x, y) {
+        if (penDecor) {
+            const d = new penDecor(x / TileSize, y / TileSize);
+            if (penDecorData)
+                d.apllyData(penDecorData);
+            if (ctrl)
+                d.snapToPixels();
+            else
+                d.center();
+            this.decor.push(d);
+            penDecorData = d.objData;
+            selectedDecor = d;
+        }
     }
     getData() {
         const data = {
             tiles: [],
             entity: [],
+            decor: [],
         };
         for (let y = 0; y < ViewHeight; y++) {
             const row = [];
@@ -525,10 +649,12 @@ class View {
             data.tiles.push(row);
         }
         this.entity.forEach(e => data.entity.push(e.getData()));
+        this.decor.forEach(d => data.decor.push(d.getData()));
         return data;
     }
     static fromData(data) {
         const view = new View();
+        view.decor = [];
         for (let y = 0; y < ViewHeight && y < data.tiles.length; y++) {
             for (let x = 0; x < ViewWidth && x < data.tiles[y].length; x++) {
                 view.tiles[y][x] = new Tile(data.tiles[y][x]);
@@ -539,6 +665,13 @@ class View {
             if (entity)
                 view.entity.push(entity);
         });
+        if (!data.decor)
+            return view;
+        data.decor.forEach(dData => {
+            const decor = Decor.fromData(dData);
+            if (decor)
+                view.decor.push(decor);
+        });
         return view;
     }
 }
@@ -548,7 +681,7 @@ class Tile {
         if (id)
             this.id = id;
     }
-    draw() {
+    draw(ctx) {
         const img = tileImages[this.id];
         if (img) {
             ctx.drawImage(img, 0, 0, TileSize, TileSize);
@@ -600,9 +733,11 @@ class FastPalette {
     imgs = [];
     tiles = [pen.getTile()];
     entity = [penEntity];
+    decor = [penDecor];
     hovered = null;
     addtileI = 1;
     addentityI = 1;
+    adddecorI = 1;
     constructor() {
         const imgs = div_fast_palette.querySelectorAll(".fast-palette-part");
         for (let i = 0; i < imgs.length; i++) {
@@ -625,6 +760,8 @@ class FastPalette {
         this.closedByClick = false;
         if (inp_mode_entity.checked)
             this.setPaletteEntity();
+        else if (inp_mode_decor.checked)
+            this.setPaletteDecor();
         else
             this.setPaletteTiles();
         div_fast_palette.style.left = `${mousePos.x}px`;
@@ -659,6 +796,22 @@ class FastPalette {
             imgDiv.appendChild(img);
         }
     }
+    setPaletteDecor() {
+        for (let i = 0; i < this.imgs.length; i++) {
+            const imgDiv = this.imgs[i];
+            imgDiv.innerHTML = "";
+            const d = this.decor.length > i ? this.decor[i] : this.decor[0];
+            if (!d) {
+                const img = document.createElement("img");
+                img.src = "imgs/none.png";
+                imgDiv.appendChild(img);
+                continue;
+            }
+            const img = document.createElement("canvas");
+            d.draw(img, 65);
+            imgDiv.appendChild(img);
+        }
+    }
     close(closedByClick = false) {
         this.opened = false || this.closedByClick;
         div_fast_palette.classList.remove("fast-palette-visible");
@@ -667,8 +820,15 @@ class FastPalette {
         this.closedByClick = closedByClick;
         if (inp_mode_entity.checked)
             penEntity = this.entity.length > this.hovered ? this.entity[this.hovered] : this.entity[0];
-        else
-            pen.setPen(this.tiles.length > this.hovered ? this.tiles[this.hovered] : this.tiles[0]);
+        else if (inp_mode_decor.checked) {
+            penDecor = this.decor.length > this.hovered ? this.decor[this.hovered] : this.decor[0];
+            penDecorData = null;
+        }
+        else {
+            const tile = this.tiles.length > this.hovered ? this.tiles[this.hovered] : this.tiles[0];
+            pen.setPen(tile);
+            pen.setGroup(PenTiles.getGroup(tile));
+        }
     }
     addTile(tileid) {
         if (this.tiles.indexOf(tileid) != -1)
@@ -681,6 +841,12 @@ class FastPalette {
             return;
         this.entity[this.addentityI] = entity;
         this.addentityI = (this.addentityI + 1) % this.imgs.length;
+    }
+    addDecor(decor) {
+        if (this.decor.indexOf(decor) != -1)
+            return;
+        this.decor[this.addentityI] = decor;
+        this.adddecorI = (this.adddecorI + 1) % this.imgs.length;
     }
 }
 class PenTiles {
@@ -707,19 +873,25 @@ class PenTiles {
     }
     openGroup(group) {
         if (group == undefined) {
-            if (this.group) {
-                div_palette_group.classList.add("fast-palette-visible");
+            if (this.group && !this.group.random) {
+                div_palette_group.classList.toggle("fast-palette-visible");
             }
             return;
         }
+        this.setGroup(group);
+        if (group.random)
+            return;
+        div_palette_group.classList.add("fast-palette-visible");
+    }
+    setGroup(group) {
+        if (!group)
+            return;
         this.group = group;
+        this.groupTiles = [];
         if (group.random) {
-            this.groupTiles = [];
             for (const k in tileGroups[group.key].tiles)
                 this.groupTiles.push(k);
-            return;
         }
-        div_palette_group.classList.add("fast-palette-visible");
         div_palette_group_imgs.innerHTML = "";
         for (const k in tileGroups[group.key].tiles) {
             const key = k;
@@ -743,7 +915,19 @@ class PenTiles {
             addImg();
         }
     }
-    close() {
+    static getGroup(tile) {
+        for (const group of tileList) {
+            if (group.key == tile)
+                return group;
+            if (group.group) {
+                const tiles = tileGroups[group.key].tiles;
+                for (const key in tiles) {
+                    if (key == tile)
+                        return group;
+                }
+            }
+        }
+        return undefined;
     }
 }
 const pen = new PenTiles();
@@ -800,7 +984,19 @@ btn_new.addEventListener("click", async () => {
     localStorage.setItem("WorldEditor-world-filename", worldFileName);
 });
 inp_tilesize.addEventListener("change", () => TileSize = inp_tilesize.valueAsNumber);
-inp_mode_entity.addEventListener("change", () => setPalete());
+inp_mode_entity.addEventListener("change", () => {
+    if (inp_mode_entity.checked)
+        inp_mode_decor.checked = false;
+    setPalete();
+});
+inp_mode_decor.addEventListener("change", () => {
+    if (inp_mode_decor.checked)
+        inp_mode_entity.checked = false;
+    setPalete();
+});
+inp_mode_view.addEventListener("change", () => {
+    setPalete();
+});
 canvas.addEventListener("wheel", e => {
     const moveSpeed = camera_speed();
     if (e.ctrlKey) {
@@ -836,7 +1032,9 @@ canvas.addEventListener("wheel", e => {
 let camera_moving = null;
 let view_moving = null;
 let entity_moving = null;
+let decor_moving = null;
 let drawing = null;
+let ctrl = false;
 canvas.addEventListener("mousedown", e => {
     e.preventDefault();
     if (e.button == 0) {
@@ -851,15 +1049,31 @@ canvas.addEventListener("mousedown", e => {
         else if (inp_mode_entity.checked) {
             const { entity } = world.getEntity(e.offsetX - camera_x, e.offsetY - camera_y);
             if (entity) {
-                entity_moving = { x: e.offsetX, y: e.offsetY, dx: 0, dy: 0, entity };
-                if (selectedEntity == entity)
-                    selectedEntity = null;
+                if (ctrl)
+                    entity.snapToPixels();
                 else
-                    selectedEntity = entity;
+                    entity.center();
+                entity_moving = { x: e.offsetX, y: e.offsetY, dx: 0, dy: 0, entity };
+                selectedEntity = entity;
             }
             else {
                 drawing = "entity";
                 selectedEntity = null;
+            }
+        }
+        else if (inp_mode_decor.checked) {
+            const { decor } = world.getDecor(e.offsetX - camera_x, e.offsetY - camera_y);
+            if (decor) {
+                if (ctrl)
+                    decor.snapToPixels();
+                else
+                    decor.center();
+                decor_moving = { x: e.offsetX, y: e.offsetY, dx: 0, dy: 0, decor };
+                selectedDecor = decor;
+            }
+            else {
+                drawing = "decor";
+                selectedDecor = null;
             }
         }
         else {
@@ -888,6 +1102,14 @@ canvas.addEventListener("mousedown", e => {
                 fastPalette.addEntity(penEntity);
             }
         }
+        else if (inp_mode_decor.checked) {
+            const { decor } = world.getDecor(e.offsetX - camera_x, e.offsetY - camera_y);
+            if (decor) {
+                penDecor = decor.constructor;
+                penDecorData = decor.objData;
+                fastPalette.addDecor(penDecor);
+            }
+        }
         else {
             world.pick(e.offsetX - camera_x, e.offsetY - camera_y);
         }
@@ -903,14 +1125,31 @@ canvas.addEventListener("mousemove", e => {
     if (drawing) {
         if (drawing == "pen")
             world.pen(e.offsetX - camera_x, e.offsetY - camera_y);
-        else
-            drawing = null;
     }
     else if (entity_moving) {
         // entity_moving.dx = e.offsetX - entity_moving.x;
         // entity_moving.dy = e.offsetY - entity_moving.y;
-        entity_moving.dx = Math.floor((e.offsetX - entity_moving.x + TileSize / 2) / TileSize) * TileSize;
-        entity_moving.dy = Math.floor((e.offsetY - entity_moving.y + TileSize / 2) / TileSize) * TileSize;
+        if (ctrl) {
+            entity_moving.dx = Math.floor((e.offsetX - entity_moving.x + TileSize / 16 / 2) / (TileSize / 16)) * TileSize / 16;
+            entity_moving.dy = Math.floor((e.offsetY - entity_moving.y + TileSize / 16 / 2) / (TileSize / 16)) * TileSize / 16;
+        }
+        else {
+            entity_moving.dx = Math.floor((e.offsetX - entity_moving.x + TileSize / 2) / TileSize) * TileSize;
+            entity_moving.dy = Math.floor((e.offsetY - entity_moving.y + TileSize / 2) / TileSize) * TileSize;
+        }
+        setCursor("move");
+    }
+    else if (decor_moving) {
+        // decor_moving.dx = e.offsetX - decor_moving.x;
+        // decor_moving.dy = e.offsetY - decor_moving.y;
+        if (ctrl) {
+            decor_moving.dx = Math.floor((e.offsetX - decor_moving.x + TileSize / 16 / 2) / (TileSize / 16)) * TileSize / 16;
+            decor_moving.dy = Math.floor((e.offsetY - decor_moving.y + TileSize / 16 / 2) / (TileSize / 16)) * TileSize / 16;
+        }
+        else {
+            decor_moving.dx = Math.floor((e.offsetX - decor_moving.x + TileSize / 2) / TileSize) * TileSize;
+            decor_moving.dy = Math.floor((e.offsetY - decor_moving.y + TileSize / 2) / TileSize) * TileSize;
+        }
         setCursor("move");
     }
     else if (camera_moving) {
@@ -939,12 +1178,17 @@ canvas.addEventListener("mouseup", e => {
         world.fill(e.offsetX - camera_x, e.offsetY - camera_y);
     if (drawing == "entity")
         world.entity(e.offsetX - camera_x, e.offsetY - camera_y);
+    if (drawing == "decor")
+        world.decor(e.offsetX - camera_x, e.offsetY - camera_y);
     if (entity_moving)
         endEntityMove();
+    if (decor_moving)
+        endDecorMove();
     drawing = null;
     camera_moving = null;
     view_moving = null;
     entity_moving = null;
+    decor_moving = null;
 });
 canvas.addEventListener("mouseleave", () => {
     drawing = null;
@@ -962,28 +1206,49 @@ canvas.addEventListener("dblclick", e => {
             entity.openMenu(vx, vy);
         }
     }
+    if (inp_mode_decor.checked && e.button == 0) {
+        const { decor, vx, vy } = world.getDecor(e.offsetX - camera_x, e.offsetY - camera_y);
+        if (decor) {
+            selectedDecor = decor;
+            decor.openMenu(vx, vy);
+        }
+    }
 });
 window.addEventListener("keypress", e => {
     if (Popup.Opened)
         return;
     switch (e.code) {
-        case "KeyW":
+        case "KeyF":
             inp_mode_fill.checked = true;
             break;
-        case "KeyS":
+        case "KeyR":
             inp_mode_pen.checked = true;
             break;
-        case "KeyA":
+        case "KeyS":
             inp_mode_view.checked = !inp_mode_view.checked;
+            setPalete();
             break;
         case "KeyH":
             inp_highlight_tiles.checked = !inp_highlight_tiles.checked;
             break;
-        case "KeyD":
+        case "KeyJ":
+            inp_highlight_decor.checked = !inp_highlight_decor.checked;
+            break;
+        case "KeyE": {
             inp_mode_entity.checked = !inp_mode_entity.checked;
+            if (inp_mode_entity.checked)
+                inp_mode_decor.checked = false;
             setPalete();
             break;
-        case "KeyE":
+        }
+        case "KeyD": {
+            inp_mode_decor.checked = !inp_mode_decor.checked;
+            if (inp_mode_decor.checked)
+                inp_mode_entity.checked = false;
+            setPalete();
+            break;
+        }
+        case "KeyW":
             pen.openGroup();
             break;
         // case "KeyC": endEntityMove()?.center(); break;
@@ -1008,6 +1273,10 @@ window.addEventListener("keydown", e => {
         case "KeyQ":
             fastPalette.open();
             break;
+        case "ControlLeft":
+        case "ControlRight":
+            ctrl = true;
+            break;
     }
 });
 window.addEventListener("keyup", async (e) => {
@@ -1019,22 +1288,31 @@ window.addEventListener("keyup", async (e) => {
             break;
         case "Delete":
             {
-                if (!selectedEntity)
-                    return;
-                let popup = new Popup();
-                popup.focusOn = "cancel";
-                popup.content.appendChild(Div([], [], "Вы уверены, что хотите удалить сущность?"));
-                let r = await popup.openAsync();
-                if (!r)
-                    return;
-                const { view } = world.getView(selectedEntity.x, selectedEntity.y);
-                if (!view)
-                    return;
-                const i = view.entity.indexOf(selectedEntity);
-                if (i >= 0) {
+                if (selectedDecor) {
+                    const { view, i } = world.findView(selectedDecor);
+                    if (!view || i < 0)
+                        return;
+                    view.decor.splice(i, 1);
+                    selectedDecor = null;
+                }
+                else if (selectedEntity) {
+                    let popup = new Popup();
+                    popup.focusOn = "cancel";
+                    popup.content.appendChild(Div([], [], "Вы уверены, что хотите удалить сущность?"));
+                    let r = await popup.openAsync();
+                    if (!r)
+                        return;
+                    const { view, i } = world.findView(selectedEntity);
+                    if (!view || i < 0)
+                        return;
                     view.entity.splice(i, 1);
+                    selectedEntity = null;
                 }
             }
+            break;
+        case "ControlLeft":
+        case "ControlRight":
+            ctrl = false;
             break;
     }
 });
@@ -1043,28 +1321,21 @@ window.addEventListener("mousemove", e => {
     mousePos.y = e.pageY;
 });
 function loadImages() {
-    const imagesFolder = "./images/";
-    function loadImage(url, onload) {
-        const img = new Image();
-        img.src = url;
-        img.addEventListener("load", () => onload(img));
-    }
     for (const k in tileIds) {
         const key = k;
         const imgName = tileIds[key];
         tileImages[key] = undefined;
-        let path;
-        if (imgName[0] == "/")
-            path = "./imgs/" + imgName.substring(1);
-        else
-            path = imagesFolder + "tiles/" + imgName;
-        loadImage(path, img => tileImages[key] = img);
+        loadImage(imgName, img => tileImages[key] = img, "tiles");
     }
-    loadImage("./imgs/icon-move.png", img => icon_move = img);
-    loadImage("./imgs/icon-trash.png", img => icon_trash = img);
-    loadImage("./imgs/icon-plus.png", img => icon_plus = img);
+    loadImage("/icon-move.png", img => icon_move = img);
+    loadImage("/icon-trash.png", img => icon_trash = img);
+    loadImage("/icon-plus.png", img => icon_plus = img);
+    loadImage("/icon-save.png", img => icon_save = img);
     entity.forEach(e => {
-        loadImage(imagesFolder + "entities/" + e.imgUrl, img => e.img = img);
+        loadImage(e.imgUrl, img => e.img = img, "entities");
+    });
+    decor.forEach(d => {
+        loadImage(d.imgUrl, img => d.img = img, "decor");
     });
 }
 function centerView(x, y) {
@@ -1115,7 +1386,59 @@ function setCursor(cursor) {
 }
 function setPalete() {
     div_palette.innerHTML = "";
-    if (inp_mode_entity.checked) {
+    if (inp_mode_view.checked) {
+        const _TileSize = TileSize;
+        TileSize = 15;
+        startViews.forEach((e, i) => {
+            const img = document.createElement("canvas");
+            img.width = TileSize * ViewWidth;
+            img.height = TileSize * ViewHeight;
+            const ctx = getCanvasContext(img);
+            const data = JSON.parse(startViews[i]);
+            const view = View.fromData(data);
+            view.drawInd(ctx);
+            img.addEventListener("click", () => {
+                div_palette.children[startView].classList.remove("palette-view-selected");
+                div_palette.children[i].classList.add("palette-view-selected");
+                startView = i;
+            });
+            const delbtn = document.createElement("button");
+            delbtn.innerText = "×";
+            delbtn.addEventListener("click", async () => {
+                if (startViews.length <= 1) {
+                    let popup = new Popup();
+                    popup.cancelBtn = false;
+                    popup.content.appendChild(Div([], [], `Нельзя удалить последний экран`));
+                    popup.open();
+                    return;
+                }
+                let popup = new Popup();
+                popup.focusOn = "cancel";
+                popup.content.appendChild(Div([], [], `Вы уверены, что хотите удалить экран из палитры?`));
+                let r = await popup.openAsync();
+                if (!r)
+                    return;
+                popup = new Popup();
+                popup.focusOn = "cancel";
+                popup.content.appendChild(Div([], [], `Вы точно уверены, что хотите удалить экран из палитры?`));
+                popup.reverse = true;
+                r = await popup.openAsync();
+                if (!r)
+                    return;
+                startViews.splice(i, 1);
+                startView = Math.min(startView, startViews.length - 1);
+                localStorage.setItem("WorldEditor-startViews", JSON.stringify(startViews));
+                setPalete();
+            });
+            div_palette.appendChild(Div(["palette-view"], [
+                img,
+                delbtn
+            ]));
+        });
+        div_palette.children[startView].classList.add("palette-view-selected");
+        TileSize = _TileSize;
+    }
+    else if (inp_mode_entity.checked) {
         const img = document.createElement("img");
         img.title = "Отключить добавление";
         img.src = "./imgs/none.png";
@@ -1133,6 +1456,30 @@ function setPalete() {
                     img.addEventListener("click", () => {
                         penEntity = e;
                         fastPalette.addEntity(penEntity);
+                    });
+                }
+                else
+                    setTimeout(addImg, 100);
+            }
+            addImg();
+        });
+    }
+    else if (inp_mode_decor.checked) {
+        selectedDecor = null;
+        penDecorData = null;
+        decor.forEach(d => {
+            const img = document.createElement("canvas");
+            img.title = d.className;
+            div_palette.appendChild(img);
+            function addImg() {
+                if (!inp_mode_decor.checked)
+                    return;
+                if (d.img) {
+                    d.draw(img, 48);
+                    img.addEventListener("click", () => {
+                        penDecor = d;
+                        penDecorData = null;
+                        fastPalette.addDecor(penDecor);
                     });
                 }
                 else
@@ -1172,12 +1519,30 @@ function endEntityMove() {
     if (entity_moving) {
         entity_moving.entity.x += entity_moving.dx / TileSize;
         entity_moving.entity.y += entity_moving.dy / TileSize;
-        entity_moving.entity.x = Math.min(Math.max(entity_moving.entity.x, 0), ViewWidth);
-        entity_moving.entity.y = Math.min(Math.max(entity_moving.entity.y, 0), ViewHeight);
-        entity_moving.entity.center();
+        entity_moving.entity.x = Math.min(Math.max(entity_moving.entity.x, 0), ViewWidth - entity_moving.entity.getWidth());
+        entity_moving.entity.y = Math.min(Math.max(entity_moving.entity.y, 0), ViewHeight - entity_moving.entity.getHeight());
+        if (ctrl)
+            entity_moving.entity.snapToPixels();
+        else
+            entity_moving.entity.center();
         const entity = entity_moving.entity;
         entity_moving = null;
         return entity;
+    }
+}
+function endDecorMove() {
+    if (decor_moving) {
+        decor_moving.decor.x += decor_moving.dx / TileSize;
+        decor_moving.decor.y += decor_moving.dy / TileSize;
+        decor_moving.decor.x = Math.min(Math.max(decor_moving.decor.x, 0), ViewWidth - decor_moving.decor.getWidth());
+        decor_moving.decor.y = Math.min(Math.max(decor_moving.decor.y, 0), ViewHeight - decor_moving.decor.getHeight());
+        if (ctrl)
+            decor_moving.decor.snapToPixels();
+        else
+            decor_moving.decor.center();
+        const decor = decor_moving.decor;
+        decor_moving = null;
+        return decor;
     }
 }
 async function askForSure(action) {
@@ -1273,6 +1638,16 @@ function saveScreenImg(x = 0, y = 0, w) {
             continue;
         ctx.drawImage(obj.img, 0, 0, obj.width, obj.height, (entity.x + obj.xImg) * tileSize, (entity.y + obj.yImg) * tileSize, obj.widthImg * tileSize, obj.heightImg * tileSize);
     }
+    const hide = inp_highlight_decor.checked;
+    const decor = inp_mode_decor.checked;
+    const _TileSize = TileSize;
+    TileSize = tileSize;
+    inp_highlight_decor.checked = false;
+    for (const decor of view.decor)
+        decor.draw(ctx);
+    TileSize = _TileSize;
+    inp_highlight_decor.checked = hide;
+    inp_mode_decor.checked = decor;
     canvas.addEventListener("click", () => {
         document.body.removeChild(canvas);
     });
@@ -1321,6 +1696,16 @@ function saveWorldImg(w, back = "lightblue") {
                     continue;
                 ctx.drawImage(obj.img, 0, 0, obj.width, obj.height, (entity.x + obj.xImg) * tileSize, (entity.y + obj.yImg) * tileSize, obj.widthImg * tileSize, obj.heightImg * tileSize);
             }
+            const hide = inp_highlight_decor.checked;
+            const decor = inp_mode_decor.checked;
+            const _TileSize = TileSize;
+            TileSize = tileSize;
+            inp_highlight_decor.checked = false;
+            for (const decor of view.decor)
+                decor.draw(ctx);
+            TileSize = _TileSize;
+            inp_highlight_decor.checked = hide;
+            inp_mode_decor.checked = decor;
             ctx.translate(-X * ViewWidth * tileSize, -Y * ViewHeight * tileSize);
         }
     }

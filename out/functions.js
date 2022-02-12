@@ -97,3 +97,14 @@ function rectPointIntersect(rect, point) {
         rect.y + rect.h >= point.y &&
         point.y >= rect.y);
 }
+function loadImage(name, onload, folder) {
+    const imagesFolder = "./images/";
+    let path;
+    if (name[0] == "/")
+        path = "./imgs" + name;
+    else
+        path = folder ? imagesFolder + folder + "/" + name : imagesFolder + name;
+    const img = new Image();
+    img.src = path;
+    img.addEventListener("load", () => onload(img));
+}

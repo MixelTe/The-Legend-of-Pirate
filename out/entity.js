@@ -4,7 +4,7 @@ class Entity {
     y;
     objData = [];
     static img;
-    static imgUrl = "none.png";
+    static imgUrl = "/none.png";
     static className = "Entity";
     static width = 1;
     static height = 1;
@@ -14,10 +14,11 @@ class Entity {
     static yImg = 0;
     static widthHitbox = 1;
     static heightHitbox = 1;
+    getWidth = () => this.constructor.widthHitbox;
+    getHeight = () => this.constructor.heightHitbox;
     constructor(x, y) {
         this.x = x;
         this.y = y;
-        this.center();
     }
     static draw(canvas, size) {
         if (this.img == undefined)
@@ -32,7 +33,7 @@ class Entity {
         ctx.drawImage(this.img, 0, 0, this.width, this.height, 0, 0, canvas.width, canvas.height);
     }
     ;
-    draw() {
+    draw(ctx) {
         const obj = this.constructor;
         if (obj.img == undefined)
             return;
@@ -42,8 +43,13 @@ class Entity {
         if (entity_moving && entity_moving.entity == this)
             ctx.translate(entity_moving.dx, entity_moving.dy);
         ctx.drawImage(obj.img, 0, 0, obj.width, obj.height, (this.x + obj.xImg) * TileSize, (this.y + obj.yImg) * TileSize, width, height);
-        ctx.strokeStyle = "rgba(0, 0, 0, 0.5)";
-        ctx.strokeRect(this.x * TileSize, this.y * TileSize, obj.widthHitbox * TileSize, obj.heightHitbox * TileSize);
+        if (inp_mode_entity.checked) {
+            if (selectedEntity == this)
+                ctx.strokeStyle = "rgba(255, 0, 0, 0.5)";
+            else
+                ctx.strokeStyle = "rgba(0, 0, 0, 0.5)";
+            ctx.strokeRect(this.x * TileSize, this.y * TileSize, obj.widthHitbox * TileSize, obj.heightHitbox * TileSize);
+        }
         ctx.restore();
         if (selectedEntity == this) {
             const fontSize = TileSize / 5;
@@ -113,8 +119,12 @@ class Entity {
         this.x = Math.floor(this.x + obj.widthHitbox / 2) + (1 - obj.widthHitbox) / 2;
         this.y = Math.floor(this.y + obj.heightHitbox / 2) + (1 - obj.heightHitbox) / 2;
     }
+    snapToPixels() {
+        this.x = Math.floor(this.x * 16) / 16;
+        this.y = Math.floor(this.y * 16) / 16;
+    }
     openMenu(vx, vy) {
-        new EntityEditor(this, vx, vy).show();
+        new ObjDataEditor(this, vx, vy).show();
     }
     getData() {
         const obj = this.constructor;
