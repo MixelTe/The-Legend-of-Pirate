@@ -290,6 +290,22 @@ class World
 		if (X >= this.width || Y >= this.height) return { view: null, X, Y, vx: X, vy: Y };
 		return { view: this.map[Y][X] || null, X: x - X * width, Y: y - Y * height, vx: X, vy: Y };
 	}
+	public findView(obj: Decor | Entity)
+	{
+		for (let y = 0; y < this.height; y++)
+		{
+			for (let x = 0; x < this.width; x++)
+			{
+				const view = this.map[y][x];
+				if (!view) continue;
+				let i = -1;
+				if (obj instanceof Decor) i = view.decor.indexOf(obj);
+				else i = view.entity.indexOf(obj);
+				if (i > -1) return { view, i };
+			}
+		}
+		return { view: null, i: -1 };
+	}
 	public fill(x: number, y: number)
 	{
 		const { view, X, Y } = this.getView(x, y);
@@ -1068,8 +1084,7 @@ canvas.addEventListener("mousedown", e =>
 				if (ctrl) entity.snapToPixels();
 				else entity.center();
 				entity_moving = { x: e.offsetX, y: e.offsetY, dx: 0, dy: 0, entity };
-				if (selectedEntity == entity) selectedEntity = null;
-				else selectedEntity = entity;
+				selectedEntity = entity;
 			}
 			else
 			{
@@ -1085,8 +1100,7 @@ canvas.addEventListener("mousedown", e =>
 				if (ctrl) decor.snapToPixels();
 				else decor.center();
 				decor_moving = { x: e.offsetX, y: e.offsetY, dx: 0, dy: 0, decor };
-				if (selectedDecor == decor) selectedDecor = null;
-				else selectedDecor = decor;
+				selectedDecor = decor;
 			}
 			else
 			{
@@ -1301,10 +1315,10 @@ window.addEventListener("keyup", async e =>
 			{
 				if (selectedDecor)
 				{
-					const { view } = world.getView(selectedDecor.x, selectedDecor.y);
-					if (!view) return;
-					const i = view.decor.indexOf(selectedDecor);
-					if (i >= 0) view.decor.splice(i, 1);
+					const { view, i } = world.findView(selectedDecor);
+					if (!view || i < 0) return;
+					view.decor.splice(i, 1);
+					selectedDecor = null;
 				}
 				else if (selectedEntity)
 				{
@@ -1313,13 +1327,10 @@ window.addEventListener("keyup", async e =>
 					popup.content.appendChild(Div([], [], "Вы уверены, что хотите удалить сущность?"));
 					let r = await popup.openAsync();
 					if (!r) return
-					const { view } = world.getView(selectedEntity.x, selectedEntity.y);
-					if (!view) return;
-					const i = view.entity.indexOf(selectedEntity);
-					if (i >= 0)
-					{
-						view.entity.splice(i, 1);
-					}
+					const { view, i } = world.findView(selectedEntity);
+					if (!view || i < 0) return;
+					view.entity.splice(i, 1);
+					selectedEntity = null;
 				}
 			}
 			break;
@@ -1446,6 +1457,7 @@ function setPalete()
 	}
 	else if (inp_mode_decor.checked)
 	{
+		selectedDecor = null;
 		decor.forEach(d =>
 		{
 			const img = document.createElement("canvas");
