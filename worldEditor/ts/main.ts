@@ -1541,7 +1541,7 @@ function setPalete()
 				popup.reverse = true
 				r = await popup.openAsync();
 				if (!r) return;
-				startViews.splice(startView, 1);
+				startViews.splice(i, 1);
 				startView = Math.min(startView, startViews.length - 1);
 				localStorage.setItem("WorldEditor-startViews", JSON.stringify(startViews));
 				setPalete();
