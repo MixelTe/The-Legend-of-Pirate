@@ -615,19 +615,23 @@ class View
 	}
 	public setEntity(x: number, y: number)
 	{
-		// const X = x / TileSize;
-		// const Y = y / TileSize;
-		const X = Math.floor(x / TileSize);
-		const Y = Math.floor(y / TileSize);
-		if (penEntity) this.entity.push(new penEntity(X, Y));
+		if (penEntity)
+		{
+			const e = new penEntity(x / TileSize, y / TileSize);
+			if (ctrl) e.snapToPixels();
+			else e.center()
+			this.entity.push(e);
+		}
 	}
 	public setDecor(x: number, y: number)
 	{
-		// const X = x / TileSize;
-		// const Y = y / TileSize;
-		const X = Math.floor(x / TileSize);
-		const Y = Math.floor(y / TileSize);
-		if (penDecor) this.decor.push(new penDecor(X, Y));
+		if (penDecor)
+		{
+			const d = new penDecor(x / TileSize, y / TileSize);
+			if (ctrl) d.snapToPixels();
+			else d.center()
+			this.decor.push(d);
+		}
 	}
 	public getData()
 	{
