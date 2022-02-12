@@ -44,7 +44,8 @@ class Entity
 		ctx.drawImage(obj.img, 0, 0, obj.width, obj.height, (this.x + obj.xImg) * TileSize, (this.y + obj.yImg) * TileSize, width, height);
 		if (inp_mode_entity.checked)
 		{
-			ctx.strokeStyle = "rgba(0, 0, 0, 0.5)";
+			if (selectedEntity == this) ctx.strokeStyle = "rgba(255, 0, 0, 0.5)";
+			else ctx.strokeStyle = "rgba(0, 0, 0, 0.5)";
 			ctx.strokeRect(this.x * TileSize, this.y * TileSize, obj.widthHitbox * TileSize, obj.heightHitbox * TileSize);
 		}
 		ctx.restore();

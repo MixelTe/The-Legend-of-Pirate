@@ -45,7 +45,8 @@ class Decor
 		}
 		if (inp_mode_decor.checked)
 		{
-			ctx.strokeStyle = "rgba(0, 0, 0, 0.5)";
+			if (selectedDecor == this) ctx.strokeStyle = "rgba(255, 0, 0, 0.5)";
+			else ctx.strokeStyle = "rgba(0, 0, 0, 0.5)";
 			ctx.strokeRect(this.x * TileSize, this.y * TileSize, obj.width * TileSize, obj.height * TileSize);
 		}
 		ctx.restore();
@@ -109,6 +110,22 @@ class Decor
 		}
 		decor.afterDataSet();
 		return decor;
+	}
+	public apllyData(data: ObjData)
+	{
+		for (let i = 0; i < this.objData.length; i++)
+		{
+			const dataEl = this.objData[i];
+			for (let j = 0; j < data.length; j++)
+			{
+				const el = data[j];
+				if (el.name == dataEl.name)
+				{
+					dataEl.value = JSON.parse(JSON.stringify(el.value));
+				}
+			}
+		}
+		this.afterDataSet();
 	}
 	protected afterDataSet()
 	{

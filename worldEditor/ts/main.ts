@@ -51,6 +51,7 @@ const camera_speed = () =>
 };
 let penEntity: typeof Entity | null = null;
 let penDecor: typeof Decor | null = null;
+let penDecorData: ObjData | null = null;
 let selectedEntity: Entity | null = null;
 let selectedDecor: Decor | null = null;
 let worldFileName = localStorage.getItem("WorldEditor-world-filename") || "worldData.json";
@@ -631,6 +632,7 @@ class View
 			if (ctrl) e.snapToPixels();
 			else e.center()
 			this.entity.push(e);
+			selectedEntity = e;
 		}
 	}
 	public setDecor(x: number, y: number)
@@ -638,9 +640,12 @@ class View
 		if (penDecor)
 		{
 			const d = new penDecor(x / TileSize, y / TileSize);
+			if (penDecorData) d.apllyData(penDecorData);
 			if (ctrl) d.snapToPixels();
-			else d.center()
+			else d.center();
 			this.decor.push(d);
+			penDecorData = d.objData;
+			selectedDecor = d;
 		}
 	}
 	public getData()
@@ -679,6 +684,7 @@ class View
 			const entity = Entity.fromData(eData);
 			if (entity) view.entity.push(entity);
 		});
+		if (!data.decor) return view;
 		data.decor.forEach(dData =>
 		{
 			const decor = Decor.fromData(dData);
@@ -854,7 +860,11 @@ class FastPalette
 		if (this.closedByClick || this.hovered == null) return;
 		this.closedByClick = closedByClick;
 		if (inp_mode_entity.checked) penEntity = this.entity.length > this.hovered ? this.entity[this.hovered] : this.entity[0];
-		else if (inp_mode_decor.checked) penDecor = this.decor.length > this.hovered ? this.decor[this.hovered] : this.decor[0];
+		else if (inp_mode_decor.checked)
+		{
+			penDecor = this.decor.length > this.hovered ? this.decor[this.hovered] : this.decor[0];
+			penDecorData = null;
+		}
 		else
 		{
 			const tile = this.tiles.length > this.hovered ? this.tiles[this.hovered] : this.tiles[0];
@@ -1162,6 +1172,7 @@ canvas.addEventListener("mousedown", e =>
 			if (decor)
 			{
 				penDecor = <typeof Decor>decor.constructor;
+				penDecorData = decor.objData;
 				fastPalette.addDecor(penDecor);
 			}
 		}
@@ -1461,6 +1472,7 @@ function setPalete()
 	else if (inp_mode_decor.checked)
 	{
 		selectedDecor = null;
+		penDecorData = null;
 		decor.forEach(d =>
 		{
 			const img = document.createElement("canvas");
@@ -1475,6 +1487,7 @@ function setPalete()
 					img.addEventListener("click", () =>
 					{
 						penDecor = d;
+						penDecorData = null;
 						fastPalette.addDecor(penDecor);
 					});
 				}

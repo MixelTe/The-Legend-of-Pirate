@@ -59,10 +59,10 @@ class Decor_TileEdge extends Decor
 			Span([], [], "Удалить декорацию"),
 			Button("delete-button", "Удалить", async () =>
 			{
-				let popup = new Popup();
-				popup.focusOn = "cancel";
-				popup.content.appendChild(Div([], [], "Вы уверены, что хотите удалить декорацию?"));
-				let r = await popup.openAsync();
+				const popup_confirm = new Popup();
+				popup_confirm.focusOn = "cancel";
+				popup_confirm.content.appendChild(Div([], [], "Вы уверены, что хотите удалить декорацию?"));
+				let r = await popup_confirm.openAsync();
 				if (!r) return
 				const view = world.map[vy][vx];
 				if (!view) return;
