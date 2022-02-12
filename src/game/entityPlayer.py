@@ -300,16 +300,6 @@ class EntityPlayer(EntityAlive):
             if (tile and "water" in tile.tags):
                 x, y = self.x + self.width * 0.5, self.y + self.height * 0.7
                 zone = [int(x), int(y), 1, 1]
-                if ("water-t" in tile.tags):
-                    zone[1] += 0.4
-                    zone[3] -= 0.4
-                if ("water-b" in tile.tags):
-                    zone[3] -= 0.4
-                if ("water-l" in tile.tags):
-                    zone[0] += 0.4
-                    zone[2] -= 0.4
-                if ("water-r" in tile.tags):
-                    zone[2] -= 0.4
                 swim = rectPointIntersection(zone, (x, y))
             if (swim):
                 self.state = "swim"

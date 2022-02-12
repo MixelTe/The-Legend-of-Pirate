@@ -235,3 +235,4 @@ interface Decor_TileEdgeObj extends DecorObj
 createSimpleDecorClass_Auto("snail", null, 0.375, 0.375)
 Decor_TileEdge.createTileEdge("tileEdge_water")
 Decor_TileEdge.createTileEdge("tileEdge_water_deep")
+Decor_TileEdge.createTileEdge("tileEdge_sand")
