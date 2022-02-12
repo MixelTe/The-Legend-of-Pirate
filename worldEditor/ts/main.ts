@@ -242,7 +242,7 @@ class World
 				{
 					ctx.save();
 					if (view_moving && view_moving.vx == x && view_moving.vy == y) ctx.translate(view_moving.dx, view_moving.dy);
-					view.draw();
+					view.draw(x, y);
 					ctx.restore();
 				}
 				else
@@ -470,7 +470,7 @@ class View
 			this.tiles.push(line)
 		}
 	}
-	public draw()
+	public draw(x?: number, y?: number)
 	{
 		for (let y = 0; y < ViewHeight; y++)
 		{
@@ -485,7 +485,7 @@ class View
 		}
 		ctx.save();
 		if (inp_highlight_decor.checked && !inp_mode_decor.checked) ctx.globalAlpha = 0.2;
-		this.decor.forEach(d => d.draw());
+		this.decor.forEach(d => d.draw(ctx));
 		ctx.restore();
 		ctx.save();
 		if (!inp_mode_entity.checked) ctx.globalAlpha = 0.5;
@@ -496,6 +496,7 @@ class View
 		ctx.strokeRect(0, 0, ViewWidth * TileSize, ViewHeight * TileSize);
 		if (inp_mode_view.checked)
 		{
+			ctx.save();
 			ctx.fillStyle = "rgba(0, 0, 0, 0.3)";
 			ctx.fillRect(0, 0, ViewWidth * TileSize, ViewHeight * TileSize);
 			if (icon_move)
@@ -508,6 +509,15 @@ class View
 				const rect = icon_trash_rect();
 				ctx.drawImage(icon_trash, rect.x, rect.y, rect.w, rect.h);
 			}
+			if (x != undefined && y != undefined)
+			{
+				ctx.save();
+				ctx.font = `${TileSize}px Arial`;
+				ctx.fillStyle = "lime";
+				ctx.fillText(`${x}:${y}`, TileSize * 0.3, TileSize);
+				ctx.restore();
+			}
+			ctx.restore();
 		}
 	}
 	public fill(x: number, y: number)
@@ -1684,6 +1694,15 @@ function saveScreenImg(x = 0, y = 0, w?: number)
 					  0, 0, obj.width, obj.height,
 					  (entity.x + obj.xImg) * tileSize, (entity.y + obj.yImg) * tileSize, obj.widthImg * tileSize, obj.heightImg * tileSize);
 	}
+	const hide = inp_highlight_decor.checked;
+	const decor = inp_mode_decor.checked;
+	const _TileSize = TileSize;
+	TileSize = tileSize;
+	inp_highlight_decor.checked = false;
+	for (const decor of view.decor) decor.draw(ctx);
+	TileSize = _TileSize;
+	inp_highlight_decor.checked = hide;
+	inp_mode_decor.checked = decor;
 	canvas.addEventListener("click", () =>
 	{
 		document.body.removeChild(canvas);
@@ -1745,6 +1764,15 @@ function saveWorldImg(w?: number, back: string | null = "lightblue")
 							  0, 0, obj.width, obj.height,
 							  (entity.x + obj.xImg) * tileSize, (entity.y + obj.yImg) * tileSize, obj.widthImg * tileSize, obj.heightImg * tileSize);
 			}
+			const hide = inp_highlight_decor.checked;
+			const decor = inp_mode_decor.checked;
+			const _TileSize = TileSize;
+			TileSize = tileSize;
+			inp_highlight_decor.checked = false;
+			for (const decor of view.decor) decor.draw(ctx);
+			TileSize = _TileSize;
+			inp_highlight_decor.checked = hide;
+			inp_mode_decor.checked = decor;
 			ctx.translate(-X * ViewWidth * tileSize, -Y * ViewHeight * tileSize)
 		}
 	}

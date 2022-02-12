@@ -28,7 +28,7 @@ class Decor
 		ctx.imageSmoothingEnabled = false;
 		ctx.drawImage(this.img, 0, 0, canvas.width, canvas.height);
 	};
-	public draw()
+	public draw(ctx: CanvasRenderingContext2D)
 	{
 		const obj = <DecorObj><any>this.constructor;
 		if (obj.img == undefined) return;

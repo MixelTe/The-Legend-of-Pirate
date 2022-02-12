@@ -52,11 +52,23 @@ class ObjDataEditor
 					if (!r) return
 					const view = world.map[vy][vx];
 					if (!view) return;
-					const i = view.entity.indexOf(obj);
-					if (i >= 0)
+					if (obj instanceof Decor)
 					{
-						view.entity.splice(i, 1);
-						this.popup.close(true);
+						const i = view.decor.indexOf(obj);
+						if (i >= 0)
+						{
+							view.decor.splice(i, 1);
+							this.popup.close(true);
+						}
+					}
+					else
+					{
+						const i = view.entity.indexOf(obj);
+						if (i >= 0)
+						{
+							view.entity.splice(i, 1);
+							this.popup.close(true);
+						}
 					}
 				}),
 			]),
