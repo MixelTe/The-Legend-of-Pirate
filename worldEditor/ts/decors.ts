@@ -20,7 +20,7 @@ class Decor_TileEdge extends Decor
 		this.canvas.height = 16;
 		this.redraw();
 	}
-	protected override afterDataSet()
+	public override afterDataSet()
 	{
 		this.sides = this.objData[0].value;
 		this.redraw();

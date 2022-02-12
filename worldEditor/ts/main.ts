@@ -450,15 +450,7 @@ class View
 			{
 				if (x == 0 || x == ViewWidth - 1 || y == 0 || y == ViewHeight - 1)
 				{
-					if (x == 0 && y == 0) line.push(new Tile("water_deep_sand_br2"))
-					else if (x == 0 && y == ViewHeight - 1) line.push(new Tile("water_deep_sand_tr2"))
-					else if (x == ViewWidth - 1 && y == 0) line.push(new Tile("water_deep_sand_bl2"))
-					else if (x == ViewWidth - 1 && y == ViewHeight - 1) line.push(new Tile("water_deep_sand_tl2"))
-					else if (x == 0) line.push(new Tile("water_deep_sand_r"))
-					else if (x == ViewWidth - 1) line.push(new Tile("water_deep_sand_l"))
-					else if (y == 0) line.push(new Tile("water_deep_sand_b"))
-					else if (y == ViewHeight - 1) line.push(new Tile("water_deep_sand_t"))
-					else line.push(new Tile("water_deep"))
+					line.push(new Tile("water_deep"))
 				}
 				else
 				{
@@ -466,6 +458,20 @@ class View
 					if (random == 0) line.push(new Tile("sand1"));
 					else if (random == 1) line.push(new Tile("sand2"));
 					else line.push(new Tile("sand3"));
+					if (x == 1 || x == ViewWidth - 2 || y == 1 || y == ViewHeight - 2)
+					{
+						const d = new DecorDict["tileEdge_water_deep"](x, y);
+						this.decor.push(d);
+						if (x == 1 && y == 1) d.objData[0].value = [true, false, false, true];
+						else if (x == 1 && y == ViewHeight - 2)  d.objData[0].value = [false, false, true, true];
+						else if (x == ViewWidth - 2 && y == 1)  d.objData[0].value = [true, true, false, false];
+						else if (x == ViewWidth - 2 && y == ViewHeight - 2)  d.objData[0].value = [false, true, true, false];
+						else if (x == 1)  d.objData[0].value = [false, false, false, true];
+						else if (x == ViewWidth - 2)  d.objData[0].value = [false, true, false, false];
+						else if (y == 1)  d.objData[0].value = [true, false, false, false];
+						else if (y == ViewHeight - 2) d.objData[0].value = [false, false, true, false];
+						d.afterDataSet();
+					}
 				}
 			}
 			this.tiles.push(line)
@@ -671,6 +677,7 @@ class View
 	public static fromData(data: ViewData)
 	{
 		const view = new View();
+		view.decor = [];
 
 		for (let y = 0; y < ViewHeight && y < data.tiles.length; y++)
 		{

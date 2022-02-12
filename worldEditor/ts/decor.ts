@@ -127,7 +127,7 @@ class Decor
 		}
 		this.afterDataSet();
 	}
-	protected afterDataSet()
+	public afterDataSet()
 	{
 
 	}
