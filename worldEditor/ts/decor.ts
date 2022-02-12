@@ -60,8 +60,8 @@ class Decor
 	public center()
 	{
 		const obj = <DecorObj><any>this.constructor;
-		this.x = Math.floor(this.x + obj.width / 2) + (1 - obj.width) / 2;
-		this.y = Math.floor(this.y + obj.height / 2) + (1 - obj.height) / 2;
+		this.x = Math.floor(this.x) + (1 - obj.width) / 2;
+		this.y = Math.floor(this.y) + (1 - obj.height) / 2;
 	}
 	public snapToPixels()
 	{

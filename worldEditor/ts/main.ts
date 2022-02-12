@@ -1183,7 +1183,6 @@ canvas.addEventListener("mousemove", e =>
 	if (drawing)
 	{
 		if (drawing == "pen") world.pen(e.offsetX - camera_x, e.offsetY - camera_y);
-		else drawing = null;
 	}
 	else if (entity_moving)
 	{
