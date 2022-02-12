@@ -33,7 +33,7 @@ class Entity
 		ctx.imageSmoothingEnabled = false;
 		ctx.drawImage(this.img, 0, 0, this.width, this.height, 0, 0, canvas.width, canvas.height);
 	};
-	public draw()
+	public draw(ctx: CanvasRenderingContext2D)
 	{
 		const obj = <EntityObj><any>this.constructor;
 		if (obj.img == undefined) return;

@@ -36,11 +36,16 @@ for (const key in EntityDict) entity.push(EntityDict[<keyof typeof EntityDict>ke
 const decor: (typeof Decor)[] = [];
 for (const key in DecorDict) decor.push(DecorDict[<keyof typeof DecorDict>key])
 const tileImages: TileImages = {};
+const startViews_JSON = localStorage.getItem("WorldEditor-startViews");
+const startViews: string[] = startViews_JSON ? JSON.parse(startViews_JSON) : [DefaultNewView];
+let startView = 0;
 let icon_move: null | HTMLImageElement = null;
 let icon_plus: null | HTMLImageElement = null;
 const icon_center_rect = () => { const size = TileSize * 2; return { x: (ViewWidth * TileSize - size) / 2, y: (ViewHeight * TileSize - size) / 2, w: size, h: size } };
 let icon_trash: null | HTMLImageElement = null;
 const icon_trash_rect = () => { const size = TileSize * 0.9; return { x: (ViewWidth - 0.5) * TileSize - size, y: TileSize / 2, w: size, h: size * 1.5 } };
+let icon_save: null | HTMLImageElement = null;
+const icon_save_rect = () => { const size = TileSize * 0.9; return { x: 0.5 * TileSize, y: ((ViewHeight - 0.5) * TileSize - size), w: size, h: size } };
 
 inp_tilesize.valueAsNumber = TileSize;
 let camera_x = 0;
@@ -348,7 +353,8 @@ class World
 		if (view) view.mouseup(X, Y, vx, vy);
 		else
 		{
-			this.map[vy][vx] = new View();
+			const data = JSON.parse(startViews[startView]);
+			this.map[vy][vx] = View.fromData(data);
 		}
 	}
 	public getEntity(x: number, y: number)
@@ -448,31 +454,32 @@ class View
 			const line = []
 			for (let x = 0; x < ViewWidth; x++)
 			{
-				if (x == 0 || x == ViewWidth - 1 || y == 0 || y == ViewHeight - 1)
-				{
-					line.push(new Tile("water_deep"))
-				}
-				else
-				{
-					const random = Math.floor(Math.random() * 3);
-					if (random == 0) line.push(new Tile("sand1"));
-					else if (random == 1) line.push(new Tile("sand2"));
-					else line.push(new Tile("sand3"));
-					if (x == 1 || x == ViewWidth - 2 || y == 1 || y == ViewHeight - 2)
-					{
-						const d = new DecorDict["tileEdge_water_deep"](x, y);
-						this.decor.push(d);
-						if (x == 1 && y == 1) d.objData[0].value = [true, false, false, true];
-						else if (x == 1 && y == ViewHeight - 2)  d.objData[0].value = [false, false, true, true];
-						else if (x == ViewWidth - 2 && y == 1)  d.objData[0].value = [true, true, false, false];
-						else if (x == ViewWidth - 2 && y == ViewHeight - 2)  d.objData[0].value = [false, true, true, false];
-						else if (x == 1)  d.objData[0].value = [false, false, false, true];
-						else if (x == ViewWidth - 2)  d.objData[0].value = [false, true, false, false];
-						else if (y == 1)  d.objData[0].value = [true, false, false, false];
-						else if (y == ViewHeight - 2) d.objData[0].value = [false, false, true, false];
-						d.afterDataSet();
-					}
-				}
+				line.push(new Tile("water_deep"));
+				// if (x == 0 || x == ViewWidth - 1 || y == 0 || y == ViewHeight - 1)
+				// {
+				// 	line.push(new Tile("water_deep"))
+				// }
+				// else
+				// {
+				// 	const random = Math.floor(Math.random() * 3);
+				// 	if (random == 0) line.push(new Tile("sand1"));
+				// 	else if (random == 1) line.push(new Tile("sand2"));
+				// 	else line.push(new Tile("sand3"));
+				// 	if (x == 1 || x == ViewWidth - 2 || y == 1 || y == ViewHeight - 2)
+				// 	{
+				// 		const d = new DecorDict["tileEdge_water_deep"](x, y);
+				// 		this.decor.push(d);
+				// 		if (x == 1 && y == 1) d.objData[0].value = [true, false, false, true];
+				// 		else if (x == 1 && y == ViewHeight - 2)  d.objData[0].value = [false, false, true, true];
+				// 		else if (x == ViewWidth - 2 && y == 1)  d.objData[0].value = [true, true, false, false];
+				// 		else if (x == ViewWidth - 2 && y == ViewHeight - 2)  d.objData[0].value = [false, true, true, false];
+				// 		else if (x == 1)  d.objData[0].value = [false, false, false, true];
+				// 		else if (x == ViewWidth - 2)  d.objData[0].value = [false, true, false, false];
+				// 		else if (y == 1)  d.objData[0].value = [true, false, false, false];
+				// 		else if (y == ViewHeight - 2) d.objData[0].value = [false, false, true, false];
+				// 		d.afterDataSet();
+				// 	}
+				// }
 			}
 			this.tiles.push(line)
 		}
@@ -486,7 +493,7 @@ class View
 				let tile = this.tiles[y][x];
 				ctx.save();
 				ctx.translate(x * TileSize, y * TileSize);
-				tile.draw();
+				tile.draw(ctx);
 				ctx.restore();
 			}
 		}
@@ -496,7 +503,7 @@ class View
 		ctx.restore();
 		ctx.save();
 		if (!inp_mode_entity.checked) ctx.globalAlpha = 0.5;
-		this.entity.forEach(e => e.draw());
+		this.entity.forEach(e => e.draw(ctx));
 		ctx.restore();
 		ctx.strokeStyle = "black";
 		ctx.lineWidth = 1;
@@ -516,6 +523,11 @@ class View
 				const rect = icon_trash_rect();
 				ctx.drawImage(icon_trash, rect.x, rect.y, rect.w, rect.h);
 			}
+			if (icon_save)
+			{
+				const rect = icon_save_rect();
+				ctx.drawImage(icon_save, rect.x, rect.y, rect.w, rect.h);
+			}
 			if (x != undefined && y != undefined)
 			{
 				ctx.save();
@@ -526,6 +538,22 @@ class View
 			}
 			ctx.restore();
 		}
+	}
+	public drawInd(ctx: CanvasRenderingContext2D)
+	{
+		for (let y = 0; y < ViewHeight; y++)
+		{
+			for (let x = 0; x < ViewWidth; x++)
+			{
+				let tile = this.tiles[y][x];
+				ctx.save();
+				ctx.translate(x * TileSize, y * TileSize);
+				tile.draw(ctx);
+				ctx.restore();
+			}
+		}
+		this.decor.forEach(d => d.draw(ctx));
+		this.entity.forEach(e => e.draw(ctx));
 	}
 	public fill(x: number, y: number)
 	{
@@ -577,6 +605,10 @@ class View
 		{
 			setCursor("pointer");
 		}
+		else if (rectPointIntersect(icon_save_rect(), { x, y }))
+		{
+			setCursor("pointer");
+		}
 		else
 		{
 			setCursor("move");
@@ -585,6 +617,8 @@ class View
 	public mousedown(x: number, y: number, rx: number, ry: number, vx: number, vy: number)
 	{
 		if (rectPointIntersect(icon_trash_rect(), { x, y }))
+		{ }
+		else if (rectPointIntersect(icon_save_rect(), { x, y }))
 		{ }
 		else
 		{
@@ -610,6 +644,20 @@ class View
 			}
 			if (!r) return;
 			world.map[vy][vx] = undefined;
+		}
+		else if (rectPointIntersect(icon_save_rect(), { x, y }))
+		{
+			const popup = new Popup();
+			popup.focusOn = "cancel";
+			popup.content.appendChild(Div([], [], "Сохранить экран в палитре?"));
+			const r = await popup.openAsync();
+			if (!r) return;
+			const data = JSON.stringify(this.getData());
+			div_palette.children[startView].classList.remove("palette-view-selected");
+			startView = startViews.push(data) - 1;
+			localStorage.setItem("WorldEditor-startViews", JSON.stringify(startViews));
+			setPalete();
+			div_palette.children[startView].classList.add("palette-view-selected");
 		}
 	}
 	public getEntity(x: number, y: number)
@@ -707,7 +755,7 @@ class Tile
 	{
 		if (id) this.id = id;
 	}
-	public draw()
+	public draw(ctx: CanvasRenderingContext2D)
 	{
 		const img = tileImages[this.id];
 		if (img)
@@ -1055,6 +1103,9 @@ inp_mode_decor.addEventListener("change", () => {
 	if (inp_mode_decor.checked) inp_mode_entity.checked = false;
 	setPalete();
 });
+inp_mode_view.addEventListener("change", () => {
+	setPalete();
+});
 canvas.addEventListener("wheel", e =>
 {
 	const moveSpeed = camera_speed();
@@ -1305,7 +1356,7 @@ window.addEventListener("keypress", e =>
 	switch (e.code) {
 		case "KeyF": inp_mode_fill.checked = true; break;
 		case "KeyR": inp_mode_pen.checked = true; break;
-		case "KeyS": inp_mode_view.checked = !inp_mode_view.checked; break;
+		case "KeyS": inp_mode_view.checked = !inp_mode_view.checked; setPalete(); break;
 		case "KeyH": inp_highlight_tiles.checked = !inp_highlight_tiles.checked; break;
 		case "KeyJ": inp_highlight_decor.checked = !inp_highlight_decor.checked; break;
 		case "KeyE": {
@@ -1388,6 +1439,7 @@ function loadImages()
 	loadImage("/icon-move.png", img => icon_move = img);
 	loadImage("/icon-trash.png", img => icon_trash = img);
 	loadImage("/icon-plus.png", img => icon_plus = img);
+	loadImage("/icon-save.png", img => icon_save = img);
 	entity.forEach(e => {
 		loadImage(e.imgUrl, img => e.img = img, "entities");
 	});
@@ -1447,7 +1499,62 @@ function setCursor(cursor: "none" | "pointer" | "move")
 function setPalete()
 {
 	div_palette.innerHTML = "";
-	if (inp_mode_entity.checked)
+	if (inp_mode_view.checked)
+	{
+		const _TileSize = TileSize;
+		TileSize = 15;
+		startViews.forEach((e, i) =>
+		{
+			const img = document.createElement("canvas");
+			img.width = TileSize * ViewWidth;
+			img.height = TileSize * ViewHeight;
+			const ctx = getCanvasContext(img);
+			const data = JSON.parse(startViews[i]);
+			const view = View.fromData(data);
+			view.drawInd(ctx);
+			img.addEventListener("click", () =>
+			{
+				div_palette.children[startView].classList.remove("palette-view-selected");
+				div_palette.children[i].classList.add("palette-view-selected");
+				startView = i;
+			});
+			const delbtn = document.createElement("button");
+			delbtn.innerText = "×";
+			delbtn.addEventListener("click", async () =>
+			{
+				if (startViews.length <= 1)
+				{
+					let popup = new Popup();
+					popup.cancelBtn = false;
+					popup.content.appendChild(Div([], [], `Нельзя удалить последний экран`));
+					popup.open();
+					return;
+				}
+				let popup = new Popup();
+				popup.focusOn = "cancel";
+				popup.content.appendChild(Div([], [], `Вы уверены, что хотите удалить экран из палитры?`));
+				let r = await popup.openAsync();
+				if (!r) return;
+				popup = new Popup();
+				popup.focusOn = "cancel";
+				popup.content.appendChild(Div([], [], `Вы точно уверены, что хотите удалить экран из палитры?`));
+				popup.reverse = true
+				r = await popup.openAsync();
+				if (!r) return;
+				startViews.splice(startView, 1);
+				startView = Math.min(startView, startViews.length - 1);
+				localStorage.setItem("WorldEditor-startViews", JSON.stringify(startViews));
+				setPalete();
+			});
+			div_palette.appendChild(Div(["palette-view"], [
+				img,
+				delbtn
+			]));
+		});
+		div_palette.children[startView].classList.add("palette-view-selected");
+		TileSize = _TileSize;
+	}
+	else if (inp_mode_entity.checked)
 	{
 		const img = document.createElement("img");
 		img.title = "Отключить добавление";
