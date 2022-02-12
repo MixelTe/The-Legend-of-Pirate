@@ -1362,10 +1362,13 @@ window.addEventListener("mousemove", e =>
 function loadImages()
 {
 	const imagesFolder = "../../src/data/images/"
-	function loadImage(url: string, onload: (img: HTMLImageElement) => void)
+	function loadImage(name: string, onload: (img: HTMLImageElement) => void, folder?: string)
 	{
-		const img = new Image()
-		img.src = url;
+		let path;
+		if (name[0] == "/") path = "./imgs" + name;
+		else path = folder ? imagesFolder + folder + "/" + name : imagesFolder + name;
+		const img = new Image();
+		img.src = path;
 		img.addEventListener("load", () => onload(img));
 	}
 	for (const k in tileIds)
@@ -1373,19 +1376,16 @@ function loadImages()
 		const key = k;
 		const imgName = tileIds[key];
 		tileImages[key] = undefined;
-		let path;
-		if (imgName[0] == "/") path = "./imgs/" + imgName.substring(1)
-		else path = imagesFolder + "tiles/" + imgName
-		loadImage(path, img => tileImages[key] = img);
+		loadImage(imgName, img => tileImages[key] = img, "tiles");
 	}
-	loadImage("./imgs/icon-move.png", img => icon_move = img);
-	loadImage("./imgs/icon-trash.png", img => icon_trash = img);
-	loadImage("./imgs/icon-plus.png", img => icon_plus = img);
+	loadImage("/icon-move.png", img => icon_move = img);
+	loadImage("/icon-trash.png", img => icon_trash = img);
+	loadImage("/icon-plus.png", img => icon_plus = img);
 	entity.forEach(e => {
-		loadImage(imagesFolder + "entities/" + e.imgUrl, img => e.img = img);
+		loadImage(e.imgUrl, img => e.img = img, "entities");
 	});
 	decor.forEach(d => {
-		loadImage(imagesFolder + "decor/" + d.imgUrl, img => d.img = img);
+		loadImage(d.imgUrl, img => d.img = img, "decor");
 	});
 }
 function centerView(x: number, y: number)
