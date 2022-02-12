@@ -1010,6 +1010,7 @@ let view_moving: null | { x: number, y: number, dx: number, dy: number, vx: numb
 let entity_moving: null | { x: number, y: number, dx: number, dy: number, entity: Entity } = null;
 let decor_moving: null | { x: number, y: number, dx: number, dy: number, decor: Decor } = null;
 let drawing: null | "pen" | "fill" | "entity" | "decor" = null;
+let ctrl = false;
 canvas.addEventListener("mousedown", e =>
 {
 	e.preventDefault();
@@ -1030,6 +1031,7 @@ canvas.addEventListener("mousedown", e =>
 			const { entity } = world.getEntity(e.offsetX - camera_x, e.offsetY - camera_y);
 			if (entity)
 			{
+				if (!ctrl) entity.center();
 				entity_moving = { x: e.offsetX, y: e.offsetY, dx: 0, dy: 0, entity };
 				if (selectedEntity == entity) selectedEntity = null;
 				else selectedEntity = entity;
@@ -1045,6 +1047,7 @@ canvas.addEventListener("mousedown", e =>
 			const { decor } = world.getDecor(e.offsetX - camera_x, e.offsetY - camera_y);
 			if (decor)
 			{
+				if (!ctrl) decor.center();
 				decor_moving = { x: e.offsetX, y: e.offsetY, dx: 0, dy: 0, decor };
 				if (selectedDecor == decor) selectedDecor = null;
 				else selectedDecor = decor;
@@ -1122,16 +1125,32 @@ canvas.addEventListener("mousemove", e =>
 	{
 		// entity_moving.dx = e.offsetX - entity_moving.x;
 		// entity_moving.dy = e.offsetY - entity_moving.y;
-		entity_moving.dx = Math.floor((e.offsetX - entity_moving.x + TileSize / 2) / TileSize) * TileSize;
-		entity_moving.dy = Math.floor((e.offsetY - entity_moving.y + TileSize / 2) / TileSize) * TileSize;
+		if (ctrl)
+		{
+			entity_moving.dx = Math.floor((e.offsetX - entity_moving.x + TileSize / 16 / 2) / (TileSize / 16)) * TileSize / 16;
+			entity_moving.dy = Math.floor((e.offsetY - entity_moving.y + TileSize / 16 / 2) / (TileSize / 16)) * TileSize / 16;
+		}
+		else
+		{
+			entity_moving.dx = Math.floor((e.offsetX - entity_moving.x + TileSize / 2) / TileSize) * TileSize;
+			entity_moving.dy = Math.floor((e.offsetY - entity_moving.y + TileSize / 2) / TileSize) * TileSize;
+		}
 		setCursor("move");
 	}
 	else if (decor_moving)
 	{
-		// entity_moving.dx = e.offsetX - entity_moving.x;
-		// entity_moving.dy = e.offsetY - entity_moving.y;
-		decor_moving.dx = Math.floor((e.offsetX - decor_moving.x + TileSize / 2) / TileSize) * TileSize;
-		decor_moving.dy = Math.floor((e.offsetY - decor_moving.y + TileSize / 2) / TileSize) * TileSize;
+		// decor_moving.dx = e.offsetX - decor_moving.x;
+		// decor_moving.dy = e.offsetY - decor_moving.y;
+		if (ctrl)
+		{
+			decor_moving.dx = Math.floor((e.offsetX - decor_moving.x + TileSize / 16 / 2) / (TileSize / 16)) * TileSize / 16;
+			decor_moving.dy = Math.floor((e.offsetY - decor_moving.y + TileSize / 16 / 2) / (TileSize / 16)) * TileSize / 16;
+		}
+		else
+		{
+			decor_moving.dx = Math.floor((e.offsetX - decor_moving.x + TileSize / 2) / TileSize) * TileSize;
+			decor_moving.dy = Math.floor((e.offsetY - decor_moving.y + TileSize / 2) / TileSize) * TileSize;
+		}
 		setCursor("move");
 	}
 	else if (camera_moving)
@@ -1233,6 +1252,8 @@ window.addEventListener("keydown", e =>
 		case "ArrowDown": world.down(); break;
 		case "ArrowLeft": world.left(); break;
 		case "KeyQ": fastPalette.open(); break;
+		case "ControlLeft":
+		case "ControlRight": ctrl = true; break;
 	}
 });
 window.addEventListener("keyup", async e =>
@@ -1266,6 +1287,8 @@ window.addEventListener("keyup", async e =>
 				}
 			}
 			break;
+		case "ControlLeft":
+		case "ControlRight": ctrl = false; break;
 	}
 });
 window.addEventListener("mousemove", e =>
@@ -1447,9 +1470,9 @@ function endEntityMove()
 	{
 		entity_moving.entity.x += entity_moving.dx / TileSize;
 		entity_moving.entity.y += entity_moving.dy / TileSize;
-		entity_moving.entity.x = Math.min(Math.max(entity_moving.entity.x, 0), ViewWidth);
-		entity_moving.entity.y = Math.min(Math.max(entity_moving.entity.y, 0), ViewHeight);
-		entity_moving.entity.center();
+		entity_moving.entity.x = Math.min(Math.max(entity_moving.entity.x, 0), ViewWidth - entity_moving.entity.getWidth());
+		entity_moving.entity.y = Math.min(Math.max(entity_moving.entity.y, 0), ViewHeight - entity_moving.entity.getHeight());
+		if (!ctrl) entity_moving.entity.center();
 		const entity = entity_moving.entity;
 		entity_moving = null;
 		return entity;
@@ -1461,9 +1484,9 @@ function endDecorMove()
 	{
 		decor_moving.decor.x += decor_moving.dx / TileSize;
 		decor_moving.decor.y += decor_moving.dy / TileSize;
-		decor_moving.decor.x = Math.min(Math.max(decor_moving.decor.x, 0), ViewWidth);
-		decor_moving.decor.y = Math.min(Math.max(decor_moving.decor.y, 0), ViewHeight);
-		decor_moving.decor.center();
+		decor_moving.decor.x = Math.min(Math.max(decor_moving.decor.x, 0), ViewWidth - decor_moving.decor.getWidth());
+		decor_moving.decor.y = Math.min(Math.max(decor_moving.decor.y, 0), ViewHeight - decor_moving.decor.getHeight());
+		if (!ctrl) decor_moving.decor.center();
 		const decor = decor_moving.decor;
 		decor_moving = null;
 		return decor;

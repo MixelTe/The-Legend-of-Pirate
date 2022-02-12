@@ -8,12 +8,13 @@ class Decor
 	public static width = 1;
 	public static height = 1;
 	public static img: HTMLImageElement | undefined;
+	public getWidth = () => (<DecorObj><any>this.constructor).width;
+	public getHeight = () => (<DecorObj><any>this.constructor).height;
 
 	constructor(x: number, y: number)
 	{
 		this.x = x;
 		this.y = y;
-		this.center();
 	}
 	public static draw(canvas: HTMLCanvasElement, size: number)
 	{

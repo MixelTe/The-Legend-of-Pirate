@@ -14,11 +14,12 @@ class Entity
 	protected static readonly yImg: number = 0;
 	protected static readonly widthHitbox: number = 1;
 	protected static readonly heightHitbox: number = 1;
+	public getWidth = () => (<EntityObj><any>this.constructor).widthHitbox;
+	public getHeight = () => (<EntityObj><any>this.constructor).heightHitbox;
 	constructor(x: number, y: number)
 	{
 		this.x = x;
 		this.y = y;
-		this.center();
 	}
 	public static draw(canvas: HTMLCanvasElement, size: number)
 	{
