@@ -124,6 +124,11 @@ class Entity
 		this.x = Math.floor(this.x + obj.widthHitbox / 2) + (1 - obj.widthHitbox) / 2;
 		this.y = Math.floor(this.y + obj.heightHitbox / 2) + (1 - obj.heightHitbox) / 2;
 	}
+	public snapToPixels()
+	{
+		this.x = Math.floor(this.x * 16) / 16;
+		this.y = Math.floor(this.y * 16) / 16;
+	}
 	public openMenu(vx: number, vy: number)
 	{
 		new ObjDataEditor(this, vx, vy).show();

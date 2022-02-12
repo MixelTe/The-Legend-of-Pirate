@@ -1065,7 +1065,8 @@ canvas.addEventListener("mousedown", e =>
 			const { entity } = world.getEntity(e.offsetX - camera_x, e.offsetY - camera_y);
 			if (entity)
 			{
-				if (!ctrl) entity.center();
+				if (ctrl) entity.snapToPixels();
+				else entity.center();
 				entity_moving = { x: e.offsetX, y: e.offsetY, dx: 0, dy: 0, entity };
 				if (selectedEntity == entity) selectedEntity = null;
 				else selectedEntity = entity;
@@ -1081,7 +1082,8 @@ canvas.addEventListener("mousedown", e =>
 			const { decor } = world.getDecor(e.offsetX - camera_x, e.offsetY - camera_y);
 			if (decor)
 			{
-				if (!ctrl) decor.center();
+				if (ctrl) decor.snapToPixels();
+				else decor.center();
 				decor_moving = { x: e.offsetX, y: e.offsetY, dx: 0, dy: 0, decor };
 				if (selectedDecor == decor) selectedDecor = null;
 				else selectedDecor = decor;
@@ -1506,7 +1508,8 @@ function endEntityMove()
 		entity_moving.entity.y += entity_moving.dy / TileSize;
 		entity_moving.entity.x = Math.min(Math.max(entity_moving.entity.x, 0), ViewWidth - entity_moving.entity.getWidth());
 		entity_moving.entity.y = Math.min(Math.max(entity_moving.entity.y, 0), ViewHeight - entity_moving.entity.getHeight());
-		if (!ctrl) entity_moving.entity.center();
+		if (ctrl) entity_moving.entity.snapToPixels();
+		else entity_moving.entity.center();
 		const entity = entity_moving.entity;
 		entity_moving = null;
 		return entity;
@@ -1520,7 +1523,8 @@ function endDecorMove()
 		decor_moving.decor.y += decor_moving.dy / TileSize;
 		decor_moving.decor.x = Math.min(Math.max(decor_moving.decor.x, 0), ViewWidth - decor_moving.decor.getWidth());
 		decor_moving.decor.y = Math.min(Math.max(decor_moving.decor.y, 0), ViewHeight - decor_moving.decor.getHeight());
-		if (!ctrl) decor_moving.decor.center();
+		if (ctrl) decor_moving.decor.snapToPixels();
+		else decor_moving.decor.center();
 		const decor = decor_moving.decor;
 		decor_moving = null;
 		return decor;

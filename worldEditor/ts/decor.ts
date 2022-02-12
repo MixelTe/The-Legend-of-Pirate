@@ -55,6 +55,11 @@ class Decor
 		this.x = Math.floor(this.x + obj.width / 2) + (1 - obj.width) / 2;
 		this.y = Math.floor(this.y + obj.height / 2) + (1 - obj.height) / 2;
 	}
+	public snapToPixels()
+	{
+		this.x = Math.floor(this.x * 16) / 16;
+		this.y = Math.floor(this.y * 16) / 16;
+	}
 	public openMenu(vx: number, vy: number)
 	{
 		new ObjDataEditor(this, vx, vy).show();
