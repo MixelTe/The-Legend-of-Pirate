@@ -825,7 +825,12 @@ class FastPalette
 		this.closedByClick = closedByClick;
 		if (inp_mode_entity.checked) penEntity = this.entity.length > this.hovered ? this.entity[this.hovered] : this.entity[0];
 		else if (inp_mode_decor.checked) penDecor = this.decor.length > this.hovered ? this.decor[this.hovered] : this.decor[0];
-		else pen.setPen(this.tiles.length > this.hovered ? this.tiles[this.hovered] : this.tiles[0]);
+		else
+		{
+			const tile = this.tiles.length > this.hovered ? this.tiles[this.hovered] : this.tiles[0];
+			pen.setPen(tile);
+			pen.setGroup(PenTiles.getGroup(tile));
+		}
 	}
 	public addTile(tileid: string)
 	{
@@ -876,7 +881,7 @@ class PenTiles
 		{
 			if (this.group && !this.group.random)
 			{
-				div_palette_group.classList.add("fast-palette-visible");
+				div_palette_group.classList.toggle("fast-palette-visible");
 			}
 			return;
 		}
