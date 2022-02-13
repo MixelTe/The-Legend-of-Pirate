@@ -77,3 +77,12 @@ class DecorTileEdge_waterDeep(DecorTileEdge):
 
 DecorTileEdge_water.load(DecorTileEdge_waterDeep.images, "tileEdge_water_deep")
 Decor.registerDecor("tileEdge_water_deep", DecorTileEdge_waterDeep)
+
+
+class DecorTileEdge_sand(DecorTileEdge):
+    images = {}
+    pass
+
+
+DecorTileEdge_water.load(DecorTileEdge_sand.images, "tileEdge_sand")
+Decor.registerDecor("tileEdge_sand", DecorTileEdge_sand)
