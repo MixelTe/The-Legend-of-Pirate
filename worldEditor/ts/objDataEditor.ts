@@ -74,6 +74,19 @@ class ObjDataEditor
 			]),
 		]));
 		this.popup.addListener("cancel", () => obj.objData = this.objDataCopy);
+		this.popup.addListener("close", () =>
+		{
+			if (obj instanceof Decor)
+			{
+				for (const decor of selectedDecors)
+				{
+					if (decor.constructor == obj.constructor)
+					{
+						decor.apllyData(obj.objData);
+					}
+				}
+			}
+		});
 	}
 	private copyData(objData: ObjData)
 	{

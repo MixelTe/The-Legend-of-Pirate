@@ -33,8 +33,9 @@ class Decor
 	{
 		const obj = <DecorObj><any>this.constructor;
 		if (obj.img == undefined) return;
+		const selected = selectedDecors.includes(this)
 		ctx.save();
-		if (decor_moving && decor_moving.decor == this) ctx.translate(decor_moving.dx, decor_moving.dy);
+		if (decor_moving && (decor_moving.decor == this || selected)) ctx.translate(decor_moving.dx, decor_moving.dy);
 		if (this.canvas)
 		{
 			ctx.drawImage(this.canvas, this.x * TileSize, this.y * TileSize, obj.width * TileSize, obj.height * TileSize);
@@ -48,6 +49,13 @@ class Decor
 			if (selectedDecor == this) ctx.strokeStyle = "rgba(255, 0, 0, 0.5)";
 			else ctx.strokeStyle = "rgba(0, 0, 0, 0.5)";
 			ctx.strokeRect(this.x * TileSize, this.y * TileSize, obj.width * TileSize, obj.height * TileSize);
+			if (selected)
+			{
+				ctx.strokeStyle = "rgba(255, 0, 0, 1)";
+				if (selectedDecor == this) ctx.lineWidth = 4;
+				else ctx.lineWidth = 2;
+				ctx.strokeRect(this.x * TileSize, this.y * TileSize, obj.width * TileSize, obj.height * TileSize);
+			}
 		}
 		ctx.restore();
 	};

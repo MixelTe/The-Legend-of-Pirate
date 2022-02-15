@@ -101,6 +101,28 @@ function rectPointIntersect(rect: {x: number, y: number, w: number, h: number}, 
 		point.y >= rect.y
 	);
 }
+function rectIntersect(rect1: {x: number, y: number, w: number, h: number}, rect2: {x: number, y: number, w: number, h: number})
+{
+    return (
+        rect1.x + rect1.w >= rect2.x &&
+        rect2.x + rect2.w >= rect1.x &&
+        rect1.y + rect1.h >= rect2.y &&
+        rect2.y + rect2.h >= rect1.y
+    );
+}
+function normalizeRect(rect: {x: number, y: number, w: number, h: number})
+{
+	if (rect.w < 0)
+	{
+		rect.x += rect.w;
+		rect.w *= -1;
+	}
+	if (rect.h < 0)
+	{
+		rect.y += rect.h;
+		rect.h *= -1;
+	}
+}
 function loadImage(name: string, onload: (img: HTMLImageElement) => void, folder?: string)
 {
 	const imagesFolder = "../../src/data/images/";

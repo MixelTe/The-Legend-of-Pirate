@@ -116,6 +116,13 @@ class Decor_TileEdge extends Decor
 		{
 			this.objData[0].value = this.sides;
 			this.objData[1].value = this.corners;
+			for (const decor of selectedDecors)
+			{
+				if (decor.constructor == this.constructor)
+				{
+					decor.apllyData(this.objData);
+				}
+			}
 		});
 		popup.open();
 	}
