@@ -39,8 +39,9 @@ class Entity {
             return;
         const width = obj.widthImg * TileSize;
         const height = obj.heightImg * TileSize;
+        const selected = selectedEntities.includes(this);
         ctx.save();
-        if (entity_moving && entity_moving.entity == this)
+        if (entity_moving && (entity_moving.entity == this || selected))
             ctx.translate(entity_moving.dx, entity_moving.dy);
         ctx.drawImage(obj.img, 0, 0, obj.width, obj.height, (this.x + obj.xImg) * TileSize, (this.y + obj.yImg) * TileSize, width, height);
         if (inp_mode_entity.checked) {
@@ -49,6 +50,14 @@ class Entity {
             else
                 ctx.strokeStyle = "rgba(0, 0, 0, 0.5)";
             ctx.strokeRect(this.x * TileSize, this.y * TileSize, obj.widthHitbox * TileSize, obj.heightHitbox * TileSize);
+            if (selected) {
+                ctx.strokeStyle = "rgba(255, 0, 0, 1)";
+                if (selectedEntity == this)
+                    ctx.lineWidth = 4;
+                else
+                    ctx.lineWidth = 2;
+                ctx.strokeRect(this.x * TileSize - 2, this.y * TileSize - 2, obj.widthHitbox * TileSize + 4, obj.heightHitbox * TileSize + 4);
+            }
         }
         ctx.restore();
         if (selectedEntity == this) {
@@ -151,7 +160,6 @@ class Entity {
             const value = data[dataEl.name];
             if (value === undefined) {
                 console.error(`No such field "${dataEl.name}"`, data);
-                dataEl.value = null;
                 continue;
             }
             dataEl.value = value;
