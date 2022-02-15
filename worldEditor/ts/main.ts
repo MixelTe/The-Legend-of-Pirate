@@ -1143,10 +1143,12 @@ btn_new.addEventListener("click", async () =>
 inp_tilesize.addEventListener("change", () => TileSize = inp_tilesize.valueAsNumber);
 inp_mode_entity.addEventListener("change", () => {
 	if (inp_mode_entity.checked) inp_mode_decor.checked = false;
+	else selectedEntity = null;
 	setPalete();
 });
 inp_mode_decor.addEventListener("change", () => {
 	if (inp_mode_decor.checked) inp_mode_entity.checked = false;
+	else selectedDecor = null;
 	setPalete();
 });
 inp_mode_view.addEventListener("change", () => {
@@ -1316,8 +1318,13 @@ canvas.addEventListener("mousemove", e =>
 	if (drawing)
 	{
 		if (drawing == "pen") world.pen(e.offsetX - camera_x, e.offsetY - camera_y);
-		else if (drawing == "entity") world.entity(e.offsetX - camera_x, e.offsetY - camera_y);
-		else if (drawing == "decor") world.decor(e.offsetX - camera_x, e.offsetY - camera_y);
+		else if (drawing == "decor")
+		{
+			if (penDecor && penDecor.width >= 1 && penDecor.height >= 1)
+			{
+				world.decor(e.offsetX - camera_x, e.offsetY - camera_y);
+			}
+		}
 	}
 	else if (entity_moving)
 	{
