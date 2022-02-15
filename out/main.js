@@ -1025,11 +1025,15 @@ inp_tilesize.addEventListener("change", () => TileSize = inp_tilesize.valueAsNum
 inp_mode_entity.addEventListener("change", () => {
     if (inp_mode_entity.checked)
         inp_mode_decor.checked = false;
+    else
+        selectedEntity = null;
     setPalete();
 });
 inp_mode_decor.addEventListener("change", () => {
     if (inp_mode_decor.checked)
         inp_mode_entity.checked = false;
+    else
+        selectedDecor = null;
     setPalete();
 });
 inp_mode_view.addEventListener("change", () => {
@@ -1084,6 +1088,39 @@ canvas.addEventListener("mousedown", e => {
         }
         if (inp_mode_view.checked) {
             world.mousedown(e.offsetX, e.offsetY);
+            return;
+        }
+        if (e.ctrlKey) {
+            if (selection) {
+                selection.cx = e.offsetX;
+                selection.cy = e.offsetY;
+                selection.changed = false;
+            }
+            else {
+                selection = { x: e.offsetX, y: e.offsetY, cx: e.offsetX, cy: e.offsetY, changed: false };
+            }
+            if (inp_mode_entity.checked) {
+                const { entity } = world.getEntity(e.offsetX - camera_x, e.offsetY - camera_y);
+                if (entity) {
+                    const i = selectedEntities.indexOf(entity);
+                    if (i >= 0)
+                        selectedEntities.splice(i, 1);
+                    else
+                        selectedEntities.push(entity);
+                    selection.changed = true;
+                }
+            }
+            else if (inp_mode_decor.checked) {
+                const { decor } = world.getDecor(e.offsetX - camera_x, e.offsetY - camera_y);
+                if (decor) {
+                    const i = selectedDecors.indexOf(decor);
+                    if (i >= 0)
+                        selectedDecors.splice(i, 1);
+                    else
+                        selectedDecors.push(decor);
+                    selection.changed = true;
+                }
+            }
         }
         else if (inp_mode_entity.checked) {
             const { entity } = world.getEntity(e.offsetX - camera_x, e.offsetY - camera_y);
@@ -1134,34 +1171,23 @@ canvas.addEventListener("mousedown", e => {
         setCursor("move");
     }
     if (e.button == 1) {
-        if (e.ctrlKey) {
-            if (inp_mode_entity.checked) {
-                const { entity } = world.getEntity(e.offsetX - camera_x, e.offsetY - camera_y);
-                if (entity) {
-                    const i = selectedEntities.indexOf(entity);
-                    if (i >= 0)
-                        selectedEntities.splice(i, 1);
-                    else
-                        selectedEntities.push(entity);
-                }
+        if (inp_mode_entity.checked) {
+            const { entity } = world.getEntity(e.offsetX - camera_x, e.offsetY - camera_y);
+            if (entity) {
+                penEntity = entity.constructor;
+                fastPalette.addEntity(penEntity);
             }
-            else if (inp_mode_decor.checked) {
-                const { decor } = world.getDecor(e.offsetX - camera_x, e.offsetY - camera_y);
-                if (decor) {
-                    const i = selectedDecors.indexOf(decor);
-                    if (i >= 0)
-                        selectedDecors.splice(i, 1);
-                    else
-                        selectedDecors.push(decor);
-                }
-            }
-            if (selection) {
-                selection.cx = e.offsetX;
-                selection.cy = e.offsetY;
+        }
+        else if (inp_mode_decor.checked) {
+            const { decor } = world.getDecor(e.offsetX - camera_x, e.offsetY - camera_y);
+            if (decor) {
+                penDecor = decor.constructor;
+                penDecorData = decor.objData;
+                fastPalette.addDecor(penDecor);
             }
         }
         else {
-            selection = { x: e.offsetX, y: e.offsetY, cx: e.offsetX, cy: e.offsetY, changed: false };
+            world.pick(e.offsetX - camera_x, e.offsetY - camera_y);
         }
     }
 });
@@ -1181,10 +1207,11 @@ canvas.addEventListener("mousemove", e => {
     if (drawing) {
         if (drawing == "pen")
             world.pen(e.offsetX - camera_x, e.offsetY - camera_y);
-        else if (drawing == "entity")
-            world.entity(e.offsetX - camera_x, e.offsetY - camera_y);
-        else if (drawing == "decor")
-            world.decor(e.offsetX - camera_x, e.offsetY - camera_y);
+        else if (drawing == "decor") {
+            if (penDecor && penDecor.width >= 1 && penDecor.height >= 1) {
+                world.decor(e.offsetX - camera_x, e.offsetY - camera_y);
+            }
+        }
     }
     else if (entity_moving) {
         // entity_moving.dx = e.offsetX - entity_moving.x;
@@ -1244,26 +1271,6 @@ canvas.addEventListener("mouseup", e => {
         endEntityMove();
     if (decor_moving)
         endDecorMove();
-    if (e.button == 1 && !(selection && selection.changed)) {
-        if (inp_mode_entity.checked) {
-            const { entity } = world.getEntity(e.offsetX - camera_x, e.offsetY - camera_y);
-            if (entity) {
-                penEntity = entity.constructor;
-                fastPalette.addEntity(penEntity);
-            }
-        }
-        else if (inp_mode_decor.checked) {
-            const { decor } = world.getDecor(e.offsetX - camera_x, e.offsetY - camera_y);
-            if (decor) {
-                penDecor = decor.constructor;
-                penDecorData = decor.objData;
-                fastPalette.addDecor(penDecor);
-            }
-        }
-        else {
-            world.pick(e.offsetX - camera_x, e.offsetY - camera_y);
-        }
-    }
     if (selection && !selection.changed) {
         selectedDecors = [];
         selectedEntities = [];
