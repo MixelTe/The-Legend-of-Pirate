@@ -726,7 +726,7 @@ class View
 	}
 	public setEntity(x: number, y: number)
 	{
-		if (penEntity)
+		if (penEntity && !this.getEntity(x, y))
 		{
 			const e = new penEntity(x / TileSize, y / TileSize);
 			if (ctrl) e.snapToPixels();
@@ -737,7 +737,7 @@ class View
 	}
 	public setDecor(x: number, y: number)
 	{
-		if (penDecor)
+		if (penDecor && !this.getDecor(x, y))
 		{
 			const d = new penDecor(x / TileSize, y / TileSize);
 			if (penDecorData) d.apllyData(penDecorData);
@@ -1316,6 +1316,8 @@ canvas.addEventListener("mousemove", e =>
 	if (drawing)
 	{
 		if (drawing == "pen") world.pen(e.offsetX - camera_x, e.offsetY - camera_y);
+		else if (drawing == "entity") world.entity(e.offsetX - camera_x, e.offsetY - camera_y);
+		else if (drawing == "decor") world.decor(e.offsetX - camera_x, e.offsetY - camera_y);
 	}
 	else if (entity_moving)
 	{
