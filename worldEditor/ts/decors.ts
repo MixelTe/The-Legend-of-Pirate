@@ -1,8 +1,10 @@
 class Decor_TileEdge extends Decor
 {
 	private sides = [true, false, false, false];
+	private corners = [false, false, false, false];
 	protected static readonly imgs = {
 		top: <null | HTMLImageElement>null,
+		corner: <null | HTMLImageElement>null,
 		top_right: <null | HTMLImageElement>null,
 		top_right_left: <null | HTMLImageElement>null,
 		top_right_left_bottom: <null | HTMLImageElement>null,
@@ -11,7 +13,8 @@ class Decor_TileEdge extends Decor
 	private ctx = getCanvasContext(this.canvas);
 	public static override readonly imgUrl: string = "/none.png";
 	public override objData: ObjData = [
-		{ name: "sides", type: "any", value: this.sides, }
+		{ name: "sides", type: "any", value: this.sides },
+		{ name: "corners", type: "any", value: this.corners },
 	];
 	constructor(x: number, y: number)
 	{
@@ -23,15 +26,21 @@ class Decor_TileEdge extends Decor
 	public override afterDataSet()
 	{
 		this.sides = this.objData[0].value;
+		this.corners = this.objData[1].value;
 		this.redraw();
 	}
 	public override openMenu(vx: number, vy: number)
 	{
 		const sidesCopy = [this.sides[0], this.sides[1], this.sides[2], this.sides[3]];
+		const cornesCopy = [this.corners[0], this.corners[1], this.corners[2], this.corners[3]];
 		const inp_top = Input([], "checkbox");
 		const inp_right = Input([], "checkbox");
 		const inp_bottom = Input([], "checkbox");
 		const inp_left = Input([], "checkbox");
+		const inp_topR = Input([], "checkbox");
+		const inp_bottomR = Input([], "checkbox");
+		const inp_bottomL = Input([], "checkbox");
+		const inp_topL = Input([], "checkbox");
 		const canvas = document.createElement("canvas");
 		canvas.width = 64;
 		canvas.height = 64;
@@ -40,9 +49,9 @@ class Decor_TileEdge extends Decor
 		popup.title = "Редактирование декорации";
 		popup.content.appendChild(Div(["TileEdge-picker"], [Table([], [
 			TR([], [
-				TD([], []),
+				TD([], [inp_topL]),
 				TD([], [inp_top]),
-				TD([], []),
+				TD([], [inp_topR]),
 			]),
 			TR([], [
 				TD([], [inp_left]),
@@ -50,9 +59,9 @@ class Decor_TileEdge extends Decor
 				TD([], [inp_right]),
 			]),
 			TR([], [
-				TD([], []),
+				TD([], [inp_bottomL]),
 				TD([], [inp_bottom]),
-				TD([], []),
+				TD([], [inp_bottomR]),
 			])
 		])]));
 		popup.content.appendChild(Div([], [
@@ -78,10 +87,18 @@ class Decor_TileEdge extends Decor
 		inp_right.checked = this.sides[1];
 		inp_bottom.checked = this.sides[2];
 		inp_left.checked = this.sides[3];
-		inp_top.addEventListener("change", () => {this.sides[0] = inp_top.checked; redraw();});
-		inp_right.addEventListener("change", () => {this.sides[1] = inp_right.checked; redraw();});
-		inp_bottom.addEventListener("change", () => {this.sides[2] = inp_bottom.checked; redraw();});
-		inp_left.addEventListener("change", () => {this.sides[3] = inp_left.checked; redraw();});
+		inp_topR.checked = this.corners[0];
+		inp_bottomR.checked = this.corners[1];
+		inp_bottomL.checked = this.corners[2];
+		inp_topL.checked = this.corners[3];
+		inp_top.addEventListener("change", () => { this.sides[0] = inp_top.checked; redraw(); });
+		inp_right.addEventListener("change", () => { this.sides[1] = inp_right.checked; redraw(); });
+		inp_bottom.addEventListener("change", () => { this.sides[2] = inp_bottom.checked; redraw(); });
+		inp_left.addEventListener("change", () => { this.sides[3] = inp_left.checked; redraw(); });
+		inp_topR.addEventListener("change", () => { this.corners[0] = inp_topR.checked; redraw(); });
+		inp_bottomR.addEventListener("change", () => { this.corners[1] = inp_bottomR.checked; redraw(); });
+		inp_bottomL.addEventListener("change", () => { this.corners[2] = inp_bottomL.checked; redraw(); });
+		inp_topL.addEventListener("change", () => { this.corners[3] = inp_topL.checked; redraw(); });
 		const redraw = () =>
 		{
 			this.redraw();
@@ -90,20 +107,56 @@ class Decor_TileEdge extends Decor
 			ctx.drawImage(this.canvas, 0, 0, canvas.width, canvas.height);
 		}
 		redraw();
-		popup.addListener("cancel", () => this.sides = sidesCopy);
-		popup.addListener("close", () => this.objData[0].value = this.sides);
+		popup.addListener("cancel", () =>
+		{
+			this.sides = sidesCopy;
+			this.corners = cornesCopy;
+		});
+		popup.addListener("close", () =>
+		{
+			this.objData[0].value = this.sides;
+			this.objData[1].value = this.corners;
+		});
 		popup.open();
 	}
 	public redraw()
 	{
 		const obj = <Decor_TileEdgeObj><any>this.constructor;
-		if (!(obj.imgs.top && obj.imgs.top_bottom && obj.imgs.top_right && obj.imgs.top_right_left && obj.imgs.top_right_left_bottom))
+		if (!(obj.imgs.top && obj.imgs.corner && obj.imgs.top_right && obj.imgs.top_right_left && obj.imgs.top_right_left_bottom))
 		{
 			setTimeout(() => this.redraw(), 200);
 			return;
 		}
 		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 		this.ctx.save();
+		if (this.corners[0])
+		{
+			this.ctx.drawImage(obj.imgs.corner, 0, 0);
+		}
+		if (this.corners[1])
+		{
+			this.ctx.save();
+			this.ctx.translate(16, 0)
+			this.ctx.rotate(Math.PI / 2);
+			this.ctx.drawImage(obj.imgs.corner, 0, 0);
+			this.ctx.restore();
+		}
+		if (this.corners[2])
+		{
+			this.ctx.save();
+			this.ctx.translate(16, 16)
+			this.ctx.rotate(Math.PI);
+			this.ctx.drawImage(obj.imgs.corner, 0, 0);
+			this.ctx.restore();
+		}
+		if (this.corners[3])
+		{
+			this.ctx.save();
+			this.ctx.translate(0, 16)
+			this.ctx.rotate(Math.PI / 2 * 3);
+			this.ctx.drawImage(obj.imgs.corner, 0, 0);
+			this.ctx.restore();
+		}
 		if (this.sidesIs([true, false, false, false]))
 		{
 			this.ctx.drawImage(obj.imgs.top, 0, 0);
@@ -176,13 +229,19 @@ class Decor_TileEdge extends Decor
 		}
 		else if (this.sidesIs([true, false, true, false]))
 		{
-			this.ctx.drawImage(obj.imgs.top_bottom, 0, 0);
+			this.ctx.drawImage(obj.imgs.top, 0, 0);
+			this.ctx.translate(16, 16)
+			this.ctx.rotate(Math.PI);
+			this.ctx.drawImage(obj.imgs.top, 0, 0);
 		}
 		else if (this.sidesIs([false, true, false, true]))
 		{
 			this.ctx.translate(16, 0)
 			this.ctx.rotate(Math.PI / 2);
-			this.ctx.drawImage(obj.imgs.top_bottom, 0, 0);
+			this.ctx.drawImage(obj.imgs.top, 0, 0);
+			this.ctx.translate(16, 16)
+			this.ctx.rotate(Math.PI);
+			this.ctx.drawImage(obj.imgs.top, 0, 0);
 		}
 		this.ctx.restore();
 	}
@@ -202,7 +261,7 @@ class Decor_TileEdge extends Decor
 			public static override readonly imgUrl: string = `/${name}.png`;
 			protected static override readonly imgs = {
 				top: <null | HTMLImageElement>null,
-				top_bottom: <HTMLImageElement | null>null,
+				corner: <null | HTMLImageElement>null,
 				top_right: <null | HTMLImageElement>null,
 				top_right_left: <null | HTMLImageElement>null,
 				top_right_left_bottom: <null | HTMLImageElement>null,
@@ -210,7 +269,7 @@ class Decor_TileEdge extends Decor
 			public static loadImgs()
 			{
 				loadImage("top.png", img => this.imgs.top = img, "decor/" + name);
-				loadImage("top_bottom.png", img => this.imgs.top_bottom = img, "decor/" + name);
+				loadImage("corner.png", img => this.imgs.corner = img, "decor/" + name);
 				loadImage("top_right.png", img => this.imgs.top_right = img, "decor/" + name);
 				loadImage("top_right_left.png", img => this.imgs.top_right_left = img, "decor/" + name);
 				loadImage("top_right_left_bottom.png", img => this.imgs.top_right_left_bottom = img, "decor/" + name);
@@ -224,7 +283,7 @@ interface Decor_TileEdgeObj extends DecorObj
 {
 	imgs: {
 		top: HTMLImageElement | null;
-		top_bottom: HTMLImageElement | null;
+		corner: HTMLImageElement | null;
 		top_right: HTMLImageElement | null;
 		top_right_left: HTMLImageElement | null;
 		top_right_left_bottom: HTMLImageElement | null;

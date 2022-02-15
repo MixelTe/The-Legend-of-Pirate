@@ -164,7 +164,6 @@ class Entity
 			if (value === undefined)
 			{
 				console.error(`No such field "${dataEl.name}"`, data);
-				dataEl.value = null;
 				continue;
 			}
 			dataEl.value = value;
