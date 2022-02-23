@@ -8,12 +8,12 @@ from settings import Settings
 multRect = getRectMult(Settings.width, Settings.overlay_height)
 multPos = getPosMult(Settings.width, Settings.overlay_height)
 
-heartSize = int(Settings.tileSize * 0.8)
+heartSize = int(Settings.tileSize * 1.06)
 img_heart = pygame.transform.scale(load_image("hpF.png"), (heartSize, heartSize))
 img_heartHalf = pygame.transform.scale(load_image("hp.png"), (heartSize, heartSize))
 img_heartEmpty = pygame.transform.scale(load_image("hpE.png"), (heartSize, heartSize))
-img_coin = pygame.transform.scale(load_image("coin.png"), (int(Settings.tileSize * 0.333), int(Settings.tileSize * 0.4)))
-exitBtn = multRect((0.8, 0.15, 0.18, 0.7))
+img_coin = pygame.transform.scale(load_image("coin.png"), (int(Settings.tileSize * 0.444), int(Settings.tileSize * 0.533)))
+exitBtn = multRect((0.8, 0.19, 0.18, 0.62))
 img_exitBtn = pygame.transform.scale(load_image("quit.png"), (int(exitBtn[2]), int(exitBtn[3])))
 img_exitBtn_active = pygame.transform.scale(load_image("quit_active.png"), (int(exitBtn[2]), int(exitBtn[3])))
 img_msgBox = pygame.transform.scale(load_image("msgBox.png"), (int(0.5 * Settings.width), int(1 * Settings.overlay_height)))
@@ -32,27 +32,27 @@ class Overlay:
         self.exitBtn_hover = False
 
         self.msgBox = multRect((0.25, 0, 0.5, 1))
-        self.msgBox_text = multRect((0.27, 0.07, 0.48, 0.95))
+        self.msgBox_text = multRect((0.268, 0.07, 0.467, 0.87))
         self.text_past = ""
         self.text_img = None
 
-        self.fontM = pygame.font.Font(Settings.path_font, int(Settings.tileSize * 0.4) + 1)
-        self.fontL = pygame.font.Font(Settings.path_font, int(Settings.tileSize * 0.55) + 1)
+        self.fontM = pygame.font.Font(Settings.path_font, int(Settings.tileSize * 0.53) + 1)
+        self.fontL = pygame.font.Font(Settings.path_font, int(Settings.tileSize * 0.73) + 1)
 
-        self.heartsPos = multPos((0.03, 0.35))
-        self.coinPos = multPos((0.02, 0.08))
-        self.coinText = multRect((0.05, 0.05, 0.48, 0.9))
+        self.heartsPos = multPos((0.03, 0.45))
+        self.coinPos = multPos((0.03, 0.13))
+        self.coinText = multRect((0.06, 0.1, 0.48, 0.9))
         self.text_coin_past = -1
         self.text_coin = None
 
     def update(self) -> bool:
         if (self.text_past != self.player.message):
             self.text_past = self.player.message
-            self.text_img = renderText(self.fontM, int(Settings.tileSize * 0.27) + 1,
+            self.text_img = renderText(self.fontM, int(Settings.tileSize * 0.35) + 1,
                                        self.msgBox_text.size, self.player.message, pygame.Color(81, 44, 40))
         if (self.text_coin_past != self.player.saveData.coins):
             self.text_coin_past = self.player.saveData.coins
-            self.text_coin = renderText(self.fontL, int(Settings.tileSize * 0.44) + 1,
+            self.text_coin = renderText(self.fontL, int(Settings.tileSize * 0.54) + 1,
                                         self.msgBox_text.size, str(self.text_coin_past), "black")
         return self.exit
 
@@ -65,6 +65,7 @@ class Overlay:
 
         # pygame.draw.rect(self.surface, pygame.Color(194, 133, 105), self.msgBox, 0, int(Settings.tileSize * 0.2))
         self.surface.blit(img_msgBox, self.msgBox.topleft)
+        # pygame.draw.rect(self.surface, pygame.Color(194, 133, 0), self.msgBox_text)
         if (self.text_img is not None):
             self.surface.blit(self.text_img, self.msgBox_text.topleft)
 
