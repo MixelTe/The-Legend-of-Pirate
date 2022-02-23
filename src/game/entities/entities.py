@@ -1,6 +1,10 @@
+import math
+import pygame
 from functions import load_entityImg, load_sound
 from game.entity import Entity, EntityAlive, EntityGroups
 from random import random
+
+from settings import Settings
 
 
 class EntityCactus(EntityAlive):
@@ -74,14 +78,13 @@ class EntityCannonball(EntityAlive):
         self.height = 0.4
 
     def update(self):
-        collisions =  super().update()
+        collisions = super().update()
         for rect, collision in collisions:
             if (isinstance(collision, EntityDoor)):
                 self.screen.saveData.tags.append("island-door")
                 self.remove()
                 collision.remove()
                 EntityCannonball.sound_boom.play()
-
 
 
 Entity.registerEntity("cannonball", EntityCannonball)
@@ -143,3 +146,42 @@ class EntityStoneBar(Entity):
 
 
 Entity.registerEntity("stoneBar", EntityStoneBar)
+
+
+class EntityBone(EntityAlive):
+    image = load_entityImg("bone.png", 0.6, 0.315)
+
+    def __init__(self, screen, data: dict = None):
+        super().__init__(screen, data)
+        self.image = EntityBone.image
+        self.group = EntityGroups.enemy
+        self.strength = 1
+        self.speed = 0.08
+        self.width = 0.6
+        self.height = 0.6
+        self.rotation = 0
+
+    def draw(self, surface: pygame.Surface):
+        self.image = pygame.transform.rotate(EntityBone.image, self.rotation)
+        if (self.rotation < 90):
+            self.imagePos = (-math.cos(self.rotation / 180 * math.pi) * 0.3 + 0.3,
+                             -math.sin(self.rotation / 180 * math.pi) * 0.3 + 0.3)
+        elif (self.rotation < 180):
+            self.imagePos = (math.cos(self.rotation / 180 * math.pi) * 0.3 + 0.3,
+                             -math.sin(self.rotation / 180 * math.pi) * 0.3 + 0.3)
+        elif (self.rotation < 270):
+            self.imagePos = (math.cos(self.rotation / 180 * math.pi) * 0.3 + 0.3,
+                             math.sin(self.rotation / 180 * math.pi) * 0.3 + 0.3)
+        elif (self.rotation < 360):
+            self.imagePos = (-math.cos(self.rotation / 180 * math.pi) * 0.3 + 0.3,
+                             math.sin(self.rotation / 180 * math.pi) * 0.3 + 0.3)
+        super().draw(surface)
+
+    def update(self):
+        collisions = super().update()
+        self.rotation = (self.rotation + (1000 / Settings.fps) / 2) % 360
+        if (len(collisions) != 0):
+            self.remove()
+
+
+Entity.registerEntity("bone", EntityBone)

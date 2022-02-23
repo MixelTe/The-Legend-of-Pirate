@@ -7,6 +7,11 @@ from settings import Settings
 
 animatorData = AnimatorData("skeleton", [
     ("stay.png", 0, (9, 13), (-0.15, -0.45, 0.69, 1)),
+    ("moveW.png", 150, (9, 13), (-0.15, -0.45, 0.69, 1)),
+    ("moveS.png", 150, (9, 13), (-0.15, -0.45, 0.69, 1)),
+    ("moveA.png", 150, (9, 13), (-0.15, -0.45, 0.69, 1)),
+    ("moveD.png", 150, (9, 13), (-0.15, -0.45, 0.69, 1)),
+    ("attack.png", 250, (9, 13), (-0.15, -0.45, 0.69, 1)),
 ])
 
 
@@ -17,7 +22,7 @@ class EntitySkeleton(EntityAlive):
         super().__init__(screen, data)
         self.animator = Animator(animatorData, "stay")
         self.group = EntityGroups.enemy
-        self.strength = 1
+        self.strength = 0
         self.healthMax = 2
         self.health = 2
         self.width = 0.4
@@ -25,6 +30,8 @@ class EntitySkeleton(EntityAlive):
         self.state = "go"
         self.dirR = True
         self.pastY = self.y
+        self.attackDelay = 0
+        self.bone = None
 
     def applyData(self, dataSetter: Callable[[str, Any, str, Callable[[Any], Any]], None], data: dict):
         super().applyData(dataSetter, data)
@@ -47,7 +54,9 @@ class EntitySkeleton(EntityAlive):
         removePlayerFromCollisions(collisions)
         if (not self.alive or Settings.disableAI):
             return
+        self.attackDelay = max(self.attackDelay - 1000 / Settings.fps, 0)
         if (self.state == "go"):
+            self.animator.setAnimation("moveD" if self.dirR else "moveA")
             self.speedX = self.speed * (1 if self.dirR else -1)
             self.speedY = 0
             rise = False
@@ -57,11 +66,11 @@ class EntitySkeleton(EntityAlive):
             else:
                 if (self.x - int(self.x) <= (1 - self.width) / 2):
                     rise = True
-            if (rise):
+            if (rise or len(collisions) != 0):
                 nx = int(self.x) + (1 if self.dirR else -1) + (1 - self.width) / 2
                 collisions = self.predictCollisions(nx, self.y)
                 removePlayerFromCollisions(collisions)
-                if (len(collisions) != 0):
+                if (len(collisions) != 0 or len(collisions) != 0):
                     self.dirR = not self.dirR
                     self.x = int(self.x) + (1 - self.width) / 2
                     self.state = "rise"
@@ -71,12 +80,44 @@ class EntitySkeleton(EntityAlive):
                     removePlayerFromCollisions(collisions)
                     if (len(collisions) != 0):
                         self.rise = not self.rise
+            if (self.state == "go" and self.attackDelay <= 0):
+                if (abs(self.x - self.screen.player.x) < self.screen.player.width or
+                        abs(self.y - self.screen.player.y) < self.screen.player.height):
+                    self.attackDelay = 1000
+                    self.speedX = 0
+                    self.speedY = 0
+                    self.state = "attack"
+                    self.animator.setAnimation("attack")
+                    self.bone = EntityAlive.createById("bone", self.screen)
+                    if (abs(self.x - self.screen.player.x) < self.screen.player.width):
+                        self.bone.x = self.x + (self.width - self.bone.width) / 2
+                        if (self.screen.player.y >= self.y):
+                            self.bone.y = self.y + self.height
+                            self.bone.speedY = self.bone.speed
+                        else:
+                            self.bone.y = self.y - self.height - self.bone.height
+                            self.bone.speedY = -self.bone.speed
+                    if (abs(self.y - self.screen.player.y) < self.screen.player.height):
+                        self.bone.y = self.y + (self.height - self.bone.height) / 2
+                        if (self.screen.player.x >= self.x):
+                            self.bone.x = self.x + self.width
+                            self.bone.speedX = self.bone.speed
+                        else:
+                            self.bone.x = self.x - self.width - self.bone.height
+                            self.bone.speedX = -self.bone.speed
         elif (self.state == "rise"):
+            self.animator.setAnimation("moveW" if self.rise else "moveS")
             self.speedX = 0
             self.speedY = self.speed * (-1 if self.rise else 1)
             if (abs(self.pastY - self.y) >= 1 or len(collisions) != 0):
                 self.y = int(self.y) + (1 - self.height) / 2
                 self.state = "go"
+        elif (self.state == "attack"):
+            if (self.animator.lastState[1]):
+                self.state = "go"
+            elif (self.animator.lastState[0]):
+                self.screen.addEntity(self.bone)
+                self.bone = None
 
 
 def removePlayerFromCollisions(collisions: list):
