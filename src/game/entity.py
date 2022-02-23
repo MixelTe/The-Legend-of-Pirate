@@ -281,6 +281,34 @@ class Entity:
         rectNew = (rectSelf[0] + rect[0], rectSelf[1] + rect[1], rect[2], rect[3])
         return entity.is_inRect(rectNew)
 
+    def predictCollisions(self, x: float, y: float) -> list[tuple[tuple[int, int, int, int], Union[Tile, Entity, None]]]:
+        # столкновения, если бы сущность была расположена по этим координатам
+        newRect = (x, y, self.width, self.height)
+        colision = []
+        for (tile, x, y) in self.screen.getTiles():
+            rect = (x, y, 1, 1)
+            if (not rectIntersection(newRect, rect)):
+                continue
+            if (not self.canGoOn(tile)):
+                colision.append((rect, tile))
+                return colision
+
+        for entity in self.screen.entities:
+            if (entity == self or entity.hidden):
+                continue
+            rect = entity.get_rect()
+            if (rectIntersection(newRect, rect)):
+                colision.append((rect, entity))
+                return colision
+
+        for rect in screenBorders:
+            if (not rectIntersection(newRect, rect)):
+                continue
+            colision.append((rect, None))
+            return colision
+
+        return colision
+
 
 class EntityGroups:
     neutral = 0
@@ -341,8 +369,10 @@ class EntityAlive(Entity):
         pass
 
     def update(self):
-        self.attackPushbackX = max((abs(self.attackPushbackX) - self.attackPushbackA), 0) * (1 if self.attackPushbackX >= 0 else -1)
-        self.attackPushbackY = max((abs(self.attackPushbackY) - self.attackPushbackA), 0) * (1 if self.attackPushbackY >= 0 else -1)
+        self.attackPushbackX = max((abs(self.attackPushbackX) - self.attackPushbackA), 0) * \
+            (1 if self.attackPushbackX >= 0 else -1)
+        self.attackPushbackY = max((abs(self.attackPushbackY) - self.attackPushbackA), 0) * \
+            (1 if self.attackPushbackY >= 0 else -1)
         speedX = self.speedX
         speedY = self.speedY
         self.speedX += self.attackPushbackX

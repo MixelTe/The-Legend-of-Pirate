@@ -110,10 +110,10 @@ class ObjDataEditor
 				inpFalse,
 				Span([], [], "False")
 			], undefined),
-			initEl("label", [], [
+			(data.nullable ? initEl("label", [], [
 				inpNone,
 				Span([], [], "None")
-			], undefined),
+			], undefined) : Span()),
 		]));
 		if (data.value) inpTrue.checked = true;
 		else if (data.value == false) inpFalse.checked = true;
@@ -128,10 +128,10 @@ class ObjDataEditor
 		const inp = Input([], "number");
 		td.appendChild(Div([], [
 			inp,
-			initEl("label", [], [
+			(data.nullable ? initEl("label", [], [
 				inpNone,
 				Span([], [], "None")
-			], undefined),
+			], undefined) : Span()),
 		]));
 		if (data.value == null)
 		{
@@ -163,10 +163,10 @@ class ObjDataEditor
 		const inp = Input([], "text");
 		td.appendChild(Div([], [
 			inp,
-			initEl("label", [], [
+			(data.nullable ? initEl("label", [], [
 				inpNone,
 				Span([], [], "None")
-			], undefined),
+			], undefined) : Span()),
 		]));
 		if (data.value == null)
 		{
@@ -218,10 +218,10 @@ class ObjDataEditor
 				Span([], [], "H: "),
 				inpH
 			], undefined),
-			initEl("label", [], [
+			(data.nullable ? initEl("label", [], [
 				inpNone,
 				Span([], [], "None")
-			], undefined),
+			], undefined) : Span()),
 		]));
 		inpNone.addEventListener("change", () =>
 		{
@@ -280,10 +280,10 @@ class ObjDataEditor
 		td.appendChild(Div([], [
 			span,
 			btn,
-			initEl("label", [], [
+			(data.nullable ? initEl("label", [], [
 				inpNone,
 				Span([], [], "None")
-			], undefined),
+			], undefined) : Span()),
 		]));
 		if (data.value == null)
 		{
@@ -328,10 +328,10 @@ class ObjDataEditor
 		td.appendChild(Div([], [
 			span,
 			btn,
-			initEl("label", [], [
+			(data.nullable ? initEl("label", [], [
 				inpNone,
 				Span([], [], "None")
-			], undefined),
+			], undefined) : Span()),
 		]));
 		if (data.value == null)
 		{
@@ -387,10 +387,10 @@ class ObjDataEditor
 		const inp = document.createElement("select");
 		td.appendChild(Div([], [
 			inp,
-			initEl("label", [], [
+			(data.nullable ? initEl("label", [], [
 				inpNone,
 				Span([], [], "None")
-			], undefined),
+			], undefined) : Span()),
 		]));
 		if (!data.options) return;
 		for (const elData of data.options)

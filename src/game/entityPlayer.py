@@ -50,6 +50,8 @@ sound_dig = load_sound("dig.mp3")
 
 
 class EntityPlayer(EntityAlive):
+    id = "player"
+
     def __init__(self, saveData: SaveData):
         super().__init__(None)
         self.saveData = saveData

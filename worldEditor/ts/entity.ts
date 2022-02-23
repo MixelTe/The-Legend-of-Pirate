@@ -213,6 +213,7 @@ interface EntityData<T extends keyof EntityDataType>
 	value: EntityDataType[T];
 	displayColor?: string,
 	options?: EntityDataType[T][],
+	nullable?: boolean,
 }
 type ObjData = EntityData<keyof EntityDataType>[];
 
