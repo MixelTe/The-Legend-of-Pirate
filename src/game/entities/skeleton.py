@@ -80,10 +80,9 @@ class EntitySkeleton(EntityAlive):
                     removePlayerFromCollisions(collisions)
                     if (len(collisions) != 0):
                         self.rise = not self.rise
-            if (self.state == "go" and self.attackDelay <= 0):
+            if (self.state == "go"):
                 if (abs(self.x - self.screen.player.x) < self.screen.player.width or
                         abs(self.y - self.screen.player.y) < self.screen.player.height):
-                    self.attackDelay = 1000
                     self.speedX = 0
                     self.speedY = 0
                     self.state = "attack"
@@ -114,10 +113,15 @@ class EntitySkeleton(EntityAlive):
                 self.state = "go"
         elif (self.state == "attack"):
             if (self.animator.lastState[1]):
-                self.state = "go"
+                if (self.attackDelay <= 0):
+                    self.state = "go"
+                else:
+                    self.animator.setAnimation("attack", 1)
             elif (self.animator.lastState[0]):
-                self.screen.addEntity(self.bone)
-                self.bone = None
+                self.attackDelay = 2000
+                if (self.bone is not None):
+                    self.screen.addEntity(self.bone)
+                    self.bone = None
 
 
 def removePlayerFromCollisions(collisions: list):
