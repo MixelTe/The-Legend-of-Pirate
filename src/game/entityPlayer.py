@@ -326,7 +326,7 @@ class EntityPlayer(EntityAlive):
         # self.animator.setAnimation("attack_swimS")
 
     def preUpdate(self):
-        self.message = "Это исследование о том, почему домашние задания довольно часто вызывают раздражение, у кого-то конфликты дома, кто-то списывает, кому-то скучно. Хотят разобраться, почему так происходит и что можно попытаться поправить."
+        self.message = ""
         self.action = None
 
     def takeDamage(self, damage: int, attacker: Union[Entity, str, None] = None):
