@@ -118,10 +118,10 @@ class ObjDataEditor {
                 inpFalse,
                 Span([], [], "False")
             ], undefined),
-            initEl("label", [], [
+            (data.nullable ? initEl("label", [], [
                 inpNone,
                 Span([], [], "None")
-            ], undefined),
+            ], undefined) : Span()),
         ]));
         if (data.value)
             inpTrue.checked = true;
@@ -139,10 +139,10 @@ class ObjDataEditor {
         const inp = Input([], "number");
         td.appendChild(Div([], [
             inp,
-            initEl("label", [], [
+            (data.nullable ? initEl("label", [], [
                 inpNone,
                 Span([], [], "None")
-            ], undefined),
+            ], undefined) : Span()),
         ]));
         if (data.value == null) {
             inp.disabled = true;
@@ -168,10 +168,10 @@ class ObjDataEditor {
         const inp = Input([], "text");
         td.appendChild(Div([], [
             inp,
-            initEl("label", [], [
+            (data.nullable ? initEl("label", [], [
                 inpNone,
                 Span([], [], "None")
-            ], undefined),
+            ], undefined) : Span()),
         ]));
         if (data.value == null) {
             inp.disabled = true;
@@ -216,10 +216,10 @@ class ObjDataEditor {
                 Span([], [], "H: "),
                 inpH
             ], undefined),
-            initEl("label", [], [
+            (data.nullable ? initEl("label", [], [
                 inpNone,
                 Span([], [], "None")
-            ], undefined),
+            ], undefined) : Span()),
         ]));
         inpNone.addEventListener("change", () => {
             if (inpNone.checked) {
@@ -270,10 +270,10 @@ class ObjDataEditor {
         td.appendChild(Div([], [
             span,
             btn,
-            initEl("label", [], [
+            (data.nullable ? initEl("label", [], [
                 inpNone,
                 Span([], [], "None")
-            ], undefined),
+            ], undefined) : Span()),
         ]));
         if (data.value == null) {
             btn.disabled = true;
@@ -312,10 +312,10 @@ class ObjDataEditor {
         td.appendChild(Div([], [
             span,
             btn,
-            initEl("label", [], [
+            (data.nullable ? initEl("label", [], [
                 inpNone,
                 Span([], [], "None")
-            ], undefined),
+            ], undefined) : Span()),
         ]));
         if (data.value == null) {
             btn.disabled = true;
@@ -363,10 +363,10 @@ class ObjDataEditor {
         const inp = document.createElement("select");
         td.appendChild(Div([], [
             inp,
-            initEl("label", [], [
+            (data.nullable ? initEl("label", [], [
                 inpNone,
                 Span([], [], "None")
-            ], undefined),
+            ], undefined) : Span()),
         ]));
         if (!data.options)
             return;
