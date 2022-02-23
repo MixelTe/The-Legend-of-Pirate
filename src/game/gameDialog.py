@@ -17,8 +17,8 @@ class GameDialog:
         return self.surface
 
     def drawBack(self):
-        self.surface.fill("gray")
-        border = int(Settings.width * 0.04) + 1
+        self.surface.fill("#5CA8A8")
+        border = int(Settings.width * 0.035) + 1
         pygame.draw.rect(self.surface, pygame.Color(194, 133, 105), (0, 0, self.rect.width, self.rect.height), border)
 
     def update(self) -> bool:

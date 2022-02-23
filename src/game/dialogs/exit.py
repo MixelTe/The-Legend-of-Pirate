@@ -14,7 +14,7 @@ sound_btn2 = load_sound("btn2.wav", "btn")
 
 class GameDialog_exit(GameDialog):
     multRectInner = getRectMult(*multPos((0.3, 0.5)))
-    btnSize = multPosFull((1.6, 0.96), Settings.tileSize)
+    btnSize = multPosFull((2.13, 1.28), Settings.tileSize)
     btnSize = (int(btnSize[0]), int(btnSize[1]))
     yes_img = pygame.transform.scale(load_image("yes.png"), btnSize)
     no_img = pygame.transform.scale(load_image("no.png"), btnSize)
@@ -25,7 +25,7 @@ class GameDialog_exit(GameDialog):
 
     def __init__(self, onClose: Callable):
         super().__init__(onClose, *multPos((0.3, 0.5)))
-        font = pygame.font.Font(Settings.path_font, int(Settings.tileSize * 0.58) + 1)
+        font = pygame.font.Font(Settings.path_font, int(Settings.tileSize * 0.77) + 1)
         self.text1 = font.render("Do you really", True, pygame.Color(81, 44, 40))
         self.text2 = font.render("want to quit?", True, pygame.Color(81, 44, 40))
         self.selected = 1
