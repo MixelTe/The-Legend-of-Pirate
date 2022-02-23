@@ -286,6 +286,8 @@ class EntityCoolName(Entity):
 
 * self.is_inRectD(rect: tuple[float, float, float, float], entity: Entity) - проверка попадает ли сущность в область, относительную этой
 
+* self.predictCollisions(x: float, y: float) - возвращает столкновения, если бы сущность была расположена по этим координатам
+
 * self.screen.addEntity(entity: Entity) - добавить сущность в мир
 
 * self.screen.removeEntity(entity: Entity) - удалить сущность из мира
