@@ -292,7 +292,7 @@ class EntityCoolName(Entity):
 
 * self.screen.removeEntity(entity: Entity) - удалить сущность из мира
 
-* self.screen.goTo(world: str, screen: tuple[int, int]) - переключить экран. world - id мира, screen - координаты экрана. Если такого нет, произойдёт ошибка.
+* self.screen.goTo(world: str, screen: tuple[int, int], pos?: tuple[int, int]) - переключить экран, если такого нет, произойдёт ошибка. world - id мира, screen - координаты экрана, pos - новые координаты игрока (необязательный параметр).
 
 * self.screen.world.name - id текущего мира
 
