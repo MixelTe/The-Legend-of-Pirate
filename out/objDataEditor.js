@@ -11,42 +11,75 @@ class ObjDataEditor {
             this.popup.title = "Редактирование декорации";
         const table = Table("entity-editor");
         this.popup.content.appendChild(table);
+        const titles = [];
+        const onChange = (data) => {
+            for (const el of titles) {
+                if (!el.data.smartTitle)
+                    continue;
+                if (data.name == el.data.smartTitle.field) {
+                    const newTitle = el.data.smartTitle.titles[data.value];
+                    if (newTitle)
+                        el.td.innerText = newTitle;
+                    else
+                        el.td.innerText = el.data.title || el.data.name;
+                }
+            }
+        };
         obj.objData.forEach(data => {
             const colorRect = Div("color-rect");
             if (data.displayColor)
                 colorRect.style.background = data.displayColor;
+            const nameTD = TD([], [], data.name);
+            if (data.title)
+                nameTD.innerText = data.title;
+            if (data.smartTitle) {
+                titles.push({ td: nameTD, data });
+                for (const data2 of obj.objData) {
+                    if (data2.name == data.smartTitle.field) {
+                        const newTitle = data.smartTitle.titles[data2.value];
+                        if (newTitle)
+                            nameTD.innerText = newTitle;
+                        else
+                            nameTD.innerText = data.title || data.name;
+                        break;
+                    }
+                }
+            }
             const td = TD();
             const tr = TR([], [
                 TD([], [colorRect]),
-                TD([], [], data.name),
+                nameTD,
                 td
             ]);
             table.appendChild(tr);
             if (data.options) {
-                this.createValueEdit_select(data, td);
+                this.createValueEdit_select(data, td, onChange);
                 return;
             }
             switch (data.type) {
                 case "bool":
-                    this.createValueEdit_bool(data, td);
+                    this.createValueEdit_bool(data, td, onChange);
                     break;
                 case "number":
-                    this.createValueEdit_number(data, td);
+                    this.createValueEdit_number(data, td, onChange);
                     break;
                 case "text":
-                    this.createValueEdit_text(data, td);
+                    this.createValueEdit_text(data, td, onChange);
                     break;
                 case "aura":
-                    this.createValueEdit_aura(data, td);
+                    this.createValueEdit_aura(data, td, onChange);
                     break;
                 case "area":
-                    this.createValueEdit_area(data, td);
+                    this.createValueEdit_area(data, td, onChange);
                     break;
                 case "tile":
-                    this.createValueEdit_tile(data, td, vx, vy);
+                    this.createValueEdit_tile(data, td, vx, vy, onChange);
                     break;
                 case "tiles":
-                    this.createValueEdit_tiles(data, td, vx, vy);
+                    this.createValueEdit_tiles(data, td, vx, vy, onChange);
+                    break;
+                case "coords":
+                    this.createValueEdit_coords(data, td, onChange);
                     break;
                 default:
                     console.error("switch default");
@@ -102,7 +135,7 @@ class ObjDataEditor {
         const newData = JSON.parse(JSON.stringify(objData));
         return newData;
     }
-    createValueEdit_bool(data, td) {
+    createValueEdit_bool(data, td, onChange) {
         const inpTrue = Input([], "radio");
         inpTrue.name = "entityEditor-bool" + Math.random();
         const inpFalse = Input([], "radio");
@@ -129,12 +162,12 @@ class ObjDataEditor {
             inpFalse.checked = true;
         else
             inpNone.checked = true;
-        inpTrue.addEventListener("change", () => data.value = inpTrue.checked);
-        inpFalse.addEventListener("change", () => data.value = inpTrue.checked);
+        inpTrue.addEventListener("change", () => { data.value = inpTrue.checked; onChange(data); });
+        inpFalse.addEventListener("change", () => { data.value = inpTrue.checked; onChange(data); });
         inpNone.addEventListener("change", () => { if (inpNone.checked)
-            data.value = null; });
+            data.value = null; onChange(data); });
     }
-    createValueEdit_number(data, td) {
+    createValueEdit_number(data, td, onChange) {
         const inpNone = Input([], "checkbox");
         const inp = Input([], "number");
         td.appendChild(Div([], [
@@ -161,9 +194,9 @@ class ObjDataEditor {
                 inp.disabled = false;
             }
         });
-        inp.addEventListener("change", () => data.value = inp.valueAsNumber);
+        inp.addEventListener("change", () => { data.value = inp.valueAsNumber; onChange(data); });
     }
-    createValueEdit_text(data, td) {
+    createValueEdit_text(data, td, onChange) {
         const inpNone = Input([], "checkbox");
         const inp = Input([], "text");
         td.appendChild(Div([], [
@@ -190,9 +223,9 @@ class ObjDataEditor {
                 inp.disabled = false;
             }
         });
-        inp.addEventListener("change", () => data.value = inp.value);
+        inp.addEventListener("change", () => { data.value = inp.value; onChange(data); });
     }
-    createValueEdit_rect(data, td, addD = false) {
+    createValueEdit_rect(data, td, addD, onChange) {
         const inpX = Input("inp-short", "number");
         const inpY = Input("inp-short", "number");
         const inpW = Input("inp-short", "number");
@@ -237,10 +270,10 @@ class ObjDataEditor {
                 inpH.disabled = false;
             }
         });
-        inpX.addEventListener("change", () => rect[0] = inpX.valueAsNumber);
-        inpY.addEventListener("change", () => rect[1] = inpY.valueAsNumber);
-        inpW.addEventListener("change", () => rect[2] = inpW.valueAsNumber);
-        inpH.addEventListener("change", () => rect[3] = inpH.valueAsNumber);
+        inpX.addEventListener("change", () => { rect[0] = inpX.valueAsNumber; onChange(data); });
+        inpY.addEventListener("change", () => { rect[1] = inpY.valueAsNumber; onChange(data); });
+        inpW.addEventListener("change", () => { rect[2] = inpW.valueAsNumber; onChange(data); });
+        inpH.addEventListener("change", () => { rect[3] = inpH.valueAsNumber; onChange(data); });
         if (data.value == null) {
             inpX.disabled = true;
             inpY.disabled = true;
@@ -256,13 +289,13 @@ class ObjDataEditor {
         inpW.valueAsNumber = rect[2];
         inpH.valueAsNumber = rect[3];
     }
-    createValueEdit_aura(data, td) {
-        this.createValueEdit_rect(data, td, true);
+    createValueEdit_aura(data, td, onChange) {
+        this.createValueEdit_rect(data, td, true, onChange);
     }
-    createValueEdit_area(data, td) {
-        this.createValueEdit_rect(data, td);
+    createValueEdit_area(data, td, onChange) {
+        this.createValueEdit_rect(data, td, false, onChange);
     }
-    createValueEdit_tile(data, td, vx, vy) {
+    createValueEdit_tile(data, td, vx, vy, onChange) {
         const inpNone = Input([], "checkbox");
         const span = Span([], [], "0;0 ");
         const btn = Button([], "Изменить");
@@ -295,6 +328,7 @@ class ObjDataEditor {
                 btn.disabled = false;
                 span.innerText = `${point[0]}:${point[1]} `;
             }
+            onChange(data);
         });
         btn.addEventListener("click", async () => {
             const r = await new EntityEditor_TileSeclector(vx, vy, true).get();
@@ -302,9 +336,10 @@ class ObjDataEditor {
                 point = r[0];
             data.value = point;
             span.innerText = `${point[0]}:${point[1]} `;
+            onChange(data);
         });
     }
-    createValueEdit_tiles(data, td, vx, vy) {
+    createValueEdit_tiles(data, td, vx, vy, onChange) {
         const inpNone = Input([], "checkbox");
         const span = Span([], [], "0шт ");
         const btn = Button([], "Изменить");
@@ -337,6 +372,7 @@ class ObjDataEditor {
                 btn.disabled = false;
                 span.innerText = points.length + "шт ";
             }
+            onChange(data);
         });
         btn.addEventListener("click", async () => {
             const r = await new EntityEditor_TileSeclector(vx, vy, false, points).get();
@@ -345,9 +381,10 @@ class ObjDataEditor {
                 points = r;
             data.value = points;
             span.innerText = points.length + "шт ";
+            onChange(data);
         });
     }
-    createValueEdit_select(data, td) {
+    createValueEdit_select(data, td, onChange) {
         if (data.type != "text" && data.type != "number" && data.type != "bool" && data.type != "tile") {
             const inp = document.createElement("select");
             const el = document.createElement("option");
@@ -402,8 +439,53 @@ class ObjDataEditor {
                 setValue();
                 inp.disabled = false;
             }
+            onChange(data);
         });
-        inp.addEventListener("change", () => setValue());
+        inp.addEventListener("change", () => { setValue(); onChange(data); });
+    }
+    createValueEdit_coords(data, td, onChange) {
+        const inpX = Input("inp-short", "number");
+        const inpY = Input("inp-short", "number");
+        let point = [0, 0];
+        const inpNone = Input([], "checkbox");
+        td.appendChild(Div([], [
+            initEl("label", [], [
+                Span([], [], "X: "),
+                inpX
+            ], undefined),
+            initEl("label", [], [
+                Span([], [], "Y: "),
+                inpY
+            ], undefined),
+            (data.nullable ? initEl("label", [], [
+                inpNone,
+                Span([], [], "None")
+            ], undefined) : Span()),
+        ]));
+        inpNone.addEventListener("change", () => {
+            if (inpNone.checked) {
+                data.value = null;
+                inpX.disabled = true;
+                inpY.disabled = true;
+            }
+            else {
+                data.value = point;
+                inpX.disabled = false;
+                inpY.disabled = false;
+            }
+        });
+        inpX.addEventListener("change", () => { point[0] = inpX.valueAsNumber; onChange(data); });
+        inpY.addEventListener("change", () => { point[1] = inpY.valueAsNumber; onChange(data); });
+        if (data.value == null) {
+            inpX.disabled = true;
+            inpY.disabled = true;
+            inpNone.checked = true;
+        }
+        else {
+            point = data.value;
+        }
+        inpX.valueAsNumber = point[0];
+        inpY.valueAsNumber = point[1];
     }
     show() {
         this.popup.open();

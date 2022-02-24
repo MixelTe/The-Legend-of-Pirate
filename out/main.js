@@ -883,7 +883,7 @@ class FastPalette {
     addDecor(decor) {
         if (this.decor.indexOf(decor) != -1)
             return;
-        this.decor[this.addentityI] = decor;
+        this.decor[this.adddecorI] = decor;
         this.adddecorI = (this.adddecorI + 1) % this.imgs.length;
     }
 }
