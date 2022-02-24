@@ -57,4 +57,3 @@ class ScreenData:
 
 
 World("StartWorld")
-World("island")
