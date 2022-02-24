@@ -66,6 +66,9 @@ class ObjDataEditor {
                 case "text":
                     this.createValueEdit_text(data, td, onChange);
                     break;
+                case "textAria":
+                    this.createValueEdit_textAria(data, td, onChange);
+                    break;
                 case "aura":
                     this.createValueEdit_aura(data, td, onChange);
                     break;
@@ -199,6 +202,35 @@ class ObjDataEditor {
     createValueEdit_text(data, td, onChange) {
         const inpNone = Input([], "checkbox");
         const inp = Input([], "text");
+        td.appendChild(Div([], [
+            inp,
+            (data.nullable ? initEl("label", [], [
+                inpNone,
+                Span([], [], "None")
+            ], undefined) : Span()),
+        ]));
+        if (data.value == null) {
+            inp.disabled = true;
+            inpNone.checked = true;
+        }
+        else {
+            inp.value = data.value;
+        }
+        inpNone.addEventListener("change", () => {
+            if (inpNone.checked) {
+                data.value = null;
+                inp.disabled = true;
+            }
+            else {
+                data.value = inp.value;
+                inp.disabled = false;
+            }
+        });
+        inp.addEventListener("change", () => { data.value = inp.value; onChange(data); });
+    }
+    createValueEdit_textAria(data, td, onChange) {
+        const inpNone = Input([], "checkbox");
+        const inp = initEl("textarea", undefined, undefined, undefined);
         td.appendChild(Div([], [
             inp,
             (data.nullable ? initEl("label", [], [
