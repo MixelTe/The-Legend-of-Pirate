@@ -4,10 +4,12 @@ createNewEntityClass_Auto("crab-kolobok", false, 13, 11, 0.8, 0.677, 0, 0, 0.8, 
 	{ type: "bool", name: "sleeping", value: true },
 	{ type: "number", name: "hp", value: 1, displayColor: "black" },
 	{ type: "text", name: "tag", value: null, displayColor: "black", nullable: true },
+	{ type: "textAria", name: "description", value: null, displayColor: "black", nullable: true },
 	{ type: "aura", name: "atackArea", value: [0.5, 0.5, 1, 1], displayColor: "orange" },
 	{ type: "area", name: "sleepArea", value: [6, 2, 5, 3], displayColor: "azure" },
 	{ type: "tile", name: "favoriteTile", value: [1, 4], displayColor: "pink" },
 	{ type: "tiles", name: "killingTiles", value: [[13, 2], [13, 3]], displayColor: "tomato" },
+	{ type: "coords", name: "coords", value: [1, 3], displayColor: "lime" },
 ]);
 
 createNewEntityClass_Auto("crab", true, 20, 11, 1, 0.55)
@@ -19,14 +21,14 @@ createNewEntityClass_Auto("cannon", true, 11, 12, 1, 1)
 createNewEntityClass_Auto("dig_place", false, 7, 7, 1, 1, 0.35, 0.35, 0.3, 0.3)
 createNewEntityClass_Auto("trainer", true, 9, 18, 0.75, 0.7, 0, -0.8, 0.75, 1.5)
 createNewEntityClass_Auto("pirate2", true, 11, 22, 0.75, 0.7, 0, -0.8, 0.75, 1.5, [
-	{ type: "text", name: "speech", value: "" },
+	{ type: "textAria", name: "speech", value: "" },
 ])
 createNewEntityClass_Auto("market", false, 39, 39, 1, 1, 0, 0, 1, 1, [
 	{ type: "text", name: "item id", value: "coin", displayColor: "black", title: "Id предмета" },
 	{ type: "number", name: "price", value: 1, displayColor: "lime", title: "Цена" },
 	{ type: "text", name: "market id", value: null, displayColor: "lime", nullable: true, title: "Id магазина" },
-	{ type: "text", name: "on buy speech", value: null, nullable: true, title: "Речь при покупке" },
-	{ type: "text", name: "speech", value: null, nullable: true, title: "Рекламная речь" },
+	{ type: "textAria", name: "on buy speech", value: null, nullable: true, title: "Речь при покупке" },
+	{ type: "textAria", name: "speech", value: null, nullable: true, title: "Рекламная речь" },
 ])
 createNewEntityClass_Auto("trigger", false, 50, 50, 1, 1, 0, 0, 1, 1, [
 	{ type: "area", name: "zone", value: [0, 0, 1, 1], displayColor: "orange", title: "Область активации" },

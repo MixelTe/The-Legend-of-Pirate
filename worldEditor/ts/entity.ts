@@ -198,6 +198,7 @@ interface EntityDataType
 	"bool": boolean | null,
 	"number": number | null,
 	"text": string | null,
+	"textAria": string | null,
 	"aura": Rect | null,
 	"area": Rect | null,
 	"tile": Point | null,

@@ -60,6 +60,7 @@ class ObjDataEditor
 				case "bool": this.createValueEdit_bool(<EntityData<"bool">>data, td, onChange); break;
 				case "number": this.createValueEdit_number(<EntityData<"number">>data, td, onChange); break;
 				case "text": this.createValueEdit_text(<EntityData<"text">>data, td, onChange); break;
+				case "textAria": this.createValueEdit_textAria(<EntityData<"textAria">>data, td, onChange); break;
 				case "aura": this.createValueEdit_aura(<EntityData<"aura">>data, td, onChange); break;
 				case "area": this.createValueEdit_area(<EntityData<"area">>data, td, onChange); break;
 				case "tile": this.createValueEdit_tile(<EntityData<"tile">>data, td, vx, vy, onChange); break;
@@ -192,6 +193,42 @@ class ObjDataEditor
 	{
 		const inpNone = Input([], "checkbox");
 		const inp = Input([], "text");
+		td.appendChild(Div([], [
+			inp,
+			(data.nullable ? initEl("label", [], [
+				inpNone,
+				Span([], [], "None")
+			], undefined) : Span()),
+		]));
+		if (data.value == null)
+		{
+			inp.disabled = true;
+			inpNone.checked = true;
+		}
+		else
+		{
+			inp.value = data.value;
+		}
+		inpNone.addEventListener("change", () =>
+		{
+			if (inpNone.checked)
+			{
+				data.value = null;
+				inp.disabled = true;
+			}
+			else
+			{
+				data.value = inp.value;
+				inp.disabled = false;
+			}
+		});
+		inp.addEventListener("change", () => { data.value = inp.value; onChange(data); });
+
+	}
+	private createValueEdit_textAria(data: EntityData<"textAria">, td: HTMLTableCellElement, onChange: (data: EntityData<any>) => void)
+	{
+		const inpNone = Input([], "checkbox");
+		const inp = initEl("textarea", undefined, undefined, undefined)
 		td.appendChild(Div([], [
 			inp,
 			(data.nullable ? initEl("label", [], [
