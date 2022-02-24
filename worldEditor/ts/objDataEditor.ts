@@ -10,30 +10,61 @@ class ObjDataEditor
 		else this.popup.title = "Редактирование декорации";
 		const table = Table("entity-editor");
 		this.popup.content.appendChild(table);
+		const titles: { td: HTMLTableCellElement, data: EntityData<any> }[] = [];
+		const onChange = (data: EntityData<any>) =>
+		{
+			for (const el of titles)
+			{
+				if (!el.data.smartTitle) continue;
+				if (data.name == el.data.smartTitle.field)
+				{
+					const newTitle = el.data.smartTitle.titles[data.value];
+					if (newTitle) el.td.innerText = newTitle;
+					else el.td.innerText = el.data.title || el.data.name;
+				}
+			}
+		}
 		obj.objData.forEach(data =>
 		{
 			const colorRect = Div("color-rect");
 			if (data.displayColor) colorRect.style.background = data.displayColor;
+			const nameTD = TD([], [], data.name);
+			if (data.title) nameTD.innerText = data.title;
+			if (data.smartTitle)
+			{
+				titles.push({ td: nameTD, data });
+				for (const data2 of obj.objData)
+				{
+					if (data2.name == data.smartTitle.field)
+					{
+						const newTitle = data.smartTitle.titles[data2.value];
+						if (newTitle) nameTD.innerText = newTitle;
+						else nameTD.innerText = data.title || data.name;
+						break;
+					}
+				}
+			}
 			const td = TD();
 			const tr = TR([], [
 				TD([], [colorRect]),
-				TD([], [], data.name),
+				nameTD,
 				td
 			]);
 			table.appendChild(tr);
 			if (data.options)
 			{
-				this.createValueEdit_select(data, td);
+				this.createValueEdit_select(data, td, onChange);
 				return;
 			}
 			switch (data.type) {
-				case "bool": this.createValueEdit_bool(<EntityData<"bool">>data, td); break;
-				case "number": this.createValueEdit_number(<EntityData<"number">>data, td); break;
-				case "text": this.createValueEdit_text(<EntityData<"text">>data, td); break;
-				case "aura": this.createValueEdit_aura(<EntityData<"aura">>data, td); break;
-				case "area": this.createValueEdit_area(<EntityData<"area">>data, td); break;
-				case "tile": this.createValueEdit_tile(<EntityData<"tile">>data, td, vx, vy); break;
-				case "tiles": this.createValueEdit_tiles(<EntityData<"tiles">>data, td, vx, vy); break;
+				case "bool": this.createValueEdit_bool(<EntityData<"bool">>data, td, onChange); break;
+				case "number": this.createValueEdit_number(<EntityData<"number">>data, td, onChange); break;
+				case "text": this.createValueEdit_text(<EntityData<"text">>data, td, onChange); break;
+				case "aura": this.createValueEdit_aura(<EntityData<"aura">>data, td, onChange); break;
+				case "area": this.createValueEdit_area(<EntityData<"area">>data, td, onChange); break;
+				case "tile": this.createValueEdit_tile(<EntityData<"tile">>data, td, vx, vy, onChange); break;
+				case "tiles": this.createValueEdit_tiles(<EntityData<"tiles">>data, td, vx, vy, onChange); break;
+				case "coords": this.createValueEdit_coords(<EntityData<"coords">>data, td, onChange); break;
 				default: console.error("switch default"); break;
 			}
 		});
@@ -93,7 +124,7 @@ class ObjDataEditor
 		const newData: ObjData = JSON.parse(JSON.stringify(objData));
 		return newData;
 	}
-	private createValueEdit_bool(data: EntityData<"bool">, td: HTMLTableCellElement)
+	private createValueEdit_bool(data: EntityData<"bool">, td: HTMLTableCellElement, onChange: (data: EntityData<any>) => void)
 	{
 		const inpTrue = Input([], "radio");
 		inpTrue.name = "entityEditor-bool" + Math.random();
@@ -118,11 +149,11 @@ class ObjDataEditor
 		if (data.value) inpTrue.checked = true;
 		else if (data.value == false) inpFalse.checked = true;
 		else inpNone.checked = true;
-		inpTrue.addEventListener("change", () => data.value = inpTrue.checked);
-		inpFalse.addEventListener("change", () => data.value = inpTrue.checked);
-		inpNone.addEventListener("change", () => { if (inpNone.checked) data.value = null });
+		inpTrue.addEventListener("change", () => {data.value = inpTrue.checked; onChange(data)});
+		inpFalse.addEventListener("change", () => {data.value = inpTrue.checked; onChange(data)});
+		inpNone.addEventListener("change", () => { if (inpNone.checked) data.value = null; onChange(data) });
 	}
-	private createValueEdit_number(data: EntityData<"number">, td: HTMLTableCellElement)
+	private createValueEdit_number(data: EntityData<"number">, td: HTMLTableCellElement, onChange: (data: EntityData<any>) => void)
 	{
 		const inpNone = Input([], "checkbox");
 		const inp = Input([], "number");
@@ -155,9 +186,9 @@ class ObjDataEditor
 				inp.disabled = false;
 			}
 		});
-		inp.addEventListener("change", () => data.value = inp.valueAsNumber);
+		inp.addEventListener("change", () => { data.value = inp.valueAsNumber; onChange(data); });
 	}
-	private createValueEdit_text(data: EntityData<"text">, td: HTMLTableCellElement)
+	private createValueEdit_text(data: EntityData<"text">, td: HTMLTableCellElement, onChange: (data: EntityData<any>) => void)
 	{
 		const inpNone = Input([], "checkbox");
 		const inp = Input([], "text");
@@ -190,10 +221,10 @@ class ObjDataEditor
 				inp.disabled = false;
 			}
 		});
-		inp.addEventListener("change", () => data.value = inp.value);
+		inp.addEventListener("change", () => { data.value = inp.value; onChange(data); });
 
 	}
-	private createValueEdit_rect(data: EntityData<"aura" | "area">, td: HTMLTableCellElement, addD = false)
+	private createValueEdit_rect(data: EntityData<"aura" | "area">, td: HTMLTableCellElement, addD: boolean, onChange: (data: EntityData<any>) => void)
 	{
 		const inpX = Input("inp-short", "number");
 		const inpY = Input("inp-short", "number");
@@ -242,10 +273,10 @@ class ObjDataEditor
 				inpH.disabled = false;
 			}
 		});
-		inpX.addEventListener("change", () => rect[0] = inpX.valueAsNumber);
-		inpY.addEventListener("change", () => rect[1] = inpY.valueAsNumber);
-		inpW.addEventListener("change", () => rect[2] = inpW.valueAsNumber);
-		inpH.addEventListener("change", () => rect[3] = inpH.valueAsNumber);
+		inpX.addEventListener("change", () => { rect[0] = inpX.valueAsNumber; onChange(data);});
+		inpY.addEventListener("change", () => { rect[1] = inpY.valueAsNumber; onChange(data);});
+		inpW.addEventListener("change", () => { rect[2] = inpW.valueAsNumber; onChange(data);});
+		inpH.addEventListener("change", () => { rect[3] = inpH.valueAsNumber; onChange(data);});
 		if (data.value == null)
 		{
 			inpX.disabled = true;
@@ -263,15 +294,15 @@ class ObjDataEditor
 		inpW.valueAsNumber = rect[2];
 		inpH.valueAsNumber = rect[3];
 	}
-	private createValueEdit_aura(data: EntityData<"aura">, td: HTMLTableCellElement)
+	private createValueEdit_aura(data: EntityData<"aura">, td: HTMLTableCellElement, onChange: (data: EntityData<any>) => void)
 	{
-		this.createValueEdit_rect(data, td, true);
+		this.createValueEdit_rect(data, td, true, onChange);
 	}
-	private createValueEdit_area(data: EntityData<"area">, td: HTMLTableCellElement)
+	private createValueEdit_area(data: EntityData<"area">, td: HTMLTableCellElement, onChange: (data: EntityData<any>) => void)
 	{
-		this.createValueEdit_rect(data, td);
+		this.createValueEdit_rect(data, td, false, onChange);
 	}
-	private createValueEdit_tile(data: EntityData<"tile">, td: HTMLTableCellElement, vx: number, vy: number)
+	private createValueEdit_tile(data: EntityData<"tile">, td: HTMLTableCellElement, vx: number, vy: number, onChange: (data: EntityData<any>) => void)
 	{
 		const inpNone = Input([], "checkbox");
 		const span = Span([], [], "0;0 ");
@@ -310,6 +341,7 @@ class ObjDataEditor
 				btn.disabled = false;
 				span.innerText = `${point[0]}:${point[1]} `;
 			}
+			onChange(data);
 		});
 		btn.addEventListener("click", async () =>
 		{
@@ -317,9 +349,10 @@ class ObjDataEditor
 			if (r) point = r[0];
 			data.value = point;
 			span.innerText = `${point[0]}:${point[1]} `;
+			onChange(data);
 		});
 	}
-	private createValueEdit_tiles(data: EntityData<"tiles">, td: HTMLTableCellElement, vx: number, vy: number)
+	private createValueEdit_tiles(data: EntityData<"tiles">, td: HTMLTableCellElement, vx: number, vy: number, onChange: (data: EntityData<any>) => void)
 	{
 		const inpNone = Input([], "checkbox");
 		const span = Span([], [], "0шт ");
@@ -358,6 +391,7 @@ class ObjDataEditor
 				btn.disabled = false;
 				span.innerText = points.length + "шт ";
 			}
+			onChange(data);
 		});
 		btn.addEventListener("click", async () =>
 		{
@@ -366,10 +400,11 @@ class ObjDataEditor
 			if (r) points = r;
 			data.value = points;
 			span.innerText = points.length + "шт ";
+			onChange(data);
 		});
 
 	}
-	private createValueEdit_select<T extends keyof EntityDataType>(data: EntityData<T>, td: HTMLTableCellElement)
+	private createValueEdit_select<T extends keyof EntityDataType>(data: EntityData<T>, td: HTMLTableCellElement, onChange: (data: EntityData<any>) => void)
 	{
 		if (data.type != "text" && data.type != "number" && data.type != "bool" && data.type != "tile")
 		{
@@ -428,8 +463,59 @@ class ObjDataEditor
 				setValue();
 				inp.disabled = false;
 			}
+			onChange(data);
 		});
-		inp.addEventListener("change", () => setValue());
+		inp.addEventListener("change", () => { setValue(); onChange(data); });
+	}
+	private createValueEdit_coords(data: EntityData<"coords">, td: HTMLTableCellElement, onChange: (data: EntityData<any>) => void)
+	{
+		const inpX = Input("inp-short", "number");
+		const inpY = Input("inp-short", "number");
+		let point: Point = [0, 0];
+		const inpNone = Input([], "checkbox");
+		td.appendChild(Div([], [
+			initEl("label", [], [
+				Span([], [], "X: "),
+				inpX
+			], undefined),
+			initEl("label", [], [
+				Span([], [], "Y: "),
+				inpY
+			], undefined),
+			(data.nullable ? initEl("label", [], [
+				inpNone,
+				Span([], [], "None")
+			], undefined) : Span()),
+		]));
+		inpNone.addEventListener("change", () =>
+		{
+			if (inpNone.checked)
+			{
+				data.value = null;
+				inpX.disabled = true;
+				inpY.disabled = true;
+			}
+			else
+			{
+				data.value = point;
+				inpX.disabled = false;
+				inpY.disabled = false;
+			}
+		});
+		inpX.addEventListener("change", () => { point[0] = inpX.valueAsNumber; onChange(data);});
+		inpY.addEventListener("change", () => { point[1] = inpY.valueAsNumber; onChange(data);});
+		if (data.value == null)
+		{
+			inpX.disabled = true;
+			inpY.disabled = true;
+			inpNone.checked = true;
+		}
+		else
+		{
+			point = data.value;
+		}
+		inpX.valueAsNumber = point[0];
+		inpY.valueAsNumber = point[1];
 	}
 
 	public show()

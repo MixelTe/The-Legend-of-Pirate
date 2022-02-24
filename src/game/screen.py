@@ -92,8 +92,8 @@ class Screen:
         if (entity in self.entities):
             self.entities.remove(entity)
 
-    def goTo(self, world: str, screen: tuple[int, int]):
-        self.goToVar = ScreenGoTo(world, screen, self.surface)
+    def goTo(self, world: str, screen: tuple[int, int], pos: tuple[int, int] = None):
+        self.goToVar = ScreenGoTo(world, screen, self.surface, pos)
 
     def tryGoTo(self, dir: Union[Literal["up"], Literal["right"], Literal["down"], Literal["left"]]):
         pos = list(self.pos)
@@ -121,9 +121,10 @@ class Screen:
 
 
 class ScreenGoTo:
-    def __init__(self, world: str, screen: tuple[int, int], image: pygame.Surface):
+    def __init__(self, world: str, screen: tuple[int, int], image: pygame.Surface, pos: Union[tuple[int, int], None]):
         self.world = world
         self.screen = screen
+        self.pos = pos
         self.image = image  # изображение последнего кадра этого экрана
 
 

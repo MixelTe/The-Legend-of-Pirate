@@ -988,7 +988,7 @@ class FastPalette
 	public addDecor(decor: null | typeof Decor)
 	{
 		if (this.decor.indexOf(decor) != -1) return;
-		this.decor[this.addentityI] = decor;
+		this.decor[this.adddecorI] = decor;
 		this.adddecorI = (this.adddecorI + 1) % this.imgs.length;
 	}
 }

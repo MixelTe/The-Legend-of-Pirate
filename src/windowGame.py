@@ -96,10 +96,14 @@ class WindowGame(Window):
                     dy = 1
                 elif (goTo.screen[1] < self.screen.pos[1]):
                     dy = -1
+                if (goTo.pos):
+                    self.player.centerTo(goTo.pos)
                 self.screen = Screen.create(self.world, *goTo.screen, self.saveData, self.player, self.openDialog)
                 self.screen.update()
                 self.screenAnim = ScreenAnimationMove(goTo.image, self.screen.draw(), (dx, dy))
             else:
+                if (goTo.pos):
+                    self.player.centerTo(goTo.pos)
                 self.world = World.getWorld(goTo.world)
                 self.screen = Screen.create(self.world, *goTo.screen, self.saveData, self.player, self.openDialog)
                 self.screen.update()

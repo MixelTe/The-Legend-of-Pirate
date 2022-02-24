@@ -202,6 +202,7 @@ interface EntityDataType
 	"area": Rect | null,
 	"tile": Point | null,
 	"tiles": Point[] | null,
+	"coords": Point | null,
 	"any": any | null,
 };
 type Rect = [number, number, number, number]
@@ -214,6 +215,15 @@ interface EntityData<T extends keyof EntityDataType>
 	displayColor?: string,
 	options?: EntityDataType[T][],
 	nullable?: boolean,
+	title?: string,
+	smartTitle?: SmartTitle,
+}
+interface SmartTitle
+{
+	field: string,
+	titles: {
+		[_: string]: string,
+	}
 }
 type ObjData = EntityData<keyof EntityDataType>[];
 

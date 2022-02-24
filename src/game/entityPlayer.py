@@ -337,3 +337,7 @@ class EntityPlayer(EntityAlive):
                 self.lastAttaker = attacker.id
             if (isinstance(attacker, str)):
                 self.lastAttaker = attacker
+
+    def centerTo(self, pos: tuple[int, int]):
+        self.x = pos[0] + self.width / 2
+        self.y = pos[1] + self.height / 2

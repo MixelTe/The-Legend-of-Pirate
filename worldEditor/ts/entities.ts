@@ -22,26 +22,38 @@ createNewEntityClass_Auto("pirate2", true, 11, 22, 0.75, 0.7, 0, -0.8, 0.75, 1.5
 	{ type: "text", name: "speech", value: "" },
 ])
 createNewEntityClass_Auto("market", false, 39, 39, 1, 1, 0, 0, 1, 1, [
-	{ type: "text", name: "item id", value: "coin", displayColor: "black" },
-	{ type: "number", name: "price", value: 1, displayColor: "lime" },
-	{ type: "text", name: "market id", value: null, displayColor: "lime", nullable: true },
-	{ type: "text", name: "on buy speech", value: null, nullable: true },
-	{ type: "text", name: "speech", value: null, nullable: true },
+	{ type: "text", name: "item id", value: "coin", displayColor: "black", title: "Id предмета" },
+	{ type: "number", name: "price", value: 1, displayColor: "lime", title: "Цена" },
+	{ type: "text", name: "market id", value: null, displayColor: "lime", nullable: true, title: "Id магазина" },
+	{ type: "text", name: "on buy speech", value: null, nullable: true, title: "Речь при покупке" },
+	{ type: "text", name: "speech", value: null, nullable: true, title: "Рекламная речь" },
 ])
 createNewEntityClass_Auto("trigger", false, 50, 50, 1, 1, 0, 0, 1, 1, [
-	{ type: "text", name: "dialog", value: null, displayColor: "lime", nullable: true },
-	{ type: "area", name: "zone", value: null, displayColor: "orange", nullable: true },
+	{ type: "area", name: "zone", value: [0, 0, 1, 1], displayColor: "orange", title: "Область активации" },
+	{ type: "text", name: "type", value: "travelToWorld", displayColor: "lime", options: ["travelToWorld", "dialog"], title: "Тип" },
+	{ type: "text", name: "value", value: null, displayColor: "lime", nullable: true, smartTitle: {
+		field: "type",
+		titles: { "travelToWorld": "Id Мира", "dialog": "Id диалога" }
+	}},
+	{ type: "coords", name: "value2", value: null, displayColor: "lime", nullable: true, smartTitle: {
+		field: "type",
+		titles: { "travelToWorld": "Экран", "dialog": "Не используется" }
+	}},
+	{ type: "tile", name: "value3", value: null, displayColor: "lime", nullable: true, smartTitle: {
+		field: "type",
+		titles: { "travelToWorld": "Место", "dialog": "Не используется" }
+	}},
 ])
 createNewEntityClass_Auto("cactusDancing", true, 18, 24, 0.85, 0.85, -0.075, -0.475, 1, 1.33)
 createNewEntityClass_Auto("aborigine", true, 15, 16, 0.93, 1)
 createNewEntityClass_Auto("aborigineBow", true, 15, 16, 0.93, 1)
 createNewEntityClass_Auto("skeleton", true, 9, 13, 0.4, 0.55, -0.15, -0.45, 0.69, 1, [
-	{ type: "text", name: "direction", value: "right", options: ["right", "left"] },
-	{ type: "bool", name: "rise", value: true },
+	{ type: "text", name: "direction", value: "right", options: ["right", "left"], title: "Направление" },
+	{ type: "bool", name: "rise", value: true, title: "Поднимается ли" },
 ])
 createNewEntityClass_Auto("skeletonShield", true, 9, 13, 0.69, 1)
 createNewEntityClass_Auto("tentacle", true, 28, 34, 0.82, 1)
 createNewEntityClass_Auto("piranha", true, 35, 32, 1, 0.91)
 createNewEntityClass_Auto("cactusDancingChild", true, 18, 24, 0.85, 0.85, -0.075, -0.475, 1, 1.33, [
-	{ type: "number", name: "color", value: 1, displayColor: "lime", options: [1, 2, 3, 4] },
+	{ type: "number", name: "color", value: 1, displayColor: "lime", options: [1, 2, 3, 4], title: "Цвет" },
 ])
