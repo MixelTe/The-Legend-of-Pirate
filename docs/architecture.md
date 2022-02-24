@@ -149,14 +149,17 @@
 		3. draw() -> pygame.Surface - вызов draw у всех tiles, decor, entities, decorAbove, возвращает итоговый кадр
 		4. addEntity(entity: Entity) - добавляет entity в их список
 		5. removeEntity(entity: Entity) - удаляет entity из списка
-		6. goTo(world: str, screen: tuple[int, int]) - создаёт ScreenGoTo и присваивает в goToVar
-		7. static create(world: World, x: int, y: int, saveData: SaveData, player: EntityPlayer, openDialog: (dialog: GameDialog) -> None) -> Screen
+		6. goTo(world: str, screen: tuple[int, int], pos?: tuple[int, int]) - создаёт ScreenGoTo и присваивает в goToVar
+		7. tryGoTo(dir: "up" | "right" | "down" | "left") - переход на соседний экран, если возможно
+		8. getTiles() -> list\[tuple\[tile, x, y] - возвращает итератор всех клеток и их координат
+		9. static create(world: World, x: int, y: int, saveData: SaveData, player: EntityPlayer, openDialog: (dialog: GameDialog) -> None) -> Screen
 ---
 10. ## Класс ScreenGoTo
 	* То куда необходимо переключить экран и его изображение
 	* Поля:
 		* world: str
 		* screen: tuple[int, int]
+		* pos: tuple[int, int] | None - новые координаты игрока
 		* image: pygame.Surface - изображение последнего кадра этого экрана
 	* Методы:
 		1. init(world: str, screen: tuple[int, int], image: pygame.Surface)
