@@ -25,6 +25,7 @@ class Settings:
     tileSize = 1
     drawHitboxes = False
     drawNoneImgs = False
+    drawGrid = False
     disableAI = False
     moveScreenOnNumpad = True
 

@@ -50,8 +50,15 @@ createNewEntityClass_Auto("cactusDancing", true, 18, 24, 0.85, 0.85, -0.075, -0.
 createNewEntityClass_Auto("aborigine", true, 15, 16, 0.93, 1)
 createNewEntityClass_Auto("aborigineBow", true, 15, 16, 0.93, 1)
 createNewEntityClass_Auto("skeleton", true, 9, 13, 0.4, 0.55, -0.15, -0.45, 0.69, 1, [
-	{ type: "text", name: "direction", value: "right", options: ["right", "left"], title: "Направление" },
-	{ type: "bool", name: "rise", value: true, title: "Поднимается ли" },
+	{ type: "text", name: "moveStyle", value: "ver", options: ["ver", "hor"], title: "Направление сдвига" },
+	{ type: "bool", name: "dirR", value: true, smartTitle: {
+		field: "moveStyle",
+		titles: { "ver": "Вправо", "hor": "Вверх" },
+	}, header: "Стартовое направление" },
+	{ type: "bool", name: "rise", value: true, smartTitle: {
+		field: "moveStyle",
+		titles: { "ver": "Сдвиг вверх", "hor": "Сдвиг вправо" },
+	} },
 ])
 createNewEntityClass_Auto("skeletonShield", true, 9, 13, 0.69, 1)
 createNewEntityClass_Auto("tentacle", true, 28, 34, 0.82, 1)

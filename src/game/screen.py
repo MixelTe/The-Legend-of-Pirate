@@ -83,6 +83,12 @@ class Screen:
         for decor in self.decorAbove:
             decor.draw(self.surface)
 
+        if (Settings.drawGrid):
+            for y in range(Settings.screen_height):
+                pygame.draw.line(self.surface, "orange", (0, y * Settings.tileSize), (Settings.width, y * Settings.tileSize))
+            for x in range(Settings.screen_width):
+                pygame.draw.line(self.surface, "orange", (x * Settings.tileSize, 0), (x * Settings.tileSize, Settings.height))
+
         return self.surface
 
     def addEntity(self, entity: Entity):

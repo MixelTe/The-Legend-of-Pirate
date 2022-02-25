@@ -218,6 +218,7 @@ interface EntityData<T extends keyof EntityDataType>
 	nullable?: boolean,
 	title?: string,
 	smartTitle?: SmartTitle,
+	header?: string,
 }
 interface SmartTitle
 {

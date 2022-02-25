@@ -19,6 +19,8 @@ animatorData = AnimatorData("skeleton", [
 class EntitySkeleton(EntityAlive):
     def __init__(self, screen, data: dict = None):
         self.speed = 0.05
+        self.moveStyle = "ver"  # ver, hor
+        self.dirR = True
         self.rise = True
         super().__init__(screen, data)
         self.animator = Animator(animatorData, "stay")
@@ -29,17 +31,15 @@ class EntitySkeleton(EntityAlive):
         self.width = 0.4
         self.height = 0.55
         self.state = "go"
-        self.dirR = True
-        self.pastY = self.y
+        self.pastCoord = self.y
         self.attackDelay = 0
         self.bone = None
 
     def applyData(self, dataSetter: Callable[[str, Any, str, Callable[[Any], Any]], None], data: dict):
         super().applyData(dataSetter, data)
-        if ("direction" in data):
-            self.dirR = data["direction"] == "right"
-        if ("rise" in data):
-            self.rise = bool(data["rise"])
+        dataSetter("moveStyle", self.moveStyle)
+        dataSetter("dirR", self.dirR)
+        dataSetter("rise", self.rise)
 
     def canGoOn(self, tile: Tile) -> bool:
         return "water" not in tile.tags and super().canGoOn(tile)
@@ -57,30 +57,56 @@ class EntitySkeleton(EntityAlive):
             return
         self.attackDelay = max(self.attackDelay - 1000 / Settings.fps, 0)
         if (self.state == "go"):
-            self.animator.setAnimation("moveD" if self.dirR else "moveA")
-            self.speedX = self.speed * (1 if self.dirR else -1)
-            self.speedY = 0
-            rise = False
-            if (self.dirR):
-                if (self.x - int(self.x) >= (1 - self.width) / 2):
-                    rise = True
+            if (self.moveStyle == "ver"):
+                self.animator.setAnimation("moveD" if self.dirR else "moveA")
+                self.speedX = self.speed * (1 if self.dirR else -1)
+                self.speedY = 0
+                rise = False
+                if (self.dirR):
+                    if (self.x - int(self.x) >= (1 - self.width) / 2):
+                        rise = True
+                else:
+                    if (self.x - int(self.x) <= (1 - self.width) / 2):
+                        rise = True
+                if (rise or len(collisions) != 0):
+                    ny = int(self.x) + (1 if self.dirR else -1) + (1 - self.width) / 2
+                    collisions = self.predictCollisions(ny, self.y)
+                    removeFromCollisions(collisions, ["player"])
+                    if (len(collisions) != 0):
+                        self.dirR = not self.dirR
+                        self.x = int(self.x) + (1 - self.width) / 2
+                        self.state = "rise"
+                        self.pastCoord = self.y
+                        ny = int(self.y) + (-1 if self.rise else 1) + (1 - self.height) / 2
+                        collisions = self.predictCollisions(self.x, ny)
+                        removeFromCollisions(collisions, ["player"])
+                        if (len(collisions) != 0):
+                            self.rise = not self.rise
             else:
-                if (self.x - int(self.x) <= (1 - self.width) / 2):
-                    rise = True
-            if (rise or len(collisions) != 0):
-                nx = int(self.x) + (1 if self.dirR else -1) + (1 - self.width) / 2
-                collisions = self.predictCollisions(nx, self.y)
-                removeFromCollisions(collisions, ["player"])
-                if (len(collisions) != 0 or len(collisions) != 0):
-                    self.dirR = not self.dirR
-                    self.x = int(self.x) + (1 - self.width) / 2
-                    self.state = "rise"
-                    self.pastY = self.y
-                    ny = int(self.y) + (-1 if self.rise else 1) + (1 - self.height) / 2
+                self.animator.setAnimation("moveW" if self.dirR else "moveS")
+                self.speedY = self.speed * (-1 if self.dirR else 1)
+                self.speedX = 0
+                rise = False
+                if (self.dirR):
+                    if (self.y - int(self.y) <= (1 - self.height) / 2):
+                        rise = True
+                else:
+                    if (self.y - int(self.y) >= (1 - self.height) / 2):
+                        rise = True
+                if (rise or len(collisions) != 0):
+                    ny = int(self.y) + (-1 if self.dirR else 1) + (1 - self.height) / 2
                     collisions = self.predictCollisions(self.x, ny)
                     removeFromCollisions(collisions, ["player"])
                     if (len(collisions) != 0):
-                        self.rise = not self.rise
+                        self.dirR = not self.dirR
+                        self.y = int(self.y) + (1 - self.height) / 2
+                        self.state = "rise"
+                        self.pastCoord = self.x
+                        nx = int(self.x) + (1 if self.rise else -1) + (1 - self.width) / 2
+                        collisions = self.predictCollisions(nx, self.y)
+                        removeFromCollisions(collisions, ["player"])
+                        if (len(collisions) != 0):
+                            self.rise = not self.rise
             if (self.state == "go"):
                 if (abs(self.x - self.screen.player.x) < self.screen.player.width or
                         abs(self.y - self.screen.player.y) < self.screen.player.height):
@@ -106,12 +132,20 @@ class EntitySkeleton(EntityAlive):
                             self.bone.x = self.x - self.width - self.bone.height
                             self.bone.speedX = -self.bone.speed
         elif (self.state == "rise"):
-            self.animator.setAnimation("moveW" if self.rise else "moveS")
-            self.speedX = 0
-            self.speedY = self.speed * (-1 if self.rise else 1)
-            if (abs(self.pastY - self.y) >= 1 or len(collisions) != 0):
-                self.y = int(self.y) + (1 - self.height) / 2
-                self.state = "go"
+            if (self.moveStyle == "ver"):
+                self.animator.setAnimation("moveW" if self.rise else "moveS")
+                self.speedX = 0
+                self.speedY = self.speed * (-1 if self.rise else 1)
+                if (abs(self.pastCoord - self.y) >= 1 or len(collisions) != 0):
+                    self.y = int(self.y) + (1 - self.height) / 2
+                    self.state = "go"
+            else:
+                self.animator.setAnimation("moveD" if self.rise else "moveA")
+                self.speedY = 0
+                self.speedX = self.speed * (1 if self.rise else -1)
+                if (abs(self.pastCoord - self.x) >= 1 or len(collisions) != 0):
+                    self.x = int(self.x) + (1 - self.width) / 2
+                    self.state = "go"
         elif (self.state == "attack"):
             if (self.animator.lastState[1]):
                 if (self.attackDelay <= 0):
