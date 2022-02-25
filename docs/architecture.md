@@ -235,12 +235,13 @@
 		10. static createById(id: str, screen: pygame.Surface) - создание сущности по id
 		11. static registerEntity(id: str, entityClass) - добавляет сущность в entityDict и присваевает id в entityClass.id
 		12. canGoOn(tile: Tile) -> bool - может ли сущность наступить на эту клетку
-		13. get_tile(dx: int = 0, dy: int = 0, pos: tuple[float, float] = (0.5, 0.5)) -> tuple[Tile, tuple[int, int]] | tuple[None, None] - клетка относительно сущности и её координаты. pos - позиция точки проверки в сущности, где 0 - левый верхний угол, 1 - правый нижний
-		14. get_entities(rect: tuple[float, float, float, float]) -> list\[Entity] - сущности попадающие в область
-		15. get_entitiesD(rect: tuple[float, float, float, float]) -> list\[Entity] - сущности попадающие в область, относительную сущности
-		16. is_inRect(rect: tuple[float, float, float, float]) -> проверка попадает ли эта сущность в область
-		17. is_inRectD(rect: tuple[float, float, float, float], entity: Entity) -> проверка попадает ли сущность в область, относительную этой
-		18. predictCollisions(x: float, y: float) -> list[tuple[tuple[int, int, int, int], Union[Tile, Entity, None]]] - возвращает список столкновений, если бы сущность была расположена по этим координатам
+		13. tileSpeed(tile: Tile) -> float - скорость сущности на клетке
+		14. get_tile(dx: int = 0, dy: int = 0, pos: tuple[float, float] = (0.5, 0.5)) -> tuple[Tile, tuple[int, int]] | tuple[None, None] - клетка относительно сущности и её координаты. pos - позиция точки проверки в сущности, где 0 - левый верхний угол, 1 - правый нижний
+		15. get_entities(rect: tuple[float, float, float, float]) -> list\[Entity] - сущности попадающие в область
+		16. get_entitiesD(rect: tuple[float, float, float, float]) -> list\[Entity] - сущности попадающие в область, относительную сущности
+		17. is_inRect(rect: tuple[float, float, float, float]) -> проверка попадает ли эта сущность в область
+		18. is_inRectD(rect: tuple[float, float, float, float], entity: Entity) -> проверка попадает ли сущность в область, относительную этой
+		19. predictCollisions(x: float, y: float) -> list[tuple[tuple[int, int, int, int], Union[Tile, Entity, None]]] - возвращает список столкновений, если бы сущность была расположена по этим координатам
 ---
 16. ## Класс EntityAlive(Entity)
 	* Поля:
