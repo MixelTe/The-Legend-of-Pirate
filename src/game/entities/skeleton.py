@@ -1,4 +1,5 @@
 from typing import Any, Callable
+from functions import removeFromCollisions
 from game.animator import Animator, AnimatorData
 from game.entity import Entity, EntityAlive, EntityGroups
 from game.tile import Tile
@@ -51,7 +52,7 @@ class EntitySkeleton(EntityAlive):
 
     def update(self):
         collisions = super().update()
-        removePlayerFromCollisions(collisions)
+        removeFromCollisions(collisions, ["player"])
         if (not self.alive or Settings.disableAI):
             return
         self.attackDelay = max(self.attackDelay - 1000 / Settings.fps, 0)
@@ -69,7 +70,7 @@ class EntitySkeleton(EntityAlive):
             if (rise or len(collisions) != 0):
                 nx = int(self.x) + (1 if self.dirR else -1) + (1 - self.width) / 2
                 collisions = self.predictCollisions(nx, self.y)
-                removePlayerFromCollisions(collisions)
+                removeFromCollisions(collisions, ["player"])
                 if (len(collisions) != 0 or len(collisions) != 0):
                     self.dirR = not self.dirR
                     self.x = int(self.x) + (1 - self.width) / 2
@@ -77,7 +78,7 @@ class EntitySkeleton(EntityAlive):
                     self.pastY = self.y
                     ny = int(self.y) + (-1 if self.rise else 1) + (1 - self.height) / 2
                     collisions = self.predictCollisions(self.x, ny)
-                    removePlayerFromCollisions(collisions)
+                    removeFromCollisions(collisions, ["player"])
                     if (len(collisions) != 0):
                         self.rise = not self.rise
             if (self.state == "go"):
@@ -122,14 +123,6 @@ class EntitySkeleton(EntityAlive):
                 if (self.bone is not None):
                     self.screen.addEntity(self.bone)
                     self.bone = None
-
-
-def removePlayerFromCollisions(collisions: list):
-    for i, (rect, obj) in enumerate(collisions):
-        if (isinstance(obj, Entity)):
-            if (obj.id == "player"):
-                collisions.pop(i)
-                return
 
 
 EntityAlive.registerEntity("skeleton", EntitySkeleton)

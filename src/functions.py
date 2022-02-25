@@ -231,3 +231,11 @@ class TextAnimator:
     def toEnd(self):
         self.stop == True
         self.curLines = self.lines
+
+
+def removeFromCollisions(collisions: list, entitiesId: list[str]):
+    from game.entity import Entity
+    for i, (rect, obj) in enumerate(collisions):
+        if (isinstance(obj, Entity)):
+            if (obj.id in entitiesId):
+                collisions.pop(i)

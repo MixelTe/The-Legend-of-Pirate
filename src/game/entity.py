@@ -140,8 +140,9 @@ class Entity:
                     self.pushOutside(rect)
                 return colision
             else:
-                nX = self.x + self.speedX * tile.speed * moveX
-                nY = self.y + self.speedY * tile.speed * moveY
+                if (not self.ghostT):
+                    nX = self.x + self.speedX * tile.speed * moveX
+                    nY = self.y + self.speedY * tile.speed * moveY
 
         for entity in self.screen.entities:
             if (entity == self or entity.hidden):

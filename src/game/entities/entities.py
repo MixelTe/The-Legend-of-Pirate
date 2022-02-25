@@ -1,8 +1,9 @@
 import math
 import pygame
-from functions import load_entityImg, load_sound
+from functions import load_entityImg, load_sound, removeFromCollisions
 from game.entity import Entity, EntityAlive, EntityGroups
 from random import random
+from game.tile import Tile
 
 from settings import Settings
 
@@ -185,3 +186,30 @@ class EntityBone(EntityAlive):
 
 
 Entity.registerEntity("bone", EntityBone)
+
+
+class EntityInk(EntityAlive):
+    image = load_entityImg("ink.png", 0.6, 0.6)
+
+    def __init__(self, screen, data: dict = None):
+        super().__init__(screen, data)
+        self.image = EntityInk.image
+        self.group = EntityGroups.enemy
+        self.ghostT = True
+        self.ghostE = True
+        self.strength = 1
+        self.speed = 0.1
+        self.width = 0.6
+        self.height = 0.6
+
+    def canGoOn(self, tile: Tile) -> bool:
+        return super().canGoOn(tile) or "water-deep" in tile.tags
+
+    def update(self):
+        collisions = super().update()
+        removeFromCollisions(collisions, ["tentacle"])
+        if (len(collisions) != 0):
+            self.remove()
+
+
+Entity.registerEntity("ink", EntityInk)
