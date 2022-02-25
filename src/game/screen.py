@@ -61,7 +61,7 @@ class Screen:
             self.addEntity(e)
 
     def update(self) -> Union[None, ScreenGoTo]:
-        self.entities.sort(key=lambda e: (e.drawPriority, e.y))
+        self.entities.sort(key=lambda e: (e.drawPriority, e.y + e.height))
         for entity in self.entities:
             entity.preUpdate()
         for entity in self.entities:
@@ -121,7 +121,7 @@ class Screen:
 
 
 class ScreenGoTo:
-    def __init__(self, world: str, screen: tuple[int, int], image: pygame.Surface, pos: Union[tuple[int, int], None]):
+    def __init__(self, world: str, screen: tuple[int, int], image: pygame.Surface, pos: Union[tuple[int, int], None] = None):
         self.world = world
         self.screen = screen
         self.pos = pos

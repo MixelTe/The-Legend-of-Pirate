@@ -122,6 +122,8 @@ class EntityBush(Entity):
     def __init__(self, screen, data: dict = None):
         super().__init__(screen, data)
         self.image = EntityBush.image
+        self.hidden = True
+        self.ghostE = True
 
 
 Entity.registerEntity("bush", EntityBush)
@@ -213,3 +215,31 @@ class EntityInk(EntityAlive):
 
 
 Entity.registerEntity("ink", EntityInk)
+
+
+class EntityWood(Entity):
+    image = load_entityImg("wood.png", 0.875, 0.4375)
+
+    def __init__(self, screen, data: dict = None):
+        super().__init__(screen, data)
+        self.image = EntityWood.image
+        self.width = 0.875
+        self.height = 0.25
+        self.imagePos = (0, -0.1875)
+
+
+Entity.registerEntity("wood", EntityWood)
+
+
+class EntityWood2(Entity):
+    image = load_entityImg("wood2.png", 0.9375, 0.625)
+
+    def __init__(self, screen, data: dict = None):
+        super().__init__(screen, data)
+        self.image = EntityWood2.image
+        self.width = 0.6875
+        self.height = 0.625
+        self.imagePos = (-0.125, 0)
+
+
+Entity.registerEntity("wood2", EntityWood2)
