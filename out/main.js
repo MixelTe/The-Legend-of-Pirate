@@ -651,6 +651,8 @@ class View {
     setEntity(x, y) {
         if (penEntity && !this.getEntity(x, y)) {
             const e = new penEntity(x / TileSize, y / TileSize);
+            e.x -= e.getWidth() / 2;
+            e.y -= e.getHeight() / 2;
             if (ctrl)
                 e.snapToPixels();
             else
