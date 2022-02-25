@@ -164,6 +164,9 @@ class EntityBone(EntityAlive):
         self.height = 0.6
         self.rotation = 0
 
+    def canGoOn(self, tile: Tile) -> bool:
+        return super().canGoOn(tile) or "low" in tile.tags
+
     def draw(self, surface: pygame.Surface):
         self.image = pygame.transform.rotate(EntityBone.image, self.rotation)
         if (self.rotation < 90):
@@ -205,7 +208,7 @@ class EntityInk(EntityAlive):
         self.height = 0.6
 
     def canGoOn(self, tile: Tile) -> bool:
-        return super().canGoOn(tile) or "water-deep" in tile.tags
+        return super().canGoOn(tile) or "low" in tile.tags
 
     def update(self):
         collisions = super().update()

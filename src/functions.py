@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Literal, Union
 import pygame
 import os
 import json
@@ -239,3 +239,12 @@ def removeFromCollisions(collisions: list, entitiesId: list[str]):
         if (isinstance(obj, Entity)):
             if (obj.id in entitiesId):
                 collisions.pop(i)
+
+
+def compare(a: float, sign: Union[Literal["=="], Literal[">="], Literal["<="]], b: float):
+    isEqual = abs(a - b) < 0.00001
+    if (sign == ">="):
+        return isEqual or a > b
+    if (sign == "<="):
+        return isEqual or a < b
+    return isEqual

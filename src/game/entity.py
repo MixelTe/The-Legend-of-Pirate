@@ -141,8 +141,8 @@ class Entity:
                 return colision
             else:
                 if (not self.ghostT):
-                    nX = self.x + self.speedX * tile.speed * moveX
-                    nY = self.y + self.speedY * tile.speed * moveY
+                    nX = self.x + self.speedX * self.tileSpeed(tile) * moveX
+                    nY = self.y + self.speedY * self.tileSpeed(tile) * moveY
 
         for entity in self.screen.entities:
             if (entity == self or entity.hidden):
@@ -241,6 +241,9 @@ class Entity:
 
     def canGoOn(self, tile: Tile) -> bool:
         return not tile.solid
+
+    def tileSpeed(self, tile: Tile) -> float:
+        return tile.speed
 
     def remove(self):
         self.screen.removeEntity(self)

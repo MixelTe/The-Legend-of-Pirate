@@ -5,6 +5,7 @@ from functions import load_sound, rectPointIntersection
 from game.animator import Animator, AnimatorData
 from game.entity import Entity, EntityAlive, EntityGroups
 from game.saveData import SaveData
+from game.tile import Tile
 from settings import Settings
 
 
@@ -78,6 +79,12 @@ class EntityPlayer(EntityAlive):
         self.animator.damageAnimCount = 4
         self.lastAttaker = ""
         self.walkSoundCounter = 0
+
+        if (Settings.ghostmode):
+            self.hidden = True
+            self.ghostE = True
+            self.ghostE = True
+            self.immortal = True
 
     def onKeyDown(self, key):
         if (key == pygame.K_w or key == pygame.K_UP):
@@ -341,3 +348,8 @@ class EntityPlayer(EntityAlive):
     def centerTo(self, pos: tuple[int, int]):
         self.x = pos[0] + self.width / 2
         self.y = pos[1] + self.height / 2
+
+    def canGoOn(self, tile: Tile) -> bool:
+        if (Settings.ghostmode):
+            return True
+        return super().canGoOn(tile)
