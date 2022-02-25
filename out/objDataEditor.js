@@ -45,6 +45,14 @@ class ObjDataEditor {
                     }
                 }
             }
+            if (data.header) {
+                const td = initEl("th", [], [], data.header);
+                td.colSpan = 2;
+                table.appendChild(TR([], [
+                    TD(),
+                    td,
+                ]));
+            }
             const td = TD();
             const tr = TR([], [
                 TD([], [colorRect]),
