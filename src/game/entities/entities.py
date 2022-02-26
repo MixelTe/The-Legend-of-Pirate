@@ -124,6 +124,16 @@ class EntityBush(Entity):
         self.image = EntityBush.image
         self.hidden = True
         self.ghostE = True
+        self.active = False
+
+    def update(self):
+        super().update()
+        self.active = self.screen.player.is_inRect(self.get_rect())
+
+    def draw(self, surface: pygame.Surface, opaque=1):
+        if (self.active):
+            return super().draw(surface, 0.7)
+        return super().draw(surface, opaque)
 
 
 Entity.registerEntity("bush", EntityBush)

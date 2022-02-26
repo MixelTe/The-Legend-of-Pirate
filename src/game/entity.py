@@ -81,13 +81,18 @@ class Entity:
             self.animator.update()
         return self.move()
 
-    def draw(self, surface: pygame.Surface):
+    def draw(self, surface: pygame.Surface, opaque=1):
         if (self.animator is not None):
             self.image, self.imagePos = self.animator.getImage()
 
         rect = multRect(self.get_rect(), Settings.tileSize)
         if (self.image is not None):
-            surface.blit(self.image, (rect[0] + self.imagePos[0] * Settings.tileSize,
+            image = self.image
+            if (opaque != 1):
+                image = self.image.copy()
+                alpha = max(min(opaque * 255, 255), 0)
+                image.fill((255, 255, 255, alpha), None, pygame.BLEND_RGBA_MULT)
+            surface.blit(image, (rect[0] + self.imagePos[0] * Settings.tileSize,
                          rect[1] + self.imagePos[1] * Settings.tileSize))
 
         self.draw_dev(surface)
@@ -257,12 +262,11 @@ class Entity:
         return (self.screen.tiles[y][x], (x, y))
 
     def get_entities(self, rect: tuple[float, float, float, float]) -> list[Entity]:
-        rectSelf = self.get_rect()
         entities = []
         for entity in self.screen.entities:
             if (entity == self):
                 continue
-            if (entity.is_inRect(rectSelf)):
+            if (entity.is_inRect(rect)):
                 entities.append(entity)
         return entities
 
@@ -285,9 +289,13 @@ class Entity:
         rectNew = (rectSelf[0] + rect[0], rectSelf[1] + rect[1], rect[2], rect[3])
         return entity.is_inRect(rectNew)
 
-    def predictCollisions(self, x: float, y: float) -> list[tuple[tuple[int, int, int, int], Union[Tile, Entity, None]]]:
+    def predictCollisions(self, x: float, y: float, w: float = None, h: float = None) -> list[tuple[tuple[int, int, int, int], Union[Tile, Entity, None]]]:
         # столкновения, если бы сущность была расположена по этим координатам
-        newRect = (x, y, self.width, self.height)
+        newRect = [x, y, self.width, self.height]
+        if (w):
+            newRect[2] = w
+        if (h):
+            newRect[3] = h
         colision = []
         for (tile, x, y) in self.screen.getTiles():
             rect = (x, y, 1, 1)

@@ -78,22 +78,22 @@ class EntityPiranha(EntityAlive):
                     if (compare(self.x - int(self.x), "<=", (1 - self.width) / 2)):
                         rise = True
                 if (rise or len(collisions) != 0):
-                    nx = int(self.x) + (1 if self.dirR else -1) + (1 - self.width) / 2
-                    collisions = self.predictCollisions(nx, self.y)
+                    nx = int(self.x) + (1 if self.dirR else -1)
+                    collisions = self.predictCollisions(nx + 0.1, int(self.y) + 0.1, 0.8, 0.8)
                     removeFromCollisions(collisions, ["player"])
                     if (len(collisions) != 0):
                         self.dirR = not self.dirR
                         self.x = int(self.x) + (1 - self.width) / 2
                         self.state = "rise"
                         self.pastCoord = self.y
-                        ny = int(self.y) + (-1 if self.rise else 1) + (1 - self.height) / 2
-                        collisions = self.predictCollisions(self.x, ny)
+                        ny = int(self.y) + (-1 if self.rise else 1)
+                        collisions = self.predictCollisions(int(self.x) + 0.1, ny + 0.1, 0.8, 0.8)
                         removeFromCollisions(collisions, ["player"])
                         if (len(collisions) != 0):
                             self.rise = not self.rise
+                        self.animator.setAnimation("moveW" if self.rise else "moveS")
                         self.speedX = 0
                         self.speedY = self.speed * (-1 if self.rise else 1)
-                        self.animator.setAnimation("moveW" if self.rise else "moveS")
                 if (self.state == "go"):
                     self.animator.setAnimation("moveD" if self.dirR else "moveA")
             else:
@@ -108,16 +108,16 @@ class EntityPiranha(EntityAlive):
                     if (compare(self.y - int(self.y), ">=", (1 - self.height) / 2)):
                         rise = True
                 if (rise or len(collisions) != 0):
-                    ny = int(self.y) + (-1 if self.dirR else 1) + (1 - self.height) / 2
-                    collisions = self.predictCollisions(self.x, ny)
+                    ny = int(self.y) + (-1 if self.dirR else 1)
+                    collisions = self.predictCollisions(int(self.x) + 0.1, ny + 0.1, 0.8, 0.8)
                     removeFromCollisions(collisions, ["player"])
                     if (len(collisions) != 0):
                         self.dirR = not self.dirR
                         self.y = int(self.y) + (1 - self.height) / 2
                         self.state = "rise"
                         self.pastCoord = self.x
-                        nx = int(self.x) + (1 if self.rise else -1) + (1 - self.width) / 2
-                        collisions = self.predictCollisions(nx, self.y)
+                        nx = int(self.x) + (1 if self.rise else -1)
+                        collisions = self.predictCollisions(nx + 0.1, int(self.y) + 0.1, 0.8, 0.8)
                         removeFromCollisions(collisions, ["player"])
                         if (len(collisions) != 0):
                             self.rise = not self.rise

@@ -27,7 +27,7 @@ class Settings:
     drawNoneImgs = False
     drawGrid = False
     disableAI = False
-    ghostmode = True
+    ghostmode = False
     moveScreenOnNumpad = True
 
 

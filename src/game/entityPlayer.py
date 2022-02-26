@@ -334,6 +334,13 @@ class EntityPlayer(EntityAlive):
             if (self.screen.tryGoTo("down")):
                 self.y = 0.1
 
+        if (not Settings.ghostmode):
+            entities = self.get_entitiesD((0, self.height * 0.9, self.width, self.height * 0.1))
+            self.visibleForEnemies = True
+            for entity in entities:
+                if (entity.id == "bush"):
+                    self.visibleForEnemies = False
+                    break
         # self.animator.setAnimation("attack_swimS")
 
     def preUpdate(self):
@@ -355,3 +362,8 @@ class EntityPlayer(EntityAlive):
         if (Settings.ghostmode):
             return True
         return super().canGoOn(tile)
+
+    def draw(self, surface: pygame.Surface):
+        if (not self.visibleForEnemies):
+            return super().draw(surface, 0.7)
+        return super().draw(surface)
