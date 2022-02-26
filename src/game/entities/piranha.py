@@ -12,6 +12,7 @@ animatorData = AnimatorData("piranha", [
     ("moveD.png", 150, (35, 32), (-0.05, -0.15, 0.91, 1)),
     ("moveW.png", 150, (32, 35), (-0.15, -0.05, 1, 0.91)),
     ("moveS.png", 150, (32, 35), (-0.15, -0.05, 1, 0.91)),
+    ("charging.png", 300, (35, 32), (-0.05, -0.15, 0.91, 1)),
 ])
 
 
@@ -33,6 +34,7 @@ class EntityPiranha(EntityAlive):
         self.speedYA = 0
         self.state = "go"
         self.returnTile = (0, 0)
+        self.attackD = (0, 0)
 
     def applyData(self, dataSetter: Callable[[str, Any, str, Callable[[Any], Any]], None], data: dict):
         super().applyData(dataSetter, data)
@@ -145,6 +147,21 @@ class EntityPiranha(EntityAlive):
                     self.state = "go"
             if (self.state == "rise"):
                 self.startAttack()
+        elif (self.state == "charging"):
+            self.speedX = 0
+            self.speedY = 0
+            if (self.animator.lastState[1]):
+                self.state = "attack"
+                attackTime = 500 / 1000 * Settings.fps
+                dx, dy = self.attackD
+                if (abs(dx) > abs(dy)):
+                    self.animator.setAnimation("moveD" if dx > 0 else "moveA")
+                else:
+                    self.animator.setAnimation("moveS" if dy > 0 else "moveW")
+                self.speedX = dx / attackTime * 2
+                self.speedY = dy / attackTime * 2
+                self.speedXA = (self.speedX ** 2 / (-2 * dx)) if (dx != 0) else 0
+                self.speedYA = (self.speedY ** 2 / (-2 * dy)) if (dy != 0) else 0
         elif (self.state == "attack"):
             self.speedX += self.speedXA
             self.speedY += self.speedYA
@@ -182,21 +199,13 @@ class EntityPiranha(EntityAlive):
         if (not self.screen.player.visibleForEnemies):
             return
         attackRange = 4
-        attackTime = 500 / 1000 * Settings.fps
         if (distance(self.get_rect(), self.screen.player.get_rect()) <= attackRange ** 2):
             self.returnTile = (int(self.x + self.width / 2), int(self.y + self.height / 2))
-            self.state = "attack"
-            self.animator.setAnimation("stay")
+            self.state = "charging"
+            self.animator.setAnimation("charging")
             dx = (self.screen.player.x + self.screen.player.width / 2) - (self.x + self.width / 2)
             dy = (self.screen.player.y + self.screen.player.height / 2) - (self.y + self.height / 2)
-            if (abs(dx) > abs(dy)):
-                self.animator.setAnimation("moveD" if dx > 0 else "moveA")
-            else:
-                self.animator.setAnimation("moveS" if dy > 0 else "moveW")
-            self.speedX = dx / attackTime * 2
-            self.speedY = dy / attackTime * 2
-            self.speedXA = (self.speedX ** 2 / (-2 * dx)) if (dx != 0) else 0
-            self.speedYA = (self.speedY ** 2 / (-2 * dy)) if (dy != 0) else 0
+            self.attackD = (dx, dy)
 
 
 EntityAlive.registerEntity("piranha", EntityPiranha)
