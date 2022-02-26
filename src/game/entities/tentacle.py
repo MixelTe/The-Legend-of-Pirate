@@ -57,8 +57,12 @@ class EntityTentacle(EntityAlive):
                 self.y = y + (1 - self.height) / 2
         elif (self.state == "appear"):
             if (self.animator.lastState[1]):
-                self.animator.setAnimation("attack")
-                self.state = "attack"
+                if (self.screen.player.visibleForEnemies):
+                    self.animator.setAnimation("attack")
+                    self.state = "attack"
+                else:
+                    self.animator.setAnimation("hide")
+                    self.state = "hide"
         elif (self.state == "attack"):
             if (self.animator.lastState[0] and self.animator.frame == 2):
                 self.fire()

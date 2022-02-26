@@ -117,7 +117,7 @@ class EntitySkeleton(EntityAlive):
                             self.rise = not self.rise
                 if (self.state == "go"):
                     self.animator.setAnimation("moveW" if self.dirR else "moveS")
-            if (self.state == "go" and (not Settings.ghostmode)):
+            if (self.state == "go" and self.screen.player.visibleForEnemies):
                 if (abs(self.x - self.screen.player.x) < self.screen.player.width or
                         abs(self.y - self.screen.player.y) < self.screen.player.height):
                     self.speedX = 0

@@ -54,11 +54,11 @@ class EntityCrab(EntityAlive):
         if (not self.alive or Settings.disableAI):
             return
         if (self.state == "sleep"):
-            if (self.is_inRectD(self.lookZone, self.screen.player)):
+            if (self.is_inRectD(self.lookZone, self.screen.player) and self.screen.player.visibleForEnemies):
                 self.state = "agr"
                 self.animator.setAnimation("agr")
         elif (self.state == "agr"):
-            if (self.is_inRectD(self.lookZone, self.screen.player)):
+            if (self.is_inRectD(self.lookZone, self.screen.player) and self.screen.player.visibleForEnemies):
                 self.target = (self.screen.player.x + self.screen.player.width / 2,
                                self.screen.player.y + self.screen.player.height / 2)
             if (self.animator.lastState[1]):

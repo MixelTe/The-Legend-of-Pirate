@@ -79,12 +79,14 @@ class EntityPlayer(EntityAlive):
         self.animator.damageAnimCount = 4
         self.lastAttaker = ""
         self.walkSoundCounter = 0
+        self.visibleForEnemies = True
 
         if (Settings.ghostmode):
             self.hidden = True
             self.ghostE = True
             self.ghostE = True
             self.immortal = True
+            self.visibleForEnemies = False
 
     def onKeyDown(self, key):
         if (key == pygame.K_w or key == pygame.K_UP):
