@@ -32,7 +32,7 @@ class EntityMarket(Entity):
                 self.item = None
 
     def applyData(self, dataSetter: Callable[[str, Any, str, Callable[[Any], Any]], None], data: dict):
-        super().applyData(dataSetter)
+        super().applyData(dataSetter, data)
         dataSetter("price", self.price)
         dataSetter("speech", self.speech)
         if ("item id" in data):
