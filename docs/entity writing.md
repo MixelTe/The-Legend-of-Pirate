@@ -266,14 +266,16 @@ class EntityCoolName(Entity):
         collisions = super().update()
 
         for rect, collision in collisions:
-            if (isinstance(collision, EntityPlayer)):
-                print("Столкновение с игроком"):
-            elif (isinstance(collision, Tile)):
-                if (collision.id == "water_deep"):
+            if (collision is not None):
+                if (collision.id == "player"):
+                    print("Столкновение с игроком")
+                elif (collision.id == "water_deep"):
                     print("Столкновение с глубокой водой")
 ```
 
 Для создания сущности, не подчиняющейся законам физики, необходимо убрать вызов метода **super().update()**. При этом будет необходимо будет самостоятельно прочитывать движение сущности.
+
+Все противники должны перестовать атаковать игрока, если значение self.screen.player.visibleForEnemies не True
 
 ## Взаимодействие с миром
 Для создания сложных сущностей потребуятся данные о мире и способы взаимодействовать с ним.
