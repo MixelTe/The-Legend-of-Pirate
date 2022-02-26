@@ -248,3 +248,16 @@ def compare(a: float, sign: Union[Literal["=="], Literal[">="], Literal["<="]], 
     if (sign == "<="):
         return isEqual or a < b
     return isEqual
+
+
+def distance(r1: tuple[float, float, float, float], r2: tuple[float, float, float, float], center=True, sqrt=False):
+    if (center):
+        dx = (r1[0] + r1[2] / 2) - (r2[0] + r2[2] / 2)
+        dy = (r1[1] + r1[3] / 2) - (r2[1] + r2[3] / 2)
+    else:
+        dx = r1[0] - r2[0]
+        dy = r1[1] - r2[1]
+    d = dx * dx + dy * dy
+    if (sqrt):
+        d = d ** 0.5
+    return d

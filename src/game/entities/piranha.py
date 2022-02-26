@@ -1,5 +1,5 @@
 from typing import Any, Callable
-from functions import compare, removeFromCollisions
+from functions import compare, distance, removeFromCollisions
 from game.animator import Animator, AnimatorData
 from game.entity import EntityAlive, EntityGroups
 from game.tile import Tile
@@ -29,7 +29,10 @@ class EntityPiranha(EntityAlive):
         self.health = 2
         self.width = 0.8
         self.height = 0.7
+        self.speedXA = 0
+        self.speedYA = 0
         self.state = "go"
+        self.returnTile = (0, 0)
 
     def applyData(self, dataSetter: Callable[[str, Any, str, Callable[[Any], Any]], None], data: dict):
         super().applyData(dataSetter, data)
@@ -38,6 +41,8 @@ class EntityPiranha(EntityAlive):
         dataSetter("rise", self.rise)
 
     def canGoOn(self, tile: Tile) -> bool:
+        if (self.state == "attack" or self.state == "return"):
+            return not tile.solid or "water-deep" in tile.tags
         return "water" in tile.tags or "water-deep" in tile.tags
 
     def tileSpeed(self, tile: Tile) -> float:
@@ -71,15 +76,12 @@ class EntityPiranha(EntityAlive):
                     if (compare(self.x - int(self.x), "<=", (1 - self.width) / 2)):
                         rise = True
                 if (rise or len(collisions) != 0):
-                    ny = int(self.x) + (1 if self.dirR else -1) + (1 - self.width) / 2
-                    collisions = self.predictCollisions(ny, self.y)
+                    nx = int(self.x) + (1 if self.dirR else -1) + (1 - self.width) / 2
+                    collisions = self.predictCollisions(nx, self.y)
                     removeFromCollisions(collisions, ["player"])
                     if (len(collisions) != 0):
-                        self.animator.setAnimation("moveW" if self.rise else "moveS")
                         self.dirR = not self.dirR
                         self.x = int(self.x) + (1 - self.width) / 2
-                        self.speedX = 0
-                        self.speedY = self.speed * (-1 if self.rise else 1)
                         self.state = "rise"
                         self.pastCoord = self.y
                         ny = int(self.y) + (-1 if self.rise else 1) + (1 - self.height) / 2
@@ -87,6 +89,9 @@ class EntityPiranha(EntityAlive):
                         removeFromCollisions(collisions, ["player"])
                         if (len(collisions) != 0):
                             self.rise = not self.rise
+                        self.speedX = 0
+                        self.speedY = self.speed * (-1 if self.rise else 1)
+                        self.animator.setAnimation("moveW" if self.rise else "moveS")
                 if (self.state == "go"):
                     self.animator.setAnimation("moveD" if self.dirR else "moveA")
             else:
@@ -105,11 +110,8 @@ class EntityPiranha(EntityAlive):
                     collisions = self.predictCollisions(self.x, ny)
                     removeFromCollisions(collisions, ["player"])
                     if (len(collisions) != 0):
-                        self.animator.setAnimation("moveD" if self.rise else "moveA")
                         self.dirR = not self.dirR
                         self.y = int(self.y) + (1 - self.height) / 2
-                        self.speedY = 0
-                        self.speedX = self.speed * (1 if self.rise else -1)
                         self.state = "rise"
                         self.pastCoord = self.x
                         nx = int(self.x) + (1 if self.rise else -1) + (1 - self.width) / 2
@@ -117,8 +119,13 @@ class EntityPiranha(EntityAlive):
                         removeFromCollisions(collisions, ["player"])
                         if (len(collisions) != 0):
                             self.rise = not self.rise
+                        self.animator.setAnimation("moveD" if self.rise else "moveA")
+                        self.speedY = 0
+                        self.speedX = self.speed * (1 if self.rise else -1)
                 if (self.state == "go"):
                     self.animator.setAnimation("moveW" if self.dirR else "moveS")
+            if (self.state == "go"):
+                self.startAttack()
         elif (self.state == "rise"):
             if (self.moveStyle == "ver"):
                 self.animator.setAnimation("moveW" if self.rise else "moveS")
@@ -136,6 +143,60 @@ class EntityPiranha(EntityAlive):
                 if (compare(abs(self.pastCoord - self.x), ">=", 1) or len(collisions) != 0):
                     self.x = int(self.x) + (1 - self.width) / 2
                     self.state = "go"
+            if (self.state == "rise"):
+                self.startAttack()
+        elif (self.state == "attack"):
+            self.speedX += self.speedXA
+            self.speedY += self.speedYA
+            if (abs(self.speedX) < abs(self.speedX + self.speedXA)
+                or abs(self.speedY) < abs(self.speedY + self.speedYA)):
+                self.state = "return"
+        elif (self.state == "return"):
+            dx = (self.returnTile[0] + 0.5) - (self.x + self.width / 2)
+            dy = (self.returnTile[1] + 0.5) - (self.y + self.height / 2)
+            if (abs(self.speedX) < abs(self.speedX + self.speedXA)
+                or abs(self.speedY) < abs(self.speedY + self.speedYA)):
+                returnTime = 800 / 1000 * Settings.fps
+                dx = max(min(dx, 1), -1)
+                dy = max(min(dy, 1), -1)
+                if (abs(dx) <= 0.4 and abs(dy) <= 0.4):
+                    self.speedX = dx / returnTime * 4
+                    self.speedY = dy / returnTime * 4
+                    self.speedXA = 0
+                    self.speedYA = 0
+                else:
+                    self.speedX = dx / returnTime * 2
+                    self.speedY = dy / returnTime * 2
+                    self.speedXA = (self.speedX ** 2 / (-2 * dx)) if (dx != 0) else 0
+                    self.speedYA = (self.speedY ** 2 / (-2 * dy)) if (dy != 0) else 0
+                if (abs(dx) > abs(dy)):
+                    self.animator.setAnimation("moveD" if dx > 0 else "moveA")
+                else:
+                    self.animator.setAnimation("moveS" if dy > 0 else "moveW")
+            if (abs(dx) <= 0.01 and abs(dy) <= 0.01):
+                self.state = "go"
+            self.speedX += self.speedXA
+            self.speedY += self.speedYA
+
+    def startAttack(self):
+        if (not self.screen.player.visibleForEnemies):
+            return
+        attackRange = 4
+        attackTime = 500 / 1000 * Settings.fps
+        if (distance(self.get_rect(), self.screen.player.get_rect()) <= attackRange ** 2):
+            self.returnTile = (int(self.x + self.width / 2), int(self.y + self.height / 2))
+            self.state = "attack"
+            self.animator.setAnimation("stay")
+            dx = (self.screen.player.x + self.screen.player.width / 2) - (self.x + self.width / 2)
+            dy = (self.screen.player.y + self.screen.player.height / 2) - (self.y + self.height / 2)
+            if (abs(dx) > abs(dy)):
+                self.animator.setAnimation("moveD" if dx > 0 else "moveA")
+            else:
+                self.animator.setAnimation("moveS" if dy > 0 else "moveW")
+            self.speedX = dx / attackTime * 2
+            self.speedY = dy / attackTime * 2
+            self.speedXA = (self.speedX ** 2 / (-2 * dx)) if (dx != 0) else 0
+            self.speedYA = (self.speedY ** 2 / (-2 * dy)) if (dy != 0) else 0
 
 
 EntityAlive.registerEntity("piranha", EntityPiranha)
