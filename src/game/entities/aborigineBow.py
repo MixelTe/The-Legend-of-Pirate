@@ -5,7 +5,7 @@ from settings import Settings
 
 
 animatorData = AnimatorData("aborigineBow", [
-    ("stay.png", 0, (15, 16), (0, 0, 0.93, 1)),
+    ("stay.png", 0, (15, 16), (-0.241, -0.6, 1.2, 1.3)),
 ])
 
 
@@ -17,8 +17,8 @@ class EntityAborigineBow(EntityAlive):
         self.strength = 1
         self.healthMax = 2
         self.health = 2
-        self.width = 0.93
-        self.height = 1
+        self.width = 0.32
+        self.height = 0.7
 
     def canGoOn(self, tile: Tile) -> bool:
         return "water" not in tile.tags and super().canGoOn(tile)

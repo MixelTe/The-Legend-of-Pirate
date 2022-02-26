@@ -74,6 +74,7 @@ class ObjDataEditor
 				case "area": this.createValueEdit_area(<EntityData<"area">>data, td, onChange); break;
 				case "tile": this.createValueEdit_tile(<EntityData<"tile">>data, td, vx, vy, onChange); break;
 				case "tiles": this.createValueEdit_tiles(<EntityData<"tiles">>data, td, vx, vy, onChange); break;
+				case "tilesNumered": this.createValueEdit_tiles(<EntityData<"tilesNumered">>data, td, vx, vy, onChange); break;
 				case "coords": this.createValueEdit_coords(<EntityData<"coords">>data, td, onChange); break;
 				default: console.error("switch default"); break;
 			}
@@ -398,7 +399,7 @@ class ObjDataEditor
 			onChange(data);
 		});
 	}
-	private createValueEdit_tiles(data: EntityData<"tiles">, td: HTMLTableCellElement, vx: number, vy: number, onChange: (data: EntityData<any>) => void)
+	private createValueEdit_tiles(data: EntityData<"tiles" | "tilesNumered">, td: HTMLTableCellElement, vx: number, vy: number, onChange: (data: EntityData<any>) => void)
 	{
 		const inpNone = Input([], "checkbox");
 		const span = Span([], [], "0шт ");
@@ -441,7 +442,7 @@ class ObjDataEditor
 		});
 		btn.addEventListener("click", async () =>
 		{
-			const r = await new EntityEditor_TileSeclector(vx, vy, false, points).get();
+			const r = await new EntityEditor_TileSeclector(vx, vy, false, points, data.type == "tilesNumered").get();
 			console.log(r);
 			if (r) points = r;
 			data.value = points;
@@ -579,10 +580,12 @@ class EntityEditor_TileSeclector
 	private selected: Point[] = [];
 	private ctx: CanvasRenderingContext2D;
 	private cursor: Point | undefined;
-	constructor(vx: number, vy: number, oneTile: boolean, cur?: Point[])
+	private numered: boolean;
+	constructor(vx: number, vy: number, oneTile: boolean, cur?: Point[], numered?: boolean)
 	{
 		this.popup = new Popup();
 		this.view = world.map[vy][vx];
+		this.numered = !!numered;
 		this.oneTile = oneTile;
 		if (cur) this.selected = JSON.parse(JSON.stringify(cur));
 		if (oneTile) this.popup.title = "Выбор клетки";
@@ -666,10 +669,17 @@ class EntityEditor_TileSeclector
 			{
 				const img = tileImages[tile.id];
 				if (img) this.ctx.drawImage(img, 0, 0, this.tileSize, this.tileSize);
-				if (this.pointSelected(x, y) != null)
+				const i = this.pointSelected(x, y)
+				if (i != null)
 				{
 					this.ctx.fillStyle = "rgba(0, 255, 0, 0.2)";
 					this.ctx.fillRect(0, 0, this.tileSize, this.tileSize);
+					if (this.numered)
+					{
+						this.ctx.fillStyle = "rgba(255, 0, 255, 0.6)";
+						this.ctx.font = "20px Aria"
+						this.ctx.fillText(`${i}`, 6, 17);
+					}
 					this.ctx.strokeStyle = "lime";
 					this.ctx.lineWidth = 1;
 					const shift = 2;
@@ -693,7 +703,7 @@ class EntityEditor_TileSeclector
 		for (let i = 0; i < selected.length; i++)
 		{
 			const point = selected[i];
-			if (point[0] == x && point[0] == y) return i;
+			if (point[0] == x && point[1] == y) return i;
 		}
 		return null;
 	}
@@ -704,7 +714,7 @@ class EntityEditor_TileSeclector
 		if (!r || this.selected.length == 0) return null;
 		this.selected.forEach(el =>
 		{
-			if (!this.pointSelected(el[0], el[1], selected))
+			if (this.pointSelected(el[0], el[1], selected) == null)
 			{
 				selected.push(el);
 			}

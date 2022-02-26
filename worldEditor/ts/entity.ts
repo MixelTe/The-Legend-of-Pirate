@@ -37,26 +37,6 @@ class Entity
 	{
 		const obj = <EntityObj><any>this.constructor;
 		if (obj.img == undefined) return;
-		const width = obj.widthImg * TileSize;
-		const height = obj.heightImg * TileSize;
-		const selected = selectedEntities.includes(this);
-		ctx.save();
-		if (entity_moving && (entity_moving.entity == this || selected)) ctx.translate(entity_moving.dx, entity_moving.dy);
-		ctx.drawImage(obj.img, 0, 0, obj.width, obj.height, (this.x + obj.xImg) * TileSize, (this.y + obj.yImg) * TileSize, width, height);
-		if (inp_mode_entity.checked)
-		{
-			if (selectedEntity == this) ctx.strokeStyle = "rgba(255, 0, 0, 0.5)";
-			else ctx.strokeStyle = "rgba(0, 0, 0, 0.5)";
-			ctx.strokeRect(this.x * TileSize, this.y * TileSize, obj.widthHitbox * TileSize, obj.heightHitbox * TileSize);
-			if (selected)
-			{
-				ctx.strokeStyle = "rgba(255, 0, 0, 1)";
-				if (selectedEntity == this) ctx.lineWidth = 4;
-				else ctx.lineWidth = 2;
-				ctx.strokeRect(this.x * TileSize - 2, this.y * TileSize - 2, obj.widthHitbox * TileSize + 4, obj.heightHitbox * TileSize + 4);
-			}
-		}
-		ctx.restore();
 		if (selectedEntity == this)
 		{
 			const fontSize = TileSize / 5;
@@ -103,7 +83,7 @@ class Entity
 					ctx.fillRect(point[0] * TileSize, point[1] * TileSize, TileSize, TileSize);
 					ctx.restore();
 				}
-				else if (data.type == 'tiles')
+				else if (data.type == 'tiles' || data.type == 'tilesNumered')
 				{
 					const points = <Point[]>data.value;
 					if (points == null) continue;
@@ -113,12 +93,40 @@ class Entity
 					{
 						const point = points[j];
 						ctx.fillRect(point[0] * TileSize, point[1] * TileSize, TileSize, TileSize);
+						if (data.type == 'tilesNumered')
+						{
+							ctx.save();
+							ctx.fillStyle = "rgb(255, 0, 255)";
+							ctx.font = `${TileSize}px Aria`
+							ctx.fillText(`${j}`, point[0] * TileSize + TileSize * 0.2, point[1] * TileSize + TileSize * 0.8);
+							ctx.restore();
+						}
 					}
 					ctx.restore();
 				}
 			}
 			ctx.restore();
 		}
+		const width = obj.widthImg * TileSize;
+		const height = obj.heightImg * TileSize;
+		const selected = selectedEntities.includes(this);
+		ctx.save();
+		if (entity_moving && (entity_moving.entity == this || selected)) ctx.translate(entity_moving.dx, entity_moving.dy);
+		ctx.drawImage(obj.img, 0, 0, obj.width, obj.height, (this.x + obj.xImg) * TileSize, (this.y + obj.yImg) * TileSize, width, height);
+		if (inp_mode_entity.checked)
+		{
+			if (selectedEntity == this) ctx.strokeStyle = "rgba(255, 0, 0, 0.5)";
+			else ctx.strokeStyle = "rgba(0, 0, 0, 0.5)";
+			ctx.strokeRect(this.x * TileSize, this.y * TileSize, obj.widthHitbox * TileSize, obj.heightHitbox * TileSize);
+			if (selected)
+			{
+				ctx.strokeStyle = "rgba(255, 0, 0, 1)";
+				if (selectedEntity == this) ctx.lineWidth = 4;
+				else ctx.lineWidth = 2;
+				ctx.strokeRect(this.x * TileSize - 2, this.y * TileSize - 2, obj.widthHitbox * TileSize + 4, obj.heightHitbox * TileSize + 4);
+			}
+		}
+		ctx.restore();
 	};
 	public intersect(x: number, y: number)
 	{
@@ -203,6 +211,7 @@ interface EntityDataType
 	"area": Rect | null,
 	"tile": Point | null,
 	"tiles": Point[] | null,
+	"tilesNumered": Point[] | null,
 	"coords": Point | null,
 	"any": any | null,
 };

@@ -47,8 +47,22 @@ createNewEntityClass_Auto("trigger", false, 50, 50, 1, 1, 0, 0, 1, 1, [
 	}},
 ])
 createNewEntityClass_Auto("cactusDancing", true, 18, 24, 0.85, 0.85, -0.075, -0.475, 1, 1.33)
-createNewEntityClass_Auto("aborigine", true, 15, 16, 0.93, 1)
-createNewEntityClass_Auto("aborigineBow", true, 15, 16, 0.93, 1)
+createNewEntityClass_Auto("aborigine", true, 15, 16, 0.32, 0.7, -0.241, -0.6, 1.2, 1.3, [
+	{ type: "text", name: "type", value: "stay", options: ["stay", "patrol"] },
+	{ type: "bool", name: "rotate", value: false, smartTitle: {
+		field: "type",
+		titles: { "stay": "Поворачивается ли", "patrol": "В конце пути идёт в начало" }
+	}},
+	{ type: "text", name: "direction", value: null, nullable: true, options: ["right", "down", "left", "up"], smartTitle: {
+		field: "type",
+		titles: { "stay": "Напривление взгляда", "patrol": "Не используется" }
+	}},
+	{ type: "tilesNumered", name: "path", value: null, nullable: true, displayColor: "lime", smartTitle: {
+		field: "type",
+		titles: { "stay": "Не используется", "patrol": "Точки пути" }
+	}},
+])
+createNewEntityClass_Auto("aborigineBow", true, 15, 16, 0.32, 0.7, -0.241, -0.6, 1.2, 1.3)
 createNewEntityClass_Auto("skeleton", true, 9, 13, 0.4, 0.55, -0.15, -0.45, 0.69, 1, [
 	{ type: "text", name: "moveStyle", value: "ver", options: ["ver", "hor"], title: "Направление сдвига" },
 	{ type: "bool", name: "dirR", value: true, smartTitle: {
