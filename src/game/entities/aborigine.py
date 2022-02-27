@@ -41,6 +41,7 @@ class EntityAborigine(EntityAlive):
         self.seePlayer = 0
         self.sightZoneVisible = True
         self.rotationSpeed = 0.01
+        self.stayTime = 0
 
     def applyData(self, dataSetter: Callable[[str, Any, str, Callable[[Any], Any]], None], data: dict):
         super().applyData(dataSetter, data)
@@ -82,9 +83,16 @@ class EntityAborigine(EntityAlive):
             return
 
         if (self.state == "stay"):
+            self.stayTime -= max(1000 / Settings.fps, 0)
             if (self.type == "patrol"):
-                self.state = "patrol"
-                self.animator.setAnimation("moveA")
+                if (self.stayTime <= 0):
+                    self.state = "patrol"
+                    nextX, nextY = self.path[self.nextTile]
+                    if (abs(int(self.x) - nextX) == 0):
+                        self.setSightDir("down" if int(self.x) < nextY else "up")
+                    else:
+                        self.setSightDir("right" if int(self.x) < nextX else "left")
+                    self.animator.setAnimation("moveA" if int(self.x) < nextX else "moveD")
             self.sightDirCur += self.rotationSpeed
             if (abs(self.sightDirCur - self.sightDir) > 20 / 180 * math.pi):
                 self.rotationSpeed *= -1
@@ -96,6 +104,7 @@ class EntityAborigine(EntityAlive):
             dy = (nextY + 0.5) - (self.y + self.height / 2)
             if (abs(dx) <= 0.01 and abs(dy) <= 0.01):
                 pathLen = len(self.path)
+                changeSight = True
                 if (self.forward):
                     self.nextTile += 1
                 else:
@@ -103,12 +112,21 @@ class EntityAborigine(EntityAlive):
                 if (self.rotate):
                     self.nextTile = (self.nextTile + pathLen) % pathLen
                 else:
-                    if (self.nextTile < 0):
+                    if (self.nextTile < 0 or self.nextTile >= pathLen):
+                        if (self.nextTile < 0):
+                            self.nextTile = 1
+                        if (self.nextTile >= pathLen):
+                            self.nextTile = pathLen - 2
+                        self.stayTime = 1000
+                        self.state = "stay"
                         self.forward = not self.forward
-                        self.nextTile = 1
-                    if (self.nextTile >= pathLen):
-                        self.forward = not self.forward
-                        self.nextTile = pathLen - 2
+                        changeSight = False
+                if (changeSight):
+                    nextXN, nextYN = self.path[self.nextTile]
+                    if (abs(nextXN - nextX) == 0):
+                        self.setSightDir("down" if nextYN > nextY else "up")
+                    else:
+                        self.setSightDir("right" if nextXN > nextX else "left")
             else:
                 if (dx > 0):
                     self.animator.setAnimation("moveD")
@@ -135,6 +153,9 @@ class EntityAborigine(EntityAlive):
     def checkPlayer(self):
         seeSpeed = 0.001
         unseeSpeed = 0.0002
+        if (not self.screen.player.visibleForEnemies):
+            self.seePlayer = max(self.seePlayer - unseeSpeed * 1000 / Settings.fps, 0)
+            return False
         dx = (self.screen.player.x + self.screen.player.width / 2) - (self.x + self.width / 2)
         dy = (self.screen.player.y + self.screen.player.height / 2) - (self.y + self.height / 2)
         distance = dx * dx + dy * dy
