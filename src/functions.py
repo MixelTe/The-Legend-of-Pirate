@@ -1,3 +1,4 @@
+import math
 from typing import Literal, Union
 import pygame
 import os
@@ -199,7 +200,8 @@ class TextAnimator:
 
     def draw(self):
         self.surface.fill(pygame.Color(0, 0, 0, 0))
-        displayLines(self.surface, self.font, self.lineHeight, (0, 0), self.curLines, self.color, self.centerX, self.centerY)
+        displayLines(self.surface, self.font, self.lineHeight, (0, 0),
+                     self.curLines, self.color, self.centerX, self.centerY)
         return self.surface
 
     def update(self):
@@ -261,3 +263,41 @@ def distance(r1: tuple[float, float, float, float], r2: tuple[float, float, floa
     if (sqrt):
         d = d ** 0.5
     return d
+
+
+def drawPie(surface: pygame.Surface, color: pygame.Color, center: tuple[int, int], r: int, startA: float, endA: float, width=0, q=15, alpha=False):
+    cx, cy = center
+    cx, cy = int(cx), int(cy)
+    startA = int(startA * 180 / math.pi)
+    endA = int(endA * 180 / math.pi)
+    if (startA > endA):
+        startA, endA = endA, startA
+
+    if (alpha):
+        p = [(r, r)]
+        for n in range(startA, endA + 1, q):
+            x = r + int(r * math.cos(n * math.pi / 180))
+            y = r + int(r * math.sin(n * math.pi / 180))
+            p.append((x, y))
+        p.append((
+            r + int(r * math.cos((endA + 1) * math.pi / 180)),
+            r + int(r * math.sin((endA + 1) * math.pi / 180))))
+        p.append((r, r))
+    else:
+        p = [(cx, cy)]
+        for n in range(startA, endA + 1, q):
+            x = cx + int(r * math.cos(n * math.pi / 180))
+            y = cy + int(r * math.sin(n * math.pi / 180))
+            p.append((x, y))
+        p.append((
+            cx + int(r * math.cos((endA + 1) * math.pi / 180)),
+            cy + int(r * math.sin((endA + 1) * math.pi / 180))))
+        p.append((cx, cy))
+
+    if len(p) > 3:
+        if (alpha):
+            surf = pygame.Surface((r * 2, r * 2), pygame.SRCALPHA)
+            pygame.draw.polygon(surf, color, p, width)
+            surface.blit(surf, (cx - r, cy - r))
+        else:
+            pygame.draw.polygon(surface, color, p, width)
