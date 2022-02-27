@@ -1,5 +1,6 @@
 import pygame
 from backMusic import onMusicEnd, setBackMusic
+from fpsGraph import FpsGraph
 from functions import joinPath
 from settings import Settings
 
@@ -16,6 +17,7 @@ class Main:
     def __init__(self):
         # self.window: Window = WindowStart()
         self.window: Window = WindowGame(0)
+        self.fpsGraph = FpsGraph()
 
     def start(self):
         clock = pygame.time.Clock()
@@ -33,6 +35,9 @@ class Main:
                     running = False
                 if event.type == musicEndEvent:
                     onMusicEnd()
+                if (event.type == pygame.KEYDOWN):
+                    if (event.key == pygame.K_F3):
+                        self.fpsGraph.enabled = not self.fpsGraph.enabled
                 self.window.on_event(event)
 
             result = self.window.update()
@@ -41,9 +46,13 @@ class Main:
 
             screen.fill((133, 133, 133))
             self.window.draw(screen)
+            if (self.fpsGraph.enabled):
+                self.fpsGraph.draw(screen)
             pygame.display.flip()
 
-            clock.tick(Settings.fps)
+            time = clock.tick(Settings.fps)
+            if (self.fpsGraph.enabled):
+                self.fpsGraph.add(time)
 
 
 pygame.joystick.init()
