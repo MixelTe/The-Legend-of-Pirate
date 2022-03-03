@@ -56,4 +56,5 @@ class ScreenData:
         self.decor: list[dict] = data["decor"] if ("decor" in data) else []
 
 
-World("StartWorld")
+World("SandWorld")
+World("WaterWorld")
