@@ -89,6 +89,9 @@ class ObjDataEditor {
                 case "tiles":
                     this.createValueEdit_tiles(data, td, vx, vy, onChange);
                     break;
+                case "tilesNumered":
+                    this.createValueEdit_tiles(data, td, vx, vy, onChange);
+                    break;
                 case "coords":
                     this.createValueEdit_coords(data, td, onChange);
                     break;
@@ -415,7 +418,7 @@ class ObjDataEditor {
             onChange(data);
         });
         btn.addEventListener("click", async () => {
-            const r = await new EntityEditor_TileSeclector(vx, vy, false, points).get();
+            const r = await new EntityEditor_TileSeclector(vx, vy, false, points, data.type == "tilesNumered").get();
             console.log(r);
             if (r)
                 points = r;
@@ -539,9 +542,11 @@ class EntityEditor_TileSeclector {
     selected = [];
     ctx;
     cursor;
-    constructor(vx, vy, oneTile, cur) {
+    numered;
+    constructor(vx, vy, oneTile, cur, numered) {
         this.popup = new Popup();
         this.view = world.map[vy][vx];
+        this.numered = !!numered;
         this.oneTile = oneTile;
         if (cur)
             this.selected = JSON.parse(JSON.stringify(cur));
@@ -624,9 +629,15 @@ class EntityEditor_TileSeclector {
                 const img = tileImages[tile.id];
                 if (img)
                     this.ctx.drawImage(img, 0, 0, this.tileSize, this.tileSize);
-                if (this.pointSelected(x, y) != null) {
+                const i = this.pointSelected(x, y);
+                if (i != null) {
                     this.ctx.fillStyle = "rgba(0, 255, 0, 0.2)";
                     this.ctx.fillRect(0, 0, this.tileSize, this.tileSize);
+                    if (this.numered) {
+                        this.ctx.fillStyle = "rgba(255, 0, 255, 0.6)";
+                        this.ctx.font = "20px Aria";
+                        this.ctx.fillText(`${i}`, 6, 17);
+                    }
                     this.ctx.strokeStyle = "lime";
                     this.ctx.lineWidth = 1;
                     const shift = 2;
@@ -648,7 +659,7 @@ class EntityEditor_TileSeclector {
             selected = this.selected;
         for (let i = 0; i < selected.length; i++) {
             const point = selected[i];
-            if (point[0] == x && point[0] == y)
+            if (point[0] == x && point[1] == y)
                 return i;
         }
         return null;
@@ -659,7 +670,7 @@ class EntityEditor_TileSeclector {
         if (!r || this.selected.length == 0)
             return null;
         this.selected.forEach(el => {
-            if (!this.pointSelected(el[0], el[1], selected)) {
+            if (this.pointSelected(el[0], el[1], selected) == null) {
                 selected.push(el);
             }
         });

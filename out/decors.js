@@ -115,6 +115,7 @@ class Decor_TileEdge extends Decor {
                     decor.apllyData(this.objData);
                 }
             }
+            this.redraw();
         });
         popup.open();
     }

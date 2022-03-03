@@ -17,6 +17,8 @@ const inp_mode_entity = getInput("inp-mode-entity");
 const inp_mode_decor = getInput("inp-mode-decor");
 const inp_highlight_tiles = getInput("inp-highlight-tiles");
 const inp_highlight_decor = getInput("inp-highlight-decor");
+const inp_highlight_stacked = getInput("inp-highlight-stacked");
+const inp_auto_edge = getInput("inp-auto-edge");
 // const world_map = getTable("world-map")
 const div_viewport = getDiv("viewport");
 const div_palette = getDiv("palette");
@@ -63,6 +65,7 @@ let mousePos = { x: 0, y: 0 };
 let mousePosCanvas = { x: 0, y: 0 };
 let selectedEntities = [];
 let selectedDecors = [];
+let copied = { entities: [], decors: [] };
 class World {
     map = [];
     width;
@@ -487,13 +490,50 @@ class View {
         ctx.save();
         if (inp_highlight_decor.checked && !inp_mode_decor.checked)
             ctx.globalAlpha = 0.2;
-        this.decor.forEach(d => d.draw(ctx));
+        const decorPlaces = {};
+        this.decor.forEach(d => {
+            d.draw(ctx);
+            if (inp_highlight_stacked.checked && inp_mode_decor.checked) {
+                const key = `${Math.floor(d.x)}:${Math.floor(d.y)}`;
+                if (!decorPlaces[key])
+                    decorPlaces[key] = 1;
+                else
+                    decorPlaces[key] += 1;
+            }
+        });
         ctx.restore();
         ctx.save();
         if (!inp_mode_entity.checked)
             ctx.globalAlpha = 0.5;
-        this.entity.forEach(e => e.draw(ctx));
+        const entityPlaces = {};
+        this.entity.forEach(e => {
+            e.draw(ctx);
+            if (inp_highlight_stacked.checked && inp_mode_entity.checked) {
+                const key = `${Math.floor(e.x)}:${Math.floor(e.y)}`;
+                if (!entityPlaces[key])
+                    entityPlaces[key] = 1;
+                else
+                    entityPlaces[key] += 1;
+            }
+        });
         ctx.restore();
+        const drawStacked = (pointS, count) => {
+            if (count < 2)
+                return;
+            const splited = pointS.split(":");
+            ctx.save();
+            ctx.translate(parseInt(splited[0]) * TileSize, parseInt(splited[1]) * TileSize);
+            ctx.fillStyle = "red";
+            // ctx.fillRect(0.5 * TileSize, 0.1 * TileSize, 0.4 * TileSize, 0.1 * TileSize);
+            // ctx.fillRect(0.5 * TileSize, 0.3 * TileSize, 0.4 * TileSize, 0.16 * TileSize);
+            ctx.font = `${TileSize * 0.6}px Arial`;
+            ctx.fillText(`${count}`, 0.5 * TileSize, 0.5 * TileSize);
+            ctx.restore();
+        };
+        for (const key in decorPlaces)
+            drawStacked(key, decorPlaces[key]);
+        for (const key in entityPlaces)
+            drawStacked(key, entityPlaces[key]);
         ctx.strokeStyle = "black";
         ctx.lineWidth = 1;
         ctx.strokeRect(0, 0, ViewWidth * TileSize, ViewHeight * TileSize);
@@ -671,8 +711,61 @@ class View {
             else
                 d.center();
             this.decor.push(d);
-            penDecorData = d.objData;
             selectedDecor = d;
+            if (d instanceof Decor_TileEdge && inp_auto_edge.checked) {
+                const x = Math.floor(d.x);
+                const y = Math.floor(d.y);
+                const type = d.constructor.className;
+                const checkTile = (x, y, id) => {
+                    if (x < 0 || x >= ViewWidth || y < 0 || y >= ViewHeight)
+                        return false;
+                    if (typeof id == "string")
+                        return this.tiles[y][x].id == id;
+                    return id(this.tiles[y][x].id);
+                };
+                if (type == "tileEdge_water") {
+                    d.sides[1] = checkTile(x + 1, y, "water_low");
+                    d.sides[3] = checkTile(x - 1, y, "water_low");
+                    d.sides[2] = checkTile(x, y + 1, "water_low");
+                    d.sides[0] = checkTile(x, y - 1, "water_low");
+                    if (!(d.sides[1] || d.sides[3] || d.sides[2] || d.sides[0])) {
+                        if (penDecorData)
+                            d.apllyData(penDecorData);
+                        else
+                            d.sides[0] = true;
+                    }
+                }
+                else if (type == "tileEdge_water_deep") {
+                    d.sides[1] = checkTile(x + 1, y, "water_deep");
+                    d.sides[3] = checkTile(x - 1, y, "water_deep");
+                    d.sides[2] = checkTile(x, y + 1, "water_deep");
+                    d.sides[0] = checkTile(x, y - 1, "water_deep");
+                    if (!(d.sides[1] || d.sides[3] || d.sides[2] || d.sides[0])) {
+                        if (penDecorData)
+                            d.apllyData(penDecorData);
+                        else
+                            d.sides[0] = true;
+                    }
+                }
+                else if (type == "tileEdge_sand") {
+                    d.sides[1] = checkTile(x + 1, y, id => id.startsWith("sand"));
+                    d.sides[3] = checkTile(x - 1, y, id => id.startsWith("sand"));
+                    d.sides[2] = checkTile(x, y + 1, id => id.startsWith("sand"));
+                    d.sides[0] = checkTile(x, y - 1, id => id.startsWith("sand"));
+                    d.corners[1] = checkTile(x + 1, y + 1, id => id.startsWith("sand"));
+                    d.corners[0] = checkTile(x + 1, y - 1, id => id.startsWith("sand"));
+                    d.corners[2] = checkTile(x - 1, y + 1, id => id.startsWith("sand"));
+                    d.corners[3] = checkTile(x - 1, y - 1, id => id.startsWith("sand"));
+                    if (!(d.sides[1] || d.sides[3] || d.sides[2] || d.sides[0] || d.corners[1] || d.corners[3] || d.corners[2] || d.corners[0])) {
+                        if (penDecorData)
+                            d.apllyData(penDecorData);
+                        else
+                            d.sides[0] = true;
+                    }
+                }
+                d.afterDataSet();
+            }
+            penDecorData = d.objData;
         }
     }
     getData() {
@@ -926,6 +1019,8 @@ class PenTiles {
     setGroup(group) {
         if (!group)
             return;
+        if (!group.group)
+            return;
         this.group = group;
         this.groupTiles = [];
         if (group.random) {
@@ -1173,9 +1268,11 @@ canvas.addEventListener("mousedown", e => {
         setCursor("move");
     }
     if (e.button == 1) {
+        let action = false;
         if (inp_mode_entity.checked) {
             const { entity } = world.getEntity(e.offsetX - camera_x, e.offsetY - camera_y);
             if (entity) {
+                action = true;
                 penEntity = entity.constructor;
                 fastPalette.addEntity(penEntity);
             }
@@ -1183,6 +1280,7 @@ canvas.addEventListener("mousedown", e => {
         else if (inp_mode_decor.checked) {
             const { decor } = world.getDecor(e.offsetX - camera_x, e.offsetY - camera_y);
             if (decor) {
+                action = true;
                 penDecor = decor.constructor;
                 penDecorData = decor.objData;
                 fastPalette.addDecor(penDecor);
@@ -1190,6 +1288,16 @@ canvas.addEventListener("mousedown", e => {
         }
         else {
             world.pick(e.offsetX - camera_x, e.offsetY - camera_y);
+        }
+        if (!action) {
+            if (selection) {
+                selection.cx = e.offsetX;
+                selection.cy = e.offsetY;
+                selection.changed = false;
+            }
+            else {
+                selection = { x: e.offsetX, y: e.offsetY, cx: e.offsetX, cy: e.offsetY, changed: false };
+            }
         }
     }
 });
@@ -1381,57 +1489,23 @@ window.addEventListener("keyup", async (e) => {
             fastPalette.close();
             break;
         case "Delete":
-            {
-                if (selectedDecor || selectedDecors.length > 0) {
-                    function del(decor) {
-                        const { view, i } = world.findView(decor);
-                        if (!view || i < 0)
-                            return;
-                        view.decor.splice(i, 1);
-                    }
-                    if (selectedDecor)
-                        del(selectedDecor);
-                    selectedDecor = null;
-                    for (const decor of selectedDecors) {
-                        del(decor);
-                    }
-                }
-                else if (selectedEntity || selectedEntities.length > 0) {
-                    function del(entity) {
-                        const { view, i } = world.findView(entity);
-                        if (!view || i < 0)
-                            return;
-                        view.entity.splice(i, 1);
-                    }
-                    if (selectedEntities.length > 0) {
-                        let popup = new Popup();
-                        popup.focusOn = "cancel";
-                        const count = selectedEntities.length + (selectedEntity ? 1 : 0);
-                        popup.content.appendChild(Div([], [], `Вы уверены, что хотите удалить этих сущностей (${count}шт)?`));
-                        let r = await popup.openAsync();
-                        if (!r)
-                            return;
-                    }
-                    else {
-                        let popup = new Popup();
-                        popup.focusOn = "cancel";
-                        popup.content.appendChild(Div([], [], "Вы уверены, что хотите удалить сущность?"));
-                        let r = await popup.openAsync();
-                        if (!r)
-                            return;
-                    }
-                    if (selectedEntity)
-                        del(selectedEntity);
-                    selectedEntity = null;
-                    for (const entity of selectedEntities) {
-                        del(entity);
-                    }
-                }
-            }
+            deleteSelected();
             break;
         case "ControlLeft":
         case "ControlRight":
             ctrl = false;
+            break;
+        case "KeyC":
+            if (e.ctrlKey)
+                copySelected();
+            break;
+        case "KeyX":
+            if (e.ctrlKey)
+                cutSelected();
+            break;
+        case "KeyV":
+            if (e.ctrlKey)
+                pasteSelected();
             break;
     }
 });
@@ -1476,16 +1550,18 @@ function centerView(x, y) {
 function normalizeCamera() {
     const width = world.width * ViewWidth * TileSize;
     const height = world.height * ViewHeight * TileSize;
+    const gapW = canvas.width / 2;
+    const gapH = canvas.height / 2;
     if (width > canvas.width) {
-        camera_x = Math.max(Math.min(camera_x, 0), -width + canvas.width);
+        camera_x = Math.max(Math.min(camera_x, gapW), -width + canvas.width - gapW);
     }
     else
-        camera_x = 0;
+        camera_x = Math.min(camera_x, gapW);
     if (height > canvas.height) {
-        camera_y = Math.max(Math.min(camera_y, 0), -height + canvas.height);
+        camera_y = Math.max(Math.min(camera_y, gapH), -height + canvas.height - gapH);
     }
     else
-        camera_y = 0;
+        camera_y = Math.min(camera_y, gapH);
 }
 function setCursor(cursor) {
     switch (cursor) {
@@ -1702,6 +1778,106 @@ async function askForSure(action) {
         return false;
     return true;
 }
+async function deleteSelected(askForSure = true) {
+    if (selectedDecor || selectedDecors.length > 0) {
+        function del(decor) {
+            const { view, i } = world.findView(decor);
+            if (!view || i < 0)
+                return;
+            view.decor.splice(i, 1);
+        }
+        if (selectedDecor && selectedDecors.length == 0)
+            del(selectedDecor);
+        selectedDecor = null;
+        for (const decor of selectedDecors) {
+            del(decor);
+        }
+        selectedDecors = [];
+    }
+    else if (selectedEntity || selectedEntities.length > 0) {
+        function del(entity) {
+            const { view, i } = world.findView(entity);
+            if (!view || i < 0)
+                return;
+            view.entity.splice(i, 1);
+        }
+        if (askForSure) {
+            if (selectedEntities.length > 0) {
+                let popup = new Popup();
+                popup.focusOn = "cancel";
+                const count = selectedEntities.length;
+                popup.content.appendChild(Div([], [], `Вы уверены, что хотите удалить этих сущностей (${count}шт)?`));
+                let r = await popup.openAsync();
+                if (!r)
+                    return;
+            }
+            else {
+                let popup = new Popup();
+                popup.focusOn = "cancel";
+                popup.content.appendChild(Div([], [], "Вы уверены, что хотите удалить сущность?"));
+                let r = await popup.openAsync();
+                if (!r)
+                    return;
+            }
+        }
+        if (selectedEntity && selectedEntities.length == 0)
+            del(selectedEntity);
+        selectedEntity = null;
+        for (const entity of selectedEntities) {
+            del(entity);
+        }
+        selectedEntities = [];
+    }
+}
+function copySelected() {
+    if (inp_mode_decor.checked) {
+        copied.decors = [];
+        if (selectedDecor)
+            copied.decors.push(selectedDecor);
+        for (const decor of selectedDecors) {
+            copied.decors.push(decor);
+        }
+    }
+    if (inp_mode_entity.checked) {
+        copied.entities = [];
+        if (selectedEntity)
+            copied.entities.push(selectedEntity);
+        for (const entity of selectedEntities) {
+            copied.entities.push(entity);
+        }
+    }
+}
+function cutSelected() {
+    copySelected();
+    deleteSelected();
+}
+function pasteSelected() {
+    const { view } = world.getView(mousePosCanvas.x - camera_x, mousePosCanvas.y - camera_y);
+    if (!view)
+        return;
+    if (inp_mode_decor.checked) {
+        selectedDecor = null;
+        selectedDecors = [];
+        for (const decor of copied.decors) {
+            const copy = Decor.fromData(decor.getData());
+            if (copy)
+                selectedDecors.push(copy);
+        }
+        view.decor = selectedDecors.concat(view.decor);
+    }
+    if (inp_mode_entity.checked) {
+        selectedEntity = null;
+        selectedEntities = [];
+        for (const entity of copied.entities) {
+            const copy = Entity.fromData(entity.getData());
+            if (copy) {
+                // view.entity.push(copy);
+                selectedEntities.push(copy);
+            }
+        }
+        view.entity = selectedEntities.concat(view.entity);
+    }
+}
 loadImages();
 setPalete();
 World.loadFromLocalStorage();
@@ -1717,7 +1893,9 @@ function loop() {
     const rect = div_viewport.getBoundingClientRect();
     canvas.width = rect.width;
     canvas.height = rect.height;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "hsl(195deg 53% 70%)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.imageSmoothingEnabled = false;
     ctx.save();
     ctx.translate(camera_x, camera_y);
