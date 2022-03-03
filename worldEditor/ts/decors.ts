@@ -1,7 +1,7 @@
 class Decor_TileEdge extends Decor
 {
-	private sides = [true, false, false, false];
-	private corners = [false, false, false, false];
+	public sides = [true, false, false, false];
+	public corners = [false, false, false, false];
 	protected static readonly imgs = {
 		top: <null | HTMLImageElement>null,
 		corner: <null | HTMLImageElement>null,
@@ -123,6 +123,7 @@ class Decor_TileEdge extends Decor
 					decor.apllyData(this.objData);
 				}
 			}
+			this.redraw();
 		});
 		popup.open();
 	}
@@ -286,8 +287,9 @@ class Decor_TileEdge extends Decor
 		DecorDict[name] = Decor_TileEdge_New;
 	}
 }
-interface Decor_TileEdgeObj extends DecorObj
+interface Decor_TileEdgeObj extends Decor_TileEdge
 {
+	className: string,
 	imgs: {
 		top: HTMLImageElement | null;
 		corner: HTMLImageElement | null;
