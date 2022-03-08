@@ -114,7 +114,7 @@ class Entity:
         else:
             pygame.draw.rect(surface, color, rect, round(Settings.tileSize * 0.03125) + 1)
 
-    def move(self) -> list[tuple[tuple[int, int, int, int], Union[Tile, Entity, None]]]:
+    def move(self) -> list[tuple[tuple[float, float, float, float], Union[Tile, Entity, None]]]:
         # просчёт движения с учётом карты и сущностей. При столкновении с сущностью или клеткой возвращает эту сущность или клетку
         moveX = 1
         moveY = 1
@@ -289,7 +289,7 @@ class Entity:
         rectNew = (rectSelf[0] + rect[0], rectSelf[1] + rect[1], rect[2], rect[3])
         return entity.is_inRect(rectNew)
 
-    def predictCollisions(self, x: float, y: float, w: float = None, h: float = None) -> list[tuple[tuple[int, int, int, int], Union[Tile, Entity, None]]]:
+    def predictCollisions(self, x: float, y: float, w: float = None, h: float = None) -> list[tuple[tuple[float, float, float, float], Union[Tile, Entity, None]]]:
         # столкновения, если бы сущность была расположена по этим координатам
         newRect = [x, y, self.width, self.height]
         if (w):

@@ -4,6 +4,7 @@ import pygame
 from functions import drawPie
 from game.animator import Animator, AnimatorData
 from game.entity import EntityAlive, EntityGroups
+from game.pathFinder import PathFinder
 from game.tile import Tile
 from settings import Settings
 
@@ -37,6 +38,7 @@ class EntityAborigine(EntityAlive):
         super().__init__(screen, data)
         self.startPos = (int(self.x), int(self.y))
         self.animator = Animator(animatorData, "stayD")
+        self.pathFinder = PathFinder(self)
         self.group = EntityGroups.enemy
         self.speed = 0.05
         self.strength = 0
@@ -89,7 +91,7 @@ class EntityAborigine(EntityAlive):
     def draw(self, surface: pygame.Surface, opaque=1):
         super().draw(surface, opaque)
         if (Settings.drawHitboxes):
-            if (self.leader):
+            if (EntityAborigine.Leader == self):
                 points = [
                     (0, 0),
                     (0.4, 0),
@@ -116,7 +118,7 @@ class EntityAborigine(EntityAlive):
         #         self.lookDirCur - math.pi / 4, self.lookDirCur + math.pi / 4, 1)
 
     def update(self):
-        super().update()
+        collisions = super().update()
         if (not self.alive or Settings.disableAI):
             return
 
@@ -191,20 +193,7 @@ class EntityAborigine(EntityAlive):
             if (self.checkPlayer()):
                 self.startAttackAsLeader()
         elif (self.state == "attack"):
-            self.sightZoneVisible = False
-            tx = (self.screen.player.x + self.screen.player.width * (0.5 + self.target[0])) - self.width / 2
-            ty = (self.screen.player.y + self.screen.player.height * (0.5 + self.target[1])) - self.height / 2
-            dx = tx - self.x
-            dy = ty - self.y
-            a = math.atan2(dy, dx)
-            self.speedX = math.cos(a) * self.speed
-            self.speedY = math.sin(a) * self.speed
-            if (abs(dx) < self.speed):
-                self.speedX = 0
-                self.x = tx
-            if (abs(dy) < self.speed):
-                self.speedY = 0
-                self.y = ty
+            self.attack(collisions)
 
     def checkPlayer(self):
         seeSpeed = 0.001
@@ -290,8 +279,29 @@ class EntityAborigine(EntityAlive):
 
     def startAttack(self, target=(0, 0)):
         self.state = "attack"
+        self.pathFinder.setTragetEntity(self.screen.player,
+            target[0] * self.screen.player.width,
+            target[1] * self.screen.player.height
+        )
         self.target = target
         self.startPos = (int(self.x), int(self.y))
+
+    def attack(self, collisions):
+        self.sightZoneVisible = False
+        self.pathFinder.apllySpeed()
+        # tx = (self.screen.player.x + self.screen.player.width * (0.5 + self.target[0])) - self.width / 2
+        # ty = (self.screen.player.y + self.screen.player.height * (0.5 + self.target[1])) - self.height / 2
+        # dx = tx - self.x
+        # dy = ty - self.y
+        # a = math.atan2(dy, dx)
+        # self.speedX = math.cos(a) * self.speed
+        # self.speedY = math.sin(a) * self.speed
+        # if (abs(dx) < self.speed):
+        #     self.speedX = 0
+        #     self.x = tx
+        # if (abs(dy) < self.speed):
+        #     self.speedY = 0
+        #     self.y = ty
 
 
 
