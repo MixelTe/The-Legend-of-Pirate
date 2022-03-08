@@ -11,12 +11,14 @@ pygame.mixer.init()
 from window import Window
 from windowStart import WindowStart
 from windowGame import WindowGame
+from windowAnimationTest import WindowAnimationTest
 
 
 class Main:
     def __init__(self):
         # self.window: Window = WindowStart()
         self.window: Window = WindowGame(0)
+        # self.window: Window = WindowAnimationTest()
         self.fpsGraph = FpsGraph()
 
     def start(self):
@@ -38,6 +40,15 @@ class Main:
                 if (event.type == pygame.KEYDOWN):
                     if (event.key == pygame.K_F3):
                         self.fpsGraph.enabled = not self.fpsGraph.enabled
+                    if (Settings.DEVMode):
+                        if (event.key == pygame.K_F1):
+                            Settings.drawHitboxes = not Settings.drawHitboxes
+                        if (event.key == pygame.K_F4):
+                            Settings.disableAI = not Settings.disableAI
+                        if (event.key == pygame.K_F5):
+                            Settings.ghostmode = not Settings.ghostmode
+                        if (event.key == pygame.K_F6):
+                            Settings.drawGrid = not Settings.drawGrid
                 self.window.on_event(event)
 
             result = self.window.update()

@@ -1238,11 +1238,13 @@ inp_tilesize.addEventListener("change", () => TileSize = inp_tilesize.valueAsNum
 inp_mode_entity.addEventListener("change", () => {
 	if (inp_mode_entity.checked) inp_mode_decor.checked = false;
 	else selectedEntity = null;
+	selectedDecor = null;
 	setPalete();
 });
 inp_mode_decor.addEventListener("change", () => {
 	if (inp_mode_decor.checked) inp_mode_entity.checked = false;
 	else selectedDecor = null;
+	selectedEntity = null;
 	setPalete();
 });
 inp_mode_view.addEventListener("change", () => {
@@ -1578,12 +1580,16 @@ window.addEventListener("keypress", e =>
 		case "KeyE": {
 			inp_mode_entity.checked = !inp_mode_entity.checked;
 			if (inp_mode_entity.checked) inp_mode_decor.checked = false;
+			else selectedEntity = null;
+			selectedDecor = null;
 			setPalete();
 			break;
 		}
 		case "KeyD": {
 			inp_mode_decor.checked = !inp_mode_decor.checked;
 			if (inp_mode_decor.checked) inp_mode_entity.checked = false;
+			else selectedDecor = null;
+			selectedEntity = null;
 			setPalete();
 			break;
 		}
@@ -2108,11 +2114,9 @@ console.log('saveWorldImg(w?: number, back: string | null = "lightblue")');
 function saveScreenImg(x = 0, y = 0, w?: number)
 {
 	let tileSize = TileSize;
-	if (w == undefined)
-	{
-		w = 1920;
-		tileSize = Math.floor(w / ViewWidth)
-	}
+	if (w == undefined) w = 1920;
+	tileSize = Math.floor(w / ViewWidth)
+	w = tileSize * ViewWidth;
 	let h = tileSize * ViewHeight;
 
 	const canvas = document.createElement("canvas");
@@ -2138,14 +2142,6 @@ function saveScreenImg(x = 0, y = 0, w?: number)
 			ctx.drawImage(img, x * tileSize, y * tileSize, tileSize, tileSize);
 		}
 	}
-	for (const entity of view.entity)
-	{
-		const obj = <EntityObj><any>entity.constructor;
-		if (obj.img == undefined) continue;
-		ctx.drawImage(obj.img,
-					  0, 0, obj.width, obj.height,
-					  (entity.x + obj.xImg) * tileSize, (entity.y + obj.yImg) * tileSize, obj.widthImg * tileSize, obj.heightImg * tileSize);
-	}
 	const hide = inp_highlight_decor.checked;
 	const decor = inp_mode_decor.checked;
 	const _TileSize = TileSize;
@@ -2155,6 +2151,14 @@ function saveScreenImg(x = 0, y = 0, w?: number)
 	TileSize = _TileSize;
 	inp_highlight_decor.checked = hide;
 	inp_mode_decor.checked = decor;
+	for (const entity of view.entity)
+	{
+		const obj = <EntityObj><any>entity.constructor;
+		if (obj.img == undefined) continue;
+		ctx.drawImage(obj.img,
+					  0, 0, obj.width, obj.height,
+					  (entity.x + obj.xImg) * tileSize, (entity.y + obj.yImg) * tileSize, obj.widthImg * tileSize, obj.heightImg * tileSize);
+	}
 	canvas.addEventListener("click", () =>
 	{
 		document.body.removeChild(canvas);

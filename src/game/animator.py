@@ -5,7 +5,7 @@ from settings import Settings
 
 class AnimatorData:
     def __init__(self, folder: str, animations: list[tuple[str, int, tuple[int, int], tuple[float, float, float, float]]]):
-        self.frames: dict[str, tuple[list[pygame.Surface], int, tuple[int, int]]] = {}
+        self.frames: dict[str, tuple[list[pygame.Surface], int, tuple[float, float]]] = {}
         # все кадры анимации, скорость переключения кадров (милисекунды между кадрами) и позиция картинки относительно сущности для каждой анимации
 
         for imgName, speed, frameSize, imgRect in animations:
@@ -60,7 +60,7 @@ class Animator:
         self.lastState = (False, False)
         return self.lastState
 
-    def getImage(self) -> tuple[pygame.Surface, tuple[int, int]]:
+    def getImage(self) -> tuple[pygame.Surface, tuple[float, float]]:
         imgD = self.data.get_image(self.anim, self.frame)
         if (not self.damageAnim):
             return imgD

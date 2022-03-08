@@ -23,11 +23,12 @@ class Settings:
     damageDelayPlayer = 1600
     fullscreen = False
     tileSize = 1
-    drawHitboxes = False
+    DEVMode = True
+    drawHitboxes = False  # F1
+    disableAI = False  # F4
+    ghostmode = True  # F5
+    drawGrid = False  # F6
     drawNoneImgs = False
-    drawGrid = False
-    disableAI = False
-    ghostmode = True
     moveScreenOnNumpad = True
 
 

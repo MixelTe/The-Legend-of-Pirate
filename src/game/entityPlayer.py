@@ -81,13 +81,6 @@ class EntityPlayer(EntityAlive):
         self.walkSoundCounter = 0
         self.visibleForEnemies = True
 
-        if (Settings.ghostmode):
-            self.hidden = True
-            self.ghostE = True
-            self.ghostE = True
-            self.immortal = True
-            self.visibleForEnemies = False
-
     def onKeyDown(self, key):
         if (key == pygame.K_w or key == pygame.K_UP):
             self.addKeyToPressed("up")
@@ -334,6 +327,18 @@ class EntityPlayer(EntityAlive):
             if (self.screen.tryGoTo("down")):
                 self.y = 0.1
 
+        if (Settings.ghostmode):
+            self.hidden = True
+            self.ghostE = True
+            self.ghostE = True
+            self.immortal = True
+            self.visibleForEnemies = False
+        elif (self.hidden):
+            self.hidden = False
+            self.ghostE = False
+            self.ghostE = False
+            self.immortal = False
+            self.visibleForEnemies = True
         if (not Settings.ghostmode):
             entities = self.get_entitiesD((0, self.height * 0.9, self.width, self.height * 0.1))
             self.visibleForEnemies = True
@@ -341,6 +346,8 @@ class EntityPlayer(EntityAlive):
                 if (entity.id == "bush"):
                     self.visibleForEnemies = False
                     break
+        else:
+            a = 1
         # self.animator.setAnimation("attack_swimS")
 
     def preUpdate(self):

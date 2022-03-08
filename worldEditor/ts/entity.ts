@@ -16,6 +16,8 @@ class Entity
 	protected static readonly heightHitbox: number = 1;
 	public getWidth = () => (<EntityObj><any>this.constructor).widthHitbox;
 	public getHeight = () => (<EntityObj><any>this.constructor).heightHitbox;
+
+	public static customDraw = (self: Entity, ctx: CanvasRenderingContext2D) => {};
 	constructor(x: number, y: number)
 	{
 		this.x = x;
@@ -127,6 +129,7 @@ class Entity
 			}
 		}
 		ctx.restore();
+		obj.customDraw(this, ctx);
 	};
 	public intersect(x: number, y: number)
 	{
@@ -200,6 +203,7 @@ interface EntityObj
 	readonly yImg: number;
 	readonly widthImg: number;
 	readonly heightImg: number;
+	customDraw: (self: Entity, ctx: CanvasRenderingContext2D) => {};
 }
 interface EntityDataType
 {
@@ -259,10 +263,11 @@ function createNewEntityClass(name: string, imgUrl: string, width: number, heigh
 		public override objData: ObjData = JSON.parse(JSON.stringify(objData));
 	}
 	EntityDict[name] = Entity_New;
+	return Entity_New;
 }
 function createNewEntityClass_Auto(name: string, hasFolder: boolean, width: number, height: number, widthHitbox: number, heightHitbox: number, xImg?: number, yImg?: number, widthImg?: number, heightImg?: number, objData?: ObjData)
 {
 	let imgUrl = name + ".png"
 	if (hasFolder) imgUrl = name + "/stay.png"
-	createNewEntityClass(name, imgUrl, width, height, widthHitbox, heightHitbox, xImg || 0, yImg || 0, widthImg || widthHitbox, heightImg || heightHitbox, objData || [])
+	return createNewEntityClass(name, imgUrl, width, height, widthHitbox, heightHitbox, xImg || 0, yImg || 0, widthImg || widthHitbox, heightImg || heightHitbox, objData || [])
 }
