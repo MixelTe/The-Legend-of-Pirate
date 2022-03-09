@@ -44,7 +44,6 @@ class EntityDoor(Entity):
     def update(self):
         if ("island-door" in self.screen.saveData.tags):
             self.remove()
-        return super().update()
 
 
 Entity.registerEntity("door", EntityDoor)
@@ -60,6 +59,8 @@ class EntityPalm(Entity):
         self.height = 0.7
         self.imagePos = (-0.45, -0.8)
 
+    def update(self):
+        pass
 
 Entity.registerEntity("palm", EntityPalm)
 
@@ -127,7 +128,6 @@ class EntityBush(Entity):
         self.active = False
 
     def update(self):
-        super().update()
         self.active = self.screen.player.is_inRect(self.get_rect())
 
     def draw(self, surface: pygame.Surface, opaque=1):
@@ -146,6 +146,9 @@ class EntityStone(Entity):
         super().__init__(screen, data)
         self.image = EntityStone.image
 
+    def update(self):
+        pass
+
 
 Entity.registerEntity("stone", EntityStone)
 
@@ -156,6 +159,9 @@ class EntityStoneBar(Entity):
     def __init__(self, screen, data: dict = None):
         super().__init__(screen, data)
         self.image = EntityStoneBar.image
+
+    def update(self):
+        pass
 
 
 Entity.registerEntity("stoneBar", EntityStoneBar)
@@ -240,6 +246,8 @@ class EntityWood(Entity):
         self.height = 0.25
         self.imagePos = (0, -0.1875)
 
+    def update(self):
+        pass
 
 Entity.registerEntity("wood", EntityWood)
 
@@ -254,5 +262,7 @@ class EntityWood2(Entity):
         self.height = 0.625
         self.imagePos = (-0.125, 0)
 
+    def update(self):
+        pass
 
 Entity.registerEntity("wood2", EntityWood2)

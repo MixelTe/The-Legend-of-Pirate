@@ -1,7 +1,7 @@
 import pygame
 from backMusic import onMusicEnd, setBackMusic
 from fpsGraph import FpsGraph
-from functions import joinPath
+from functions import joinPath, load_image
 from settings import Settings
 
 pygame.init()
@@ -68,6 +68,8 @@ class Main:
 
 pygame.joystick.init()
 pygame.display.set_caption('The Legend of Pirate')
+icon = pygame.transform.scale(load_image("icon.ico"), (32, 32))
+pygame.display.set_icon(icon)
 musicEndEvent = pygame.event.custom_type() + 1
 pygame.mixer.music.set_endevent(musicEndEvent)
 setBackMusic(joinPath(Settings.folder_data, Settings.folder_sounds, "back", "background.mp3"))
