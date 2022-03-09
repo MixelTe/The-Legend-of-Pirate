@@ -101,9 +101,9 @@ class EntityAborigine(EntityAlive):
                 ]
                 points = [((self.x + p[0]) * Settings.tileSize, (self.y + p[1] - 0.4) * Settings.tileSize) for p in points]
                 pygame.draw.polygon(surface, "red", points)
-        x = (self.screen.player.x + self.screen.player.width * (0.5 + self.target[0])) * Settings.tileSize
-        y = (self.screen.player.y + self.screen.player.height * (0.5 + self.target[1])) * Settings.tileSize
-        pygame.draw.circle(surface, "red", (x, y), 2)
+            x = (self.screen.player.x + self.screen.player.width * (0.5 + self.target[0])) * Settings.tileSize
+            y = (self.screen.player.y + self.screen.player.height * (0.5 + self.target[1])) * Settings.tileSize
+            pygame.draw.circle(surface, "red", (x, y), 2)
         if (not self.sightZoneVisible):
             return
         p1 = ((self.x + self.width / 2) * Settings.tileSize, (self.y + self.height / 2) * Settings.tileSize)
@@ -193,7 +193,22 @@ class EntityAborigine(EntityAlive):
             if (self.checkPlayer()):
                 self.startAttackAsLeader()
         elif (self.state == "attack"):
-            self.attack(collisions)
+            self.sightZoneVisible = False
+            self.pathFinder.apllySpeed()
+            if (self.speedY == 0 and self.speedX == 0):
+                self.animator.setAnimation("stay" + self.direction)
+            else:
+                if (abs(self.speedY) > abs(self.speedX)):
+                    if (self.speedY > 0):
+                        self.direction = "S"
+                    elif (self.speedY < 0):
+                        self.direction = "W"
+                else:
+                    if (self.speedX > 0):
+                        self.direction = "D"
+                    elif (self.speedX < 0):
+                        self.direction = "A"
+                self.animator.setAnimation("move" + self.direction)
 
     def checkPlayer(self):
         seeSpeed = 0.001
@@ -234,8 +249,6 @@ class EntityAborigine(EntityAlive):
             self.sightDirCur = 270 / 180 * math.pi
 
     def startAttackAsLeader(self):
-        self.state = "attack"
-        self.startPos = (int(self.x), int(self.y))
         EntityAborigine.Leader = self
         self.allies = list(filter(lambda e: e.id == self.id, self.screen.entities))
         positions = [[[] for _ in range(3)] for _ in range(3)]
@@ -285,24 +298,6 @@ class EntityAborigine(EntityAlive):
         )
         self.target = target
         self.startPos = (int(self.x), int(self.y))
-
-    def attack(self, collisions):
-        self.sightZoneVisible = False
-        self.pathFinder.apllySpeed()
-        # tx = (self.screen.player.x + self.screen.player.width * (0.5 + self.target[0])) - self.width / 2
-        # ty = (self.screen.player.y + self.screen.player.height * (0.5 + self.target[1])) - self.height / 2
-        # dx = tx - self.x
-        # dy = ty - self.y
-        # a = math.atan2(dy, dx)
-        # self.speedX = math.cos(a) * self.speed
-        # self.speedY = math.sin(a) * self.speed
-        # if (abs(dx) < self.speed):
-        #     self.speedX = 0
-        #     self.x = tx
-        # if (abs(dy) < self.speed):
-        #     self.speedY = 0
-        #     self.y = ty
-
 
 
 EntityAlive.registerEntity("aborigine", EntityAborigine)
