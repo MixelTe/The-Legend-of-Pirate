@@ -16,6 +16,7 @@ class Entity {
     static heightHitbox = 1;
     getWidth = () => this.constructor.widthHitbox;
     getHeight = () => this.constructor.heightHitbox;
+    static customDraw = (self, ctx) => { };
     constructor(x, y) {
         this.x = x;
         this.y = y;
@@ -122,6 +123,7 @@ class Entity {
             }
         }
         ctx.restore();
+        obj.customDraw(this, ctx);
     }
     ;
     intersect(x, y) {
@@ -191,10 +193,11 @@ function createNewEntityClass(name, imgUrl, width, height, widthHitbox, heightHi
         objData = JSON.parse(JSON.stringify(objData));
     }
     EntityDict[name] = Entity_New;
+    return Entity_New;
 }
 function createNewEntityClass_Auto(name, hasFolder, width, height, widthHitbox, heightHitbox, xImg, yImg, widthImg, heightImg, objData) {
     let imgUrl = name + ".png";
     if (hasFolder)
         imgUrl = name + "/stay.png";
-    createNewEntityClass(name, imgUrl, width, height, widthHitbox, heightHitbox, xImg || 0, yImg || 0, widthImg || widthHitbox, heightImg || heightHitbox, objData || []);
+    return createNewEntityClass(name, imgUrl, width, height, widthHitbox, heightHitbox, xImg || 0, yImg || 0, widthImg || widthHitbox, heightImg || heightHitbox, objData || []);
 }

@@ -1124,6 +1124,7 @@ inp_mode_entity.addEventListener("change", () => {
         inp_mode_decor.checked = false;
     else
         selectedEntity = null;
+    selectedDecor = null;
     setPalete();
 });
 inp_mode_decor.addEventListener("change", () => {
@@ -1131,6 +1132,7 @@ inp_mode_decor.addEventListener("change", () => {
         inp_mode_entity.checked = false;
     else
         selectedDecor = null;
+    selectedEntity = null;
     setPalete();
 });
 inp_mode_view.addEventListener("change", () => {
@@ -1440,6 +1442,9 @@ window.addEventListener("keypress", e => {
             inp_mode_entity.checked = !inp_mode_entity.checked;
             if (inp_mode_entity.checked)
                 inp_mode_decor.checked = false;
+            else
+                selectedEntity = null;
+            selectedDecor = null;
             setPalete();
             break;
         }
@@ -1447,6 +1452,9 @@ window.addEventListener("keypress", e => {
             inp_mode_decor.checked = !inp_mode_decor.checked;
             if (inp_mode_decor.checked)
                 inp_mode_entity.checked = false;
+            else
+                selectedDecor = null;
+            selectedEntity = null;
             setPalete();
             break;
         }
@@ -1927,10 +1935,10 @@ console.log("saveScreenImg(x = 0, y = 0, w?: number)");
 console.log('saveWorldImg(w?: number, back: string | null = "lightblue")');
 function saveScreenImg(x = 0, y = 0, w) {
     let tileSize = TileSize;
-    if (w == undefined) {
+    if (w == undefined)
         w = 1920;
-        tileSize = Math.floor(w / ViewWidth);
-    }
+    tileSize = Math.floor(w / ViewWidth);
+    w = tileSize * ViewWidth;
     let h = tileSize * ViewHeight;
     const canvas = document.createElement("canvas");
     document.body.appendChild(canvas);
@@ -1952,12 +1960,6 @@ function saveScreenImg(x = 0, y = 0, w) {
             ctx.drawImage(img, x * tileSize, y * tileSize, tileSize, tileSize);
         }
     }
-    for (const entity of view.entity) {
-        const obj = entity.constructor;
-        if (obj.img == undefined)
-            continue;
-        ctx.drawImage(obj.img, 0, 0, obj.width, obj.height, (entity.x + obj.xImg) * tileSize, (entity.y + obj.yImg) * tileSize, obj.widthImg * tileSize, obj.heightImg * tileSize);
-    }
     const hide = inp_highlight_decor.checked;
     const decor = inp_mode_decor.checked;
     const _TileSize = TileSize;
@@ -1968,6 +1970,12 @@ function saveScreenImg(x = 0, y = 0, w) {
     TileSize = _TileSize;
     inp_highlight_decor.checked = hide;
     inp_mode_decor.checked = decor;
+    for (const entity of view.entity) {
+        const obj = entity.constructor;
+        if (obj.img == undefined)
+            continue;
+        ctx.drawImage(obj.img, 0, 0, obj.width, obj.height, (entity.x + obj.xImg) * tileSize, (entity.y + obj.yImg) * tileSize, obj.widthImg * tileSize, obj.heightImg * tileSize);
+    }
     canvas.addEventListener("click", () => {
         document.body.removeChild(canvas);
     });
