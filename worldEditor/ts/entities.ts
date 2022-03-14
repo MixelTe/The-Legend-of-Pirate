@@ -62,7 +62,7 @@ const Aborigine = createNewEntityClass_Auto("aborigine", true, 15, 16, 0.32, 0.7
 		titles: { "stay": "Не используется", "patrol": "Точки пути" }
 	}},
 ])
-// createNewEntityClass_Auto("aborigineBow", true, 15, 16, 0.32, 0.7, -0.241, -0.6, 1.2, 1.3)
+createNewEntityClass_Auto("aborigineBow", true, 15, 16, 0.32, 0.7, -0.241, -0.6, 1.2, 1.3)
 createNewEntityClass_Auto("skeleton", true, 9, 13, 0.4, 0.55, -0.15, -0.45, 0.69, 1, [
 	{ type: "text", name: "moveStyle", value: "ver", options: ["ver", "hor"], title: "Направление сдвига" },
 	{ type: "bool", name: "dirR", value: true, smartTitle: {
@@ -95,6 +95,7 @@ createNewEntityClass_Auto("wood", false, 14, 7, 0.875, 0.25, 0, -0.1875, 0.875, 
 createNewEntityClass_Auto("wood2", false, 15, 10, 0.6875, 0.625, -0.125, 0, 0.9375, 0.625)
 createNewEntityClass_Auto("stone", false, 16, 16, 1, 1)
 createNewEntityClass_Auto("stoneBar", false, 16, 16, 1, 1)
+createNewEntityClass_Auto("lavaBubble", true, 51, 56, 1, 1)
 
 
 Aborigine.customDraw = (self, ctx) =>

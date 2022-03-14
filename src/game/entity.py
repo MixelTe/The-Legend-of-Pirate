@@ -463,6 +463,7 @@ def loadEntities():
     import game.entities.skeletonShield
     import game.entities.tentacle
     import game.entities.piranha
+    import game.entities.lavaBubble
 
 
 loadEntities()
