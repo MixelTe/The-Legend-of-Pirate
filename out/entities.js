@@ -94,6 +94,7 @@ createNewEntityClass_Auto("wood", false, 14, 7, 0.875, 0.25, 0, -0.1875, 0.875, 
 createNewEntityClass_Auto("wood2", false, 15, 10, 0.6875, 0.625, -0.125, 0, 0.9375, 0.625);
 createNewEntityClass_Auto("stone", false, 16, 16, 1, 1);
 createNewEntityClass_Auto("stoneBar", false, 16, 16, 1, 1);
+createNewEntityClass_Auto("lavaBubble", true, 51, 56, 1, 1);
 Aborigine.customDraw = (self, ctx) => {
     const lookR = 4;
     let lookW = Math.PI / 2;
