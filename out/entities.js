@@ -61,7 +61,7 @@ const Aborigine = createNewEntityClass_Auto("aborigine", true, 15, 16, 0.32, 0.7
             titles: { "stay": "Не используется", "patrol": "Точки пути" }
         } },
 ]);
-// createNewEntityClass_Auto("aborigineBow", true, 15, 16, 0.32, 0.7, -0.241, -0.6, 1.2, 1.3)
+createNewEntityClass_Auto("aborigineBow", true, 15, 16, 0.32, 0.7, -0.241, -0.6, 1.2, 1.3);
 createNewEntityClass_Auto("skeleton", true, 9, 13, 0.4, 0.55, -0.15, -0.45, 0.69, 1, [
     { type: "text", name: "moveStyle", value: "ver", options: ["ver", "hor"], title: "Направление сдвига" },
     { type: "bool", name: "dirR", value: true, smartTitle: {
