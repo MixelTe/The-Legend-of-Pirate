@@ -20,6 +20,8 @@ class Main:
         self.window: Window = WindowGame(0)
         # self.window: Window = WindowAnimationTest()
         self.fpsGraph = FpsGraph()
+        font = pygame.font.Font(Settings.path_font, int(Settings.tileSize * 0.5))
+        self.renderedText_AIDisabled = font.render("AI Disabled", True, "red")
 
     def start(self):
         clock = pygame.time.Clock()
@@ -59,6 +61,8 @@ class Main:
             self.window.draw(screen)
             if (self.fpsGraph.enabled):
                 self.fpsGraph.draw(screen)
+            if (Settings.disableAI):
+                screen.blit(self.renderedText_AIDisabled, (Settings.tileSize * 0.2, Settings.height - Settings.tileSize * 0.6))
             pygame.display.flip()
 
             time = clock.tick(Settings.fps)
