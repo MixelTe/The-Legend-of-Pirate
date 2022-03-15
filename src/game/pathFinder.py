@@ -102,23 +102,28 @@ class PathFinder:
 
         field[Y1][X1] = 0
         d = 0
+        ds = [[(X1, Y1)], []]
+        dsi = 0
         found = False
         while not found:
             changedOne = False
-            for y in range(Settings.screen_height):
-                for x in range(Settings.screen_width):
-                    if (field[y][x] == d):
-                        for Y in range(y - 1, y + 2):
-                            for X in range(x - 1, x + 2):
-                                if (X >= 0 and X < Settings.screen_width and Y >= 0 and Y < Settings.screen_height
-                                        and (x == X or y == Y) and field[Y][X] == -1):
-                                    field[Y][X] = d + 1
-                                    changedOne = True
-                                    if (X == X2 and Y == Y2):
-                                        found = True
+            for x, y in ds[dsi]:
+                if (field[y][x] == d):
+                    for Y in range(y - 1, y + 2):
+                        for X in range(x - 1, x + 2):
+                            if (X >= 0 and X < Settings.screen_width and Y >= 0 and Y < Settings.screen_height
+                                    and (x == X or y == Y) and field[Y][X] == -1):
+                                field[Y][X] = d + 1
+                                ds[1 - dsi].append((X, Y))
+                                changedOne = True
+                                if (X == X2 and Y == Y2):
+                                    found = True
+
             if (not changedOne):
                 break
             d += 1
+            ds[dsi].clear()
+            dsi = 1 - dsi
 
         if (not found):
             return False
