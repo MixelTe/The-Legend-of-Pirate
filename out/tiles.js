@@ -3,6 +3,7 @@ const tileIds = {
     water_deep: "water_deep.png",
     water_low: "water_low.png",
     stone: "stone.png",
+    lava2: "lava2.png",
 };
 const tileList = [];
 // Название группы должно совпадать с названием одного из тайлов, этот тайл будет использоваться для обложки
