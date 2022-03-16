@@ -136,6 +136,7 @@ Tile("AttackB.png", digable=True)
 Tile("DigB.png", digable=True)
 
 Tile("lava.png")
+Tile("lava2.png", solid=True)
 Tile("lavaAct.png", damage=1)
 TileAnimated("lavaAnim.png", animSpeed=200) \
     .s_dmgL([4, 5, 6], 1) \

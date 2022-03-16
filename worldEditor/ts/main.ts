@@ -790,52 +790,47 @@ class View
 				const x = Math.floor(d.x);
 				const y = Math.floor(d.y);
 				const type = (<Decor_TileEdgeObj><unknown>d.constructor).className;
-				const checkTile = (x: number, y: number, id: string | ((id: string) => boolean)) =>
+				const checkTile = (x: number, y: number, id: (id: string) => boolean) =>
 				{
 					if (x < 0 || x >= ViewWidth || y < 0 || y >= ViewHeight) return false;
 					if (typeof id == "string") return this.tiles[y][x].id == id;
 					return id(this.tiles[y][x].id);
 				}
-				if (type == "tileEdge_water")
+				const setSides = (tileId: string, startsWith = false) =>
 				{
-					d.sides[1] = checkTile(x + 1, y, "water_low");
-					d.sides[3] = checkTile(x - 1, y, "water_low");
-					d.sides[2] = checkTile(x, y + 1, "water_low");
-					d.sides[0] = checkTile(x, y - 1, "water_low");
+					const cond = startsWith ? ((id: string) => id.startsWith(tileId)) : ((id: string) => id == tileId);
+					d.sides[1] = checkTile(x + 1, y, cond);
+					d.sides[3] = checkTile(x - 1, y, cond);
+					d.sides[2] = checkTile(x, y + 1, cond);
+					d.sides[0] = checkTile(x, y - 1, cond);
 					if (!(d.sides[1] || d.sides[3] || d.sides[2] || d.sides[0]))
 					{
 						if (penDecorData) d.apllyData(penDecorData);
 						else d.sides[0] = true;
 					}
 				}
-				else if (type == "tileEdge_water_deep")
+				const setSidesAndCorners = (tileId: string, startsWith = false) =>
 				{
-					d.sides[1] = checkTile(x + 1, y, "water_deep");
-					d.sides[3] = checkTile(x - 1, y, "water_deep");
-					d.sides[2] = checkTile(x, y + 1, "water_deep");
-					d.sides[0] = checkTile(x, y - 1, "water_deep");
-					if (!(d.sides[1] || d.sides[3] || d.sides[2] || d.sides[0]))
-					{
-						if (penDecorData) d.apllyData(penDecorData);
-						else d.sides[0] = true;
-					}
-				}
-				else if (type == "tileEdge_sand")
-				{
-					d.sides[1] = checkTile(x + 1, y, id => id.startsWith("sand"));
-					d.sides[3] = checkTile(x - 1, y, id => id.startsWith("sand"));
-					d.sides[2] = checkTile(x, y + 1, id => id.startsWith("sand"));
-					d.sides[0] = checkTile(x, y - 1, id => id.startsWith("sand"));
-					d.corners[1] = checkTile(x + 1, y + 1, id => id.startsWith("sand"));
-					d.corners[0] = checkTile(x + 1, y - 1, id => id.startsWith("sand"));
-					d.corners[2] = checkTile(x - 1, y + 1, id => id.startsWith("sand"));
-					d.corners[3] = checkTile(x - 1, y - 1, id => id.startsWith("sand"));
+					const cond = startsWith ? ((id: string) => id.startsWith(tileId)) : ((id: string) => id == tileId);
+					d.sides[1] = checkTile(x + 1, y, cond);
+					d.sides[3] = checkTile(x - 1, y, cond);
+					d.sides[2] = checkTile(x, y + 1, cond);
+					d.sides[0] = checkTile(x, y - 1, cond);
+					d.corners[1] = checkTile(x + 1, y + 1, cond);
+					d.corners[0] = checkTile(x + 1, y - 1, cond);
+					d.corners[2] = checkTile(x - 1, y + 1, cond);
+					d.corners[3] = checkTile(x - 1, y - 1, cond);
 					if (!(d.sides[1] || d.sides[3] || d.sides[2] || d.sides[0] || d.corners[1] || d.corners[3] || d.corners[2] || d.corners[0]))
 					{
 						if (penDecorData) d.apllyData(penDecorData);
 						else d.sides[0] = true;
 					}
 				}
+				if (type == "tileEdge_water") setSides("water_low")
+				else if (type == "tileEdge_water_deep") setSides("water_deep")
+				else if (type == "tileEdge_lava") setSidesAndCorners("lava2")
+				else if (type == "tileEdge_sand") setSidesAndCorners("sand", true)
+				else if (type == "tileEdge_grass") setSidesAndCorners("grass", true)
 				d.afterDataSet()
 			}
 			penDecorData = d.objData;

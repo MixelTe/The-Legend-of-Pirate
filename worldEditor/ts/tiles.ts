@@ -2,6 +2,7 @@ const tileIds: TileIds = {
 	water_deep: "water_deep.png",
 	water_low: "water_low.png",
 	stone: "stone.png",
+	lava2: "lava2.png",
 }
 const tileList: TileGroup[] = []
 

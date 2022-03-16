@@ -629,10 +629,8 @@ class EntityEditor_TileSeclector
 			const x = Math.floor(e.offsetX / this.tileSize);
 			const y = Math.floor(e.offsetY / this.tileSize);
 			const i = this.pointSelected(x, y);
-			if (i == null) drawing = true;
-			else drawing = false;
+			drawing = i == null
 			this.draw();
-
 		});
 		canvas.addEventListener("mouseup", e =>
 		{
@@ -641,7 +639,7 @@ class EntityEditor_TileSeclector
 			const i = this.pointSelected(x, y);
 			if (drawing == true)
 			{
-				this.selected.push([x, y]);
+				if (i == null) this.selected.push([x, y]);
 				if (this.oneTile) this.popup.close(true);
 			}
 			else if (drawing == false)
@@ -649,6 +647,7 @@ class EntityEditor_TileSeclector
 				if (i != null) this.selected.splice(i, 1);
 			}
 			drawing = null;
+			this.draw();
 		});
 	}
 	private draw()
