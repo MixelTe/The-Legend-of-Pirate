@@ -1,4 +1,5 @@
 import math
+from functions import compare
 from game.entity import Entity
 from settings import Settings
 
@@ -38,9 +39,9 @@ class PathFinder:
                     ty = self._targetEntity.y + self._targetEntity.height / 2
                     path = self._findPath(self._curTile[0], self._curTile[1], int(tx), int(ty), True)
                     if (not path):
-                        return False
+                        return False, compare(self._entity.x, "==", tx) and compare(self._entity.y, "==", ty)
                 else:
-                    return False
+                    return False, compare(self._entity.x, "==", tx) and compare(self._entity.y, "==", ty)
             nextX = path[-2][0] + (1 - self._entity.width) / 2
             nextY = path[-2][1] + (1 - self._entity.height) / 2
             dx = nextX - self._entity.x
@@ -61,7 +62,7 @@ class PathFinder:
             self._entity.y = nextY
         if (self._entity.speedY == 0 and self._entity.speedX == 0):
             self._curTile = (int(self._entity.x + self._entity.width / 2), int(self._entity.y + self._entity.height / 2))
-        return self._entity.x == tx and self._entity.y == ty
+        return True, compare(self._entity.x, "==", tx) and compare(self._entity.y, "==", ty)
 
     def _findPath(self, X1, Y1, X2, Y2, exeptTarget=True):
         if (X1 == X2 and Y1 == Y2):
@@ -95,6 +96,11 @@ class PathFinder:
             y2 = int(rect[1] + rect[3])
             if (rect[1] + rect[3] - y2 < (1 - self._entity.height) / 2):
                 y2 -= 1
+
+            if (x1 < x2):
+                x2 = x1
+            if (y1 < y2):
+                y2 = y1
 
             for y in range(y1, y2 + 1):
                 for x in range(x1, x2 + 1):

@@ -301,3 +301,7 @@ def drawPie(surface: pygame.Surface, color: pygame.Color, center: tuple[int, int
             surface.blit(surf, (cx - r, cy - r))
         else:
             pygame.draw.polygon(surface, color, p, width)
+
+
+def distance(e1, e2):
+    return (e1.x + e1.width / 2) - (e2.x + e2.width / 2), (e1.y + e1.height / 2) - (e2.y + e2.height / 2)

@@ -2,7 +2,7 @@ import math
 from random import randint
 from typing import Any, Callable, Literal, Union
 import pygame
-from functions import drawPie
+from functions import distance, drawPie
 from game.animator import Animator, AnimatorData
 from game.entity import EntityAlive, EntityGroups
 from game.pathFinder import PathFinder
@@ -28,11 +28,11 @@ LOOKR = 4
 SPEED_PATROL = 0.05
 SPEED_SURROUND = 0.1
 SPEED_SEARCH = 0.03
+ALERTZONE_NORMAL = (0.55, 0.85)
+ALERTZONE_ACTIVE = (0.9, 1.2)
 
 
 class EntityAborigine(EntityAlive):
-    Leader = None
-
     def __init__(self, screen, data: dict = None):
         self.type = "stay"  # stay, patrol
         self.rotate = False
@@ -41,6 +41,7 @@ class EntityAborigine(EntityAlive):
         self.rotationSpeed = 0.01
         super().__init__(screen, data)
         self.startPos = (int(self.x), int(self.y))
+        self.startDir = self.direction
         self.animator = Animator(animatorData, "stayD")
         self.pathFinder = PathFinder(self)
         self.group = EntityGroups.enemy
@@ -62,10 +63,11 @@ class EntityAborigine(EntityAlive):
         self.allies = []
         self.target = (0, 0)
         self.targetPast = (0, 0)
+        self.returnPos = None
         self.searchTime = 0
         self.searchCounter = 0
+        self.spear = None
         self.setSightDir()
-        self.animator.setAnimation("attackS")
 
     def applyData(self, dataSetter: Callable[[str, Any, str, Callable[[Any], Any]], None], data: dict):
         super().applyData(dataSetter, data)
@@ -98,22 +100,17 @@ class EntityAborigine(EntityAlive):
     def draw(self, surface: pygame.Surface, opaque=1):
         super().draw(surface, opaque)
         if (Settings.drawHitboxes):
-            if (EntityAborigine.Leader == self):
-                points = [
-                    (0, 0),
-                    (0.4, 0),
-                    (0.3, 0.1),
-                    (0.4, 0.2),
-                    (0, 0.2),
-                ]
-                points = [((self.x + p[0]) * Settings.tileSize, (self.y + p[1] - 0.4) * Settings.tileSize) for p in points]
-                pygame.draw.polygon(surface, "red", points)
             x = (self.screen.player.x + self.screen.player.width * (0.5 + self.target[0])) * Settings.tileSize
             y = (self.screen.player.y + self.screen.player.height * (0.5 + self.target[1])) * Settings.tileSize
             pygame.draw.circle(surface, "red", (x, y), 2)
             if (self.pathFinder._target):
                 x, y = self.pathFinder._target
                 pygame.draw.circle(surface, "blue", (x * Settings.tileSize, y * Settings.tileSize), 4)
+            w, h = ALERTZONE_NORMAL
+            if (self.state == "search" or self.state == "surround"):
+                w, h = ALERTZONE_ACTIVE
+            w, h = w - self.screen.player.width / 2, h - self.screen.player.height / 2
+            self.draw_rect(surface, "red", (-w + self.width / 2, -h + self.height / 2, w * 2, h * 2), False, True, True)
         if (not self.sightZoneVisible):
             return
         p1 = ((self.x + self.width / 2) * Settings.tileSize, (self.y + self.height / 2) * Settings.tileSize)
@@ -152,7 +149,8 @@ class EntityAborigine(EntityAlive):
             maxR = 60 if self.rotate else 20
             if (abs(self.sightDirCur - self.sightDir) > maxR / 180 * math.pi):
                 self.rotationSpeed *= -1
-            if (self.checkPlayer()):
+            pdx, pdy = distance(self.screen.player, self)
+            if (self.checkPlayer() or (abs(pdx) < ALERTZONE_NORMAL[0] and abs(pdy) < ALERTZONE_NORMAL[1])):
                 self.startAttackAsLeader()
         elif (self.state == "patrol"):
             self.sightZoneVisible = True
@@ -196,13 +194,13 @@ class EntityAborigine(EntityAlive):
                 self.speedX = dx
             if (abs(dy) < self.speed):
                 self.speedY = dy
-            if (self.checkPlayer()):
+            pdx, pdy = distance(self.screen.player, self)
+            if (self.checkPlayer() or (abs(pdx) < ALERTZONE_NORMAL[0] and abs(pdy) < ALERTZONE_NORMAL[1])):
                 self.startAttackAsLeader()
         elif (self.state == "surround"):
             self.speed = SPEED_SURROUND
             self.sightZoneVisible = False
-            dx = (self.screen.player.x + self.screen.player.width / 2) - (self.x + self.width / 2)
-            dy = (self.screen.player.y + self.screen.player.height / 2) - (self.y + self.height / 2)
+            dx, dy = distance(self.screen.player, self)
             if (self.screen.player.visibleForEnemies or (abs(dx) < 1.5 and abs(dy) < 1.5)):
                 self.targetPast = (self.target[0] * self.screen.player.width + self.screen.player.x,
                                    self.target[1] * self.screen.player.height + self.screen.player.y)
@@ -211,8 +209,8 @@ class EntityAborigine(EntityAlive):
                                                 self.target[1] * self.screen.player.height)
             else:
                 self.pathFinder.setTragetCoord(self.targetPast[0], self.targetPast[1])
-            self.pathFinder.apllySpeed()
-            if (self.speedY == 0 and self.speedX == 0):
+            pathFound, pathEnded = self.pathFinder.apllySpeed()
+            if (not pathFound or pathEnded):
                 self.animator.setAnimation("stay" + self.direction)
                 if (not (self.screen.player.visibleForEnemies or (abs(dx) < 1.5 and abs(dy) < 1.5))):
                     self.state = "search"
@@ -221,41 +219,66 @@ class EntityAborigine(EntityAlive):
             else:
                 self.setDirection(self.speedX, self.speedY)
                 self.animator.setAnimation("move" + self.direction)
-            if (abs(dx) < 0.9 and abs(dy) < 0.9):
+            if (abs(dx) < ALERTZONE_ACTIVE[0] and abs(dy) < ALERTZONE_ACTIVE[1]):
                 self.state = "hit"
                 self.speedX = 0
                 self.speedY = 0
                 self.setDirection(dx, dy)
                 self.animator.setAnimation("attack" + self.direction)
         elif (self.state == "hit"):
+            self.animator.setAnimation("attack" + self.direction)
+            if (self.spear is None):
+                self.spear = EntityAlive.createById("spear", self.screen)
+                self.screen.addEntity(self.spear)
+                self.spear.startX = self.x
+                self.spear.startY = self.y
+                self.spear.direction = self.direction
+                self.spear.nextStage()
             if (self.animator.lastState[1]):
+                self.spear.remove()
+                self.spear = None
                 self.state = "surround"
                 self.animator.setAnimation("stay" + self.direction)
+            elif (self.animator.lastState[0]):
+                self.spear.nextStage()
         elif (self.state == "search"):
             self.sightZoneVisible = True
+            self.seePlayer = 0.99
             self.speed = SPEED_SEARCH
             self.searchTime -= 1000 / Settings.fps
-            if (self.searchTime <= 0):
+            if (self.searchTime <= 0 or len(collisions) > 0):
                 self.searchCounter += 1
                 self.searchTime = 500
                 a = randint(0, 360) / 180 * math.pi
                 self.speedX = math.cos(a) * self.speed
                 self.speedY = math.sin(a) * self.speed
                 self.setDirection(self.speedX, self.speedY)
+                self.setSightDir()
                 self.animator.setAnimation("move" + self.direction)
                 if (self.searchCounter >= 8):
                     self.state = "return"
+            dx, dy = distance(self.screen.player, self)
+            if (self.checkPlayer() or (abs(dx) < ALERTZONE_ACTIVE[0] and abs(dy) < ALERTZONE_ACTIVE[1])):
+                self.startAttackAsLeader()
         elif (self.state == "return"):
+            if (self.returnPos is None):
+                self.setReturnPos()
             self.sightZoneVisible = True
             self.speed = SPEED_PATROL
-            self.pathFinder.setTragetCoord(self.startPos[0] + 0.5, self.startPos[1] + 0.5)
+            self.pathFinder.setTragetCoord(self.returnPos[0] + 0.5, self.returnPos[1] + 0.5)
             self.pathFinder.apllySpeed()
             self.setDirection(self.speedX, self.speedY)
             self.animator.setAnimation("move" + self.direction)
-            if (int(self.x) == self.startPos[0] and int(self.y) == self.startPos[1]):
+            if (abs(int(self.x) - self.returnPos[0]) <= 0.1 and abs(int(self.y) - self.returnPos[1]) <= 0.1):
+                self.x = self.returnPos[0] + (1 - self.width) / 2
+                self.y = self.returnPos[1] + (1 - self.height) / 2
+                self.direction = self.startDir
                 self.state = "stay"
                 self.animator.setAnimation("stay" + self.direction)
-
+                self.setSightDir()
+            pdx, pdy = distance(self.screen.player, self)
+            if (self.checkPlayer() or (abs(pdx) < ALERTZONE_NORMAL[0] and abs(pdy) < ALERTZONE_NORMAL[1])):
+                self.startAttackAsLeader()
 
     def setDirection(self, x, y):
         if (abs(y) > abs(x)):
@@ -308,7 +331,6 @@ class EntityAborigine(EntityAlive):
             self.sightDirCur = 270 / 180 * math.pi
 
     def startAttackAsLeader(self):
-        EntityAborigine.Leader = self
         self.allies = list(filter(lambda e: e.id == self.id, self.screen.entities))
         if (len(self.allies) == 1):
             self.allies[0].startAttack((0, 0))
@@ -355,7 +377,20 @@ class EntityAborigine(EntityAlive):
     def startAttack(self, target=(0, 0)):
         self.state = "surround"
         self.target = target
-        self.startPos = (int(self.x), int(self.y))
+
+    def setReturnPos(self):
+        if (self.type == "stay"):
+            self.returnPos = self.startPos
+            return
+
+        def distance(point):
+            dx = self.x - point[0]
+            dy = self.y - point[1]
+            return dx * dx + dy * dy
+        points = map(lambda el: (el[0], el[1], distance(el[1])), enumerate(self.path))
+        closest = min(points, key=lambda el: el[2])
+        self.returnPos = closest[1]
+        self.nextTile = closest[0]
 
 
 EntityAlive.registerEntity("aborigine", EntityAborigine)

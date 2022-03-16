@@ -464,6 +464,7 @@ def loadEntities():
     import game.entities.tentacle
     import game.entities.piranha
     import game.entities.lavaBubble
+    import game.entities.spear
 
 
 loadEntities()
