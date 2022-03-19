@@ -1,5 +1,5 @@
 from typing import Any, Callable
-from functions import compare, distance, removeFromCollisions
+from functions import compare, distanceRects, removeFromCollisions
 from game.animator import Animator, AnimatorData
 from game.entity import EntityAlive, EntityGroups
 from game.tile import Tile
@@ -199,7 +199,7 @@ class EntityPiranha(EntityAlive):
         if (not self.screen.player.visibleForEnemies):
             return
         attackRange = 4
-        if (distance(self.get_rect(), self.screen.player.get_rect()) <= attackRange ** 2):
+        if (distanceRects(self.get_rect(), self.screen.player.get_rect()) <= attackRange ** 2):
             self.returnTile = (int(self.x + self.width / 2), int(self.y + self.height / 2))
             self.state = "charging"
             self.animator.setAnimation("charging")

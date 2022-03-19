@@ -252,7 +252,7 @@ def compare(a: float, sign: Union[Literal["=="], Literal[">="], Literal["<="]], 
     return isEqual
 
 
-def distance(r1: tuple[float, float, float, float], r2: tuple[float, float, float, float], center=True, sqrt=False):
+def distanceRects(r1: tuple[float, float, float, float], r2: tuple[float, float, float, float], center=True, sqrt=False):
     if (center):
         dx = (r1[0] + r1[2] / 2) - (r2[0] + r2[2] / 2)
         dy = (r1[1] + r1[3] / 2) - (r2[1] + r2[3] / 2)
