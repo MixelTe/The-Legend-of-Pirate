@@ -103,3 +103,21 @@ class DecorTileEdge_sand(DecorTileEdge):
 
 DecorTileEdge_water.load(DecorTileEdge_sand.images, "tileEdge_sand")
 Decor.registerDecor("tileEdge_sand", DecorTileEdge_sand)
+
+
+class DecorTileEdge_grass(DecorTileEdge):
+    images = {}
+    pass
+
+
+DecorTileEdge_water.load(DecorTileEdge_grass.images, "tileEdge_grass")
+Decor.registerDecor("tileEdge_grass", DecorTileEdge_grass)
+
+
+class DecorTileEdge_lava(DecorTileEdge):
+    images = {}
+    pass
+
+
+DecorTileEdge_water.load(DecorTileEdge_lava.images, "tileEdge_lava")
+Decor.registerDecor("tileEdge_lava", DecorTileEdge_lava)

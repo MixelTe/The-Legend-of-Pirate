@@ -59,3 +59,4 @@ class ScreenData:
 World("SandWorld")
 World("WaterWorld")
 World("ForestWorld")
+World("LavaWorld")
