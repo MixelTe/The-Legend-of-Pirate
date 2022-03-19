@@ -377,6 +377,8 @@ class EntityAborigine(EntityAlive):
     def startAttack(self, target=(0, 0)):
         self.state = "surround"
         self.target = target
+        self.targetPast = (self.target[0] * self.screen.player.width + self.screen.player.x,
+                            self.target[1] * self.screen.player.height + self.screen.player.y)
 
     def setReturnPos(self):
         if (self.type == "stay"):

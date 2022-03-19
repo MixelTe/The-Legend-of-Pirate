@@ -106,6 +106,10 @@ class PathFinder:
                 for x in range(x1, x2 + 1):
                     field[y][x] = None
 
+        if (field[Y2][X2] is None):
+            if not ((abs(Y1 - Y2) == 1 and X1 == X2) or (abs(X1 - X2) and Y1 == Y2)):
+                field[Y2][X2] = -1
+
         field[Y1][X1] = 0
         d = 0
         ds = [[(X1, Y1)], []]
