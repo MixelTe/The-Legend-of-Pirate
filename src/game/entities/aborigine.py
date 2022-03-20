@@ -4,7 +4,7 @@ from typing import Any, Callable, Literal, Union
 import pygame
 from functions import distance, drawPie
 from game.animator import Animator, AnimatorData
-from game.entity import EntityAlive, EntityGroups
+from game.entity import Entity, EntityAlive, EntityGroups
 from game.pathFinder import PathFinder
 from game.tile import Tile
 from settings import Settings
@@ -15,6 +15,10 @@ animatorData = AnimatorData("aborigine", [
     ("stayS.png", 0, (15, 16), (-0.241, -0.6, 1.2, 1.3)),
     ("stayA.png", 0, (15, 16), (-0.591, -0.6, 1.2, 1.3)),
     ("stayD.png", 0, (15, 16), (-0.241, -0.6, 1.2, 1.3)),
+    ("guardW.png", 300, (15, 16), (-0.591, -0.6, 1.2, 1.3)),
+    ("guardS.png", 300, (15, 16), (-0.241, -0.6, 1.2, 1.3)),
+    ("guardA.png", 300, (15, 16), (-0.591, -0.6, 1.2, 1.3)),
+    ("guardD.png", 300, (15, 16), (-0.241, -0.6, 1.2, 1.3)),
     ("moveW.png", 150, (15, 16), (-0.591, -0.6, 1.2, 1.3)),
     ("moveS.png", 150, (15, 16), (-0.241, -0.6, 1.2, 1.3)),
     ("moveA.png", 150, (15, 16), (-0.591, -0.6, 1.2, 1.3)),
@@ -67,6 +71,7 @@ class EntityAborigine(EntityAlive):
         self.searchTime = 0
         self.searchCounter = 0
         self.spear = None
+        self.pastState = "stay"
         self.setSightDir()
 
     def applyData(self, dataSetter: Callable[[str, Any, str, Callable[[Any], Any]], None], data: dict):
@@ -123,6 +128,25 @@ class EntityAborigine(EntityAlive):
                     self.sightDirCur - math.pi / 4, self.sightDirCur + math.pi / 4, alpha=True)
         # drawPie(surface, "gray", p1, self.lookR * Settings.tileSize,
         #         self.lookDirCur - math.pi / 4, self.lookDirCur + math.pi / 4, 1)
+
+    def takeDamage(self, damage: int, attacker: Union[Entity, str, None] = None):
+        if (self.damageDelay > 0):
+            return False
+        if (isinstance(attacker, Entity)):
+            if (attacker.id == "shovel" and self.health > 0):
+                self.startAttackAsLeader()
+                pos = self.get_relPos(self.screen.player.get_rect())
+                if (pos[0] < 0 and self.direction == "D" or
+                    pos[0] > 0 and self.direction == "A" or
+                    pos[1] > 0 and self.direction == "W" or
+                        pos[1] < 0 and self.direction == "S"):
+                    if (self.state != "guard"):
+                        self.pastState = self.state
+                        self.state = "guard"
+                    return False
+            return super().takeDamage(damage, attacker)
+        else:
+            return super().takeDamage(damage, attacker)
 
     def update(self):
         collisions = super().update()
@@ -279,6 +303,12 @@ class EntityAborigine(EntityAlive):
             pdx, pdy = distance(self.screen.player, self)
             if (self.checkPlayer() or (abs(pdx) < ALERTZONE_NORMAL[0] and abs(pdy) < ALERTZONE_NORMAL[1])):
                 self.startAttackAsLeader()
+        elif (self.state == "guard"):
+            self.speedX = 0
+            self.speedY = 0
+            self.animator.setAnimation("guard" + self.direction)
+            if (self.animator.lastState[1]):
+                self.state = self.pastState
 
     def setDirection(self, x, y):
         if (abs(y) > abs(x)):
