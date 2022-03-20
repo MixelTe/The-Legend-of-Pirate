@@ -112,7 +112,7 @@ class EntityAborigine(EntityAlive):
                 x, y = self.pathFinder._target
                 pygame.draw.circle(surface, "blue", (x * Settings.tileSize, y * Settings.tileSize), 4)
             w, h = ALERTZONE_NORMAL
-            if (self.state == "search" or self.state == "surround"):
+            if (self.state == "search" or self.state == "surround" or self.state == "hit"):
                 w, h = ALERTZONE_ACTIVE
             w, h = w - self.screen.player.width / 2, h - self.screen.player.height / 2
             self.draw_rect(surface, "red", (-w + self.width / 2, -h + self.height / 2, w * 2, h * 2), False, True, True)
@@ -134,7 +134,6 @@ class EntityAborigine(EntityAlive):
             return False
         if (isinstance(attacker, Entity)):
             if (attacker.id == "shovel" and self.health > 0):
-                self.startAttackAsLeader()
                 pos = self.get_relPos(self.screen.player.get_rect())
                 if (pos[0] < 0 and self.direction == "D" or
                     pos[0] > 0 and self.direction == "A" or
@@ -143,8 +142,16 @@ class EntityAborigine(EntityAlive):
                     if (self.state != "guard"):
                         self.pastState = self.state
                         self.state = "guard"
+                    self.startAttackAsLeader()
                     return False
-            return super().takeDamage(damage, attacker)
+                if (pos[0] < 0 and self.direction == "A" or
+                    pos[0] > 0 and self.direction == "D" or
+                    pos[1] > 0 and self.direction == "S" or
+                        pos[1] < 0 and self.direction == "W"):
+                    damage += 1
+            super().takeDamage(damage, attacker)
+            if (attacker.id == "shovel" and self.health > 0):
+                self.startAttackAsLeader()
         else:
             return super().takeDamage(damage, attacker)
 

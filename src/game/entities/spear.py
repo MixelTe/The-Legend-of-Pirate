@@ -24,25 +24,48 @@ class EntitySpear(EntityAlive):
     def nextStage(self):
         if (self.direction == "D"):
             self.width = 0.4 + 0.18 * self.stage
-            self.height = 0.7
+            self.height = 1.2
             self.x = self.startX + 0.32
-            self.y = self.startY
+            self.y = self.startY - 0.25
         elif (self.direction == "A"):
             self.width = 0.4 + 0.18 * self.stage
-            self.height = 0.7
+            self.height = 1.2
             self.x = self.startX - self.width
-            self.y = self.startY
+            self.y = self.startY - 0.25
         elif (self.direction == "W"):
-            self.width = 0.6
+            self.width = 1.2
             self.height = 0.7 + 0.15 * self.stage
             self.x = self.startX - 0.4
             self.y = self.startY - self.height + 0.4
         else:
-            self.width = 0.6
-            self.height = 0.4 + 0.15 * self.stage
-            self.x = self.startX + 0.2
+            self.width = 1.2
+            self.height = 0.7 + 0.15 * self.stage
+            self.x = self.startX - 0.4
             self.y = self.startY + 0.3
         self.stage += 1
+
+    # def nextStage(self):
+    #     if (self.direction == "D"):
+    #         self.width = 0.4 + 0.18 * self.stage
+    #         self.height = 0.7
+    #         self.x = self.startX + 0.32
+    #         self.y = self.startY
+    #     elif (self.direction == "A"):
+    #         self.width = 0.4 + 0.18 * self.stage
+    #         self.height = 0.7
+    #         self.x = self.startX - self.width
+    #         self.y = self.startY
+    #     elif (self.direction == "W"):
+    #         self.width = 0.6
+    #         self.height = 0.7 + 0.15 * self.stage
+    #         self.x = self.startX - 0.4
+    #         self.y = self.startY - self.height + 0.4
+    #     else:
+    #         self.width = 0.6
+    #         self.height = 0.4 + 0.15 * self.stage
+    #         self.x = self.startX + 0.2
+    #         self.y = self.startY + 0.3
+    #     self.stage += 1
 
 
 EntityAlive.registerEntity("spear", EntitySpear)
