@@ -32,15 +32,15 @@ class Screen:
                 row.append(Tile.fromId(data.tiles[y][x]))
             self.tiles.append(row)
 
-        for eData in data.entity:
-            self.entities.append(Entity.fromData(eData, self))
-
         for dData in data.decor:
             decor = Decor.fromData(dData)
             if (decor.aboveAll):
                 self.decorAbove.append(decor)
             else:
                 self.decor.append(decor)
+
+        for eData in data.entity:
+            self.entities.append(Entity.fromData(eData, self))
 
         self.entities.append(player)
         player.screen = self
