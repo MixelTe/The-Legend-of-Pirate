@@ -59,6 +59,7 @@ class EntityTentacle(EntityAlive):
                 self.animator.setAnimation("appear")
                 self.visible = True
                 self.hidden = False
+                self.strength = 1
                 self.state = "appear"
                 x, y = choice(self.appearCells)
                 self.x = x + (1 - self.width) / 2
@@ -83,6 +84,7 @@ class EntityTentacle(EntityAlive):
                 self.state = "hidden"
                 self.visible = False
                 self.hidden = True
+                self.strength = 0
                 self.counter = randint(3, 6) * 500
 
     def getWaterCells(self):

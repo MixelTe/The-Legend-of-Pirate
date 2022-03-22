@@ -98,6 +98,10 @@ createNewEntityClass_Auto("wood2", false, 15, 10, 0.6875, 0.625, -0.125, 0, 0.93
 createNewEntityClass_Auto("stone", false, 16, 16, 1, 1)
 createNewEntityClass_Auto("stoneBar", false, 16, 16, 1, 1)
 createNewEntityClass_Auto("lavaBubble", true, 51, 56, 1, 1)
+createNewEntityClass_Auto("octopus", true, 32, 32, 2, 2, undefined, undefined, undefined, undefined, [
+	{ type: "tiles", name: "entrance", value: [[19, 3], [19, 4], [19, 5]], title: "Вход", displayColor: "lime" },
+	{ type: "tiles", name: "exit", value: [[0, 3], [0, 4], [0, 5]], title: "Выход", displayColor: "tomato" },
+])
 
 
 Aborigine.customDraw = (self, ctx) =>
