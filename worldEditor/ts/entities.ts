@@ -75,7 +75,9 @@ createNewEntityClass_Auto("skeleton", true, 9, 13, 0.4, 0.55, -0.15, -0.45, 0.69
 	} },
 ])
 // createNewEntityClass_Auto("skeletonShield", true, 9, 13, 0.69, 1)
-createNewEntityClass_Auto("tentacle", true, 28, 34, 0.82, 1)
+createNewEntityClass_Auto("tentacle", true, 28, 34, 0.82, 1, undefined, undefined, undefined, undefined, [
+	{ type: "tiles", name: "appearCells", value: null, title: "Места появления", nullable: true, displayColor: "orange" },
+])
 createNewEntityClass_Auto("piranha", true, 35, 32, 0.8, 0.7, -0.05, -0.15, 1, 0.91, [
 	{ type: "text", name: "moveStyle", value: "ver", options: ["ver", "hor"], title: "Направление сдвига" },
 	{ type: "bool", name: "dirR", value: true, smartTitle: {

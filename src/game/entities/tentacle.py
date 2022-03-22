@@ -1,5 +1,6 @@
 import math
 from random import choice, randint
+from typing import Any, Callable
 import pygame
 from game.animator import Animator, AnimatorData
 from game.entity import EntityAlive, EntityGroups
@@ -17,6 +18,7 @@ animatorData = AnimatorData("tentacle", [
 
 class EntityTentacle(EntityAlive):
     def __init__(self, screen, data: dict = None):
+        self.appearCells = []
         super().__init__(screen, data)
         self.animator = Animator(animatorData, "stay")
         self.group = EntityGroups.enemy
@@ -30,7 +32,13 @@ class EntityTentacle(EntityAlive):
         self.hidden = True
         self.counter = randint(3, 6) * 500
         self.state = "hidden"
-        self.appearCells = self.getWaterCells()
+
+    def applyData(self, dataSetter: Callable[[str, Any, str, Callable[[Any], Any]], None], data: dict):
+        super().applyData(dataSetter, data)
+        if ("appearCells" in data):
+            self.appearCells = data["appearCells"]
+        else:
+            self.appearCells = self.getWaterCells()
 
     def draw(self, surface: pygame.Surface):
         if (self.visible):
@@ -39,7 +47,7 @@ class EntityTentacle(EntityAlive):
             self.draw_dev(surface)
 
     def canGoOn(self, tile: Tile) -> bool:
-        return "water-deep" in tile.tags
+        return "water-deep" in tile.tags or super().canGoOn(tile)
 
     def update(self):
         super().update()
