@@ -36,6 +36,7 @@ class EntityPiranha(EntityAlive):
         self.speedXA = 0
         self.speedYA = 0
         self.state = "go"
+        self.chargingCounter = 0
         self.returnTile = (0, 0)
         self.attackD = (0, 0)
 
@@ -94,11 +95,11 @@ class EntityPiranha(EntityAlive):
                         removeFromCollisions(collisions, ["player"])
                         if (len(collisions) != 0):
                             self.rise = not self.rise
-                        self.animator.setAnimation("moveW" if self.rise else "moveS")
+                        self.animator.setAnimation("swimW" if self.rise else "swimS")
                         self.speedX = 0
                         self.speedY = self.speed * (-1 if self.rise else 1)
                 if (self.state == "go"):
-                    self.animator.setAnimation("moveD" if self.dirR else "moveA")
+                    self.animator.setAnimation("swimD" if self.dirR else "swimA")
             else:
                 self.speedY = self.speed * (-1 if self.dirR else 1)
                 self.speedX = 0
@@ -124,16 +125,16 @@ class EntityPiranha(EntityAlive):
                         removeFromCollisions(collisions, ["player"])
                         if (len(collisions) != 0):
                             self.rise = not self.rise
-                        self.animator.setAnimation("moveD" if self.rise else "moveA")
+                        self.animator.setAnimation("swimD" if self.rise else "swimA")
                         self.speedY = 0
                         self.speedX = self.speed * (1 if self.rise else -1)
                 if (self.state == "go"):
-                    self.animator.setAnimation("moveW" if self.dirR else "moveS")
+                    self.animator.setAnimation("swimW" if self.dirR else "swimS")
             if (self.state == "go"):
                 self.startAttack()
         elif (self.state == "rise"):
             if (self.moveStyle == "ver"):
-                self.animator.setAnimation("moveW" if self.rise else "moveS")
+                self.animator.setAnimation("swimW" if self.rise else "swimS")
                 self.x = int(self.x) + (1 - self.width) / 2
                 self.speedX = 0
                 self.speedY = self.speed * (-1 if self.rise else 1)
@@ -141,7 +142,7 @@ class EntityPiranha(EntityAlive):
                     self.y = int(self.y) + (1 - self.height) / 2
                     self.state = "go"
             else:
-                self.animator.setAnimation("moveD" if self.rise else "moveA")
+                self.animator.setAnimation("swimD" if self.rise else "swimA")
                 self.y = int(self.y) + (1 - self.height) / 2
                 self.speedY = 0
                 self.speedX = self.speed * (1 if self.rise else -1)
@@ -153,7 +154,8 @@ class EntityPiranha(EntityAlive):
         elif (self.state == "charging"):
             self.speedX = 0
             self.speedY = 0
-            if (self.animator.lastState[1] or True):  # Temp
+            self.chargingCounter -= 1000 / Settings.fps
+            if (self.chargingCounter <= 0):
                 self.state = "attack"
                 attackTime = 500 / 1000 * Settings.fps
                 dx, dy = self.attackD
@@ -205,6 +207,7 @@ class EntityPiranha(EntityAlive):
         if (distanceRects(self.get_rect(), self.screen.player.get_rect()) <= attackRange ** 2):
             self.returnTile = (int(self.x + self.width / 2), int(self.y + self.height / 2))
             self.state = "charging"
+            self.chargingCounter = 400
             dx = (self.screen.player.x + self.screen.player.width / 2) - (self.x + self.width / 2)
             dy = (self.screen.player.y + self.screen.player.height / 2) - (self.y + self.height / 2)
             self.attackD = (dx, dy)
