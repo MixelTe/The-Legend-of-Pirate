@@ -114,7 +114,7 @@ function normalizeRect(rect) {
     }
 }
 function loadImage(name, onload, folder) {
-    const imagesFolder = "./images/";
+    const imagesFolder = "../../src/data/images/";
     let path;
     if (name[0] == "/")
         path = "./imgs" + name;
