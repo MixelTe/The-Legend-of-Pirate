@@ -9,10 +9,10 @@ from settings import Settings
 
 
 animatorData = AnimatorData("tentacle", [
-    ("stay.png", 0, (28, 34), (0, 0, 0.82, 1)),
-    ("appear.png", 300, (28, 34), (0, 0, 0.82, 1)),
-    ("attack.png", 300, (28, 34), (0, 0, 0.82, 1)),
-    ("hide.png", 300, (28, 34), (0, 0, 0.82, 1)),
+    ("stay.png", 0, (16, 16), (-0.25, -0.0625, 1, 1)),
+    ("appear.png", 300, (16, 16), (-0.25, -0.0625, 1, 1)),
+    ("attack.png", 300, (16, 16), (-0.25, -0.0625, 1, 1)),
+    ("hide.png", 300, (16, 16), (-0.25, -0.0625, 1, 1)),
 ])
 
 
@@ -26,8 +26,8 @@ class EntityTentacle(EntityAlive):
         self.strength = 1
         self.healthMax = 3
         self.health = 3
-        self.width = 0.82
-        self.height = 1
+        self.width = 0.5
+        self.height = 0.9375
         self.visible = False
         self.hidden = True
         self.counter = randint(3, 6) * 500

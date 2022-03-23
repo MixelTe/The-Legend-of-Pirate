@@ -5,7 +5,11 @@ from settings import Settings
 
 
 animatorData = AnimatorData("lavaBubble", [
-    ("stay.png", 0, (51, 56), (0, 0, 1, 1)),
+    ("stay.png", 0, (16, 16), (-0.25, -0.25, 1, 1)),
+    ("moveA.png", 0, (16, 16), (-0.25, -0.25, 1, 1)),
+    ("moveD.png", 0, (16, 16), (-0.25, -0.25, 1, 1)),
+    ("moveW.png", 0, (16, 16), (-0.25, -0.25, 1, 1)),
+    ("moveS.png", 0, (16, 16), (-0.25, -0.25, 1, 1)),
 ])
 
 
@@ -17,8 +21,8 @@ class EntityLavaBubble(EntityAlive):
         self.strength = 1
         self.healthMax = 2
         self.health = 2
-        self.width = 1
-        self.height = 1
+        self.width = 0.5625
+        self.height = 0.5
 
     def canGoOn(self, tile: Tile) -> bool:
         return "water" not in tile.tags and super().canGoOn(tile)

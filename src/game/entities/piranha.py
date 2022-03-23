@@ -7,12 +7,15 @@ from settings import Settings
 
 
 animatorData = AnimatorData("piranha", [
-    ("stay.png", 0, (35, 32), (-0.05, -0.15, 1, 0.91)),
-    ("moveA.png", 150, (35, 32), (-0.05, -0.15, 0.91, 1)),
-    ("moveD.png", 150, (35, 32), (-0.05, -0.15, 0.91, 1)),
-    ("moveW.png", 150, (32, 35), (-0.15, -0.05, 1, 0.91)),
-    ("moveS.png", 150, (32, 35), (-0.15, -0.05, 1, 0.91)),
-    ("charging.png", 300, (35, 32), (-0.05, -0.15, 0.91, 1)),
+    ("stay.png", 0, (16, 16), (0, -0.4375, 1, 1)),
+    ("moveA.png", 150, (16, 16), (0, -0.4375, 1, 1)),
+    ("moveD.png", 150, (16, 16), (0, -0.4375, 1, 1)),
+    ("moveW.png", 150, (16, 16), (0, -0.4375, 1, 1)),
+    ("moveS.png", 150, (16, 16), (0, -0.4375, 1, 1)),
+    ("swimA.png", 150, (16, 16), (0, -0.4375, 1, 1)),
+    ("swimD.png", 150, (16, 16), (0, -0.4375, 1, 1)),
+    ("swimW.png", 150, (16, 16), (0, -0.4375, 1, 1)),
+    ("swimS.png", 150, (16, 16), (0, -0.4375, 1, 1)),
 ])
 
 
@@ -28,8 +31,8 @@ class EntityPiranha(EntityAlive):
         self.strength = 1
         self.healthMax = 2
         self.health = 2
-        self.width = 0.8
-        self.height = 0.7
+        self.width = 0.9
+        self.height = 0.5
         self.speedXA = 0
         self.speedYA = 0
         self.state = "go"
@@ -150,7 +153,7 @@ class EntityPiranha(EntityAlive):
         elif (self.state == "charging"):
             self.speedX = 0
             self.speedY = 0
-            if (self.animator.lastState[1]):
+            if (self.animator.lastState[1] or True):  # Temp
                 self.state = "attack"
                 attackTime = 500 / 1000 * Settings.fps
                 dx, dy = self.attackD
@@ -202,7 +205,6 @@ class EntityPiranha(EntityAlive):
         if (distanceRects(self.get_rect(), self.screen.player.get_rect()) <= attackRange ** 2):
             self.returnTile = (int(self.x + self.width / 2), int(self.y + self.height / 2))
             self.state = "charging"
-            self.animator.setAnimation("charging")
             dx = (self.screen.player.x + self.screen.player.width / 2) - (self.x + self.width / 2)
             dy = (self.screen.player.y + self.screen.player.height / 2) - (self.y + self.height / 2)
             self.attackD = (dx, dy)

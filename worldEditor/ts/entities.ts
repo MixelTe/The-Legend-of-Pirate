@@ -75,10 +75,10 @@ createNewEntityClass_Auto("skeleton", true, 9, 13, 0.4, 0.55, -0.15, -0.45, 0.69
 	} },
 ])
 // createNewEntityClass_Auto("skeletonShield", true, 9, 13, 0.69, 1)
-createNewEntityClass_Auto("tentacle", true, 28, 34, 0.82, 1, undefined, undefined, undefined, undefined, [
+createNewEntityClass_Auto("tentacle", true, 16, 16, 0.5, 0.9375, -0.25, -0.0625, 1, 1, [
 	{ type: "tiles", name: "appearCells", value: null, title: "Места появления", nullable: true, displayColor: "orange" },
 ])
-createNewEntityClass_Auto("piranha", true, 35, 32, 0.8, 0.7, -0.05, -0.15, 1, 0.91, [
+createNewEntityClass_Auto("piranha", true, 16, 16, 0.9, 0.5, 0, -0.4375, 1, 1, [
 	{ type: "text", name: "moveStyle", value: "ver", options: ["ver", "hor"], title: "Направление сдвига" },
 	{ type: "bool", name: "dirR", value: true, smartTitle: {
 		field: "moveStyle",
@@ -97,7 +97,7 @@ createNewEntityClass_Auto("wood", false, 14, 7, 0.875, 0.25, 0, -0.1875, 0.875, 
 createNewEntityClass_Auto("wood2", false, 15, 10, 0.6875, 0.625, -0.125, 0, 0.9375, 0.625)
 createNewEntityClass_Auto("stone", false, 16, 16, 1, 1)
 createNewEntityClass_Auto("stoneBar", false, 16, 16, 1, 1)
-createNewEntityClass_Auto("lavaBubble", true, 51, 56, 1, 1)
+createNewEntityClass_Auto("lavaBubble", true, 16, 16, 0.5625, 0.5, -0.25, -0.25, 1, 1)
 createNewEntityClass_Auto("octopus", true, 32, 32, 2, 2, undefined, undefined, undefined, undefined, [
 	{ type: "tiles", name: "entrance", value: [[19, 3], [19, 4], [19, 5]], title: "Вход", displayColor: "lime" },
 	{ type: "tiles", name: "exit", value: [[0, 3], [0, 4], [0, 5]], title: "Выход", displayColor: "tomato" },
