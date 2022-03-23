@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Помощник с анимациями</title>
+	<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+	<link rel="stylesheet" type="text/css" href="popup.css">
+	<link rel="stylesheet" type="text/css" href="styles.css">
+	<script defer src="out/functions.js"></script>
+	<script defer src="out/main.js"></script>
+</head>
+<body>
+	<div class="container">
+		<canvas id="canvas"></canvas>
+		<div class="input">
+			<span>Кадр: </span>
+			<label for="inp-width">Ширина</label>
+			<input type="number" id="inp-width" min="1" value="16">
+			<label for="inp-height">Высота</label>
+			<input type="number" id="inp-height" min="1" value="16">
+		</div>
+		<div class="input">
+			<label for="inp-rotate">Поворот</label>
+			<select id="inp-rotate">
+				<option value="0">0°</option>
+				<option value="90">90°</option>
+				<option value="180">180°</option>
+				<option value="270">270°</option>
+			</select>
+		</div>
+		<div class="input">
+			<input type="checkbox" id="inp-flip">
+			<label for="inp-flip">Перевернуть</label>
+		</div>
+		<div class="input">
+			<input type="checkbox" id="inp-reverse">
+			<label for="inp-reverse">Обратить порядок</label>
+		</div>
+		<div class="input">
+			<label for="inp-img">Анимация: </label>
+			<input type="file" id="inp-img" accept="image/*">
+		</div>
+		<div class="input">
+			<label for="inp-img-name">Название анимации: </label>
+			<input type="text" id="inp-name">
+		</div>
+		<div class="input">
+			<button id="btn-save">Сохранить</button>
+		</div>
+	</div>
+</body>
+</html>
