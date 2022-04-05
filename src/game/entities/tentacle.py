@@ -76,6 +76,11 @@ class EntityTentacle(EntityAlive):
             if (self.animator.lastState[0] and self.animator.frame == 2):
                 self.fire()
             if (self.animator.lastState[1]):
+                self.counter = 1000
+                self.animator.setAnimation("stay")
+                self.state = "stay"
+        elif (self.state == "stay"):
+            if (self.counter <= 0):
                 self.animator.setAnimation("hide")
                 self.state = "hide"
         elif (self.state == "hide"):

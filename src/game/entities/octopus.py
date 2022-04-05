@@ -46,6 +46,7 @@ class EntityOctopus(EntityAlive):
         self.settedDecor = []
         self.tentacles = []
         self.dev_zones = []
+        self.counter = 0
         if ("octopus-defeated" not in self.screen.saveData.tags):
             self.blockTiles(self.exit)
             self.state = "awaitStart"
@@ -81,6 +82,7 @@ class EntityOctopus(EntityAlive):
         if (Settings.disableAI):
             return
 
+        self.counter = max(0, self.counter - 1000 / Settings.fps)
         if (self.state == "hidden"):
             self.visible = False
             self.immortal = True
@@ -88,9 +90,30 @@ class EntityOctopus(EntityAlive):
             self.visible = False
             self.immortal = True
             if (self.screen.player.is_inRect(self.startZone)):
-                self.state = "start"
+                self.state = "startAppear"
+                self.animator.setAnimation("appear")
                 self.blockTiles(self.entrance)
                 startBattleMusic(*battleMusic)
+        elif (self.state == "startAppear"):
+            self.visible = True
+            self.immortal = True
+            if (self.animator.lastState[1]):
+                self.state = "startStay"
+                self.animator.setAnimation("stay")
+                self.counter = 3000
+        elif (self.state == "startStay"):
+            self.visible = True
+            self.immortal = True
+            if (self.counter <= 0):
+                self.state = "startHide"
+                self.animator.setAnimation("hide")
+        elif (self.state == "startHide"):
+            self.visible = True
+            self.immortal = True
+            if (self.animator.lastState[1]):
+                self.visible = False
+                self.state = "start"
+                self.animator.setAnimation("stay")
         elif (self.state == "start"):
             self.visible = False
             self.immortal = True

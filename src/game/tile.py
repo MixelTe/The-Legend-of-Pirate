@@ -121,7 +121,7 @@ Tile("grass3.png")
 Tile("stone.png")
 
 Tile("water_deep.png", solid=True, tags=["water-deep", "low"])
-Tile("water_low.png", speed=0.6, tags=["water"])
+Tile("water_low.png", speed=0.8, tags=["water"])
 
 Tile("mountain.png", solid=True)
 Tile("mountain2.png", solid=True)
