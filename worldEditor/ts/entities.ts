@@ -99,6 +99,7 @@ createNewEntityClass_Auto("stone", false, 16, 16, 1, 1)
 createNewEntityClass_Auto("stoneBar", false, 16, 16, 1, 1)
 createNewEntityClass_Auto("lavaBubble", true, 16, 16, 0.5625, 0.5, -0.25, -0.25, 1, 1)
 createNewEntityClass_Auto("octopus", true, 32, 32, 2, 2, undefined, undefined, undefined, undefined, [
+	{ type: "area", name: "startZone", value: [2, 2, 16, 5], title: "Зона старта боя", displayColor: "orange" },
 	{ type: "tiles", name: "entrance", value: [[19, 3], [19, 4], [19, 5]], title: "Вход", displayColor: "lime" },
 	{ type: "tiles", name: "exit", value: [[0, 3], [0, 4], [0, 5]], title: "Выход", displayColor: "tomato" },
 ])

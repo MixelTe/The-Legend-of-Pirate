@@ -1,5 +1,5 @@
 import math
-from typing import Any, Callable
+from typing import Any, Callable, Union
 import pygame
 from game.animator import Animator, AnimatorData
 from game.decor import Decor
@@ -10,7 +10,9 @@ from settings import Settings
 
 animatorData = AnimatorData("octopus", [
     ("stay.png", 300, (32, 32), (0, 0, 2, 2)),
+    ("hit.png", 800, (32, 32), (0, 0, 2, 2)),
     ("appear.png", 100, (32, 32), (0, 0, 2, 2)),
+    ("hide.png", 100, (32, 32), (0, 0, 2, 2)),
 ])
 
 
@@ -18,9 +20,11 @@ class EntityOctopus(EntityAlive):
     def __init__(self, screen, data: dict = None):
         self.entrance = [(19, 3), (19, 4), (19, 5)]
         self.exit = [(0, 3), (0, 4), (0, 5)]
+        self.startZone = [2, 2, 16, 5]
         super().__init__(screen, data)
         self.animator = Animator(animatorData, "stay")
         self.group = EntityGroups.enemy
+        self.removeOnDeath = False
         self.strength = 1
         self.healthMax = 3
         self.health = 3
@@ -35,19 +39,17 @@ class EntityOctopus(EntityAlive):
         self.dev_zones = []
         if ("octopus-defeated" not in self.screen.saveData.tags):
             self.blockTiles(self.exit)
-            self.state = "start"
+            self.state = "awaitStart"
 
     def applyData(self, dataSetter: Callable[[str, Any, str, Callable[[Any], Any]], None], data: dict):
         super().applyData(dataSetter, data)
         dataSetter("entrance", self.entrance)
         dataSetter("exit", self.exit)
+        dataSetter("startZone", self.startZone)
 
     def draw(self, surface: pygame.Surface, opaque=1):
         if (self.visible):
             super().draw(surface, opaque)
-
-    def draw_dev(self, surface: pygame.Surface):
-        super().draw_dev(surface)
 
         if (Settings.drawHitboxes and False):
             for i, zone in enumerate(self.dev_zones):
@@ -67,17 +69,29 @@ class EntityOctopus(EntityAlive):
 
     def update(self):
         super().update()
-        if (not self.alive or Settings.disableAI):
+        if (Settings.disableAI):
             return
 
         if (self.state == "hidden"):
             self.visible = False
+            self.immortal = True
+        elif (self.state == "awaitStart"):
+            self.visible = False
+            self.immortal = True
+            if (self.screen.player.is_inRect(self.startZone)):
+                self.state = "start"
+                self.blockTiles(self.entrance)
         elif (self.state == "start"):
             self.visible = False
-            self.createTentacles(4)
-            self.state = "tentacle"
+            self.immortal = True
+            if (self.health <= 0):
+                self.endBattle()
+            else:
+                self.createTentacles(1)
+                self.state = "tentacle"
         elif (self.state == "tentacle"):
             self.visible = False
+            self.immortal = True
             self.tentacles = list(filter(lambda el: el.alive, self.tentacles))
             if (len(self.tentacles) == 0):
                 self.state = "appear"
@@ -85,11 +99,37 @@ class EntityOctopus(EntityAlive):
                 self.animator.setAnimation("appear")
         elif (self.state == "appear"):
             self.visible = True
+            self.immortal = True
             if (self.animator.lastState[1]):
-                self.state = "hidden"
+                self.animator.setAnimation("stay")
+                self.state = "visible"
+        elif (self.state == "visible"):
+            self.animator.setAnimation("stay")
+            self.visible = True
+            self.immortal = False
+        elif (self.state == "hit"):
+            self.visible = True
+            self.immortal = True
+            if (self.animator.lastState[1]):
+                self.state = "hide"
+                self.animator.setAnimation("hide")
+        elif (self.state == "hide"):
+            self.visible = True
+            self.immortal = True
+            if (self.animator.lastState[1]):
+                self.visible = False
+                self.animator.setAnimation("stay")
+                self.state = "start"
 
         self.hidden = not self.visible
         self.strength = 1 if self.visible else 0
+
+    def takeDamage(self, damage: int, attacker: Union[Entity, str, None] = None):
+        damage = min(damage, 1)
+        if (super().takeDamage(damage, attacker)):
+            self.immortal = True
+            self.state = "hit"
+            self.animator.setAnimation("hit")
 
     def blockTiles(self, tiles: list[tuple[int, int]]):
         def setDecor(x, y, tx, ty):
@@ -118,6 +158,10 @@ class EntityOctopus(EntityAlive):
             setDecor(x, y - 1, x, y)
             setDecor(x, y + 1, x, y)
 
+    def unblockTiles(self, tiles: list[tuple[int, int]]):
+        for x, y in tiles:
+            self.screen.tiles[y][x] = Tile.fromId("water_low")
+
     def createTentacles(self, count):
         step = 2 * math.pi / count
         center = (Settings.screen_width // 2, Settings.screen_height // 2)
@@ -143,5 +187,15 @@ class EntityOctopus(EntityAlive):
             self.screen.addEntity(tentacle)
             self.tentacles.append(tentacle)
             self.dev_zones.append(tiles)
+
+    def endBattle(self):
+        self.state = "hidden"
+        self.visible = False
+        self.immortal = True
+        self.unblockTiles(self.entrance)
+        self.unblockTiles(self.exit)
+        for decor in self.settedDecor:
+            self.screen.decor.remove(decor)
+        self.screen.saveData.tags.append("octopus-defeated")
 
 EntityAlive.registerEntity("octopus", EntityOctopus)
