@@ -23,6 +23,7 @@ battleMusic = (
     joinPath(Settings.folder_data, Settings.folder_sounds, "bossBattle", "bossBattle_end.mp3"),
     1
 )
+font = pygame.font.Font(Settings.path_font, int(Settings.tileSize * 1.2))
 
 
 class EntityOctopus(EntityAlive):
@@ -35,13 +36,14 @@ class EntityOctopus(EntityAlive):
         self.group = EntityGroups.enemy
         self.removeOnDeath = False
         self.strength = 1
-        self.healthMax = 3
-        self.health = 3
+        self.healthMax = 9
+        self.health = 9
         self.width = 2
         self.height = 2
         self.x = (Settings.screen_width - self.width) / 2
         self.y = (Settings.screen_height - self.height) / 2
         self.state = "hidden"
+        self.attackCount = 0
         self.visible = False
         self.settedDecor = []
         self.tentacles = []
@@ -67,6 +69,10 @@ class EntityOctopus(EntityAlive):
                 color.hsla = ((i * (360 / len(self.dev_zones)) * 2) % 360, 100, 50, 100)
                 for x, y in zone:
                     pygame.draw.rect(surface, color, [x * Settings.tileSize, y * Settings.tileSize, Settings.tileSize, Settings.tileSize], 3)
+
+        if (Settings.drawHitboxes):
+            text = font.render(f"{self.health}", True, "red")
+            surface.blit(text, (self.x * Settings.tileSize, self.y * Settings.tileSize))
 
     def canGoOn(self, tile: Tile) -> bool:
         return super().canGoOn(tile)
@@ -94,6 +100,8 @@ class EntityOctopus(EntityAlive):
                 self.animator.setAnimation("appear")
                 self.blockTiles(self.entrance)
                 startBattleMusic(*battleMusic)
+                self.x = (Settings.screen_width - self.width) / 2
+                self.y = (Settings.screen_height - self.height) / 2
         elif (self.state == "startAppear"):
             self.visible = True
             self.immortal = True
@@ -120,7 +128,7 @@ class EntityOctopus(EntityAlive):
             if (self.health <= 0):
                 self.endBattle()
             else:
-                self.createTentacles(4 + 3 - self.health)
+                self.createTentacles(3)
                 self.state = "tentacle"
         elif (self.state == "tentacle"):
             self.visible = False
@@ -130,6 +138,9 @@ class EntityOctopus(EntityAlive):
                 self.state = "appear"
                 self.visible = True
                 self.animator.setAnimation("appear")
+                self.x = (Settings.screen_width - self.width) / 2
+                self.y = (Settings.screen_height - self.height) / 2
+                self.attackCount = 0
         elif (self.state == "appear"):
             self.visible = True
             self.immortal = True
@@ -144,8 +155,12 @@ class EntityOctopus(EntityAlive):
             self.visible = True
             self.immortal = True
             if (self.animator.lastState[1]):
-                self.state = "hide"
-                self.animator.setAnimation("hide")
+                if (self.attackCount >= 3):
+                    self.state = "hide"
+                    self.animator.setAnimation("hide")
+                else:
+                    self.state = "visible"
+                    self.animator.setAnimation("stay")
         elif (self.state == "hide"):
             self.visible = True
             self.immortal = True
@@ -153,15 +168,13 @@ class EntityOctopus(EntityAlive):
                 self.visible = False
                 self.animator.setAnimation("stay")
                 self.state = "start"
-                self.x = (Settings.screen_width - self.width) / 2
-                self.y = (Settings.screen_height - self.height) / 2
 
         self.hidden = not self.visible
         self.strength = 1 if self.visible else 0
 
     def takeDamage(self, damage: int, attacker: Union[Entity, str, None] = None):
-        damage = min(damage, 1)
         if (super().takeDamage(damage, attacker)):
+            self.attackCount += 1
             self.immortal = True
             self.state = "hit"
             self.animator.setAnimation("hit")
