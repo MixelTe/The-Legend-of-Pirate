@@ -2,9 +2,9 @@ from __future__ import annotations
 from typing import Callable, Literal, Union
 import pygame
 from backMusic import endBattleMusic
-from functions import GameExeption
+from functions import GameExeption, rectPointIntersection
 from game.decor import Decor
-from game.entity import Entity
+from game.entity import Entity, EntityAlive
 from game.entityPlayer import EntityPlayer
 from game.tile import Tile
 from game.world import ScreenData, World
@@ -126,6 +126,16 @@ class Screen:
         if (not world.screenExist(x, y)):
             raise GameExeption(f"Screen.create: screen not exist, x: {x}, y: {y}")
         return Screen(world, world[x, y], (x, y), saveData, player, openDialog)
+
+    def deathMouse(self, pos: tuple[int, int]):
+        for entity in self.entities:
+            if (rectPointIntersection(entity.get_rect(), pos)):
+                self.entities.remove(entity)
+                if (isinstance(entity, EntityAlive)):
+                    entity.immortal = False
+                    entity.damageDelay = 0
+                    entity.takeDamage(100000, "Death Mouse")
+                    entity.health = 0
 
 
 class ScreenGoTo:

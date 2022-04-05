@@ -28,6 +28,9 @@ class WindowGame(Window):
             self.dialog = GameDialog_start()
 
     def on_event(self, event: pygame.event.Event):
+        if (Settings.deathMouse):
+            if (event.type == pygame.MOUSEBUTTONUP):
+                self.deathMouse(event.pos)
         if (self.dialog is None):
             if (event.type == pygame.KEYDOWN):
                 self.player.onKeyDown(event.key)
@@ -138,3 +141,9 @@ class WindowGame(Window):
         self.saveData.time += int((now - self.time).total_seconds())
         self.time = now
         self.saveData.save()
+
+    def deathMouse(self, pos: tuple[int, int]):
+        pos = list(pos)
+        pos[1] -= Settings.overlay_height
+        pos = (pos[0] / Settings.tileSize, pos[1] / Settings.tileSize)
+        self.screen.deathMouse(pos)

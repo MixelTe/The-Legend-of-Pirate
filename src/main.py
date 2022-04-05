@@ -22,6 +22,7 @@ class Main:
         self.fpsGraph = FpsGraph()
         font = pygame.font.Font(Settings.path_font, int(Settings.tileSize * 0.5))
         self.renderedText_AIDisabled = font.render("AI Disabled", True, "red")
+        self.renderedText_DeathMouse = font.render("Death Mouse", True, "red")
 
     def start(self):
         clock = pygame.time.Clock()
@@ -51,6 +52,8 @@ class Main:
                             Settings.ghostmode = not Settings.ghostmode
                         if (event.key == pygame.K_F6):
                             Settings.drawGrid = not Settings.drawGrid
+                        if (event.key == pygame.K_F7):
+                            Settings.deathMouse = not Settings.deathMouse
                 self.window.on_event(event)
 
             result = self.window.update()
@@ -63,6 +66,8 @@ class Main:
                 self.fpsGraph.draw(screen)
             if (Settings.disableAI):
                 screen.blit(self.renderedText_AIDisabled, (Settings.tileSize * 0.2, Settings.height - Settings.tileSize * 0.6))
+            if (Settings.deathMouse):
+                screen.blit(self.renderedText_DeathMouse, (Settings.tileSize * 3.2, Settings.height - Settings.tileSize * 0.6))
             pygame.display.flip()
 
             time = clock.tick(Settings.fps)

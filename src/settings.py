@@ -28,6 +28,7 @@ class Settings:
     disableAI = False  # F4
     ghostmode = True  # F5
     drawGrid = False  # F6
+    deathMouse = False  # F7
     drawNoneImgs = False
     moveScreenOnNumpad = True
 
