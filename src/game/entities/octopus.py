@@ -1,6 +1,8 @@
 import math
 from typing import Any, Callable, Union
 import pygame
+from backMusic import endBattleMusic, startBattleMusic
+from functions import joinPath
 from game.animator import Animator, AnimatorData
 from game.decor import Decor
 from game.entity import Entity, EntityAlive, EntityGroups
@@ -14,6 +16,13 @@ animatorData = AnimatorData("octopus", [
     ("appear.png", 100, (32, 32), (0, 0, 2, 2)),
     ("hide.png", 100, (32, 32), (0, 0, 2, 2)),
 ])
+
+battleMusic = (
+    joinPath(Settings.folder_data, Settings.folder_sounds, "bossBattle", "bossBattle_start.mp3"),
+    joinPath(Settings.folder_data, Settings.folder_sounds, "bossBattle", "bossBattle.mp3"),
+    joinPath(Settings.folder_data, Settings.folder_sounds, "bossBattle", "bossBattle_end.mp3"),
+    1
+)
 
 
 class EntityOctopus(EntityAlive):
@@ -81,13 +90,14 @@ class EntityOctopus(EntityAlive):
             if (self.screen.player.is_inRect(self.startZone)):
                 self.state = "start"
                 self.blockTiles(self.entrance)
+                startBattleMusic(*battleMusic)
         elif (self.state == "start"):
             self.visible = False
             self.immortal = True
             if (self.health <= 0):
                 self.endBattle()
             else:
-                self.createTentacles(1)
+                self.createTentacles(4 + 3 - self.health)
                 self.state = "tentacle"
         elif (self.state == "tentacle"):
             self.visible = False
@@ -192,6 +202,7 @@ class EntityOctopus(EntityAlive):
         self.state = "hidden"
         self.visible = False
         self.immortal = True
+        endBattleMusic()
         self.unblockTiles(self.entrance)
         self.unblockTiles(self.exit)
         for decor in self.settedDecor:
