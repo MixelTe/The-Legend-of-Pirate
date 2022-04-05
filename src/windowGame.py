@@ -1,4 +1,5 @@
 import pygame
+from backMusic import endBattleMusic
 from game.dialogs.start import GameDialog_start
 from game.entityPlayer import EntityPlayer
 from game.gameDialog import GameDialog
@@ -111,6 +112,7 @@ class WindowGame(Window):
 
         if (self.player.health <= 0):
             self.saveAll()
+            endBattleMusic()
             from windowEnd import WindowEnd
             return WindowEnd(self.save, self.player.lastAttaker)
 

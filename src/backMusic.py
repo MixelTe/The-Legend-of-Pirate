@@ -32,14 +32,14 @@ def getCurMusic():
 
 
 def onMusicEnd():
-    global curMusic
+    global curMusic, battleMusic
     if (battleMusic):
         if (battleMusic[0] == 0):
             _startMusic(battleMusic[2], battleMusic[1], -1)
             battleMusic[0] = 1
         if (battleMusic[0] == 2):
             _startMusic(backMusic, backMusicVolume, -1)
-            battleMusic[0] = 1
+            battleMusic = None
     elif (curMusic):
         curMusic = None
         _startMusic(backMusic, backMusicVolume, -1)
@@ -51,6 +51,11 @@ def startBattleMusic(startPath, mainPath, endPath, volume=1):
     _startMusic(startPath, volume)
 
 
-def endBattleMusic():
+def endBattleMusic(runEnd=False):
+    if (not battleMusic):
+        return
     battleMusic[0] = 2
-    _startMusic(battleMusic[3], battleMusic[1])
+    if (runEnd):
+        _startMusic(battleMusic[3], battleMusic[1])
+    else:
+        pygame.mixer.music.fadeout(1000)

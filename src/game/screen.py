@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import Callable, Literal, Union
 import pygame
+from backMusic import endBattleMusic
 from functions import GameExeption
 from game.decor import Decor
 from game.entity import Entity
@@ -48,6 +49,7 @@ class Screen:
         self.onCreate()
 
     def onCreate(self):
+        endBattleMusic()
         places = []
         for tile, x, y in self.getTiles():
             if (tile.id.startswith("sand")):

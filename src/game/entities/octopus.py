@@ -153,6 +153,8 @@ class EntityOctopus(EntityAlive):
                 self.visible = False
                 self.animator.setAnimation("stay")
                 self.state = "start"
+                self.x = (Settings.screen_width - self.width) / 2
+                self.y = (Settings.screen_height - self.height) / 2
 
         self.hidden = not self.visible
         self.strength = 1 if self.visible else 0
@@ -225,7 +227,7 @@ class EntityOctopus(EntityAlive):
         self.state = "hidden"
         self.visible = False
         self.immortal = True
-        endBattleMusic()
+        endBattleMusic(True)
         self.unblockTiles(self.entrance)
         self.unblockTiles(self.exit)
         for decor in self.settedDecor:
