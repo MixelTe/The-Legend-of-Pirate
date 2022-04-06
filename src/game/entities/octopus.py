@@ -128,7 +128,7 @@ class EntityOctopus(EntityAlive):
             if (self.health <= 0):
                 self.endBattle()
             else:
-                self.createTentacles(3)
+                self.createTentacles(3 + (3 - self.health // 3))
                 self.state = "tentacle"
         elif (self.state == "tentacle"):
             self.visible = False
