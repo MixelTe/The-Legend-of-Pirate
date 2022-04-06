@@ -35,7 +35,7 @@ class EntityTentacle(EntityAlive):
 
     def applyData(self, dataSetter: Callable[[str, Any, str, Callable[[Any], Any]], None], data: dict):
         super().applyData(dataSetter, data)
-        if ("appearCells" in data):
+        if ("appearCells" in data and data["appearCells"] is not None):
             self.appearCells = data["appearCells"]
         else:
             self.appearCells = self.getWaterCells()
