@@ -251,6 +251,7 @@
 		* damageDelay: int - при вызове update уменьшается на 1000 / Settings.fps
 		* alive: bool - жива ли сущность
 		* removeOnDeath: bool - удалять ли сущность при её смерти
+		* attackPushback: bool - сдвигать ли сущнось, когда её атакуют
 	* Методы:
 		* takeDamage(damage: int, attacker: Entity | str | None) -> bool - Уменьшение здоровья и установка damageDelay в Settings.damageDelay, если damageDelay <= 0. Возвращает был ли нанесён урон
 		* heal(v: int) - Увеличение здоровья в приделах healthMax
