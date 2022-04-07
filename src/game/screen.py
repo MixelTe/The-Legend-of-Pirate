@@ -68,6 +68,8 @@ class Screen:
             entity.preUpdate()
         for entity in self.entities:
             entity.update()
+            if (self.goToVar):
+                break
         return self.goToVar
 
     def draw(self) -> pygame.Surface:
