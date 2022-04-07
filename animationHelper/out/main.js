@@ -6,6 +6,7 @@ const inp_height = getInput("inp-height");
 const inp_rotate = getSelect("inp-rotate");
 const inp_flip = getInput("inp-flip");
 const inp_reverse = getInput("inp-reverse");
+const inp_shift = getInput("inp-shift");
 const inp_img = getInput("inp-img");
 const inp_name = getInput("inp-name");
 const btn_save = getButton("btn-save");
@@ -86,13 +87,17 @@ inp_height.addEventListener("change", async () => { await splitImg(); redraw(); 
 inp_rotate.addEventListener("change", () => redraw());
 inp_flip.addEventListener("change", () => redraw());
 inp_reverse.addEventListener("change", () => redraw());
+inp_shift.addEventListener("change", () => redraw());
 function redraw(origSize = false) {
     setCanvasSize(origSize);
     ctx.imageSmoothingEnabled = false;
     for (let i = 0; i < frame.l.length; i++) {
-        let img = frame.l[i];
+        let imgI = i;
+        if (!isNaN(inp_shift.valueAsNumber))
+            imgI = (imgI + inp_shift.valueAsNumber + frame.l.length) % frame.l.length;
+        let img = frame.l[imgI];
         if (inp_reverse.checked)
-            img = frame.l[frame.l.length - i - 1];
+            img = frame.l[frame.l.length - imgI - 1];
         ctx.save();
         ctx.translate(frame.w * i, 0);
         if (inp_rotate.value == "90") {

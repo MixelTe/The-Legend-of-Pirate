@@ -54,14 +54,16 @@ const Aborigine = createNewEntityClass_Auto("aborigine", true, 15, 16, 0.32, 0.7
         } },
     { type: "text", name: "direction", value: null, nullable: true, options: ["right", "down", "left", "up"], smartTitle: {
             field: "type",
-            titles: { "stay": "Напривление взгляда", "patrol": "Не используется" }
+            titles: { "stay": "Направление взгляда", "patrol": "Не используется" }
         } },
     { type: "tilesNumered", name: "path", value: null, nullable: true, displayColor: "lime", smartTitle: {
             field: "type",
             titles: { "stay": "Не используется", "patrol": "Точки пути" }
         } },
 ]);
-createNewEntityClass_Auto("aborigineBow", true, 15, 16, 0.32, 0.7, -0.241, -0.6, 1.2, 1.3);
+const AborigineBow = createNewEntityClass_Auto("aborigineBow", true, 15, 16, 0.32, 0.7, -0.4, -0.6, 1.2, 1.3, [
+    { type: "text", name: "direction", value: "right", options: ["right", "down", "left", "up"], title: "Направление взгляда" },
+]);
 createNewEntityClass_Auto("skeleton", true, 9, 13, 0.4, 0.55, -0.15, -0.45, 0.69, 1, [
     { type: "text", name: "moveStyle", value: "ver", options: ["ver", "hor"], title: "Направление сдвига" },
     { type: "bool", name: "dirR", value: true, smartTitle: {
@@ -98,59 +100,64 @@ createNewEntityClass_Auto("stone", false, 16, 16, 1, 1);
 createNewEntityClass_Auto("stoneBar", false, 16, 16, 1, 1);
 createNewEntityClass_Auto("lavaBubble", true, 16, 16, 0.5625, 0.5, -0.25, -0.25, 1, 1);
 createNewEntityClass_Auto("octopus", true, 32, 32, 2, 2, undefined, undefined, undefined, undefined, [
+    { type: "area", name: "startZone", value: [2, 2, 16, 5], title: "Зона старта боя", displayColor: "orange" },
     { type: "tiles", name: "entrance", value: [[19, 3], [19, 4], [19, 5]], title: "Вход", displayColor: "lime" },
     { type: "tiles", name: "exit", value: [[0, 3], [0, 4], [0, 5]], title: "Выход", displayColor: "tomato" },
 ]);
-Aborigine.customDraw = (self, ctx) => {
-    const lookR = 4;
-    let lookW = Math.PI / 2;
-    let dir = 0;
-    if (self.objData[0].value == "stay") {
-        switch (self.objData[2].value) {
-            case "right":
-                dir = 0;
-                break;
-            case "down":
-                dir = Math.PI / 2;
-                break;
-            case "left":
-                dir = Math.PI;
-                break;
-            case "up":
-                dir = Math.PI / 2 * 3;
-                break;
+function aborigineDraw(dirV, check0, lookR) {
+    function draw(self, ctx) {
+        let lookW = Math.PI / 2;
+        let dir = 0;
+        if (self.objData[0].value == "stay" || !check0) {
+            switch (self.objData[dirV].value) {
+                case "right":
+                    dir = 0;
+                    break;
+                case "down":
+                    dir = Math.PI / 2;
+                    break;
+                case "left":
+                    dir = Math.PI;
+                    break;
+                case "up":
+                    dir = Math.PI / 2 * 3;
+                    break;
+            }
         }
-    }
-    else {
-        const tiles = self.objData[3].value;
-        if (tiles && tiles[1]) {
-            const dx = tiles[1][0] - Math.floor(self.x);
-            const dy = tiles[1][1] - Math.floor(self.y);
-            if (dx > 0)
-                dir = 0;
-            else if (dx < 0)
-                dir = Math.PI;
-            else if (dy > 0)
-                dir = Math.PI / 2;
-            else if (dy < 0)
-                dir = Math.PI / 2 * 3;
+        else {
+            const tiles = self.objData[3].value;
+            if (tiles && tiles[1]) {
+                const dx = tiles[1][0] - Math.floor(self.x);
+                const dy = tiles[1][1] - Math.floor(self.y);
+                if (dx > 0)
+                    dir = 0;
+                else if (dx < 0)
+                    dir = Math.PI;
+                else if (dy > 0)
+                    dir = Math.PI / 2;
+                else if (dy < 0)
+                    dir = Math.PI / 2 * 3;
+            }
         }
+        const drawPie = (r, w, d) => {
+            ctx.beginPath();
+            ctx.moveTo(self.x * TileSize, self.y * TileSize);
+            ctx.arc(self.x * TileSize, self.y * TileSize, r * TileSize, d - w / 2, d + w / 2);
+            ctx.lineTo(self.x * TileSize, self.y * TileSize);
+            ctx.fill();
+        };
+        ctx.save();
+        if (self.objData[0].value == "stay" || !check0) {
+            ctx.fillStyle = "rgba(128, 128, 128, 0.2)";
+            const addW = !check0 || self.objData[1].value ? 60 / 180 * Math.PI : 20 / 180 * Math.PI;
+            drawPie(lookR, addW, dir + lookW / 2 + addW / 2);
+            drawPie(lookR, addW, dir - lookW / 2 - addW / 2);
+        }
+        ctx.fillStyle = "rgba(255, 165, 0, 0.2)";
+        drawPie(lookR, lookW, dir);
+        ctx.restore();
     }
-    const drawPie = (r, w, d) => {
-        ctx.beginPath();
-        ctx.moveTo(self.x * TileSize, self.y * TileSize);
-        ctx.arc(self.x * TileSize, self.y * TileSize, r * TileSize, d - w / 2, d + w / 2);
-        ctx.lineTo(self.x * TileSize, self.y * TileSize);
-        ctx.fill();
-    };
-    ctx.save();
-    if (self.objData[0].value == "stay") {
-        ctx.fillStyle = "rgba(128, 128, 128, 0.2)";
-        const addW = self.objData[1].value ? 60 / 180 * Math.PI : 20 / 180 * Math.PI;
-        drawPie(lookR, addW, dir + lookW / 2 + addW / 2);
-        drawPie(lookR, addW, dir - lookW / 2 - addW / 2);
-    }
-    ctx.fillStyle = "rgba(255, 165, 0, 0.2)";
-    drawPie(lookR, lookW, dir);
-    ctx.restore();
-};
+    return draw;
+}
+Aborigine.customDraw = aborigineDraw(2, true, 4);
+AborigineBow.customDraw = aborigineDraw(0, false, 5);
