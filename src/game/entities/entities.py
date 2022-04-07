@@ -266,3 +266,35 @@ class EntityWood2(Entity):
         pass
 
 Entity.registerEntity("wood2", EntityWood2)
+
+
+class EntityArrow(EntityAlive):
+    image = load_entityImg("arrow.png", 0.6, 0.2)
+
+    def __init__(self, screen, data: dict = None):
+        super().__init__(screen, data)
+        self.image = EntityArrow.image
+        self.group = EntityGroups.enemy
+        self.ghostT = True
+        self.ghostE = True
+        self.strength = 1
+        self.speed = 0.1
+        self.width = 0.6
+        self.height = 0.2
+
+    def canGoOn(self, tile: Tile) -> bool:
+        return super().canGoOn(tile) or "low" in tile.tags
+
+    def draw(self, surface: pygame.Surface, opaque=1):
+        rotation = math.atan2(-self.speedY, self.speedX) / math.pi * 180
+        self.image = pygame.transform.rotate(EntityArrow.image, rotation)
+        super().draw(surface, opaque)
+
+    def update(self):
+        collisions = super().update()
+        removeFromCollisions(collisions, ["aborigineBow"])
+        if (len(collisions) != 0):
+            self.remove()
+
+
+Entity.registerEntity("arrow", EntityArrow)
