@@ -204,12 +204,20 @@ class EntityPiranha(EntityAlive):
         if (not self.screen.player.visibleForEnemies):
             return
         attackRange = 4
-        if (distanceRects(self.get_rect(), self.screen.player.get_rect()) <= attackRange ** 2):
+        # if (distanceRects(self.get_rect(), self.screen.player.get_rect()) <= attackRange ** 2):
+        if ((abs(self.x - self.screen.player.x) < self.screen.player.width and abs(self.y - self.screen.player.y) < attackRange) or
+                (abs(self.y - self.screen.player.y) < self.screen.player.height and abs(self.x - self.screen.player.x) < attackRange)):
             self.returnTile = (int(self.x + self.width / 2), int(self.y + self.height / 2))
             self.state = "charging"
             self.chargingCounter = 400
-            dx = (self.screen.player.x + self.screen.player.width / 2) - (self.x + self.width / 2)
-            dy = (self.screen.player.y + self.screen.player.height / 2) - (self.y + self.height / 2)
+            # dx = (self.screen.player.x + self.screen.player.width / 2) - (self.x + self.width / 2)
+            # dy = (self.screen.player.y + self.screen.player.height / 2) - (self.y + self.height / 2)
+            if (abs(self.x - self.screen.player.x) < self.screen.player.width):
+                dx = 0
+                dy = (self.screen.player.y + self.screen.player.height / 2) - (self.y + self.height / 2)
+            else:
+                dx = (self.screen.player.x + self.screen.player.width / 2) - (self.x + self.width / 2)
+                dy = 0
             self.attackD = (dx, dy)
 
 
