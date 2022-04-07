@@ -81,6 +81,7 @@ strength  | сила удара         | int      | 0
 alive     | жива ли            | bool     | True
 immortal  | игноририет ли урон | bool     | False
 removeOnDeath | удалять ли после смерти | bool | True
+attackPushback | действует ли отталкивание от удара | bool | True
 group     | группа             |          | EntityGroups.neutral
 
 alive - если False, то начинается анимация гибели, после которой сущность удаляется.
