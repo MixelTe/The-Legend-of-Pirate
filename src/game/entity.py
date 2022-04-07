@@ -345,6 +345,7 @@ class EntityAlive(Entity):
         self.removeOnDeath = True
         self.damageAnimCounter = 0
         self.DamageDelay = Settings.damageDelay
+        self.attackPushback = True
         self.attackPushbackX = 0
         self.attackPushbackY = 0
         self.attackPushbackA = 0.002
@@ -359,7 +360,7 @@ class EntityAlive(Entity):
         sound_hit.play()
         self.damageDelay = self.DamageDelay
         self.health -= damage
-        if (isinstance(attacker, Entity)):
+        if (isinstance(attacker, Entity) and self.attackPushback):
             dx = (attacker.x + attacker.width / 2) - (self.x + self.width / 2)
             dy = (attacker.y + attacker.height / 2) - (self.y + self.height / 2)
             self.attackPushbackX = -0.1 * (dx / (self.width + attacker.width))

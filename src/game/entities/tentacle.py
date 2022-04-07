@@ -23,7 +23,8 @@ class EntityTentacle(EntityAlive):
         self.animator = Animator(animatorData, "stay")
         self.group = EntityGroups.enemy
         self.ghostE = True
-        self.strength = 1
+        self.attackPushback = False
+        self.strength = 0
         self.healthMax = 3
         self.health = 3
         self.width = 0.5

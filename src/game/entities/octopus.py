@@ -35,7 +35,8 @@ class EntityOctopus(EntityAlive):
         self.animator = Animator(animatorData, "stay")
         self.group = EntityGroups.enemy
         self.removeOnDeath = False
-        self.strength = 1
+        self.attackPushback = False
+        self.strength = 0
         self.healthMax = 9
         self.health = 9
         self.width = 2
@@ -170,7 +171,6 @@ class EntityOctopus(EntityAlive):
                 self.state = "start"
 
         self.hidden = not self.visible
-        self.strength = 1 if self.visible else 0
 
     def takeDamage(self, damage: int, attacker: Union[Entity, str, None] = None):
         if (super().takeDamage(damage, attacker)):
