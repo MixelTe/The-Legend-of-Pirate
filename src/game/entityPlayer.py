@@ -37,6 +37,7 @@ animatorData = AnimatorData("pirate", [
     ("swimmingS.png", 150, (18, 24), (-0.27, -0.8, 1.125, 1.5)),
     ("swimmingA.png", 150, (16, 18), (-0.37, -0.8, 1.33, 1.5)),
     ("swimmingD.png", 150, (16, 18), (-0.37, -0.8, 1.33, 1.5)),
+    ("die.png", 800, (18, 24), (-0.28, -0.8, 1.125, 1.5)),
 ])
 
 # sound_hit = load_sound("hit.wav")
@@ -192,6 +193,8 @@ class EntityPlayer(EntityAlive):
     def setSpeed(self):
         self.speedX = 0
         self.speedY = 0
+        if (self.state == "death" or self.state == "dead"):
+            return
         if (self.state != "normal" and self.state != "swim" and self.state != "dig"):
             return
         if (len(self.buttonPressed) > 0):
@@ -289,6 +292,12 @@ class EntityPlayer(EntityAlive):
                 self.state = "normal"
             if (self.animator.lastState[0]):
                 sound_walk.play()
+        elif (self.state == "death"):
+            if (self.animator.lastState[1]):
+                self.animator.setAnimation("die", 3)
+                self.state = "dead"
+        elif (self.state == "dead"):
+            self.animator.setAnimation("die", 3)
         elif (self.state == "attack" or self.state == "attack_swim"):
             if (self.shovel is not None):
                 self.animator.setAnimation(self.state + self.direction)
@@ -374,3 +383,7 @@ class EntityPlayer(EntityAlive):
         if (not self.visibleForEnemies):
             return super().draw(surface, 0.7)
         return super().draw(surface)
+
+    def death(self):
+        self.state = "death"
+        self.animator.setAnimation("die")

@@ -8,7 +8,6 @@ from windowStart import WindowStart
 
 
 img_gameover = pygame.transform.scale(load_image("gameover.png"), (int(Settings.width * 0.7), int(Settings.height * 0.32)))
-sound_over = load_sound("gameover.mp3")
 texts = {
     "crab": ["Краб оказался сильнее", "Теперь крабу одиноко", "КРАБ!"],
     "cactus": ["Кактусу надоело стоять на месте", "Кактус победил!", "Остерегайтесь кактусов!", "Колючий попался кактус"],
@@ -43,7 +42,6 @@ class WindowEnd(WindowWithButtons):
 
         self.restart = False
         self.quit = False
-        # sound_over.play()
 
     def action(self):
         if (self.selected == 0):

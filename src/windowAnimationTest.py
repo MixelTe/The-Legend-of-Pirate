@@ -2,7 +2,7 @@ import pygame
 from functions import rectPointIntersection
 from settings import Settings
 from window import Window
-from game.entities.aborigine import animatorData
+from game.entityPlayer import animatorData
 from game.animator import Animator
 
 
@@ -12,7 +12,7 @@ class WindowAnimationTest(Window):
         self.animators: list[Animator] = []
         self.drawRect = False
         self.size = [0, 0]
-        self.size[0] = 0.32
+        self.size[0] = 0.55
         self.size[1] = 0.7
         self.cursor = (0, 0)
         for anim in animatorData.frames:

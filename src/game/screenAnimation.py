@@ -82,3 +82,31 @@ class ScreenAnimationBlur(ScreenAnimation):
         self.surfaceRect.set_alpha(blur * 255)
         self.surface.blit(self.surfaceRect, (0, 0))
         return self.surface
+
+
+class ScreenAnimationDeath(ScreenAnimation):
+    def __init__(self, image: pygame.Surface, player):
+        super().__init__()
+        self.surfaceRect = pygame.Surface((self.width, self.height))
+        self.surfaceRect.fill(pygame.Color(0, 0, 0))
+        self.image = image
+        self.player = player
+        self.counter = self.width
+        self.counter2 = 0
+
+    def update(self) -> bool:
+        self.counter = max(self.counter - 20, 0)
+        self.counter2 = min(self.counter2 + 1, 40)
+        self.player.update()
+        return self.player.state == "dead"
+
+    def draw(self) -> pygame.Surface:
+        self.surface.blit(self.image, (0, 0))
+        self.surfaceRect.fill(pygame.Color(40, 40, 40))
+        center = ((self.player.x + self.player.width / 2) * Settings.tileSize,
+                  (self.player.y + self.player.height / 2) * Settings.tileSize)
+        pygame.draw.circle(self.surfaceRect, pygame.Color(255, 255, 255), center, self.counter)
+        self.surface.blit(self.surfaceRect, (0, 0), special_flags=pygame.BLEND_MULT)
+        pygame.draw.circle(self.surface, pygame.Color(200, 200, 255), center, self.counter2)
+        self.player.draw(self.surface)
+        return self.surface

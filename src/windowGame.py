@@ -1,16 +1,19 @@
 import pygame
 from backMusic import endBattleMusic
+from functions import load_sound
 from game.dialogs.start import GameDialog_start
 from game.entityPlayer import EntityPlayer
 from game.gameDialog import GameDialog
 from game.overlay import Overlay
 from game.screen import Screen
-from game.screenAnimation import ScreenAnimation, ScreenAnimationBlur, ScreenAnimationMove
+from game.screenAnimation import ScreenAnimation, ScreenAnimationBlur, ScreenAnimationDeath, ScreenAnimationMove
 from game.world import World
 from game.saveData import SaveData
 from settings import Settings
 from window import Window
 from datetime import datetime
+
+sound_over = load_sound("gameover.mp3")
 
 
 class WindowGame(Window):
@@ -85,6 +88,9 @@ class WindowGame(Window):
         if (self.screenAnim):
             done = self.screenAnim.update()
             if (done):
+                if (isinstance(self.screenAnim, ScreenAnimationDeath)):
+                    from windowEnd import WindowEnd
+                    return WindowEnd(self.save, self.player.lastAttaker)
                 self.screenAnim = None
             return
         goTo = self.screen.update()
@@ -116,8 +122,9 @@ class WindowGame(Window):
         if (self.player.health <= 0):
             self.saveAll()
             endBattleMusic()
-            from windowEnd import WindowEnd
-            return WindowEnd(self.save, self.player.lastAttaker)
+            self.player.death()
+            sound_over.play()
+            self.screenAnim = ScreenAnimationDeath(self.screen.draw(False), self.player)
 
     def draw(self, screen: pygame.Surface):
         if (self.screenAnim):

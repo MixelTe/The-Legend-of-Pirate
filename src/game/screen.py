@@ -72,7 +72,7 @@ class Screen:
                 break
         return self.goToVar
 
-    def draw(self) -> pygame.Surface:
+    def draw(self, drawPlayer=True) -> pygame.Surface:
         self.surface.fill("red")
 
         for (tile, x, y) in self.getTiles():
@@ -82,6 +82,8 @@ class Screen:
             decor.draw(self.surface)
 
         for entity in self.entities:
+            if (not drawPlayer and entity == self.player):
+                continue
             entity.draw(self.surface)
 
         for decor in self.decorAbove:
