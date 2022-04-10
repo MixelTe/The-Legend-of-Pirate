@@ -168,7 +168,7 @@ Entity.registerEntity("stoneBar", EntityStoneBar)
 
 
 class EntityBone(EntityAlive):
-    image = load_entityImg("bone.png", 0.6, 0.315)
+    image = load_entityImg("bone.png", 0.8, 0.42)
 
     def __init__(self, screen, data: dict = None):
         super().__init__(screen, data)
@@ -176,8 +176,8 @@ class EntityBone(EntityAlive):
         self.group = EntityGroups.enemy
         self.strength = 1
         self.speed = 0.08
-        self.width = 0.6
-        self.height = 0.6
+        self.width = 0.8
+        self.height = 0.8
         self.rotation = 0
 
     def canGoOn(self, tile: Tile) -> bool:
@@ -185,18 +185,19 @@ class EntityBone(EntityAlive):
 
     def draw(self, surface: pygame.Surface):
         self.image = pygame.transform.rotate(EntityBone.image, self.rotation)
+        v = 0.4
         if (self.rotation < 90):
-            self.imagePos = (-math.cos(self.rotation / 180 * math.pi) * 0.3 + 0.3,
-                             -math.sin(self.rotation / 180 * math.pi) * 0.3 + 0.3)
+            self.imagePos = (-math.cos(self.rotation / 180 * math.pi) * v + v,
+                             -math.sin(self.rotation / 180 * math.pi) * v + v)
         elif (self.rotation < 180):
-            self.imagePos = (math.cos(self.rotation / 180 * math.pi) * 0.3 + 0.3,
-                             -math.sin(self.rotation / 180 * math.pi) * 0.3 + 0.3)
+            self.imagePos = (math.cos(self.rotation / 180 * math.pi) * v + v,
+                             -math.sin(self.rotation / 180 * math.pi) * v + v)
         elif (self.rotation < 270):
-            self.imagePos = (math.cos(self.rotation / 180 * math.pi) * 0.3 + 0.3,
-                             math.sin(self.rotation / 180 * math.pi) * 0.3 + 0.3)
+            self.imagePos = (math.cos(self.rotation / 180 * math.pi) * v + v,
+                             math.sin(self.rotation / 180 * math.pi) * v + v)
         elif (self.rotation < 360):
-            self.imagePos = (-math.cos(self.rotation / 180 * math.pi) * 0.3 + 0.3,
-                             math.sin(self.rotation / 180 * math.pi) * 0.3 + 0.3)
+            self.imagePos = (-math.cos(self.rotation / 180 * math.pi) * v + v,
+                             math.sin(self.rotation / 180 * math.pi) * v + v)
         super().draw(surface)
 
     def update(self):
@@ -269,7 +270,7 @@ Entity.registerEntity("wood2", EntityWood2)
 
 
 class EntityArrow(EntityAlive):
-    image = load_entityImg("arrow.png", 0.6, 0.2)
+    image = load_entityImg("arrow.png", 0.75, 0.25)
 
     def __init__(self, screen, data: dict = None):
         super().__init__(screen, data)
@@ -279,8 +280,8 @@ class EntityArrow(EntityAlive):
         self.ghostE = True
         self.strength = 1
         self.speed = 0.1
-        self.width = 0.6
-        self.height = 0.2
+        self.width = 0.75
+        self.height = 0.25
 
     def canGoOn(self, tile: Tile) -> bool:
         return super().canGoOn(tile) or "low" in tile.tags
