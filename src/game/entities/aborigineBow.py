@@ -5,7 +5,7 @@ import pygame
 from functions import drawPie
 from game.animator import Animator, AnimatorData
 from game.entities.aborigine import EntityAborigine
-from game.entity import EntityAlive, EntityGroups
+from game.entity import Entity, EntityAlive, EntityGroups
 from game.tile import Tile
 from settings import Settings
 
@@ -56,6 +56,9 @@ class EntityAborigineBow(EntityAlive):
     def canGoOn(self, tile: Tile) -> bool:
         return "water" not in tile.tags and super().canGoOn(tile)
 
+    def canPassThrough(self, entity: Entity) -> bool:
+        return entity.id == "arrow"
+
     def onDeath(self):
         coin = EntityAlive.createById("coin", self.screen)
         self.screen.addEntity(coin)
@@ -86,13 +89,15 @@ class EntityAborigineBow(EntityAlive):
         if (self.state == "stay"):
             self.animator.setAnimation("stay" + self.getDir())
             self.sightZoneVisible = True
-            self.sightDirCur += self.rotationSpeed
-            if (abs(self.sightDirCur - self.sightDir) > 60 / 180 * math.pi):
-                self.rotationSpeed *= -1
             if (self.checkPlayer()):
                 self.alertAlly()
                 self.state = "attack"
+                self.sightZoneVisible = False
                 self.animator.setAnimation("attack" + self.getDir())
+            else:
+                self.sightDirCur += self.rotationSpeed
+                if (abs(self.sightDirCur - self.sightDir) > 60 / 180 * math.pi):
+                    self.rotationSpeed *= -1
         elif (self.state == "attack"):
             self.sightZoneVisible = False
             if (self.animator.lastState[1]):
@@ -159,5 +164,6 @@ class EntityAborigineBow(EntityAlive):
         arrow.speedX = math.cos(a) * arrow.speed
         arrow.speedY = math.sin(a) * arrow.speed
         self.screen.addEntity(arrow)
+
 
 EntityAlive.registerEntity("aborigineBow", EntityAborigineBow)

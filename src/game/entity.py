@@ -155,7 +155,7 @@ class Entity:
             rect = entity.get_rect()
             if (rectIntersection(newRect, rect)):
                 colision.append((rect, entity))
-                if (self.ghostE):
+                if (self.ghostE or self.canPassThrough(entity)):
                     continue
                 pos = self.move_toEdge(rect)
                 if (not rectIntersection((nX, self.y, self.width, self.height), rect)):
@@ -246,6 +246,9 @@ class Entity:
 
     def canGoOn(self, tile: Tile) -> bool:
         return not tile.solid
+
+    def canPassThrough(self, entity: Entity) -> bool:
+        return False
 
     def tileSpeed(self, tile: Tile) -> float:
         return tile.speed
