@@ -22,6 +22,7 @@ class Entity:
     def __init__(self, screen, data: dict = None):
         from game.screen import Screen
         self.screen: Screen = screen  # экран, для доступа к списку сущностей и к клеткам мира
+        self.tags: list[str] = []
         # группа к которой пренадлежит сущность, для определения нужно ли наносить урон (присваивать значение только с помощью полей класса EntityGroups)
         self.animator: Animator = None
         self.drawPriority = 1  # Чем больше, тем позже рисуется

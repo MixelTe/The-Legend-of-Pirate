@@ -123,6 +123,7 @@ class EntityBush(Entity):
     def __init__(self, screen, data: dict = None):
         super().__init__(screen, data)
         self.image = EntityBush.image
+        self.tags.append("low")
         self.hidden = True
         self.ghostE = True
         self.active = False
@@ -183,6 +184,9 @@ class EntityBone(EntityAlive):
     def canGoOn(self, tile: Tile) -> bool:
         return super().canGoOn(tile) or "low" in tile.tags
 
+    def canPassThrough(self, entity: Entity) -> bool:
+        return "low" in entity.tags
+
     def draw(self, surface: pygame.Surface):
         self.image = pygame.transform.rotate(EntityBone.image, self.rotation)
         v = 0.4
@@ -203,6 +207,7 @@ class EntityBone(EntityAlive):
     def update(self):
         collisions = super().update()
         self.rotation = (self.rotation + (1000 / Settings.fps) / 2) % 360
+        removeFromCollisions(collisions, [], ["low"])
         if (len(collisions) != 0):
             self.remove()
 
@@ -227,9 +232,12 @@ class EntityInk(EntityAlive):
     def canGoOn(self, tile: Tile) -> bool:
         return super().canGoOn(tile) or "low" in tile.tags
 
+    def canPassThrough(self, entity: Entity) -> bool:
+        return "low" in entity.tags
+
     def update(self):
         collisions = super().update()
-        removeFromCollisions(collisions, ["tentacle"])
+        removeFromCollisions(collisions, ["tentacle"], ["low"])
         if (len(collisions) != 0):
             self.remove()
 
@@ -242,6 +250,7 @@ class EntityWood(Entity):
 
     def __init__(self, screen, data: dict = None):
         super().__init__(screen, data)
+        self.tags.append("low")
         self.image = EntityWood.image
         self.width = 0.875
         self.height = 0.25
@@ -258,6 +267,7 @@ class EntityWood2(Entity):
 
     def __init__(self, screen, data: dict = None):
         super().__init__(screen, data)
+        self.tags.append("low")
         self.image = EntityWood2.image
         self.width = 0.6875
         self.height = 0.625
@@ -286,6 +296,9 @@ class EntityArrow(EntityAlive):
     def canGoOn(self, tile: Tile) -> bool:
         return super().canGoOn(tile) or "low" in tile.tags
 
+    def canPassThrough(self, entity: Entity) -> bool:
+        return "low" in entity.tags
+
     def draw(self, surface: pygame.Surface, opaque=1):
         rotation = math.atan2(-self.speedY, self.speedX) / math.pi * 180
         self.image = pygame.transform.rotate(EntityArrow.image, rotation)
@@ -293,7 +306,7 @@ class EntityArrow(EntityAlive):
 
     def update(self):
         collisions = super().update()
-        removeFromCollisions(collisions, ["aborigineBow"])
+        removeFromCollisions(collisions, ["aborigineBow"], ["low"])
         if (len(collisions) != 0):
             self.remove()
 
