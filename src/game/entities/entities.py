@@ -1,7 +1,8 @@
 import math
 import pygame
-from functions import load_entityImg, load_sound, removeFromCollisions
+from functions import load_entityImg, load_sound, multRect, removeFromCollisions
 from game.entity import Entity, EntityAlive, EntityGroups
+from game.animator import Animator, AnimatorData
 from random import random
 from game.tile import Tile
 
@@ -61,6 +62,7 @@ class EntityPalm(Entity):
 
     def update(self):
         pass
+
 
 Entity.registerEntity("palm", EntityPalm)
 
@@ -259,6 +261,7 @@ class EntityWood(Entity):
     def update(self):
         pass
 
+
 Entity.registerEntity("wood", EntityWood)
 
 
@@ -275,6 +278,7 @@ class EntityWood2(Entity):
 
     def update(self):
         pass
+
 
 Entity.registerEntity("wood2", EntityWood2)
 
@@ -312,3 +316,51 @@ class EntityArrow(EntityAlive):
 
 
 Entity.registerEntity("arrow", EntityArrow)
+
+
+class EntityLavaPath(EntityAlive):
+    image = load_entityImg("lavaPath.png", 1, 1)
+    animatorData = AnimatorData("lavaPath", [
+        ("stay.png", 600, (16, 16), (0, 0, 1, 1)),
+    ])
+
+    def __init__(self, screen, data: dict = None):
+        super().__init__(screen, data)
+        self.tags.append("low")
+        self.animator = Animator(EntityLavaPath.animatorData, "stay")
+        self.group = EntityGroups.enemy
+        self.hidden = True
+        self.ghostT = True
+        self.ghostE = True
+        self.drawPriority = 0
+        self.strength = 1
+        self.width = 1
+        self.height = 1
+        self.imagePos = (0, 0)
+        self.counter = 1
+
+    def draw(self, surface: pygame.Surface, opaque=1):
+        self.image, _ = self.animator.getImage()
+
+        rect = multRect(self.get_rect(), Settings.tileSize)
+        if (self.image is not None):
+            image = self.image
+            surface.blit(image, (rect[0] + self.imagePos[0] * Settings.tileSize,
+                         rect[1] + self.imagePos[1] * Settings.tileSize))
+
+        self.draw_dev(surface)
+
+    def update(self):
+        super().update()
+        if (self.animator.lastState[1]):
+            self.remove()
+        if (self.animator.lastState[0]):
+            v = 0.1
+            self.width -= v
+            self.height -= v
+            self.x += v / 2
+            self.y += v / 2
+            self.imagePos = (self.imagePos[0] - v / 2, self.imagePos[1] - v / 2)
+
+
+Entity.registerEntity("lavaPath", EntityLavaPath)

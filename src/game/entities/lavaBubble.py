@@ -30,6 +30,7 @@ class EntityLavaBubble(EntityAlive):
         self.startPos = (int(self.x), int(self.y))
         self.state = "bubble"
         self.counter = randint(1500, 2500)
+        self.lavaPathPast = (0, 0)
         self.attackD = (0, 0)
         self.speedXA = 0
         self.speedYA = 0
@@ -49,7 +50,7 @@ class EntityLavaBubble(EntityAlive):
             return
 
         untouchable = False
-        self.counter -= 1000 / Settings.fps
+        self.counter = max(0, self.counter - 1000 / Settings.fps)
         if (self.state == "bubble"):
             untouchable = True
             self.animator.setAnimation("bubble")
@@ -91,12 +92,14 @@ class EntityLavaBubble(EntityAlive):
         elif (self.state == "attack"):
             self.speedX += self.speedXA
             self.speedY += self.speedYA
+            self.addLavaPath()
             if (abs(self.speedX) < abs(self.speedX + self.speedXA)
                 or abs(self.speedY) < abs(self.speedY + self.speedYA)):
                 self.state = "return"
         elif (self.state == "return"):
             dx = (self.startPos[0] + 0.5) - (self.x + self.width / 2)
             dy = (self.startPos[1] + 0.5) - (self.y + self.height / 2)
+            self.addLavaPath()
             if (abs(self.speedX) < abs(self.speedX + self.speedXA)
                 or abs(self.speedY) < abs(self.speedY + self.speedYA)):
                 returnTime = 800 / 1000 * Settings.fps
@@ -138,7 +141,7 @@ class EntityLavaBubble(EntityAlive):
                 (abs(self.y - self.screen.player.y) < self.screen.player.height and abs(self.x - self.screen.player.x) < attackRange)):
             self.returnTile = (int(self.x + self.width / 2), int(self.y + self.height / 2))
             self.state = "charging"
-            self.chargingCounter = 400
+            self.chargingCounter = 0
             # dx = (self.screen.player.x + self.screen.player.width / 2) - (self.x + self.width / 2)
             # dy = (self.screen.player.y + self.screen.player.height / 2) - (self.y + self.height / 2)
             if (abs(self.x - self.screen.player.x) < self.screen.player.width):
@@ -148,6 +151,16 @@ class EntityLavaBubble(EntityAlive):
                 dx = (self.screen.player.x + self.screen.player.width / 2) - (self.x + self.width / 2)
                 dy = 0
             self.attackD = (dx, dy)
+
+    def addLavaPath(self):
+        if (abs(self.lavaPathPast[0] - self.x) < 0.6 and
+            abs(self.lavaPathPast[1] - self.y) < 0.6):
+            return
+        self.lavaPathPast = (self.x, self.y)
+        lavaPath = EntityAlive.createById("lavaPath", self.screen)
+        self.screen.addEntity(lavaPath)
+        lavaPath.x = self.x - (1 - self.width) / 2
+        lavaPath.y = self.y - (1 - self.height) / 2
 
 
 EntityAlive.registerEntity("lavaBubble", EntityLavaBubble)
