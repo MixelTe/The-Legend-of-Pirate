@@ -90,7 +90,10 @@ class EntityAborigine(EntityAlive):
         if self.rotate:
             self.rotationSpeed *= 1.5
         dataSetter("path", self.path)
-        if (self.path and len(self.path) <= 1):
+        if (self.path):
+            if (len(self.path) <= 1):
+                self.type = "stay"
+        else:
             self.type = "stay"
 
     def canGoOn(self, tile: Tile) -> bool:

@@ -235,12 +235,18 @@ class TextAnimator:
         self.curLines = self.lines
 
 
-def removeFromCollisions(collisions: list, entitiesId: list[str]):
+def removeFromCollisions(collisions: list, entitiesId: list[str], entitiesTags: list[str] = []):
     from game.entity import Entity
-    for i, (rect, obj) in enumerate(collisions):
+    for i in range(len(collisions) - 1, -1, -1):
+        rect, obj = collisions[i]
         if (isinstance(obj, Entity)):
             if (obj.id in entitiesId):
                 collisions.pop(i)
+                continue
+            for tag in obj.tags:
+                if (tag in entitiesTags):
+                    collisions.pop(i)
+                    break
 
 
 def compare(a: float, sign: Union[Literal["=="], Literal[">="], Literal["<="]], b: float):
