@@ -40,10 +40,12 @@ class EntityPirate2(Entity):
             self.speeches = [0, 1, 3]
             self.screen.saveData.tags.append("quest-pirate-started")
             self.screen.saveData.tags.append("quest-pirate-ended")
+            self.screen.saveData.tags.remove("quest-pirate-tubeFound")
             self.giveMap = True
         else:
             self.speeches = [3]
             self.screen.saveData.tags.append("quest-pirate-ended")
+            self.screen.saveData.tags.remove("quest-pirate-tubeFound")
             self.giveMap = True
 
     def draw(self, surface: pygame.Surface):
