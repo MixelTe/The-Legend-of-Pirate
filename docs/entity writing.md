@@ -332,3 +332,7 @@ class EntityCoolName(Entity):
 * **W** self.screen.player.message - сообщение, которое выводится игроку
 
 * **W** self.screen.player.action - функция, которая будет вызвана, при нажатии кнопки действия. Например, когда игрок подходит к предмету торговца, в это поле присваиватся функция покупки.
+
+* self.screen.player.takeItem(item: Entity, onAnimEnd: () => None = None) - активировать анимацию взятия предмета. Игроку отобразиться то изображение, которое находиться в item.image (если его поменять во время анимации, то и в анимации оно изменится). По завершению анимации будет вызвана функция onAnimEnd, если вы её передали.
+
+* self.screen.player.takeItemFun(size: tuple[float, float], drawFun: (pygame.Surface, float, float, float) => None, onAnimEnd: () => None = None) - тоже активировать анимацию взятия предмета, но рисовать предмет нужно своей функцией drawFun, которой передаются параметры: pygame.Surface, x, y, размер объекта (от 0 до 1). По завершению анимации будет вызвана функция onAnimEnd, если вы её передали.
