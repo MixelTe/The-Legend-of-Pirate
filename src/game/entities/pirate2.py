@@ -56,6 +56,8 @@ class EntityPirate2(Entity):
         if (self.is_inRectD(self.talkZone, self.screen.player)):
             self.screen.player.action = self.nextSpeach
             self.screen.player.message = TEXTS[self.speeches[self.speech]]
+            if (len(self.speeches) > 1):
+                self.screen.player.messageIsLong = True
             if (self.giveMap):
                 self.giveMap = False
                 Map = Entity.createById("map", self.screen)

@@ -61,10 +61,12 @@ class EntityPlayer(EntityAlive):
         self.buttonPressed = []
         # нажаты ли кнопки движения в направлениях: вверх, вправо, вниз, влево (для корректного изменения направления движения)
         self.health = saveData.health
-        self.healthMax = 6
+        self.healthMax = 8 if "heart-collected" in saveData.tags else 6
         self.group = EntityGroups.playerSelf
         self.weapon: Entity = None
         self.message = ""
+        self.messageIsLong = False
+        self.keyboardIsUsed = True
         self.speed = 0.06
         self.width = 0.55
         self.height = 0.7
@@ -85,6 +87,7 @@ class EntityPlayer(EntityAlive):
         self.takeItemAnim = {"drawFun": None, "item": None, "onAnimEnd": None, "counter": 0, "size": (1, 1)}
 
     def onKeyDown(self, key):
+        self.keyboardIsUsed = True
         if (key == pygame.K_w or key == pygame.K_UP):
             self.addKeyToPressed("up")
         if (key == pygame.K_s or key == pygame.K_DOWN):
@@ -112,6 +115,7 @@ class EntityPlayer(EntityAlive):
                 self.screen.tryGoTo("down")
 
     def onKeyUp(self, key):
+        self.keyboardIsUsed = True
         if (key == pygame.K_w or key == pygame.K_UP):
             self.removeKeyFromPressed("up")
         if (key == pygame.K_s or key == pygame.K_DOWN):
@@ -122,6 +126,7 @@ class EntityPlayer(EntityAlive):
             self.removeKeyFromPressed("left")
 
     def onJoyHat(self, value):
+        self.keyboardIsUsed = False
         if (value[1] > 0):
             self.removeKeyFromPressed("down")
             self.addKeyToPressed("up")
@@ -144,9 +149,11 @@ class EntityPlayer(EntityAlive):
     def onJoyAxis(self, axis, value):
         if (axis == 0):
             if (value > 0.5):
+                self.keyboardIsUsed = False
                 self.removeKeyFromPressed("left")
                 self.addKeyToPressed("right")
             elif (value < -0.5):
+                self.keyboardIsUsed = False
                 self.removeKeyFromPressed("right")
                 self.addKeyToPressed("left")
             else:
@@ -154,9 +161,11 @@ class EntityPlayer(EntityAlive):
                 self.removeKeyFromPressed("left")
         elif (axis == 1):
             if (value > 0.5):
+                self.keyboardIsUsed = False
                 self.removeKeyFromPressed("up")
                 self.addKeyToPressed("down")
             elif (value < -0.5):
+                self.keyboardIsUsed = False
                 self.removeKeyFromPressed("down")
                 self.addKeyToPressed("up")
             else:
@@ -164,16 +173,21 @@ class EntityPlayer(EntityAlive):
                 self.removeKeyFromPressed("down")
         elif (axis == 2):
             if (value > 0.5):
+                self.keyboardIsUsed = False
                 self.attack("D")
             elif (value < -0.5):
+                self.keyboardIsUsed = False
                 self.attack("A")
         elif (axis == 3):
             if (value > 0.5):
+                self.keyboardIsUsed = False
                 self.attack("S")
             elif (value < -0.5):
+                self.keyboardIsUsed = False
                 self.attack("W")
 
     def onJoyButonDown(self, button):
+        self.keyboardIsUsed = False
         if (button == 2):
             self.attack()
         if (button == 1):
@@ -374,6 +388,7 @@ class EntityPlayer(EntityAlive):
 
     def preUpdate(self):
         self.message = ""
+        self.messageIsLong = False
         self.action = None
 
     def takeDamage(self, damage: int, attacker: Union[Entity, str, None] = None):
