@@ -407,7 +407,7 @@ class EntityPlayer(EntityAlive):
         self.takeItemAnim["onAnimEnd"] = onAnimEnd
         self.takeItemAnim["counter"] = 0
 
-    def takeItemFun(self, size: tuple[float, float], onAnimEnd: Callable[[], None], drawFun: Callable[[pygame.Surface, float, float, float], None] = None):
+    def takeItemFun(self, size: tuple[float, float], drawFun: Callable[[pygame.Surface, float, float, float], None], onAnimEnd: Callable[[], None] = None):
         self.takeItemAnim["drawFun"] = drawFun
         self.takeItemAnim["onAnimEnd"] = onAnimEnd
         self.takeItemAnim["size"] = size
