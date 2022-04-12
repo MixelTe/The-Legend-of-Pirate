@@ -332,7 +332,7 @@
 		* onJoyButonUp(button)
 		* onJoyAxis(axis, value)
 		* takeItem(item: Entity, onAnimEnd: () => None = None) - активировать анимацию взятия предмета, для отображения будет использоваться item.image. По завершению анимации бедет вызвана функция onAnimEnd, если передана.
-		* takeItemFun(size: tuple[float, float], drawFun: (pygame.Surface, float, float, float) => None, onAnimEnd: () => None = None) - активировать анимацию взятия предмета, для отображения будет использоваться drawFun с параметрами поверхность, x, y, размер объекта (0-1). По завершению анимации бедет вызвана функция onAnimEnd, если передана.
+		* takeItemFun(size: tuple[float, float], drawFun: (pygame.Surface, float, float, float) => None, onAnimEnd: () => None = None) - активировать анимацию взятия предмета, для отображения будет использоваться drawFun с параметрами поверхность, x, y, размер объекта (0-1). По завершению анимации будет вызвана функция onAnimEnd, если передана.
 ---
 20. ## Класс Animator
 	* Аниматор сущностей
