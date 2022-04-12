@@ -59,7 +59,7 @@ class EntityPirate2(Entity):
             if (self.giveMap):
                 self.giveMap = False
                 Map = Entity.createById("map", self.screen)
-                Map.setImg(1)
+                Map.setImg(2 if "quest-cactus-ended" in self.screen.saveData.tags else 1)
                 self.screen.player.takeItem(Map)
 
     def nextSpeach(self):

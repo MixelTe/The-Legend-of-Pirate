@@ -38,6 +38,7 @@ class EntityCactusDancing(EntityAlive):
         self.speechCounter = 0
         self.state = 0 if "quest-cactus-ended" in self.screen.saveData.tags else -1
         self.countFound = 0
+        self.giveMap = False
         if (getCurMusic() == musicPath):
             self.animator.setAnimation("dancing")
 
@@ -72,6 +73,7 @@ class EntityCactusDancing(EntityAlive):
                 self.countFound += 1 if "quest-cactus-4" in self.screen.saveData.tags else 0
                 if (self.countFound == 4):
                     self.state = 3
+                    self.giveMap = True
                     self.screen.saveData.tags.append("quest-cactus-ended")
         if (self.animator.curAnimation() == "stay" and (self.state == 0 or self.state == 3)):
             if (getCurMusic() != musicPath):
@@ -98,6 +100,11 @@ class EntityCactusDancing(EntityAlive):
         else:
             self.x = self.X + 0.17
             self.y = self.Y + 0.59 - 0.4
+            if (self.giveMap):
+                self.giveMap = False
+                Map = Entity.createById("map", self.screen)
+                Map.setImg(2 if "quest-pirate-ended" in self.screen.saveData.tags else 1)
+                self.screen.player.takeItem(Map)
         if (self.animator.curAnimation() == "stay"):
             if (self.state == 0):
                 self.screen.player.message = TEXTS[6]
