@@ -107,7 +107,7 @@ class Overlay:
             self.surface.blit(img_map1, self.map1Pos)
         if ("quest-pirate-ended" in self.player.saveData.tags and "quest-cactus-ended" in self.player.saveData.tags):
             self.surface.blit(img_map2, self.map2Pos)
-        if ("quest-pirate-tubeFound" in self.player.saveData.tags):
+        if ("quest-pirate-tubeFound" in self.player.saveData.tags and "quest-pirate-ended" not in self.player.saveData.tags):
             self.surface.blit(img_spyglass, self.spyglassPos)
 
         if (self.iconCounter > -1):
