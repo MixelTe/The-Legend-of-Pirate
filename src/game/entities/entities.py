@@ -1,6 +1,6 @@
 import math
 import pygame
-from functions import load_entityImg, load_sound, multRect, removeFromCollisions
+from functions import load_entityImg, load_image, load_sound, multRect, removeFromCollisions, scaleImg
 from game.entity import Entity, EntityAlive, EntityGroups
 from game.animator import Animator, AnimatorData
 from random import random
@@ -24,7 +24,6 @@ class EntityCactus(EntityAlive):
         self.damageAura = (-0.075, -0.075, 1, 1)
 
     def update(self):
-        super().update()
         for e in self.get_entitiesD(self.damageAura):
             if (isinstance(e, EntityAlive)):
                 e.takeDamage(self.strength, self)
@@ -363,3 +362,44 @@ class EntityLavaPath(EntityAlive):
 
 
 Entity.registerEntity("lavaPath", EntityLavaPath)
+
+
+class EntitySpyglass(Entity):
+    image = load_entityImg("spyglass.png", 0.6875, 0.25)
+
+    def __init__(self, screen, data: dict = None):
+        super().__init__(screen, data)
+        self.tags.append("low")
+        self.image = EntitySpyglass.image
+        self.width = 0.6875
+        self.height = 0.25
+
+    def update(self):
+        pass
+
+
+Entity.registerEntity("spyglass", EntitySpyglass)
+
+
+class EntityMap(Entity):
+    image1 = scaleImg(load_image("map1.png"), 1, 1)
+    image2 = scaleImg(load_image("map2.png"), 1, 1)
+
+    def __init__(self, screen, data: dict = None):
+        super().__init__(screen, data)
+        self.tags.append("low")
+        self.image = EntityMap.image1
+        self.width = 0.6875
+        self.height = 0.25
+
+    def setImg(self, img: int):
+        if (img == 1):
+            self.image = EntityMap.image1
+        else:
+            self.image = EntityMap.image2
+
+    def update(self):
+        pass
+
+
+Entity.registerEntity("map", EntityMap)

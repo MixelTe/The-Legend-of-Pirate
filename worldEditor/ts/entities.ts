@@ -21,7 +21,7 @@ createNewEntityClass_Auto("cannon", true, 11, 12, 1, 1)
 createNewEntityClass_Auto("dig_place", false, 7, 7, 1, 1, 0.35, 0.35, 0.3, 0.3)
 createNewEntityClass_Auto("trainer", true, 9, 18, 0.75, 0.7, 0, -0.8, 0.75, 1.5)
 createNewEntityClass_Auto("pirate2", true, 11, 22, 0.75, 0.7, 0, -0.8, 0.75, 1.5, [
-	{ type: "textAria", name: "speech", value: "" },
+	// { type: "textAria", name: "speech", value: "" },
 ])
 createNewEntityClass_Auto("market", false, 39, 39, 1, 1, 0, 0, 1, 1, [
 	{ type: "text", name: "item id", value: "coin", displayColor: "black", title: "Id предмета" },
@@ -105,6 +105,7 @@ createNewEntityClass_Auto("octopus", true, 32, 32, 2, 2, undefined, undefined, u
 	{ type: "tiles", name: "entrance", value: [[19, 3], [19, 4], [19, 5]], title: "Вход", displayColor: "lime" },
 	{ type: "tiles", name: "exit", value: [[0, 3], [0, 4], [0, 5]], title: "Выход", displayColor: "tomato" },
 ])
+createNewEntityClass_Auto("spyglass", false, 11, 4, 0.6875, 0.25)
 
 
 function aborigineDraw(dirV: number, check0: boolean, lookR: number)
