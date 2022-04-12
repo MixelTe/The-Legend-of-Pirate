@@ -1,5 +1,6 @@
+import math
 from random import choices
-from typing import Union
+from typing import Callable, Union
 import pygame
 from functions import load_sound, rectPointIntersection
 from game.animator import Animator, AnimatorData
@@ -81,6 +82,7 @@ class EntityPlayer(EntityAlive):
         self.lastAttaker = ""
         self.walkSoundCounter = 0
         self.visibleForEnemies = True
+        self.takeItemAnim = {"drawFun": None, "item": None, "onAnimEnd": None, "counter": 0, "size": (1, 1)}
 
     def onKeyDown(self, key):
         if (key == pygame.K_w or key == pygame.K_UP):
@@ -248,6 +250,10 @@ class EntityPlayer(EntityAlive):
         self.shovel.nextStage()
 
     def dig(self):
+        coin = EntityAlive.createById("coin", self.screen)
+        self.screen.addEntity(coin)
+        coin.x = self.x + self.width + 0.5
+        coin.y = self.y + self.height / 2
         if (self.state != "normal"):
             return
         tile, _ = self.get_tile(1, pos=(0.5, 0.7))
@@ -284,6 +290,13 @@ class EntityPlayer(EntityAlive):
     def update(self):
         self.setSpeed()
         super().update()
+        self.takeItemAnim["counter"] = min(1, self.takeItemAnim["counter"] + 0.01)
+        if (self.takeItemAnim["counter"] == 1):
+            self.takeItemAnim["drawFun"] = None
+            self.takeItemAnim["item"] = None
+            if (self.takeItemAnim["onAnimEnd"]):
+                self.takeItemAnim["onAnimEnd"]()
+                self.takeItemAnim["onAnimEnd"] = None
 
         if (self.state == "dig"):
             self.animator.setAnimation("dig")
@@ -380,6 +393,7 @@ class EntityPlayer(EntityAlive):
         return super().canGoOn(tile)
 
     def draw(self, surface: pygame.Surface):
+        self.drawItemTaking(surface)
         if (not self.visibleForEnemies):
             return super().draw(surface, 0.7)
         return super().draw(surface)
@@ -387,3 +401,75 @@ class EntityPlayer(EntityAlive):
     def death(self):
         self.state = "death"
         self.animator.setAnimation("die")
+
+    def takeItem(self, item: Entity, onAnimEnd: Callable[[], None] = None):
+        self.takeItemAnim["item"] = item
+        self.takeItemAnim["onAnimEnd"] = onAnimEnd
+        self.takeItemAnim["counter"] = 0
+
+    def takeItemFun(self, size: tuple[float, float], onAnimEnd: Callable[[], None], drawFun: Callable[[pygame.Surface, float, float, float], None] = None):
+        self.takeItemAnim["drawFun"] = drawFun
+        self.takeItemAnim["onAnimEnd"] = onAnimEnd
+        self.takeItemAnim["size"] = size
+        self.takeItemAnim["counter"] = 0
+
+    def drawItemTaking(self, surface: pygame.Surface):
+        drawFun = self.takeItemAnim["drawFun"]
+        item = self.takeItemAnim["item"]
+        if (not drawFun and not item):
+            return
+        counter = self.takeItemAnim["counter"]
+        w, h = self.takeItemAnim["size"]
+        if (item):
+            w = item.width
+            h = item.height
+        x = self.x + self.width / 2 - w / 2
+        if (counter < 0.4):
+            y = self.y - h - 0.8 - counter
+            s = 1
+        else:
+            counter -= 0.4
+            v = counter / 0.6
+            y = self.y - h - 1.3 + counter * 1.2
+            s = 1 - max(0, v - 0.2)
+        drawItemTakingBorder(surface, x, y, w, h, counter, s)
+        x += w * (1 - s) / 2
+        y += h * (1 - s) / 2
+        if (drawFun):
+            drawFun(surface, x, y, s)
+        else:
+            drawItemTaking(item, surface, x, y, s)
+
+
+def drawItemTakingBorder(surface: pygame.Surface, x: float, y: float, w: float, h: float, counter: float, s: float):
+    x, y = x * Settings.tileSize, y * Settings.tileSize
+    w, h = w * Settings.tileSize, h * Settings.tileSize
+    size = (max(w, h) + 40)
+    sizeCircle = (size - 20) / 2
+    sizeCircleSmall = sizeCircle * 0.4
+    size *= s
+    sizeCircle *= s
+    sizeCircleSmall *= s
+    img = pygame.Surface((size, size), pygame.SRCALPHA)
+    img.fill((0, 0, 0, 0))
+    pygame.draw.circle(img, pygame.Color(255, 255, 135), (size / 2, size / 2), sizeCircle)
+    count = 5
+    step = math.pi * 2 / count
+    offset = counter * math.pi * 2
+    for i in range(count):
+        X = math.cos(step * i + offset) * sizeCircle + size / 2
+        Y = math.sin(step * i + offset) * sizeCircle + size / 2
+        pygame.draw.circle(img, pygame.Color(255, 108, 79), (X, Y), sizeCircleSmall)
+    img.fill((255, 255, 255, 180), None, pygame.BLEND_RGBA_MULT)
+    surface.blit(img, (x - (size - w) / 2, y - (size - h) / 2))
+
+
+def drawItemTaking(item: Entity, surface: pygame.Surface, x: float, y: float, s: float):
+    image = item.image
+    if (not image):
+        return
+    size = image.get_size()
+    if (s != 1):
+        size = (size[0] * s, size[1] * s)
+        image = pygame.transform.scale(image, size)
+    surface.blit(image, (x * Settings.tileSize, y * Settings.tileSize))
