@@ -53,18 +53,31 @@
 # Пират
 
 ## tags
+* quest-pirate-started
 * quest-pirate-tubeFound
 * quest-pirate-ended
 
 ## Пират
-1. В tags присутствует **quest-cactus-ended**:
-	* Текст с благодарностью (1)
+1. В tags присутствует **quest-pirate-ended**:
+	* Текст с благодарностью (2)
 
-2. В tags отсутствует **quest-cactus-tubeFound**:
-	* Текст с просьбой о помощи (0)
+2. В tags отсутствует **quest-pirate-tubeFound** и отсутствует **quest-pirate-started**:
+	* Приветствие (0)
+	* Текст с просьбой о помощи (1)
+	* tags < **quest-pirate-started**
 
-3. В tags присутствует **quest-cactus-tubeFound**:
-	* Текст с благодарностью (1)
+3. В tags отсутствует **quest-pirate-tubeFound** и присутствует **quest-pirate-started**:
+	* Текст с просьбой о помощи (1)
+
+4. В tags присутствует **quest-pirate-tubeFound** и отсутствует **quest-pirate-started**:
+	* Приветствие (0)
+	* Текст с просьбой о помощи (1)
+	* Текст с благодарностью (2)
+	* tags < **quest-pirate-started**
+	* tags < **quest-pirate-ended**
+
+5. В tags присутствует **quest-pirate-tubeFound** и присутствует **quest-pirate-started**:
+	* Текст с благодарностью (2)
 	* tags < **quest-pirate-ended**
 
 ## Подзорная труба

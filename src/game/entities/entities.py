@@ -373,24 +373,31 @@ class EntitySpyglass(Entity):
         self.image = EntitySpyglass.image
         self.width = 0.6875
         self.height = 0.25
+        self.hidden = True
+        self.ghostE = True
 
     def update(self):
-        pass
+        if ("quest-pirate-tubeFound" in self.screen.saveData.tags):
+            self.remove()
+        if (self.screen.player.is_inRect(self.get_rect())):
+            self.screen.player.takeItem(self)
+            self.remove()
+            self.screen.saveData.tags.append("quest-pirate-tubeFound")
 
 
 Entity.registerEntity("spyglass", EntitySpyglass)
 
 
 class EntityMap(Entity):
-    image1 = scaleImg(load_image("map1.png"), 1, 1)
-    image2 = scaleImg(load_image("map2.png"), 1, 1)
+    image1 = scaleImg(load_image("map1.png"), 1.03, 0.56)
+    image2 = scaleImg(load_image("map2.png"), 1.03, 0.56)
 
     def __init__(self, screen, data: dict = None):
         super().__init__(screen, data)
         self.tags.append("low")
         self.image = EntityMap.image1
-        self.width = 0.6875
-        self.height = 0.25
+        self.width = 1.03
+        self.height = 0.56
 
     def setImg(self, img: int):
         if (img == 1):
