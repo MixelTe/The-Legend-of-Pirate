@@ -22,6 +22,14 @@ for i in range(1, 5):
 
 animatorData = AnimatorData("cactusDancingChild", animations)
 musicPath = joinPath(Settings.folder_data, Settings.folder_sounds, "back", "background2.mp3")
+TEXTS = {
+    0: "Спасибо за игру!",
+    1: "Хехе, у тебя полулось",
+    2: "Серьёзно, так быстро?",
+    3: "Не думал, что такой внимательный",
+    4: "Уги-вуги!",
+    5: "А меня ты уже находил!)"
+}
 
 
 class EntityCactusDancingChild(EntityAlive):
@@ -37,6 +45,7 @@ class EntityCactusDancingChild(EntityAlive):
         self.group = EntityGroups.enemy
         self.speech = ""
         self.speechCounter = 0
+        self.state = 0 if "quest-cactus-ended" in self.screen.saveData.tags else -1
         if (getCurMusic() == musicPath):
             self.animator.setAnimation("dancing")
 
@@ -49,6 +58,8 @@ class EntityCactusDancingChild(EntityAlive):
         if (not isinstance(attacker, Entity)):
             return
         if (self.animator.curAnimation().startswith("cactus") and attacker.id == "shovel"):
+            if ("quest-cactus-started" not in self.screen.saveData.tags):
+                return
             self.animator.setAnimation(f"appear{self.color}")
             self.animator.endDamageAnim()
             self.width = 0.5
@@ -58,7 +69,14 @@ class EntityCactusDancingChild(EntityAlive):
             self.attackPushbackY = 0
             self.x = self.X + 0.17
             self.y = self.Y + 0.59
-        if (self.animator.curAnimation() == "stay"):
+            if ("quest-cactus-ended" in self.screen.saveData.tags):
+                self.state = 0
+            elif (f"quest-cactus-{self.color}" not in self.screen.saveData.tags):
+                self.state = 1
+                self.screen.saveData.tags.append(f"quest-cactus-{self.color}")
+            else:
+                self.state = 2
+        if (self.animator.curAnimation() == "stay" and self.state == 0):
             if (getCurMusic() != musicPath):
                 self.animator.setAnimation("dancing")
                 startMusicBreak(musicPath, 0.3)
@@ -71,16 +89,28 @@ class EntityCactusDancingChild(EntityAlive):
             if (self.animator.lastState[1]):
                 self.x = self.X + 0.17
                 self.y = self.Y + 0.59 - 0.4
-                self.animator.setAnimation("dancing")
-                if (getCurMusic() != musicPath):
-                    startMusicBreak(musicPath, 0.3)
+                if (self.state == 0):
+                    self.animator.setAnimation("dancing")
+                    if (getCurMusic() != musicPath):
+                        startMusicBreak(musicPath, 0.3)
+                else:
+                    self.animator.setAnimation("stay")
         elif (self.animator.curAnimation().startswith("cactus")):
             self.x = self.X
             self.y = self.Y
         else:
             self.x = self.X + 0.17
             self.y = self.Y + 0.59 - 0.4
-        if (self.animator.curAnimation() == "dancing"):
+        if (self.animator.curAnimation() == "stay"):
+            if (self.state == 0):
+                self.screen.player.message = TEXTS[0]
+            elif (self.state == 1):
+                self.screen.player.message = TEXTS[self.color]
+            elif (self.state == 2):
+                self.screen.player.message = TEXTS[5]
+        elif (self.animator.curAnimation() == "dancing"):
+            if (self.state == 0):
+                self.screen.player.message = TEXTS[0]
             if (getCurMusic() != musicPath):
                 self.animator.setAnimation(f"stay{self.color}")
 

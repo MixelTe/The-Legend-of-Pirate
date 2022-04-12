@@ -319,7 +319,6 @@ Entity.registerEntity("arrow", EntityArrow)
 
 
 class EntityLavaPath(EntityAlive):
-    image = load_entityImg("lavaPath.png", 1, 1)
     animatorData = AnimatorData("lavaPath", [
         ("stay.png", 600, (16, 16), (0, 0, 1, 1)),
     ])
