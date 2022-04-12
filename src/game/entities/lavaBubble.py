@@ -101,7 +101,8 @@ class EntityLavaBubble(EntityAlive):
             dy = (self.startPos[1] + 0.5) - (self.y + self.height / 2)
             self.addLavaPath()
             if (abs(self.speedX) < abs(self.speedX + self.speedXA)
-                or abs(self.speedY) < abs(self.speedY + self.speedYA)):
+                or abs(self.speedY) < abs(self.speedY + self.speedYA)
+                or ((abs(dx) > 0.4 or abs(dy) > 0.4) and self.speedXA == 0 and self.speedYA == 0)):
                 returnTime = 800 / 1000 * Settings.fps
                 dx = max(min(dx, 1), -1)
                 dy = max(min(dy, 1), -1)
