@@ -17,17 +17,20 @@ createNewEntityClass_Auto("door", false, 11, 12, 1, 1);
 createNewEntityClass_Auto("palm", false, 20, 22, 0.45, 0.7, -0.45, -0.8, 1.5, 1.5);
 createNewEntityClass_Auto("trader", true, 14, 24, 0.75, 0.7, 0, -0.8, 0.75, 1.5);
 createNewEntityClass_Auto("cannon", true, 11, 12, 1, 1);
-createNewEntityClass_Auto("dig_place", false, 7, 7, 1, 1, 0.35, 0.35, 0.3, 0.3);
+createNewEntityClass_Auto("dig_place", false, 7, 7, 1, 1, 0.35, 0.35, 0.3, 0.3, [
+    { type: "text", name: "content", value: "random", options: ["random", "coin", "heart", "crab"], title: "Содержимое" },
+]);
 createNewEntityClass_Auto("trainer", true, 9, 18, 0.75, 0.7, 0, -0.8, 0.75, 1.5);
 createNewEntityClass_Auto("pirate2", true, 11, 22, 0.75, 0.7, 0, -0.8, 0.75, 1.5, [
 // { type: "textAria", name: "speech", value: "" },
 ]);
 createNewEntityClass_Auto("market", false, 39, 39, 1, 1, 0, 0, 1, 1, [
-    { type: "text", name: "item id", value: "coin", displayColor: "black", title: "Id предмета" },
-    { type: "number", name: "price", value: 1, displayColor: "lime", title: "Цена" },
-    { type: "text", name: "market id", value: null, displayColor: "lime", nullable: true, title: "Id магазина" },
+    { type: "text", name: "item id", value: "coin", displayColor: "black", title: "Id предмета", optionsHint: ["coin", "heart"] },
+    { type: "number", name: "price", value: 1, displayColor: "black", title: "Цена" },
+    { type: "text", name: "market id", value: null, displayColor: "black", nullable: true, title: "Id магазина" },
     { type: "textAria", name: "on buy speech", value: null, nullable: true, title: "Речь при покупке" },
     { type: "textAria", name: "speech", value: null, nullable: true, title: "Рекламная речь" },
+    { type: "bool", name: "infinite", value: false, displayColor: "black", title: "Бесконечный товар" },
 ]);
 createNewEntityClass_Auto("trigger", false, 50, 50, 1, 1, 0, 0, 1, 1, [
     { type: "area", name: "zone", value: [0, 0, 1, 1], displayColor: "orange", title: "Область активации" },
@@ -96,7 +99,7 @@ createNewEntityClass_Auto("cactusDancingChild", true, 18, 24, 0.85, 0.85, -0.075
 createNewEntityClass_Auto("bush", false, 16, 16, 1, 1);
 createNewEntityClass_Auto("wood", false, 14, 7, 0.875, 0.25, 0, -0.1875, 0.875, 0.4375);
 createNewEntityClass_Auto("wood2", false, 15, 10, 0.6875, 0.625, -0.125, 0, 0.9375, 0.625);
-createNewEntityClass_Auto("stone", false, 16, 16, 1, 1);
+createNewEntityClass_Auto("stone", true, 16, 16, 1, 1);
 createNewEntityClass_Auto("stoneBar", false, 16, 16, 1, 1);
 createNewEntityClass_Auto("lavaBubble", true, 16, 16, 0.5625, 0.5, -0.25, -0.25, 1, 1);
 createNewEntityClass_Auto("octopus", true, 32, 32, 2, 2, undefined, undefined, undefined, undefined, [
@@ -105,9 +108,8 @@ createNewEntityClass_Auto("octopus", true, 32, 32, 2, 2, undefined, undefined, u
     { type: "tiles", name: "exit", value: [[0, 3], [0, 4], [0, 5]], title: "Выход", displayColor: "tomato" },
 ]);
 createNewEntityClass_Auto("spyglass", false, 11, 4, 0.6875, 0.25);
-function aborigineDraw(dirV, check0, lookR) {
+function aborigineDraw(dirV, check0, lookR, lookW, maxR) {
     function draw(self, ctx) {
-        let lookW = Math.PI / 2;
         let dir = 0;
         if (self.objData[0].value == "stay" || !check0) {
             switch (self.objData[dirV].value) {
@@ -150,7 +152,7 @@ function aborigineDraw(dirV, check0, lookR) {
         ctx.save();
         if (self.objData[0].value == "stay" || !check0) {
             ctx.fillStyle = "rgba(128, 128, 128, 0.2)";
-            const addW = !check0 || self.objData[1].value ? 60 / 180 * Math.PI : 20 / 180 * Math.PI;
+            const addW = !check0 || self.objData[1].value ? maxR / 180 * Math.PI : 20 / 180 * Math.PI;
             drawPie(lookR, addW, dir + lookW / 2 + addW / 2);
             drawPie(lookR, addW, dir - lookW / 2 - addW / 2);
         }
@@ -160,5 +162,5 @@ function aborigineDraw(dirV, check0, lookR) {
     }
     return draw;
 }
-Aborigine.customDraw = aborigineDraw(2, true, 4);
-AborigineBow.customDraw = aborigineDraw(0, false, 5);
+Aborigine.customDraw = aborigineDraw(2, true, 4, Math.PI / 2, 60);
+AborigineBow.customDraw = aborigineDraw(0, false, 7.5, Math.PI / 3 * 2, 40);

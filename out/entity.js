@@ -45,7 +45,7 @@ class Entity {
             let line = 0;
             const drawLine = (text) => {
                 ctx.fillText(text, this.x * TileSize + 2, this.y * TileSize + line * fontSize);
-                line += 1;
+                line -= 1;
             };
             for (let i = 0; i < this.objData.length; i++) {
                 const data = this.objData[i];
