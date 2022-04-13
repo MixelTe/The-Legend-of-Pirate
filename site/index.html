@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>The Legend of Pirate</title>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT Sans|PT Sans Caption">
+	<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+	<link rel="stylesheet" type="text/css" href="styles.css">
+	<script src="./main.js" defer></script>
+</head>
+<body>
+	<div class="container">
+		<h1>The Legend of Pirate</h1>
+		<div class="navbar btn">
+			<a class="parchment" href="./download/index.html">Скачать</a>
+		</div>
+		<p>Произошло крушение, капитан корабля оказался на неизвестном острове.</p>
+		<div class="pirate-swim" id="pirate-swim">
+			<img src="./imgs/pirate-swim.png">
+		</div>
+		<p>Сможет ли он преодолеть все преграды и вернуть корабль.</p>
+		<p>К счастью, у пирата оказалась лопата!</p>
+		<div class="pirate-attack"><div></div></div>
+		<p>На пути у капитана встретиться множество недроброжелателей.</p>
+		<div class="crab-attack"><div></div></div>
+		<p>Cокровища ждут!</p>
+		<div class="pirate-dig"><div></div></div>
+		<p>Вперёд за сокровищами и славой!</p>
+		<div class="btn">
+			<a class="parchment" href="./download/index.html">Начать приключение</a>
+		</div>
+	</div>
+	<svg style="display: none;">
+		<filter id="wavy2">
+		  <feTurbulence x="0" y="0" baseFrequency="0.02" numOctaves="5" seed="1"></feTurbulence>
+		  <feDisplacementMap in="SourceGraphic" scale="20" />
+		</filter>
+	</svg>
+</body>
+</html>
