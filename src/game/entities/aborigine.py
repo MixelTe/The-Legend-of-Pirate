@@ -15,10 +15,10 @@ animatorData = AnimatorData("aborigine", [
     ("stayS.png", 0, (15, 16), (-0.241, -0.6, 1.2, 1.3)),
     ("stayA.png", 0, (15, 16), (-0.591, -0.6, 1.2, 1.3)),
     ("stayD.png", 0, (15, 16), (-0.241, -0.6, 1.2, 1.3)),
-    ("guardW.png", 300, (15, 16), (-0.591, -0.6, 1.2, 1.3)),
-    ("guardS.png", 300, (15, 16), (-0.241, -0.6, 1.2, 1.3)),
-    ("guardA.png", 300, (15, 16), (-0.591, -0.6, 1.2, 1.3)),
-    ("guardD.png", 300, (15, 16), (-0.241, -0.6, 1.2, 1.3)),
+    ("guardW.png", 420, (15, 16), (-0.591, -0.6, 1.2, 1.3)),
+    ("guardS.png", 420, (15, 16), (-0.241, -0.6, 1.2, 1.3)),
+    ("guardA.png", 420, (15, 16), (-0.591, -0.6, 1.2, 1.3)),
+    ("guardD.png", 420, (15, 16), (-0.241, -0.6, 1.2, 1.3)),
     ("moveW.png", 150, (15, 16), (-0.591, -0.6, 1.2, 1.3)),
     ("moveS.png", 150, (15, 16), (-0.241, -0.6, 1.2, 1.3)),
     ("moveA.png", 150, (15, 16), (-0.591, -0.6, 1.2, 1.3)),
@@ -27,6 +27,10 @@ animatorData = AnimatorData("aborigine", [
     ("attackS.png", 200, (15, 18), (-0.241, -0.6, 1.2, 1.46)),
     ("attackA.png", 200, (16, 16), (-0.68, -0.6, 1.3, 1.3)),
     ("attackD.png", 200, (16, 16), (-0.241, -0.6, 1.3, 1.3)),
+    ("sitW.png", 3000, (15, 16), (-0.591, -0.6, 1.2, 1.3)),
+    ("sitS.png", 3000, (15, 16), (-0.241, -0.6, 1.2, 1.3)),
+    ("sitA.png", 3000, (15, 16), (-0.591, -0.6, 1.2, 1.3)),
+    ("sitD.png", 3000, (15, 16), (-0.241, -0.6, 1.2, 1.3)),
 ])
 LOOKR = 4
 SPEED_PATROL = 0.05
@@ -72,6 +76,7 @@ class EntityAborigine(EntityAlive):
         self.searchCounter = 0
         self.spear = None
         self.pastState = "stay"
+        self.guardCounter = 0
         self.setSightDir()
 
     def applyData(self, dataSetter: Callable[[str, Any, str, Callable[[Any], Any]], None], data: dict):
@@ -139,10 +144,18 @@ class EntityAborigine(EntityAlive):
                     pos[0] > 0 and self.direction == "A" or
                     pos[1] > 0 and self.direction == "W" or
                         pos[1] < 0 and self.direction == "S"):
+                    # if (self.state != "guard" and self.state != "sit"):
+                    state = self.state
                     if (self.state != "guard"):
+                        self.startAttackAsLeader()
                         self.pastState = self.state
                         self.state = "guard"
-                    self.startAttackAsLeader()
+                        self.guardCounter += 1
+                        self.guardCounter %= 4
+                        if (state == "sit"):
+                            self.guardCounter = 3
+                    # if (self.state != "sit"):
+                    #     return False
                     return False
                 if (pos[0] < 0 and self.direction == "A" or
                     pos[0] > 0 and self.direction == "D" or
@@ -314,6 +327,15 @@ class EntityAborigine(EntityAlive):
             self.speedX = 0
             self.speedY = 0
             self.animator.setAnimation("guard" + self.direction)
+            if (self.animator.lastState[1]):
+                if (self.guardCounter == 3):
+                    self.state = "sit"
+                else:
+                    self.state = self.pastState
+        elif (self.state == "sit"):
+            self.speedX = 0
+            self.speedY = 0
+            self.animator.setAnimation("sit" + self.direction)
             if (self.animator.lastState[1]):
                 self.state = self.pastState
 

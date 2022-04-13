@@ -77,10 +77,10 @@ class Animator:
         if (frame is None):
             if (animation != self.anim):
                 self.frame = 0
-                self.lastState = (False, self.frame == self.data.get_len(animation) - 1)
+                self.lastState = (False, False)
         else:
             self.frame = frame
-            self.lastState = (True, self.frame == self.data.get_len(animation) - 1)
+            self.lastState = (True, False)
         self.anim = animation
 
     def curAnimation(self) -> str:
