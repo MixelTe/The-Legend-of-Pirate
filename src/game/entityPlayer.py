@@ -264,10 +264,6 @@ class EntityPlayer(EntityAlive):
         self.shovel.nextStage()
 
     def dig(self):
-        coin = EntityAlive.createById("coin", self.screen)
-        self.screen.addEntity(coin)
-        coin.x = self.x + self.width + 0.5
-        coin.y = self.y + self.height / 2
         if (self.state != "normal"):
             return
         tile, _ = self.get_tile(1, pos=(0.5, 0.7))
