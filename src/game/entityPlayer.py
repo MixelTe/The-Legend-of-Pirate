@@ -313,8 +313,8 @@ class EntityPlayer(EntityAlive):
     def update(self):
         self.setSpeed()
         super().update()
-        self.takeItemAnim["counter"] = min(1, self.takeItemAnim["counter"] + 0.01)
-        if (self.takeItemAnim["counter"] == 1):
+        self.takeItemAnim["counter"] = min(2, self.takeItemAnim["counter"] + 0.01)
+        if (self.takeItemAnim["counter"] == 2):
             self.takeItemAnim["drawFun"] = None
             self.takeItemAnim["item"] = None
             if (self.takeItemAnim["onAnimEnd"]):
@@ -442,7 +442,7 @@ class EntityPlayer(EntityAlive):
         item = self.takeItemAnim["item"]
         if (not drawFun and not item):
             return
-        counter = self.takeItemAnim["counter"]
+        counter = self.takeItemAnim["counter"] / 2
         w, h = self.takeItemAnim["size"]
         if (item):
             w = item.width
