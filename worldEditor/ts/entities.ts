@@ -111,11 +111,10 @@ createNewEntityClass_Auto("octopus", true, 32, 32, 2, 2, undefined, undefined, u
 createNewEntityClass_Auto("spyglass", false, 11, 4, 0.6875, 0.25)
 
 
-function aborigineDraw(dirV: number, check0: boolean, lookR: number)
+function aborigineDraw(dirV: number, check0: boolean, lookR: number, lookW: number, maxR: number)
 {
 	function draw(self: Entity, ctx: CanvasRenderingContext2D)
 	{
-		let lookW = Math.PI / 2
 		let dir = 0;
 		if (self.objData[0].value == "stay" || !check0)
 		{
@@ -152,7 +151,7 @@ function aborigineDraw(dirV: number, check0: boolean, lookR: number)
 		if (self.objData[0].value == "stay" || !check0)
 		{
 			ctx.fillStyle = "rgba(128, 128, 128, 0.2)";
-			const addW = !check0 || self.objData[1].value ? 60 / 180 * Math.PI : 20 / 180 * Math.PI
+			const addW = !check0 || self.objData[1].value ? maxR / 180 * Math.PI : 20 / 180 * Math.PI
 			drawPie(lookR, addW, dir + lookW / 2 + addW / 2);
 			drawPie(lookR, addW, dir - lookW / 2 - addW / 2);
 		}
@@ -162,5 +161,5 @@ function aborigineDraw(dirV: number, check0: boolean, lookR: number)
 	}
 	return draw;
 }
-Aborigine.customDraw = aborigineDraw(2, true, 4);
-AborigineBow.customDraw = aborigineDraw(0, false, 5);
+Aborigine.customDraw = aborigineDraw(2, true, 4, Math.PI / 2, 60);
+AborigineBow.customDraw = aborigineDraw(0, false, 7.5, Math.PI / 3 * 2, 40);

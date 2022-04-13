@@ -17,7 +17,9 @@ animatorData = AnimatorData("aborigineBow", [
     ("attackD.png", 200, (15, 16), (-0.4, -0.6, 1.2, 1.3)),
     ("attackA.png", 200, (15, 16), (-0.4, -0.6, 1.2, 1.3)),
 ])
-LOOKR = 5
+LOOKR = 7.5
+LOOKW = math.pi / 3
+MAXR = 40 / 180 * math.pi
 
 
 class EntityAborigineBow(EntityAlive):
@@ -69,11 +71,11 @@ class EntityAborigineBow(EntityAlive):
         p1 = ((self.x + self.width / 2) * Settings.tileSize, (self.y + self.height / 2) * Settings.tileSize)
         color = pygame.Color(255, 165, 0, 50)
         drawPie(surface, color, p1, self.lookR * Settings.tileSize,
-                self.sightDirCur - math.pi / 4, self.sightDirCur + math.pi / 4, alpha=True)
+                self.sightDirCur - LOOKW, self.sightDirCur + LOOKW, alpha=True)
         if (self.seePlayer):
             color = pygame.Color(255, 60, 0, 50)
             drawPie(surface, color, p1, self.lookR * self.seePlayer * Settings.tileSize,
-                    self.sightDirCur - math.pi / 4, self.sightDirCur + math.pi / 4, alpha=True)
+                    self.sightDirCur - LOOKW, self.sightDirCur + LOOKW, alpha=True)
 
     def update(self):
         super().update()
@@ -93,7 +95,7 @@ class EntityAborigineBow(EntityAlive):
                 self.animator.setAnimation("attack" + self.getDir())
             else:
                 self.sightDirCur += self.rotationSpeed
-                if (abs(self.sightDirCur - self.sightDir) > 60 / 180 * math.pi):
+                if (abs(self.sightDirCur - self.sightDir) > MAXR):
                     self.rotationSpeed *= -1
         elif (self.state == "attack"):
             self.sightZoneVisible = False
@@ -138,7 +140,7 @@ class EntityAborigineBow(EntityAlive):
         a = math.atan2(dy, dx) % (2 * math.pi)
         betweenA = abs(self.sightDirCur - a)
         betweenA = min((2 * math.pi) - betweenA, betweenA)
-        if (betweenA <= math.pi / 4):
+        if (betweenA <= LOOKW):
             self.seePlayer = min(self.seePlayer + seeSpeed * 1000 / Settings.fps, 1)
             return self.seePlayer >= distance / self.lookR ** 2
         else:
