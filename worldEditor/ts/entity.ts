@@ -48,7 +48,7 @@ class Entity
 			const drawLine = (text: string) =>
 			{
 				ctx.fillText(text, this.x * TileSize + 2, this.y * TileSize + line * fontSize);
-				line += 1;
+				line -= 1;
 			}
 			for (let i = 0; i < this.objData.length; i++)
 			{
@@ -228,6 +228,7 @@ interface EntityData<T extends keyof EntityDataType>
 	value: EntityDataType[T];
 	displayColor?: string,
 	options?: EntityDataType[T][],
+	optionsHint?: string[],
 	nullable?: boolean,
 	title?: string,
 	smartTitle?: SmartTitle,

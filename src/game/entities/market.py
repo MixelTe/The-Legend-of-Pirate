@@ -16,6 +16,7 @@ class EntityMarket(Entity):
         self.priceImg = None
         self.price = 0
         self.marketId = None
+        self.infinite = False
         self.onBuySpeech = "Спасибо за покупку!"
         self.speech = None
         super().__init__(screen, data)
@@ -35,6 +36,7 @@ class EntityMarket(Entity):
         super().applyData(dataSetter, data)
         dataSetter("price", self.price)
         dataSetter("speech", self.speech)
+        dataSetter("infinite", self.infinite)
         if ("item id" in data):
             self.itemId = data["item id"]
             self.setItem()
@@ -79,16 +81,19 @@ class EntityMarket(Entity):
 
     def buy(self):
         if (self.screen.saveData.coins >= self.price):
-            self.trader.somethingBought(self.onBuySpeech)
+            if (self.trader):
+                self.trader.somethingBought(self.onBuySpeech)
             sound_coin.play()
             if (self.marketId is not None):
-                self.screen.saveData.tags.append(self.marketId)
+                if (self.marketId not in self.screen.saveData.tags):
+                    self.screen.saveData.tags.append(self.marketId)
             self.screen.saveData.coins -= self.price
             if (self.itemId == "coin"):
                 self.screen.saveData.coins += 1
             elif (self.itemId == "heart"):
                 self.screen.player.heal(1)
-            self.item = None
+            if (not self.infinite):
+                self.item = None
 
 
 Entity.registerEntity("market", EntityMarket)

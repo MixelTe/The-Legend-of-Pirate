@@ -24,11 +24,12 @@ createNewEntityClass_Auto("pirate2", true, 11, 22, 0.75, 0.7, 0, -0.8, 0.75, 1.5
 	// { type: "textAria", name: "speech", value: "" },
 ])
 createNewEntityClass_Auto("market", false, 39, 39, 1, 1, 0, 0, 1, 1, [
-	{ type: "text", name: "item id", value: "coin", displayColor: "black", title: "Id предмета" },
-	{ type: "number", name: "price", value: 1, displayColor: "lime", title: "Цена" },
-	{ type: "text", name: "market id", value: null, displayColor: "lime", nullable: true, title: "Id магазина" },
+	{ type: "text", name: "item id", value: "coin", displayColor: "black", title: "Id предмета", optionsHint: ["coin", "heart"] },
+	{ type: "number", name: "price", value: 1, displayColor: "black", title: "Цена" },
+	{ type: "text", name: "market id", value: null, displayColor: "black", nullable: true, title: "Id магазина" },
 	{ type: "textAria", name: "on buy speech", value: null, nullable: true, title: "Речь при покупке" },
 	{ type: "textAria", name: "speech", value: null, nullable: true, title: "Рекламная речь" },
+	{ type: "bool", name: "infinite", value: false, displayColor: "black", title: "Бесконечный товар" },
 ])
 createNewEntityClass_Auto("trigger", false, 50, 50, 1, 1, 0, 0, 1, 1, [
 	{ type: "area", name: "zone", value: [0, 0, 1, 1], displayColor: "orange", title: "Область активации" },

@@ -203,13 +203,28 @@ class ObjDataEditor
 	{
 		const inpNone = Input([], "checkbox");
 		const inp = Input([], "text");
+		const dataListEl = Span();
 		td.appendChild(Div([], [
 			inp,
 			(data.nullable ? initEl("label", [], [
 				inpNone,
 				Span([], [], "None")
 			], undefined) : Span()),
+			dataListEl,
 		]));
+		if (data.optionsHint)
+		{
+			const dataList = document.createElement("datalist");
+			dataList.id = "dataList" + data.name.replaceAll(" ", "-");
+			dataListEl.appendChild(dataList);
+			data.optionsHint.forEach(hint =>
+			{
+				const option = document.createElement("option");
+				dataList.appendChild(option);
+				option.innerText = hint;
+			});
+			inp.setAttribute("list", dataList.id);
+		}
 		if (data.value == null)
 		{
 			inp.disabled = true;
