@@ -1,4 +1,6 @@
+from random import random
 import pygame
+from functions import load_image, scaleImg
 from settings import Settings
 
 
@@ -85,6 +87,8 @@ class ScreenAnimationBlur(ScreenAnimation):
 
 
 class ScreenAnimationDeath(ScreenAnimation):
+    coin = scaleImg(load_image("coin.png"), 0.33, 0.4)
+
     def __init__(self, image: pygame.Surface, player):
         super().__init__()
         self.surfaceRect = pygame.Surface((self.width, self.height))
@@ -93,10 +97,23 @@ class ScreenAnimationDeath(ScreenAnimation):
         self.player = player
         self.counter = self.width
         self.counter2 = 0
+        self.playerCoins = self.player.saveData.coins // 2
+        self.counter3 = 0
+        self.coins = []  # {"x": 0, "y": 0, "speedX": 0, "speedY": 0}
 
     def update(self) -> bool:
         self.counter = max(self.counter - 20, 0)
         self.counter2 = min(self.counter2 + 1, 40)
+        self.counter3 += 1
+        if (self.counter3 >= 10):
+            self.counter3 = 0
+            if (self.player.saveData.coins > self.playerCoins):
+                self.player.saveData.coins -= 1
+                self.coins.append({"x": self.player.x, "y": self.player.y, "speedX": (random() - 0.5) * 0.2, "speedY": 0})
+        for coin in self.coins:
+            coin["x"] += coin["speedX"]
+            coin["y"] += coin["speedY"]
+            coin["speedY"] += 0.005
         self.player.update()
         return self.player.state == "dead"
 
@@ -108,5 +125,7 @@ class ScreenAnimationDeath(ScreenAnimation):
         pygame.draw.circle(self.surfaceRect, pygame.Color(255, 255, 255), center, self.counter)
         self.surface.blit(self.surfaceRect, (0, 0), special_flags=pygame.BLEND_MULT)
         pygame.draw.circle(self.surface, pygame.Color(200, 200, 255), center, self.counter2)
+        for coin in self.coins:
+            self.surface.blit(self.coin, (coin["x"] * Settings.tileSize, coin["y"] * Settings.tileSize))
         self.player.draw(self.surface)
         return self.surface

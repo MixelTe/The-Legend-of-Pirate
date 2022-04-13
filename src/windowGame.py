@@ -120,7 +120,10 @@ class WindowGame(Window):
                 self.screenAnim = ScreenAnimationBlur(goTo.image, self.screen.draw())
 
         if (self.player.health <= 0):
+            coins = self.saveData.coins
+            self.saveData.coins = self.saveData.coins // 2
             self.saveAll()
+            self.saveData.coins = coins
             endBattleMusic()
             self.player.death()
             sound_over.play()
