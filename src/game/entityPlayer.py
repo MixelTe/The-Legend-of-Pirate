@@ -274,10 +274,19 @@ class EntityPlayer(EntityAlive):
     def afterDig(self):
         entities = self.get_entitiesD((1.1, 0.4, 0.4, 0.3))
         dig_place = None
+        dig_place_hidden = None
         for e in entities:
             if e.id == "dig_place":
-                dig_place = e
+                if (not e.digged):
+                    dig_place = e
+                    break
+            if e.id == "dig_place_hidden":
+                dig_place_hidden = e
                 break
+
+        if (dig_place_hidden):
+            dig_place_hidden.dig()
+
         if (dig_place and not dig_place.digged):
             dig_place.dig()
             options = ["coin", "heart", "crab"]

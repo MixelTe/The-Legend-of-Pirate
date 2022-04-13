@@ -402,3 +402,52 @@ class EntityMap(Entity):
 
 
 Entity.registerEntity("map", EntityMap)
+
+
+class EntityHeartAdd(Entity):
+    image = scaleImg(load_image("hpA.png"), 0.7, 0.7)
+
+    def __init__(self, screen, data: dict = None):
+        super().__init__(screen, data)
+        self.image = EntityHeartAdd.image
+        self.hidden = True
+        self.ghostE = True
+        self.width = 0.7
+        self.height = 0.7
+
+    def update(self):
+        pass
+
+
+Entity.registerEntity("heart_add", EntityHeartAdd)
+
+
+class EntityDigPlaceHidden(Entity):
+    def __init__(self, screen, data: dict = None):
+        self.content = "heart_add"
+        super().__init__(screen, data)
+        self.hidden = True
+        self.ghostE = True
+        self.ghostT = True
+        self.width = 1
+        self.height = 1
+
+    def applyData(self, dataSetter: Callable[[str, Any, str, Callable[[Any], Any]], None], data: dict):
+        super().applyData(dataSetter, data)
+        dataSetter("content", self.content)
+
+    def dig(self):
+        if (self.content == "heart_add"):
+            if ("heart-collected" in self.screen.player.saveData.tags):
+                return
+            if ("quest-pirate-ended" not in self.screen.player.saveData.tags or
+                "quest-cactus-ended" not in self.screen.player.saveData.tags):
+                return
+            heart = Entity.createById("heart_add", self.screen)
+            self.screen.player.takeItem(heart)
+            self.screen.player.saveData.tags.append("heart-collected")
+            self.screen.player.healthMax = 8
+            self.screen.player.health = 8
+
+
+Entity.registerEntity("dig_place_hidden", EntityDigPlaceHidden)
