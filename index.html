@@ -3,151 +3,39 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Редактор Миров</title>
+	<title>The Legend of Pirate</title>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT Sans|PT Sans Caption">
 	<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
-	<link rel="stylesheet" type="text/css" href="popup.css">
 	<link rel="stylesheet" type="text/css" href="styles.css">
-	<script defer src="out/functions.js"></script>
-	<script defer src="out/popup.js"></script>
-	<script defer src="out/controls.js"></script>
-	<script defer src="out/entity.js"></script>
-	<script defer src="out/entities.js"></script>
-	<script defer src="out/objDataEditor.js"></script>
-	<script defer src="out/tiles.js"></script>
-	<script defer src="out/decor.js"></script>
-	<script defer src="out/decors.js"></script>
-	<script defer src="out/newView.js"></script>
-	<script defer src="out/main.js"></script>
+	<script src="./main.js" defer></script>
 </head>
 <body>
-	<div class="toolbar">
-		<h1>Редактор Миров</h1>
-		<div class="line">
-			<button id="btn-controls">Показать управление</button>
+	<div class="container">
+		<h1>The Legend of Pirate</h1>
+		<div class="navbar btn">
+			<a class="parchment" href="./download/index.html">Скачать</a>
 		</div>
-		<table>
-			<tr title="Ширина мира"><td><label for="inp-width">Ширина</label></td><td><input type="number" id="inp-width" value="5"></td></tr>
-			<tr title="Высота мира"><td><label for="inp-height">Высота</label></td><td><input type="number" id="inp-height" value="5"></td></tr>
-		</table>
-		<div class="world-map" title="Миникарта. ЛКМ: переместиться к экрану, ПКМ: переместиться и вместить в окно">
-			<!-- <table id="world-map"></table> -->
-			<div class="minimap">
-				<canvas id="minimap"></canvas>
-			</div>
+		<p>Произошло крушение, капитан корабля оказался на неизвестном острове.</p>
+		<div class="pirate-swim" id="pirate-swim">
+			<img src="./imgs/pirate-swim.png">
 		</div>
-		<div class="btns line">
-			<button id="btn-left" title="Сдвинуть все экраны влево">←</button>
-			<button id="btn-up" title="Сдвинуть все экраны вверх">↑</button>
-			<button id="btn-right" title="Сдвинуть все экраны вправо">→</button>
-			<button id="btn-down" title="Сдвинуть все экраны вниз">↓</button>
-		</div>
-		<div class="line" title="Размер одной клетки (px)">
-			<label>Zoom: <input type="number" id="inp-tilesize" min="1"></label>
-		</div>
-		<div class="line" title="Скорость прокрутки с помощью колёсика мыши">
-			<span>Scroll speed: </span>
-			<input type="range" id="inp_cameraSpeed" min="1" max="10" step="1" value="4">
-		</div>
-		<div class="line">
-			<span title="Режим рисования">Режим: </span>
-			<span class="margin-left">
-				<label title="Покрасить одну клетку"><span>[R] Ручка:</span><input type="radio" id="inp-mode-pen" name="mode" checked></label>
-				<label title="Покрасить все одинаковые плитки, соприкасающиеся сторонами"><span>[F] Заливка:</span><input type="radio" id="inp-mode-fill" name="mode"></label>
-			</span>
-		</div>
-		<div class="line" title="Режим настройки экранов: перемещение, добавление, удаление">
-			<label>
-				<span>[S] Режим экранов:</span>
-				<span class="checkbox-switch">
-					<input type="checkbox" id="inp-mode-view">
-					<span></span>
-				</span>
-			</label>
-		</div>
-		<div class="line" title="Режим расстановки и настройки сущностей">
-			<label>
-				<span>[E] Режим сущностей:</span>
-				<span class="checkbox-switch">
-					<input type="checkbox" id="inp-mode-entity">
-					<span></span>
-				</span>
-			</label>
-		</div>
-		<div class="line" title="Режим расстановки и настройки декораций">
-			<label>
-				<span>[D] Режим декораций:</span>
-				<span class="checkbox-switch">
-					<input type="checkbox" id="inp-mode-decor">
-					<span></span>
-				</span>
-			</label>
-		</div>
-		<div class="line" title="Подсвечивать тайл под курсором мыши">
-			<label>
-				<span>[H] Подсвечивать тайлы:</span>
-				<span class="checkbox-switch">
-					<input type="checkbox" id="inp-highlight-tiles">
-					<span></span>
-				</span>
-			</label>
-		</div>
-		<div class="line" title="Подсвечивать тайл под курсором мыши">
-			<label>
-				<span>[J] Скрыть декорации:</span>
-				<span class="checkbox-switch">
-					<input type="checkbox" id="inp-highlight-decor">
-					<span></span>
-				</span>
-			</label>
-		</div>
-		<div class="line" title="При постановки декорации края, он будет автоматически настроен">
-			<label>
-				<span>Авто-постановка декорации края:</span>
-				<span class="checkbox-switch">
-					<input type="checkbox" id="inp-auto-edge" checked>
-					<span></span>
-				</span>
-			</label>
-		</div>
-		<div class="line" title="Подсвечивать тайлы, на которых больше одной декорации/сущности">
-			<label>
-				<span>Отображать наложения:</span>
-				<span class="checkbox-switch">
-					<input type="checkbox" id="inp-highlight-stacked" checked>
-					<span></span>
-				</span>
-			</label>
-		</div>
-		<div class="line">
-			Мир:
-			<button id="btn-new">Новый</button>
-			<button id="btn-save">Сохранить</button>
-			<label class="inp-file">
-				<input type="file" id="inp-load" accept=".json">
-				<span>Загрузить</span>
-			</label>
-		</div>
-		<div class="line" id="palette">
+		<p>Сможет ли он преодолеть все преграды и вернуть корабль.</p>
+		<p>К счастью, у пирата оказалась лопата!</p>
+		<div class="pirate-attack"><div></div></div>
+		<p>На пути у капитана встретиться множество недроброжелателей.</p>
+		<div class="crab-attack"><div></div></div>
+		<p>Cокровища ждут!</p>
+		<div class="pirate-dig"><div></div></div>
+		<p>Вперёд за сокровищами и славой!</p>
+		<div class="btn">
+			<a class="parchment" href="./download/index.html">Начать приключение</a>
 		</div>
 	</div>
-	<div class="viewport" id="viewport">
-		<canvas id="canvas"></canvas>
-	</div>
-	<div class="fast-palette" id="fast-palette">
-		<div>
-			<div style="--i: 1" class="fast-palette-part"><img src="imgs/none.png"></div>
-			<div style="--i: 2" class="fast-palette-part"><img src="imgs/none.png"></div>
-			<div style="--i: 3" class="fast-palette-part"><img src="imgs/none.png"></div>
-			<div style="--i: 4" class="fast-palette-part"><img src="imgs/none.png"></div>
-			<div style="--i: 5" class="fast-palette-part"><img src="imgs/none.png"></div>
-			<div style="--i: 6" class="fast-palette-part"><img src="imgs/none.png"></div>
-			<div style="--i: 7" class="fast-palette-part"><img src="imgs/none.png"></div>
-			<div style="--i: 8" class="fast-palette-part"><img src="imgs/none.png"></div>
-		</div>
-	</div>
-	<div class="palette-group" id="palette-group">
-		<div class="palette-group-imgs" id="palette-group-imgs"></div>
-	</div>
+	<svg style="display: none;">
+		<filter id="wavy2">
+		  <feTurbulence x="0" y="0" baseFrequency="0.02" numOctaves="5" seed="1"></feTurbulence>
+		  <feDisplacementMap in="SourceGraphic" scale="20" />
+		</filter>
+	</svg>
 </body>
 </html>
-

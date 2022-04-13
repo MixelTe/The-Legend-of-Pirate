@@ -1,0 +1,326 @@
+html {
+	height: 100%;
+}
+body {
+	min-height: 100%;
+	max-height: 100%;
+	max-width: 100%;
+	margin: 0;
+	display: flex;
+	flex-direction: row;
+}
+h1 {
+	margin-top: 0;
+	text-align: center;
+}
+
+.toolbar {
+	background-color: rgb(195, 247, 195);
+	width: 300px;
+	padding: 0.4em;
+	flex-shrink: 0;
+	overflow-y: auto;
+	/* min-height: 100%; */
+}
+.btns {
+	display: flex;
+	justify-content: center;
+}
+.btns button {
+	width: 2em;
+	height: 2em;
+	margin-left: 0.5em;
+}
+.line {
+	margin: 0.4em 0;
+}
+.margin-left > * {
+	margin-left: 0.5em;
+}
+
+.world-map {
+	overflow: auto;
+	max-height: 300px;
+}
+*::-webkit-scrollbar {
+	width: 6px;
+	height: 6px;
+	background-color: transparent;
+}
+*::-webkit-scrollbar-thumb {
+	background-color: gray;
+	border-radius: 5px;
+}
+/* *::-webkit-scrollbar-button {
+	background-color: rgba(64, 224, 208, 0.5);
+} */
+*::-webkit-scrollbar-corner {
+	background-color: turquoise;
+}
+.minimap {
+	display: table;
+    margin-left: auto;
+    margin-right: auto;
+}
+#world-map {
+	border-spacing: 0;
+	/* border: none; */
+    margin-left: auto;
+    margin-right: auto;
+}
+#world-map button {
+	width: 20px;
+	height: 20px;
+	border: 1px solid black;
+	background-color: rgb(177, 225, 255);
+}
+#world-map button.active {
+	background-color: rgb(243, 200, 81);
+}
+
+.checkbox-switch {
+	position: relative;
+	display: inline-block;
+	background-color: azure;
+	/* border: 1px solid rgb(123, 216, 247); */
+	border-radius: 1em;
+	width: 2.5em;
+	height: 1.2em;
+	box-shadow: 0 0 0.2em rgba(0, 0, 0, 0.5);
+}
+.checkbox-switch input {
+	position: absolute;
+	opacity: 0;
+	pointer-events: none;
+}
+.checkbox-switch span {
+	position: absolute;
+	left: 0.15em;
+	top: 0.15em;
+	display: inline-block;
+	width: 0.9em;
+	height: 0.9em;
+	background-color: tomato;
+	box-shadow: 0 0 0.2em tomato;
+	border-radius: 1em;
+	transition: 250ms;
+}
+.checkbox-switch input:checked ~ span {
+	background-color: lime;
+	box-shadow: 0 0 0.2em lime;
+	left: 1.45em;
+}
+.checkbox-switch:hover span, .checkbox-switch input:focus ~ span {
+	box-shadow: 0 0 0.2em 0.1em tomato,
+				0 0 0.5em black;
+}
+.checkbox-switch:hover input:checked ~ span, .checkbox-switch input:checked:focus ~ span {
+	box-shadow: 0 0 0.2em 0.1em lime,
+				0 0 0.5em black;
+}
+#palette {
+	display: flex;
+	flex-wrap: wrap;
+}
+#palette img {
+	cursor: pointer;
+	image-rendering: pixelated;
+	width: 48px;
+	height: 48px;
+}
+#palette canvas {
+	cursor: pointer;
+}
+.inp-file input {
+	position: absolute;
+	opacity: 0;
+	pointer-events: none;
+}
+.inp-file span {
+	background-color: lightgreen;
+	border: 1px solid green;
+	border-radius: 0.2em;
+	padding: 0.09em 0.4em;
+}
+.inp-file span:hover, .inp-file input:focus ~ span {
+	background-color: hsl(120, 73%, 60%);
+}
+.inp-file span:active {
+	background-color: hsl(120, 73%, 80%);
+}
+
+.viewport {
+	flex-grow: 1;
+	overflow: auto;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+.cursor-move {
+	cursor: move;
+}
+.cursor-pointer {
+	cursor: pointer;
+}
+
+.controls-table {
+	border-spacing: 1em 0.3em;
+}
+.row-spacer {
+	height: 0.8em;
+}
+.row-nospace {
+	border-spacing: 0;
+}
+canvas {
+	user-select: none;
+}
+
+.color-rect {
+	width: 0.6em;
+	height: 0.6em;
+	border-radius: 50%;
+	background: conic-gradient(#fff 0.25turn, #000 0.25turn 0.5turn, #fff 0.5turn 0.75turn, #000 0.75turn) top left / 50% 50% repeat;
+}
+.inp-short {
+	width: 3.5em;
+	margin-right: 0.5em;
+}
+.delete-button {
+	color: white;
+	background-color: tomato;
+	border: 1px solid black;
+	padding: 0.2em 0.4em;
+	border-radius: 0.4em;
+	outline: none;
+}
+.delete-button:focus, .delete-button:hover {
+	box-shadow: 0 0 0.5em 0.2em tomato;
+}
+.delete-button:active {
+	box-shadow: 0 0 0.2em 0em black inset;
+}
+/* .entity-editor {
+
+} */
+
+.fast-palette {
+	position: fixed;
+	top: 300px;
+	left: 400px;
+	transform: translateX(-50%) translateY(-50%);
+	display: none;
+}
+.fast-palette-visible {
+	display: block;
+}
+.fast-palette > div {
+	position: relative;
+	width: 300px;
+	height: 300px;
+	background-color: rgba(0, 0, 0, 0.4);
+	border-radius: 50%;
+	overflow: hidden;
+}
+.fast-palette > div > div {
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 50%;
+	height: 50%;
+	transform-origin: 0% 100%;
+	transform: rotate(calc(360deg / 8 * var(--i))) skewY(315deg);
+	display: flex;
+	flex-direction: column;
+	justify-content: end;
+}
+.fast-palette > div > div:hover {
+	background-color: rgba(255, 255, 255, 0.2);
+}
+.fast-palette img, .fast-palette canvas {
+	transform: skewY(-315deg) rotate(calc(-360deg / 8 * var(--i)));
+	width: 65px;
+	height: 65px;
+	margin-bottom: 25px;
+	margin-left: 5px;
+	image-rendering: pixelated;
+	border-radius: 40%;
+}
+
+.palette-group {
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	display: none;
+	width: 100%;
+	height: 100%;
+	justify-content: center;
+	align-items: center;
+}
+.fast-palette-visible {
+	display: flex;
+}
+.palette-group-imgs {
+	position: relative;
+	max-width: min(500px, 100%);
+	/* height: 300px; */
+	background-color: rgba(0, 0, 0, 0.4);
+	border-radius: 1em;
+	overflow: hidden;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	padding: 0.5em;
+}
+.palette-group-imgs img {
+	width: 65px;
+	height: 65px;
+	image-rendering: pixelated;
+	border-radius: 0.3em;
+	margin: 0.2em;
+}
+.palette-group-imgs img:hover {
+	background-color: rgba(255, 255, 255, 0.2);
+}
+
+.TileEdge-picker {
+	display: flex;
+	justify-content: center;
+}
+.TileEdge-picker td {
+	text-align: center;
+}
+.TileEdge-picker input {
+	width: 2em;
+	height: 2em;
+}
+
+.palette-view {
+	position: relative;
+}
+.palette-view button {
+	position: absolute;
+	right: 0.2rem;
+	top: 0.2rem;
+	width: 1.8rem;
+	height: 1.8rem;
+	border-radius: 0.6rem;
+	background-color: tomato;
+	font-size: 1.4rem;
+	color: white;
+	border: none;
+	cursor: pointer;
+}
+.palette-view button:hover, .palette-view button:focus, .palette-view button:active {
+	box-shadow: inset 0 0 0.2rem 0.05rem white;
+}
+.palette-view-selected::after {
+	content: "Выбрано";
+	position: absolute;
+	left: 0.2em;
+	top: 0.2em;
+	background-color: lime;
+	border-radius: 0.6em;
+	padding: 0.4em 0.8em;
+	font-weight: bold;
+}
