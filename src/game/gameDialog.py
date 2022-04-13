@@ -3,12 +3,15 @@ from settings import Settings
 
 
 class GameDialog:
-    def __init__(self, onClose=lambda: None, w=10, h=10):
+    def __init__(self, onClose=lambda: None, w=10, h=10, alpha=False):
         self.onClose = onClose
         self.rect = pygame.Rect(0, 0, w, h)
         self.rect.x = (Settings.width - self.rect.width) / 2
         self.rect.y = (Settings.height - self.rect.height) / 2
-        self.surface = pygame.Surface(self.rect.size)
+        if (alpha):
+            self.surface = pygame.Surface(self.rect.size, pygame.SRCALPHA)
+        else:
+            self.surface = pygame.Surface(self.rect.size)
         self.closed = False
         self.exitFromGame = False
         self.drawBack()

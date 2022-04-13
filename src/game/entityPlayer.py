@@ -4,6 +4,7 @@ from typing import Callable, Union
 import pygame
 from functions import load_sound, rectPointIntersection
 from game.animator import Animator, AnimatorData
+from game.dialogs.map import GameDialog_map
 from game.entity import Entity, EntityAlive, EntityGroups
 from game.saveData import SaveData
 from game.tile import Tile
@@ -124,6 +125,8 @@ class EntityPlayer(EntityAlive):
             self.removeKeyFromPressed("right")
         if (key == pygame.K_a or key == pygame.K_LEFT):
             self.removeKeyFromPressed("left")
+        if (key == pygame.K_q):
+            self.openMap()
 
     def onJoyHat(self, value):
         self.keyboardIsUsed = False
@@ -204,7 +207,8 @@ class EntityPlayer(EntityAlive):
             self.buttonPressed.remove(key)
 
     def onJoyButonUp(self, button):
-        pass
+        if (button == 3):
+            self.openMap()
 
     def setSpeed(self):
         self.speedX = 0
@@ -309,6 +313,13 @@ class EntityPlayer(EntityAlive):
                 self.screen.addEntity(crab)
                 crab.x = self.x + 1.25
                 crab.y = self.y + 0.25
+
+    def openMap(self):
+        if ("quest-pirate-ended" in self.saveData.tags or "quest-cactus-ended" in self.saveData.tags):
+            parts = 0
+            parts += 1 if "quest-pirate-ended" in self.saveData.tags else 0
+            parts += 1 if "quest-cactus-ended" in self.saveData.tags else 0
+            self.screen.openDialog(GameDialog_map(parts))
 
     def update(self):
         self.setSpeed()
