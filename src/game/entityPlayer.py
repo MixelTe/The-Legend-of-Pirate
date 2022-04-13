@@ -280,7 +280,11 @@ class EntityPlayer(EntityAlive):
                 break
         if (dig_place and not dig_place.digged):
             dig_place.dig()
-            found = choices(["coin", "heart", "crab"], [0.5, 0.4, 0.1])[0]
+            options = ["coin", "heart", "crab"]
+            if (dig_place.content in options):
+                found = dig_place.content
+            else:
+                found = choices(options, [0.5, 0.4, 0.1])[0]
             if (found == "coin"):
                 coin = Entity.createById("coin", self.screen)
                 self.screen.addEntity(coin)

@@ -1,4 +1,5 @@
 import math
+from typing import Any, Callable
 import pygame
 from functions import load_entityImg, load_image, load_sound, multRect, removeFromCollisions, scaleImg
 from game.entity import Entity, EntityAlive, EntityGroups
@@ -98,6 +99,7 @@ class EntityDigPlace(Entity):
     image2 = load_entityImg("dig_place2.png", 1, 1)
 
     def __init__(self, screen, data: dict = None):
+        self.content = "random"
         super().__init__(screen, data)
         self.image = EntityDigPlace.image
         self.hidden = True
@@ -108,6 +110,10 @@ class EntityDigPlace(Entity):
         self.height = 1
         self.imagePos = (random() * 0.5 + 0.2, random() * 0.5 + 0.2)
         self.digged = False
+
+    def applyData(self, dataSetter: Callable[[str, Any, str, Callable[[Any], Any]], None], data: dict):
+        super().applyData(dataSetter, data)
+        dataSetter("content", self.content)
 
     def dig(self):
         self.image = EntityDigPlace.image2
