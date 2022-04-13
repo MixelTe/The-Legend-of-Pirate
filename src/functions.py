@@ -4,6 +4,7 @@ import pygame
 import os
 import json
 from settings import Settings
+from random import random
 
 
 class GameExeption(Exception):
@@ -311,3 +312,14 @@ def drawPie(surface: pygame.Surface, color: pygame.Color, center: tuple[int, int
 
 def distance(e1, e2):
     return (e1.x + e1.width / 2) - (e2.x + e2.width / 2), (e1.y + e1.height / 2) - (e2.y + e2.height / 2)
+
+
+def dropCoin(self):
+    if (random() < 0.5):
+        return
+    from game.entity import Entity
+    self: Entity = self
+    coin = Entity.createById("coin", self.screen)
+    coin.x = self.x + self.width / 2
+    coin.y = self.y + self.height / 2
+    self.screen.addEntity(coin)

@@ -2,7 +2,7 @@ import math
 from random import randint
 from typing import Any, Callable, Literal, Union
 import pygame
-from functions import distance, drawPie
+from functions import distance, drawPie, dropCoin
 from game.animator import Animator, AnimatorData
 from game.entity import Entity, EntityAlive, EntityGroups
 from game.pathFinder import PathFinder
@@ -100,10 +100,7 @@ class EntityAborigine(EntityAlive):
         return "water" not in tile.tags and super().canGoOn(tile)
 
     def onDeath(self):
-        coin = EntityAlive.createById("coin", self.screen)
-        self.screen.addEntity(coin)
-        coin.x = self.x + self.width / 2
-        coin.y = self.y + self.height / 2
+        dropCoin()
 
     def draw(self, surface: pygame.Surface, opaque=1):
         super().draw(surface, opaque)

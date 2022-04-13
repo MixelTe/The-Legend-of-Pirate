@@ -1,3 +1,4 @@
+from functions import dropCoin
 from game.animator import Animator, AnimatorData
 from game.entity import EntityAlive, EntityGroups
 from game.tile import Tile
@@ -24,10 +25,7 @@ class EntitySkeletonShield(EntityAlive):
         return "water" not in tile.tags and super().canGoOn(tile)
 
     def onDeath(self):
-        coin = EntityAlive.createById("coin", self.screen)
-        self.screen.addEntity(coin)
-        coin.x = self.x + self.width / 2
-        coin.y = self.y + self.height / 2
+        dropCoin()
 
     def update(self):
         super().update()

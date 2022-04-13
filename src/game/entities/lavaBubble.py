@@ -1,5 +1,5 @@
 from random import randint
-from functions import distanceRects
+from functions import distanceRects, dropCoin
 from game.animator import Animator, AnimatorData
 from game.entity import EntityAlive, EntityGroups
 from game.tile import Tile
@@ -39,10 +39,7 @@ class EntityLavaBubble(EntityAlive):
         return "lava" in tile.tags or super().canGoOn(tile) or self.state == "jump"
 
     def onDeath(self):
-        coin = EntityAlive.createById("coin", self.screen)
-        self.screen.addEntity(coin)
-        coin.x = self.x + self.width / 2
-        coin.y = self.y + self.height / 2
+        dropCoin()
 
     def update(self):
         super().update()

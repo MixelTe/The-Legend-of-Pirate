@@ -1,5 +1,5 @@
 from typing import Any, Callable
-from functions import compare, removeFromCollisions
+from functions import compare, dropCoin, removeFromCollisions
 from game.animator import Animator, AnimatorData
 from game.entity import Entity, EntityAlive, EntityGroups
 from game.tile import Tile
@@ -45,10 +45,7 @@ class EntitySkeleton(EntityAlive):
         return "water" not in tile.tags and super().canGoOn(tile)
 
     def onDeath(self):
-        coin = EntityAlive.createById("coin", self.screen)
-        self.screen.addEntity(coin)
-        coin.x = self.x + self.width / 2
-        coin.y = self.y + self.height / 2
+        dropCoin()
 
     def update(self):
         collisions = super().update()

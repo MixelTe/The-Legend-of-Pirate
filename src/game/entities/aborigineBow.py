@@ -2,7 +2,7 @@ import math
 from typing import Any, Callable, Literal, Union
 
 import pygame
-from functions import drawPie
+from functions import drawPie, dropCoin
 from game.animator import Animator, AnimatorData
 from game.entities.aborigine import EntityAborigine
 from game.entity import Entity, EntityAlive, EntityGroups
@@ -60,10 +60,7 @@ class EntityAborigineBow(EntityAlive):
         return entity.id == "arrow"
 
     def onDeath(self):
-        coin = EntityAlive.createById("coin", self.screen)
-        self.screen.addEntity(coin)
-        coin.x = self.x + self.width / 2
-        coin.y = self.y + self.height / 2
+        dropCoin()
 
     def draw(self, surface: pygame.Surface, opaque=1):
         super().draw(surface, opaque)

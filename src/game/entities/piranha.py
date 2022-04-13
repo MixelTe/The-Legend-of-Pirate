@@ -1,5 +1,5 @@
 from typing import Any, Callable
-from functions import compare, distanceRects, removeFromCollisions
+from functions import compare, distanceRects, dropCoin, removeFromCollisions
 from game.animator import Animator, AnimatorData
 from game.entity import EntityAlive, EntityGroups
 from game.tile import Tile
@@ -58,11 +58,8 @@ class EntityPiranha(EntityAlive):
 
     def onDeath(self):
         tile = self.get_tile()
-        if (tile[0] and "water-deep" not in tile[0].tags):
-            coin = EntityAlive.createById("coin", self.screen)
-            self.screen.addEntity(coin)
-            coin.x = self.x + self.width / 2
-            coin.y = self.y + self.height / 2
+        if (tile[0] and not tile[0].solid):
+            dropCoin()
 
     def update(self):
         collisions = super().update()
