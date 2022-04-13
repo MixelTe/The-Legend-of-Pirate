@@ -97,7 +97,7 @@ createNewEntityClass_Auto("cactusDancingChild", true, 18, 24, 0.85, 0.85, -0.075
 createNewEntityClass_Auto("bush", false, 16, 16, 1, 1)
 createNewEntityClass_Auto("wood", false, 14, 7, 0.875, 0.25, 0, -0.1875, 0.875, 0.4375)
 createNewEntityClass_Auto("wood2", false, 15, 10, 0.6875, 0.625, -0.125, 0, 0.9375, 0.625)
-createNewEntityClass_Auto("stone", false, 16, 16, 1, 1)
+createNewEntityClass_Auto("stone", true, 16, 16, 1, 1)
 createNewEntityClass_Auto("stoneBar", false, 16, 16, 1, 1)
 createNewEntityClass_Auto("lavaBubble", true, 16, 16, 0.5625, 0.5, -0.25, -0.25, 1, 1)
 createNewEntityClass_Auto("octopus", true, 32, 32, 2, 2, undefined, undefined, undefined, undefined, [

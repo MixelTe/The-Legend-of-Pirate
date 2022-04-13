@@ -471,6 +471,7 @@ def loadEntities():
     import game.entities.lavaBubble
     import game.entities.spear
     import game.entities.octopus
+    import game.entities.stone
 
 
 loadEntities()
