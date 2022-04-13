@@ -59,7 +59,7 @@ class EntityPiranha(EntityAlive):
     def onDeath(self):
         tile = self.get_tile()
         if (tile[0] and not tile[0].solid):
-            dropCoin()
+            dropCoin(self)
 
     def update(self):
         collisions = super().update()

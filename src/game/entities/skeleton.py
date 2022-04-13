@@ -45,7 +45,7 @@ class EntitySkeleton(EntityAlive):
         return "water" not in tile.tags and super().canGoOn(tile)
 
     def onDeath(self):
-        dropCoin()
+        dropCoin(self)
 
     def update(self):
         collisions = super().update()

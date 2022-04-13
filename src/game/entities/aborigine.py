@@ -100,7 +100,7 @@ class EntityAborigine(EntityAlive):
         return "water" not in tile.tags and super().canGoOn(tile)
 
     def onDeath(self):
-        dropCoin()
+        dropCoin(self)
 
     def draw(self, surface: pygame.Surface, opaque=1):
         super().draw(surface, opaque)

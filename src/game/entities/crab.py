@@ -45,7 +45,7 @@ class EntityCrab(EntityAlive):
             self.draw_rect(surface, "red", self.lookZone, False, True, True)
 
     def onDeath(self):
-        dropCoin()
+        dropCoin(self)
 
     def update(self):
         super().update()
