@@ -197,6 +197,8 @@ function createNewEntityClass(name, imgUrl, width, height, widthHitbox, heightHi
 }
 function createNewEntityClass_Auto(name, hasFolder, width, height, widthHitbox, heightHitbox, xImg, yImg, widthImg, heightImg, objData) {
     let imgUrl = name + ".png";
+    if (hasFolder == null)
+        imgUrl = "/" + name + ".png";
     if (hasFolder)
         imgUrl = name + "/stay.png";
     return createNewEntityClass(name, imgUrl, width, height, widthHitbox, heightHitbox, xImg || 0, yImg || 0, widthImg || widthHitbox, heightImg || heightHitbox, objData || []);
