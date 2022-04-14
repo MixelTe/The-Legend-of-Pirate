@@ -112,7 +112,7 @@ class EntityCactusDancingChild(EntityAlive):
             if (self.state == 0):
                 self.screen.player.message = TEXTS[0]
             if (getCurMusic() != musicPath):
-                self.animator.setAnimation(f"stay{self.color}")
+                self.animator.setAnimation(f"stay")
 
 
 EntityAlive.registerEntity("cactusDancingChild", EntityCactusDancingChild)
