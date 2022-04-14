@@ -117,7 +117,7 @@ createNewEntityClass_Auto("pirate3", true, 11, 22, 0.75, 0.7, 0, -0.8, 0.75, 1.5
 	{ type: "number", name: "img", value: 1, options: [1, 2], title: "Изображение" },
 ])
 createNewEntityClass_Auto("coinbag", null, 15, 12, 0.9375, 0.75, undefined, undefined, undefined, undefined, [
-	{ type: "number", name: "id", value: 1, title: "Id", displayColor: "green" },
+	{ type: "number", name: "id", value: 1, options: [1, 2, 3], title: "Id", displayColor: "green" },
 ])
 
 
