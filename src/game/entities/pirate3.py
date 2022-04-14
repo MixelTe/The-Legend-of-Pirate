@@ -20,7 +20,7 @@ class EntityPirate3(Entity):
         self.animator = Animator(animatorData, f"stay{self.img}")
         self.width = 0.75
         self.height = 0.7
-        self.talkZone = (-1, -1, 2, 2)
+        self.talkZone = (-1, -1, 3, 3)
 
     def applyData(self, dataSetter: Callable[[str, Any, str, Callable[[Any], Any]], None], data: dict):
         super().applyData(dataSetter, data)
