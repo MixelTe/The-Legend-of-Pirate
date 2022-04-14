@@ -112,6 +112,13 @@ createNewEntityClass_Auto("spyglass", false, 11, 4, 0.6875, 0.25)
 createNewEntityClass_Auto("dig_place_hidden", false, 16, 16, 1, 1, undefined, undefined, undefined, undefined, [
 	{ type: "text", name: "content", value: "heart_add", options: ["heart_add"], title: "Содержимое" },
 ])
+createNewEntityClass_Auto("pirate3", true, 11, 22, 0.75, 0.7, 0, -0.8, 0.75, 1.5, [
+	{ type: "textAria", name: "speech", value: "", title: "Речь" },
+	{ type: "number", name: "img", value: 1, options: [1, 2], title: "Изображение" },
+])
+createNewEntityClass_Auto("coinbag", null, 15, 12, 0.9375, 0.75, undefined, undefined, undefined, undefined, [
+	{ type: "number", name: "id", value: 1, title: "Id", displayColor: "green" },
+])
 
 
 function aborigineDraw(dirV: number, check0: boolean, lookR: number, lookW: number, maxR: number)

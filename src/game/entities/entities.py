@@ -451,3 +451,32 @@ class EntityDigPlaceHidden(Entity):
 
 
 Entity.registerEntity("dig_place_hidden", EntityDigPlaceHidden)
+
+
+class EntityСoinbag(Entity):
+    image = scaleImg(load_image("coinbag.png"), 0.9375, 0.75)
+
+    def __init__(self, screen, data: dict = None):
+        self.bagId = 1
+        super().__init__(screen, data)
+        self.tags.append("low")
+        self.image = EntityСoinbag.image
+        self.width = 0.9375
+        self.height = 0.75
+        self.hidden = True
+        self.ghostE = True
+
+    def applyData(self, dataSetter: Callable[[str, Any, str, Callable[[Any], Any]], None], data: dict):
+        super().applyData(dataSetter, data)
+        dataSetter("id", self.bagId, "bagId")
+
+    def update(self):
+        if (f"coinbag-{self.bagId}" in self.screen.saveData.tags):
+            self.remove()
+        if (self.screen.player.is_inRect(self.get_rect())):
+            self.screen.player.takeItem(self)
+            self.remove()
+            self.screen.saveData.tags.append(f"coinbag-{self.bagId}")
+
+
+Entity.registerEntity("coinbag", EntityСoinbag)
