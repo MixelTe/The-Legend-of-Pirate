@@ -8,7 +8,7 @@ class SaveData:
         self.saveFile = save
         self.saveVersion = "1"
         self.checkPointX = 3
-        self.checkPointY = 3
+        self.checkPointY = 4
         self.world = "SandWorld"
         self.screen = (4, 7)
         self.coins = 1000
