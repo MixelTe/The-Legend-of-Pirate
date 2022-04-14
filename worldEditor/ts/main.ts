@@ -769,7 +769,7 @@ class View
 			const e = new penEntity(x / TileSize, y / TileSize);
 			e.x -= e.getWidth() / 2
 			e.y -= e.getHeight() / 2
-			if (ctrl) e.snapToPixels();
+			if (shiftKey) e.snapToPixels();
 			else e.center()
 			this.entity.push(e);
 			selectedEntity = e;
@@ -781,7 +781,7 @@ class View
 		{
 			const d = new penDecor(x / TileSize, y / TileSize);
 			if (penDecorData) d.apllyData(penDecorData);
-			if (ctrl) d.snapToPixels();
+			if (shiftKey) d.snapToPixels();
 			else d.center();
 			this.decor.push(d);
 			selectedDecor = d;
@@ -1283,6 +1283,7 @@ let decor_moving: null | { x: number, y: number, dx: number, dy: number, decor: 
 let selection: null | { x: number, y: number, cx: number, cy: number, changed: boolean } = null
 let drawing: null | "pen" | "fill" | "entity" | "decor" = null;
 let ctrl = false;
+let shiftKey = false;
 canvas.addEventListener("mousedown", e =>
 {
 	e.preventDefault();
@@ -1339,7 +1340,7 @@ canvas.addEventListener("mousedown", e =>
 			const { entity } = world.getEntity(e.offsetX - camera_x, e.offsetY - camera_y);
 			if (entity)
 			{
-				if (ctrl) entity.snapToPixels();
+				if (shiftKey) entity.snapToPixels();
 				else entity.center();
 				entity_moving = { x: e.offsetX, y: e.offsetY, dx: 0, dy: 0, entity };
 				selectedEntity = entity;
@@ -1355,7 +1356,7 @@ canvas.addEventListener("mousedown", e =>
 			const { decor } = world.getDecor(e.offsetX - camera_x, e.offsetY - camera_y);
 			if (decor)
 			{
-				if (ctrl) decor.snapToPixels();
+				if (shiftKey) decor.snapToPixels();
 				else decor.center();
 				decor_moving = { x: e.offsetX, y: e.offsetY, dx: 0, dy: 0, decor };
 				selectedDecor = decor;
@@ -1464,7 +1465,7 @@ canvas.addEventListener("mousemove", e =>
 	{
 		// entity_moving.dx = e.offsetX - entity_moving.x;
 		// entity_moving.dy = e.offsetY - entity_moving.y;
-		if (ctrl)
+		if (shiftKey)
 		{
 			entity_moving.dx = Math.floor((e.offsetX - entity_moving.x + TileSize / 16 / 2) / (TileSize / 16)) * TileSize / 16;
 			entity_moving.dy = Math.floor((e.offsetY - entity_moving.y + TileSize / 16 / 2) / (TileSize / 16)) * TileSize / 16;
@@ -1480,7 +1481,7 @@ canvas.addEventListener("mousemove", e =>
 	{
 		// decor_moving.dx = e.offsetX - decor_moving.x;
 		// decor_moving.dy = e.offsetY - decor_moving.y;
-		if (ctrl)
+		if (shiftKey)
 		{
 			decor_moving.dx = Math.floor((e.offsetX - decor_moving.x + TileSize / 16 / 2) / (TileSize / 16)) * TileSize / 16;
 			decor_moving.dy = Math.floor((e.offsetY - decor_moving.y + TileSize / 16 / 2) / (TileSize / 16)) * TileSize / 16;
@@ -1603,6 +1604,8 @@ window.addEventListener("keydown", e =>
 		case "KeyQ": fastPalette.open(); break;
 		case "ControlLeft":
 		case "ControlRight": ctrl = true; break;
+		case "ShiftLeft":
+		case "ShiftRight": shiftKey = true; break;
 	}
 });
 window.addEventListener("keyup", async e =>
@@ -1613,6 +1616,8 @@ window.addEventListener("keyup", async e =>
 		case "Delete": deleteSelected(); break;
 		case "ControlLeft":
 		case "ControlRight": ctrl = false; break;
+		case "ShiftLeft":
+		case "ShiftRight": shiftKey = false; break;
 		case "KeyC": if (e.ctrlKey) copySelected(); break;
 		case "KeyX": if (e.ctrlKey) cutSelected(); break;
 		case "KeyV": if (e.ctrlKey) pasteSelected(); break;
@@ -1851,7 +1856,7 @@ function endEntityMove()
 		entity.y += entity_moving.dy / TileSize;
 		entity.x = Math.min(Math.max(entity.x, 0), ViewWidth - entity.getWidth());
 		entity.y = Math.min(Math.max(entity.y, 0), ViewHeight - entity.getHeight());
-		if (ctrl) entity.snapToPixels();
+		if (shiftKey) entity.snapToPixels();
 		else entity.center();
 	}
 	if (entity_moving)
@@ -1874,7 +1879,7 @@ function endDecorMove()
 		decor.y += decor_moving.dy / TileSize;
 		decor.x = Math.min(Math.max(decor.x, 0), ViewWidth - decor.getWidth());
 		decor.y = Math.min(Math.max(decor.y, 0), ViewHeight - decor.getHeight());
-		if (ctrl) decor.snapToPixels();
+		if (shiftKey) decor.snapToPixels();
 		else decor.center();
 	}
 	if (decor_moving)
