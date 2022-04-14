@@ -1,6 +1,6 @@
 import pygame
 from backMusic import endBattleMusic
-from functions import load_sound
+from functions import calcPlayerCoinsAfterDeath, load_sound
 from game.dialogs.start import GameDialog_start
 from game.entityPlayer import EntityPlayer
 from game.gameDialog import GameDialog
@@ -121,7 +121,7 @@ class WindowGame(Window):
 
         if (self.player.health <= 0):
             coins = self.saveData.coins
-            self.saveData.coins = self.saveData.coins // 2
+            self.saveData.coins = calcPlayerCoinsAfterDeath(self.saveData.tags, self.saveData.coins)
             self.saveAll()
             self.saveData.coins = coins
             endBattleMusic()

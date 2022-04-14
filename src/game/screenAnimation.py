@@ -1,6 +1,6 @@
 from random import random
 import pygame
-from functions import load_image, scaleImg
+from functions import calcPlayerCoinsAfterDeath, load_image, scaleImg
 from settings import Settings
 
 
@@ -97,7 +97,7 @@ class ScreenAnimationDeath(ScreenAnimation):
         self.player = player
         self.counter = self.width
         self.counter2 = 0
-        self.playerCoins = self.player.saveData.coins // 2
+        self.playerCoins = calcPlayerCoinsAfterDeath(self.player.saveData.tags, self.player.saveData.coins)
         self.counter3 = 0
         self.coins = []  # {"x": 0, "y": 0, "speedX": 0, "speedY": 0}
 

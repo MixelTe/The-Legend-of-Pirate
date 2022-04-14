@@ -22,6 +22,7 @@ img_map2 = pygame.transform.scale(load_image("map2.png"), (int(Settings.tileSize
 img_spyglass = pygame.transform.scale(load_image(joinPath(Settings.folder_entities, "spyglass.png")), (int(Settings.tileSize * 1.237), int(Settings.tileSize * 0.45)))
 img_iconE = pygame.transform.scale(load_image("E.png"), (int(Settings.tileSize * 0.7), int(Settings.tileSize * 0.7)))
 img_iconB = pygame.transform.scale(load_image("B.png"), (int(Settings.tileSize * 0.7), int(Settings.tileSize * 0.7)))
+img_coinbag = pygame.transform.scale(load_image("coinbag.png"), (int(Settings.tileSize * 0.75), int(Settings.tileSize * 0.6)))
 
 sound_btn = load_sound("btn1.mp3", "btn")
 sound_btn2 = load_sound("btn2.wav", "btn")
@@ -51,6 +52,7 @@ class Overlay:
         self.map1Pos = multPos((0.195, 0.03))
         self.map2Pos = multPos((0.195, 0.27))
         self.spyglassPos = multPos((0.125, 0.18))
+        self.coinbagPos = multPos((0.756, 0.06))
         self.text_coin_past = -1
         self.text_coin = None
 
@@ -109,6 +111,14 @@ class Overlay:
             self.surface.blit(img_map2, self.map2Pos)
         if ("quest-pirate-tubeFound" in self.player.saveData.tags and "quest-pirate-ended" not in self.player.saveData.tags):
             self.surface.blit(img_spyglass, self.spyglassPos)
+
+        coinbagCount = 0
+        coinbagCount += 1 if "coinbag-1" in self.player.saveData.tags else 0
+        coinbagCount += 1 if "coinbag-2" in self.player.saveData.tags else 0
+        coinbagCount += 1 if "coinbag-3" in self.player.saveData.tags else 0
+        for i in range(coinbagCount):
+            pos = (self.coinbagPos[0], self.coinbagPos[1] + Settings.tileSize * 0.7 * i)
+            self.surface.blit(img_coinbag, pos)
 
         if (self.iconCounter > -1):
             iconImg = img_iconE if self.player.keyboardIsUsed else img_iconB

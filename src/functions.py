@@ -323,3 +323,18 @@ def dropCoin(self):
     coin.x = self.x + self.width / 2
     coin.y = self.y + self.height / 2
     self.screen.addEntity(coin)
+
+
+def calcPlayerCoinsAfterDeath(tags: list[str], coins: int):
+    coinbagCount = 0
+    coinbagCount += 1 if "coinbag-1" in tags else 0
+    coinbagCount += 1 if "coinbag-2" in tags else 0
+    coinbagCount += 1 if "coinbag-3" in tags else 0
+    if (coinbagCount == 0):
+        return 0
+    elif (coinbagCount == 1):
+        return int(coins * 0.25)
+    elif (coinbagCount == 2):
+        return int(coins * 0.5)
+    else:
+        return int(coins * 0.75)
