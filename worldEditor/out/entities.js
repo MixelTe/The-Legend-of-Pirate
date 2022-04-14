@@ -108,6 +108,9 @@ createNewEntityClass_Auto("octopus", true, 32, 32, 2, 2, undefined, undefined, u
     { type: "tiles", name: "exit", value: [[0, 3], [0, 4], [0, 5]], title: "Выход", displayColor: "tomato" },
 ]);
 createNewEntityClass_Auto("spyglass", false, 11, 4, 0.6875, 0.25);
+createNewEntityClass_Auto("dig_place_hidden", false, 16, 16, 1, 1, undefined, undefined, undefined, undefined, [
+    { type: "text", name: "content", value: "heart_add", options: ["heart_add"], title: "Содержимое" },
+]);
 function aborigineDraw(dirV, check0, lookR, lookW, maxR) {
     function draw(self, ctx) {
         let dir = 0;
