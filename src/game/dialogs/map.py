@@ -4,10 +4,10 @@ from game.gameDialog import GameDialog
 from settings import Settings
 
 
-multPos = getPosMult(Settings.width * 0.9, Settings.height * 0.9)
+multPos = getPosMult(Settings.width * 0.97, Settings.height * 0.841)
 
-map1 = pygame.transform.scale(load_image("mapImg1.png"), (int(Settings.width * 0.9), int(Settings.height * 0.9)))
-map2 = pygame.transform.scale(load_image("mapImg2.png"), (int(Settings.width * 0.9), int(Settings.height * 0.9)))
+map1 = pygame.transform.scale(load_image("mapImg1.png"), (int(Settings.width * 0.97), int(Settings.height * 0.841)))
+map2 = pygame.transform.scale(load_image("mapImg2.png"), (int(Settings.width * 0.97), int(Settings.height * 0.841)))
 
 
 class GameDialog_map(GameDialog):
