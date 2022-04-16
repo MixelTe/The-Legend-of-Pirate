@@ -28,7 +28,8 @@ animatorData = AnimatorData("pirate", [
     ("attack_swimW.png", 100, (18, 29), (-0.27, -1.1, 1.125, 1.8)),
     ("attack_swimA.png", 100, (21, 20), (-0.77, -0.9, 1.743, 1.66)),
     ("attack_swimD.png", 100, (20, 20), (-0.37, -0.9, 1.66, 1.66)),
-    ("dig.png", 200, (21, 18), (-0.1, -0.8, 1.75, 1.5)),
+    ("digD.png", 200, (21, 18), (-0.1, -0.8, 1.75, 1.5)),
+    ("digA.png", 200, (21, 18), (-1.08, -0.8, 1.75, 1.5)),
     ("swimW.png", 0, (18, 24), (-0.27, -0.8, 1.125, 1.5)),
     ("swimS.png", 0, (18, 24), (-0.27, -0.8, 1.125, 1.5)),
     ("swimA.png", 0, (16, 18), (-0.37, -0.8, 1.33, 1.5)),
@@ -271,13 +272,28 @@ class EntityPlayer(EntityAlive):
     def dig(self):
         if (self.state != "normal"):
             return
-        tile, _ = self.get_tile(1, pos=(0.5, 0.7))
+        tileA, _ = self.get_tile(-1, pos=(0.5, 0.7))
+        tileD, _ = self.get_tile(1, pos=(0.2, 0.7))
+        if (self.direction == "A" and tileA and tileA.digable):
+            tile = tileA
+        elif (self.direction != "A" and tileD and tileD.digable):
+            tile = tileD
+            self.direction = "D"
+        elif (tileD and tileD.digable):
+            tile = tileD
+            self.direction = "D"
+        elif (tileA and tileA.digable):
+            tile = tileA
+            self.direction = "A"
         if (tile and tile.digable):
             self.state = "dig"
             sound_dig.play()
 
     def afterDig(self):
-        entities = self.get_entitiesD((1.1, 0.4, 0.4, 0.3))
+        if (self.direction == "A"):
+            entities = self.get_entitiesD((-0.75, 0.4, 0.4, 0.3))
+        else:
+            entities = self.get_entitiesD((0.9, 0.4, 0.4, 0.3))
         dig_place = None
         dig_place_hidden = None
         for e in entities:
@@ -299,21 +315,11 @@ class EntityPlayer(EntityAlive):
                 found = dig_place.content
             else:
                 found = choices(options, [0.5, 0.4, 0.1])[0]
-            if (found == "coin"):
-                coin = Entity.createById("coin", self.screen)
-                self.screen.addEntity(coin)
-                coin.x = self.x + 1.25
-                coin.y = self.y + 0.5
-            elif (found == "heart"):
-                heart = Entity.createById("heart", self.screen)
-                self.screen.addEntity(heart)
-                heart.x = self.x + 1.25
-                heart.y = self.y + 0.2
-            elif (found == "crab"):
-                crab = Entity.createById("crab", self.screen)
-                self.screen.addEntity(crab)
-                crab.x = self.x + 1.25
-                crab.y = self.y + 0.25
+            entity = Entity.createById(found, self.screen)
+            self.screen.addEntity(entity)
+            dx, dy = (-0.6, 0.5) if self.direction == "A" else (1.1, 0.5)
+            entity.x = self.x + dx - entity.width / 2
+            entity.y = self.y + dy - entity.height / 2
 
     def openMap(self):
         if ("quest-pirate-ended" in self.saveData.tags or "quest-cactus-ended" in self.saveData.tags):
@@ -334,7 +340,7 @@ class EntityPlayer(EntityAlive):
                 self.takeItemAnim["onAnimEnd"] = None
 
         if (self.state == "dig"):
-            self.animator.setAnimation("dig")
+            self.animator.setAnimation("digA" if self.direction == "A" else "digD")
             if (self.animator.lastState[1]):
                 self.afterDig()
                 self.state = "normal"
