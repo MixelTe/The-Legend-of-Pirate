@@ -1,3 +1,4 @@
+import math
 from typing import Any, Callable
 from functions import compare, distanceRects, dropCoin, removeFromCollisions
 from game.animator import Animator, AnimatorData
@@ -173,25 +174,36 @@ class EntityPiranha(EntityAlive):
         elif (self.state == "return"):
             dx = (self.returnTile[0] + 0.5) - (self.x + self.width / 2)
             dy = (self.returnTile[1] + 0.5) - (self.y + self.height / 2)
-            if (abs(self.speedX) < abs(self.speedX + self.speedXA)
-                or abs(self.speedY) < abs(self.speedY + self.speedYA)):
-                returnTime = 800 / 1000 * Settings.fps
-                dx = max(min(dx, 1), -1)
-                dy = max(min(dy, 1), -1)
-                if (abs(dx) <= 0.4 and abs(dy) <= 0.4):
-                    self.speedX = dx / returnTime * 4
-                    self.speedY = dy / returnTime * 4
-                    self.speedXA = 0
-                    self.speedYA = 0
-                else:
-                    self.speedX = dx / returnTime * 2
-                    self.speedY = dy / returnTime * 2
-                    self.speedXA = (self.speedX ** 2 / (-2 * dx)) if (dx != 0) else 0
-                    self.speedYA = (self.speedY ** 2 / (-2 * dy)) if (dy != 0) else 0
+            tileUnder = self.get_tile()[0]
+            if (tileUnder and (tileUnder.id == "water_deep" or tileUnder.id == "water_low")):
+                a = math.atan2(dy, dx)
+                self.speedX = math.cos(a) * self.speed
+                self.speedY = math.sin(a) * self.speed
                 if (abs(dx) > abs(dy)):
-                    self.animator.setAnimation("moveD" if dx > 0 else "moveA")
+                    self.animator.setAnimation("swimD" if dx > 0 else "swimA")
                 else:
-                    self.animator.setAnimation("moveS" if dy > 0 else "moveW")
+                    self.animator.setAnimation("swimS" if dy > 0 else "swimW")
+            else:
+                if (abs(self.speedX) < abs(self.speedX + self.speedXA)
+                    or abs(self.speedY) < abs(self.speedY + self.speedYA)
+                    or ((abs(dx) > 0.4 or abs(dy) > 0.4) and self.speedXA == 0 and self.speedYA == 0)):
+                    returnTime = 800 / 1000 * Settings.fps
+                    dx = max(min(dx, 1), -1)
+                    dy = max(min(dy, 1), -1)
+                    if (abs(dx) <= 0.4 and abs(dy) <= 0.4):
+                        self.speedX = dx / returnTime * 4
+                        self.speedY = dy / returnTime * 4
+                        self.speedXA = 0
+                        self.speedYA = 0
+                    else:
+                        self.speedX = dx / returnTime * 2
+                        self.speedY = dy / returnTime * 2
+                        self.speedXA = (self.speedX ** 2 / (-2 * dx)) if (dx != 0) else 0
+                        self.speedYA = (self.speedY ** 2 / (-2 * dy)) if (dy != 0) else 0
+                    if (abs(dx) > abs(dy)):
+                        self.animator.setAnimation("moveD" if dx > 0 else "moveA")
+                    else:
+                        self.animator.setAnimation("moveS" if dy > 0 else "moveW")
             if (abs(dx) <= 0.01 and abs(dy) <= 0.01):
                 self.state = "go"
             self.speedX += self.speedXA
