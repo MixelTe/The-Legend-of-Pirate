@@ -117,10 +117,14 @@ class Entity:
 
     def move(self) -> list[tuple[tuple[float, float, float, float], Union[Tile, Entity, None]]]:
         # просчёт движения с учётом карты и сущностей. При столкновении с сущностью или клеткой возвращает эту сущность или клетку
-        moveX = 1
-        moveY = 1
+
         nX = self.x + self.speedX
         nY = self.y + self.speedY
+        if (not self.ghostT):
+            tile = self.get_tile(pos=(0.5, 0.95))[0]
+            if (tile):
+                nX = self.x + self.speedX * self.tileSpeed(tile)
+                nY = self.y + self.speedY * self.tileSpeed(tile)
         newRect = (nX, nY, self.width, self.height)
         colision = []
         for (tile, x, y) in self.screen.getTiles():
@@ -132,23 +136,23 @@ class Entity:
                 if (self.ghostT):
                     continue
                 pos = self.move_toEdge(rect)
+                r, nx, ny = self.slideAroundCorner(newRect, rect)
+                if (r):
+                    nX = nx
+                    nY = ny
+                    newRect = (nX, nY, self.width, self.height)
+                    continue
                 if (not rectIntersection((nX, self.y, self.width, self.height), rect)):
                     nY = self.y
-                    moveY = 0
                     newRect = (nX, nY, self.width, self.height)
                     continue
                 if (not rectIntersection((self.x, nY, self.width, self.height), rect)):
                     nX = self.x
-                    moveX = 0
                     newRect = (nX, nY, self.width, self.height)
                     continue
                 if (pos[0] == 0 and pos[1] == 0):
                     self.pushOutside(rect)
                 return colision
-            else:
-                if (not self.ghostT):
-                    nX = self.x + self.speedX * self.tileSpeed(tile) * moveX
-                    nY = self.y + self.speedY * self.tileSpeed(tile) * moveY
 
         for entity in self.screen.entities:
             if (entity == self or entity.hidden):
@@ -217,6 +221,44 @@ class Entity:
                 self.y = rect[1] + rect[3]
             else:
                 self.y = rect[1] - self.height
+
+    def slideAroundCorner(self, newRect: tuple[int, int, int, int], rect: tuple[int, int, int, int]):
+        MaxDistance = 0.25
+        def distanceToCorner(corner: tuple[int, int]):
+            cornerSelf = (1 - corner[0], 1 - corner[1])
+            x1 = rect[0] + rect[2] * corner[0]
+            y1 = rect[1] + rect[3] * corner[1]
+            x2 = newRect[0] + newRect[2] * cornerSelf[0]
+            y2 = newRect[1] + newRect[3] * cornerSelf[1]
+            dx = x2 - x1
+            dy = y2 - y1
+            distance = dx * dx + dy * dy
+            return corner, (distance <= MaxDistance * MaxDistance)
+        def moveToCorner(corner: tuple[int, int], confirm: bool):
+            if (not confirm):
+                return False, 0, 0
+            if (corner[0] == 0):
+                nx = rect[0] - newRect[2]
+            else:
+                nx = rect[0] + rect[2]
+            if (corner[1] == 0):
+                ny = rect[1] - newRect[3]
+            else:
+                ny = rect[1] + rect[3]
+            return True, nx, ny
+        r, nx, ny = moveToCorner(*distanceToCorner((0, 0)))
+        if (r):
+            return True, nx, ny
+        r, nx, ny = moveToCorner(*distanceToCorner((0, 1)))
+        if (r):
+            return True, nx, ny
+        r, nx, ny = moveToCorner(*distanceToCorner((1, 0)))
+        if (r):
+            return True, nx, ny
+        r, nx, ny = moveToCorner(*distanceToCorner((1, 1)))
+        if (r):
+            return True, nx, ny
+        return False, newRect[0], newRect[1]
 
     def get_relPos(self, rect: tuple[int, int, int, int]):
         pos = [0, 0]
