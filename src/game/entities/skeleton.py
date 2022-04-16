@@ -35,6 +35,9 @@ class EntitySkeleton(EntityAlive):
         self.attackDelay = 0
         self.bone = None
 
+        if (self.checkInTrap()):
+            self.state = "stay"
+
     def applyData(self, dataSetter: Callable[[str, Any, str, Callable[[Any], Any]], None], data: dict):
         super().applyData(dataSetter, data)
         dataSetter("moveStyle", self.moveStyle)
@@ -115,29 +118,7 @@ class EntitySkeleton(EntityAlive):
                 if (self.state == "go"):
                     self.animator.setAnimation("moveW" if self.dirR else "moveS")
             if (self.state == "go" and self.screen.player.visibleForEnemies):
-                if (abs(self.x - self.screen.player.x) < self.screen.player.width or
-                        abs(self.y - self.screen.player.y) < self.screen.player.height):
-                    self.speedX = 0
-                    self.speedY = 0
-                    self.state = "attack"
-                    self.animator.setAnimation("attack")
-                    self.bone = EntityAlive.createById("bone", self.screen)
-                    if (abs(self.x - self.screen.player.x) < self.screen.player.width):
-                        self.bone.x = self.x + (self.width - self.bone.width) / 2
-                        if (self.screen.player.y >= self.y):
-                            self.bone.y = self.y + self.height
-                            self.bone.speedY = self.bone.speed
-                        else:
-                            self.bone.y = self.y - self.height - self.bone.height
-                            self.bone.speedY = -self.bone.speed
-                    if (abs(self.y - self.screen.player.y) < self.screen.player.height):
-                        self.bone.y = self.y + (self.height - self.bone.height) / 2
-                        if (self.screen.player.x >= self.x):
-                            self.bone.x = self.x + self.width
-                            self.bone.speedX = self.bone.speed
-                        else:
-                            self.bone.x = self.x - self.width - self.bone.height
-                            self.bone.speedX = -self.bone.speed
+                self.attack()
         elif (self.state == "rise"):
             if (self.moveStyle == "ver"):
                 self.animator.setAnimation("moveW" if self.rise else "moveS")
@@ -159,6 +140,8 @@ class EntitySkeleton(EntityAlive):
             if (self.animator.lastState[1]):
                 if (self.attackDelay <= 0):
                     self.state = "go"
+                    if (self.checkInTrap()):
+                        self.state = "stay"
                 else:
                     self.animator.setAnimation("attack", 1)
             elif (self.animator.lastState[0]):
@@ -166,6 +149,47 @@ class EntitySkeleton(EntityAlive):
                 if (self.bone is not None):
                     self.screen.addEntity(self.bone)
                     self.bone = None
+        elif (self.state == "stay"):
+            self.animator.setAnimation("stay")
+            if (self.screen.player.visibleForEnemies):
+                self.attack()
+
+    def attack(self):
+        if (abs(self.x - self.screen.player.x) < self.screen.player.width or
+                abs(self.y - self.screen.player.y) < self.screen.player.height):
+            self.speedX = 0
+            self.speedY = 0
+            self.state = "attack"
+            self.animator.setAnimation("attack")
+            self.bone = EntityAlive.createById("bone", self.screen)
+            if (abs(self.x - self.screen.player.x) < self.screen.player.width):
+                self.bone.x = self.x + (self.width - self.bone.width) / 2
+                if (self.screen.player.y >= self.y):
+                    self.bone.y = self.y + self.height
+                    self.bone.speedY = self.bone.speed
+                else:
+                    self.bone.y = self.y - self.height - self.bone.height
+                    self.bone.speedY = -self.bone.speed
+            if (abs(self.y - self.screen.player.y) < self.screen.player.height):
+                self.bone.y = self.y + (self.height - self.bone.height) / 2
+                if (self.screen.player.x >= self.x):
+                    self.bone.x = self.x + self.width
+                    self.bone.speedX = self.bone.speed
+                else:
+                    self.bone.x = self.x - self.width - self.bone.height
+                    self.bone.speedX = -self.bone.speed
+
+    def checkInTrap(self):
+        top = self.get_tile(0, -1)[0]
+        right = self.get_tile(1, 0)[0]
+        bottom = self.get_tile(0, 1)[0]
+        left = self.get_tile(-1, 0)[0]
+        free = 0
+        free += 1 if top and self.canGoOn(top) else 0
+        free += 1 if right and self.canGoOn(right) else 0
+        free += 1 if bottom and self.canGoOn(bottom) else 0
+        free += 1 if left and self.canGoOn(left) else 0
+        return free == 0
 
 
 EntityAlive.registerEntity("skeleton", EntitySkeleton)
