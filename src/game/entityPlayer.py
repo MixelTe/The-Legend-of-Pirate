@@ -233,6 +233,7 @@ class EntityPlayer(EntityAlive):
 
             if (self.state == "dig"):
                 self.state = "normal"
+                sound_dig.stop()
             if (self.buttonPressed[-1] == "up"):
                 self.speedY = -self.speed
                 self.direction = "W"
