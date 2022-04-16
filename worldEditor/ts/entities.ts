@@ -35,18 +35,18 @@ createNewEntityClass_Auto("market", false, 39, 39, 1, 1, 0, 0, 1, 1, [
 ])
 createNewEntityClass_Auto("trigger", false, 50, 50, 1, 1, 0, 0, 1, 1, [
 	{ type: "area", name: "zone", value: [0, 0, 1, 1], displayColor: "orange", title: "Область активации" },
-	{ type: "text", name: "type", value: "travelToWorld", displayColor: "lime", options: ["travelToWorld", "dialog"], title: "Тип" },
+	{ type: "text", name: "type", value: "travelToWorld", displayColor: "green", options: ["travelToWorld", "dialog", "checkpoint"], title: "Тип" },
 	{ type: "text", name: "value", value: null, displayColor: "lime", nullable: true, smartTitle: {
 		field: "type",
-		titles: { "travelToWorld": "Id Мира", "dialog": "Id диалога" }
+		titles: { "travelToWorld": "Id Мира", "dialog": "Id диалога", "checkpoint": "Не используется" }
 	}},
 	{ type: "coords", name: "value2", value: null, displayColor: "lime", nullable: true, smartTitle: {
 		field: "type",
-		titles: { "travelToWorld": "Экран", "dialog": "Не используется" }
+		titles: { "travelToWorld": "Экран", "dialog": "Не используется", "checkpoint": "Не используется" }
 	}},
 	{ type: "tile", name: "value3", value: null, displayColor: "lime", nullable: true, smartTitle: {
 		field: "type",
-		titles: { "travelToWorld": "Место", "dialog": "Не используется" }
+		titles: { "travelToWorld": "Место", "dialog": "Не используется", "checkpoint": "Точка возрождения" }
 	}},
 ])
 createNewEntityClass_Auto("cactusDancing", true, 18, 24, 0.85, 0.85, -0.075, -0.475, 1, 1.33)

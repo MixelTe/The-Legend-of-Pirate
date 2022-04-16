@@ -3,7 +3,7 @@ from functions import GameExeption
 from game.dialogs.end import GameDialog_end
 from game.entity import Entity
 
-TRIGGER_TYPES = ["dialog", "travelToWorld"]
+TRIGGER_TYPES = ["dialog", "travelToWorld", "checkpoint"]
 # dialog:
 #   value - dialog id
 #   value2 - unused
@@ -12,6 +12,10 @@ TRIGGER_TYPES = ["dialog", "travelToWorld"]
 #   value - world id
 #   value2 - screen of the world
 #   value3 - position in the screen
+# checkpoint:
+#   value - unused
+#   value2 - unused
+#   value3 - respawn point
 
 
 class EntityTrigger(Entity):
@@ -43,6 +47,11 @@ class EntityTrigger(Entity):
                     self.screen.openDialog(GameDialog_end())
             if (self.type == TRIGGER_TYPES[1]):  # travelToWorld
                 self.screen.goTo(self.value, self.value2, self.value3)
+            if (self.type == TRIGGER_TYPES[2]):  # checkpoint
+                self.screen.player.saveData.checkPointX = self.value3[0]
+                self.screen.player.saveData.checkPointY = self.value3[1]
+                self.screen.player.saveData.screen = self.screen.pos
+                self.screen.player.saveData.world = self.screen.world.name
 
 
 Entity.registerEntity("trigger", EntityTrigger)
