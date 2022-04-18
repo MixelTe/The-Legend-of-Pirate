@@ -1,3 +1,4 @@
+from functions import dropCoin
 from game.entity import Entity
 from game.animator import Animator, AnimatorData
 
@@ -21,6 +22,7 @@ class EntityStone(Entity):
         self.animator.update()
         if (self.animator.curAnimation() == "breaking"):
             if (self.animator.lastState[1]):
+                dropCoin(self)
                 self.remove()
             return
         for e in self.get_entities(self.get_rect()):
