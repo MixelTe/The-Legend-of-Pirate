@@ -16,8 +16,8 @@ from windowAnimationTest import WindowAnimationTest
 
 class Main:
     def __init__(self):
-        self.window: Window = WindowStart()
-        # self.window: Window = WindowGame(0)
+        # self.window: Window = WindowStart()
+        self.window: Window = WindowGame(0)
         # self.window: Window = WindowAnimationTest()
         self.fpsGraph = FpsGraph()
         font = pygame.font.Font(Settings.path_font, int(Settings.tileSize * 0.5))
