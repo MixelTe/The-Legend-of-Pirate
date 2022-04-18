@@ -193,9 +193,9 @@ class EntityOctopus(EntityAlive):
                 if (tx > x):
                     sides[1] = True
                 if (ty < y):
-                    sides[2] = True
-                if (ty > y):
                     sides[0] = True
+                if (ty > y):
+                    sides[2] = True
                 decor = Decor.fromData({"className": "tileEdge_water_deep", "x": x, "y": y, "sides": sides})
                 self.screen.decor.append(decor)
                 self.settedDecor.append(decor)

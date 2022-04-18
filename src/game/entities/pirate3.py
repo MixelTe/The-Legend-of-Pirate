@@ -5,7 +5,7 @@ from game.entity import Entity
 from settings import Settings
 
 
-animatorData = AnimatorData("pirate2", [
+animatorData = AnimatorData("pirate3", [
     ("stay.png", 500, (11, 22), (0, -0.8, 0.75, 1.5)),
     ("stay1.png", 500, (11, 22), (0, -0.8, 0.75, 1.5)),
     ("stay2.png", 500, (11, 22), (0, -0.8, 0.75, 1.5)),

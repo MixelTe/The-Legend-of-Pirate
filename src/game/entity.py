@@ -514,6 +514,7 @@ def loadEntities():
     import game.entities.spear
     import game.entities.octopus
     import game.entities.stone
+    import game.entities.pirate3
 
 
 loadEntities()

@@ -426,8 +426,8 @@ class EntityPlayer(EntityAlive):
                 self.lastAttaker = attacker
 
     def centerTo(self, pos: tuple[int, int]):
-        self.x = pos[0] + self.width / 2
-        self.y = pos[1] + self.height / 2
+        self.x = pos[0] + (1 - self.width) / 2
+        self.y = pos[1] + (1 - self.height) / 2
 
     def canGoOn(self, tile: Tile) -> bool:
         if (Settings.ghostmode):
