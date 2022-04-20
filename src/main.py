@@ -75,13 +75,33 @@ class Main:
                 self.fpsGraph.add(time)
 
 
+def errorMessage():
+    screen.fill((133, 133, 133))
+    screen.blit(img_error, (0, 0))
+    pygame.display.flip()
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return
+            if event.type == pygame.KEYUP:
+                return
+            if event.type == pygame.MOUSEBUTTONUP:
+                return
+            if event.type == pygame.JOYBUTTONUP:
+                return
+
+
 pygame.joystick.init()
 pygame.display.set_caption('The Legend of Pirate')
 icon = pygame.transform.scale(load_image("icon.ico"), (32, 32))
+img_error = pygame.transform.scale(load_image("error.png"), (Settings.width, Settings.height))
 pygame.display.set_icon(icon)
 musicEndEvent = pygame.event.custom_type() + 1
 pygame.mixer.music.set_endevent(musicEndEvent)
 setBackMusic(joinPath(Settings.folder_data, Settings.folder_sounds, "back", "background.mp3"))
-Main().start()
+try:
+    Main().start()
+except Exception as x:
+    errorMessage()
 pygame.mixer.quit()
 pygame.quit()
