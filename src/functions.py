@@ -320,9 +320,21 @@ def dropCoin(self):
     from game.entity import Entity
     self: Entity = self
     coin = Entity.createById("coin", self.screen)
-    coin.x = self.x + self.width / 2
-    coin.y = self.y + self.height / 2
+    coin.x = self.x + self.width / 2 - (1 - coin.width) / 2
+    coin.y = self.y + self.height / 2 - (1 - coin.height) / 2
     self.screen.addEntity(coin)
+
+
+def dropCoinOrHeart(self):
+    if (random() < 0.5):
+        return
+    from game.entity import Entity
+    self: Entity = self
+    itemId = "coin" if random() < 0.6 else "heart"
+    item = Entity.createById(itemId, self.screen)
+    item.x = self.x + self.width / 2 - (1 - item.width) / 2
+    item.y = self.y + self.height / 2 - (1 - item.height) / 2
+    self.screen.addEntity(item)
 
 
 def calcPlayerCoinsAfterDeath(tags: list[str], coins: int):

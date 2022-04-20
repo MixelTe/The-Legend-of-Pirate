@@ -2,7 +2,7 @@ import math
 from random import choice, randint
 from typing import Any, Callable
 import pygame
-from functions import dropCoin
+from functions import dropCoinOrHeart
 from game.animator import Animator, AnimatorData
 from game.entity import EntityAlive, EntityGroups
 from game.tile import Tile
@@ -45,7 +45,7 @@ class EntityTentacle(EntityAlive):
     def onDeath(self):
         tile = self.get_tile()
         if (tile[0] and not tile[0].solid):
-            dropCoin(self)
+            dropCoinOrHeart(self)
 
     def draw(self, surface: pygame.Surface):
         if (self.visible):
@@ -66,7 +66,6 @@ class EntityTentacle(EntityAlive):
                 self.animator.setAnimation("appear")
                 self.visible = True
                 self.hidden = False
-                self.strength = 1
                 self.state = "appear"
                 x, y = choice(self.appearCells)
                 self.x = x + (1 - self.width) / 2
@@ -96,7 +95,6 @@ class EntityTentacle(EntityAlive):
                 self.state = "hidden"
                 self.visible = False
                 self.hidden = True
-                self.strength = 0
                 self.counter = randint(3, 6) * 500
 
     def getWaterCells(self):

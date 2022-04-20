@@ -125,9 +125,11 @@ class EntityAborigine(EntityAlive):
             return
         p1 = ((self.x + self.width / 2) * Settings.tileSize, (self.y + self.height / 2) * Settings.tileSize)
         color = pygame.Color(255, 165, 0, 50)
-        drawPie(surface, color, p1, self.lookR * Settings.tileSize,
-                self.sightDirCur - math.pi / 4, self.sightDirCur + math.pi / 4, alpha=True)
+        # drawPie(surface, color, p1, self.lookR * Settings.tileSize,
+        #         self.sightDirCur - math.pi / 4, self.sightDirCur + math.pi / 4, alpha=True)
         if (self.seePlayer):
+            drawPie(surface, color, p1, self.lookR * Settings.tileSize,
+                    self.sightDirCur - math.pi / 4, self.sightDirCur + math.pi / 4, alpha=True)
             color = pygame.Color(255, 60, 0, 50)
             drawPie(surface, color, p1, self.lookR * self.seePlayer * Settings.tileSize,
                     self.sightDirCur - math.pi / 4, self.sightDirCur + math.pi / 4, alpha=True)

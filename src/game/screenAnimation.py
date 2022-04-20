@@ -102,8 +102,8 @@ class ScreenAnimationDeath(ScreenAnimation):
         self.coins = []  # {"x": 0, "y": 0, "speedX": 0, "speedY": 0}
 
     def update(self) -> bool:
-        self.counter = max(self.counter - 20, 0)
-        self.counter2 = min(self.counter2 + 1, 40)
+        self.counter = max(self.counter - int(Settings.tileSize * 0.6), 0)
+        self.counter2 = min(self.counter2 + int(Settings.tileSize * 0.04), Settings.tileSize * 1)
         self.counter3 += 1
         if (self.counter3 >= 10):
             self.counter3 = 0
