@@ -1,6 +1,6 @@
 import pygame
-from backMusic import endBattleMusic, setBackMusic
-from functions import calcPlayerCoinsAfterDeath, joinPath, load_sound, setWorldBackMusic
+from backMusic import endBattleMusic
+from functions import calcPlayerCoinsAfterDeath, load_sound, setWorldBackMusic
 from game.dialogs.start import GameDialog_start
 from game.entityPlayer import EntityPlayer
 from game.gameDialog import GameDialog

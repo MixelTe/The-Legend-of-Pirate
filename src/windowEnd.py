@@ -2,7 +2,7 @@ from random import choice
 import pygame
 from settings import Settings
 from window import WindowWithButtons
-from functions import createButton, load_image, load_sound, renderText
+from functions import createButton, load_image, renderText
 from windowGame import WindowGame
 from windowStart import WindowStart
 

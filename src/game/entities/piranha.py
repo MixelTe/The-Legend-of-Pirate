@@ -1,6 +1,6 @@
 import math
 from typing import Any, Callable
-from functions import compare, distanceRects, dropCoin, removeFromCollisions
+from functions import compare, dropCoin, removeFromCollisions
 from game.animator import Animator, AnimatorData
 from game.entity import EntityAlive, EntityGroups
 from game.tile import Tile

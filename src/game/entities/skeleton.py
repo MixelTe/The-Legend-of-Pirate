@@ -1,7 +1,7 @@
 from typing import Any, Callable
 from functions import compare, dropCoin, removeFromCollisions
 from game.animator import Animator, AnimatorData
-from game.entity import Entity, EntityAlive, EntityGroups
+from game.entity import EntityAlive, EntityGroups
 from game.tile import Tile
 from settings import Settings
 

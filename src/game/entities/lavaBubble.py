@@ -1,5 +1,5 @@
 from random import randint
-from functions import distanceRects, dropCoin
+from functions import dropCoin
 from game.animator import Animator, AnimatorData
 from game.entity import EntityAlive, EntityGroups
 from game.tile import Tile
