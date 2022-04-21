@@ -1,5 +1,6 @@
 import pygame
-from functions import TextAnimator, getPosMult, getRectMult, load_image
+from backMusic import setBackMusic
+from functions import TextAnimator, getPosMult, getRectMult, joinPath, load_image
 from game.gameDialog import GameDialog
 from settings import Settings
 
@@ -17,6 +18,7 @@ class GameDialog_end(GameDialog):
         self.surface.blit(background, (0, 0))
         self.text = TextAnimator(font, int(Settings.width * 0.0415) + 1, (Settings.width *
                           0.84, Settings.height), Text, pygame.Color(81, 44, 40))
+        setBackMusic(joinPath(Settings.folder_data, Settings.folder_sounds, "back", "SandWorld.mp3"))
 
     def close(self):
         if (self.text.stop):

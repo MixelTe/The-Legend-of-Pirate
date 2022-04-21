@@ -15,6 +15,8 @@ def _startMusic(path, volume=1, count=0):
 
 def setBackMusic(path, volume=1):
     global curMusic, backMusic, backMusicVolume
+    if (curMusic == path and backMusicVolume == volume):
+        return
     curMusic = path
     backMusic = path
     backMusicVolume = volume

@@ -1,7 +1,8 @@
 import pygame
+from backMusic import setBackMusic
 from settings import Settings
 from window import WindowWithButtons
-from functions import createButton
+from functions import createButton, joinPath
 from windowSaveSelection import WindowSaveSelection
 
 
@@ -15,6 +16,7 @@ class WindowStart(WindowWithButtons):
         font = pygame.font.Font(Settings.path_font, int(Settings.width * 0.04))
         self.startText = font.render(Settings.version, True, pygame.Color(81, 44, 40))
         self.startTextPos = (int(Settings.width * 0.01), int(Settings.height * 0.93))
+        setBackMusic(joinPath(Settings.folder_data, Settings.folder_sounds, "back", "SandWorld.mp3"))
 
         self.starting = False
 

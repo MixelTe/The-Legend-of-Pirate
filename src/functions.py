@@ -3,6 +3,7 @@ from typing import Literal, Union
 import pygame
 import os
 import json
+from backMusic import setBackMusic
 from settings import Settings
 from random import random
 
@@ -350,3 +351,13 @@ def calcPlayerCoinsAfterDeath(tags: list[str], coins: int):
         return int(coins * 0.5)
     else:
         return int(coins * 0.75)
+
+
+def setWorldBackMusic(world):
+    filename = "SandWorld.mp3"
+    if (world == "LavaWorld"):
+        filename = "LavaWorld.mp3"
+    if (world == "ForestWorld"):
+        filename = "ForestWorld.mp3"
+    path = joinPath(Settings.folder_data, Settings.folder_sounds, "back", filename)
+    setBackMusic(path)

@@ -98,7 +98,7 @@ img_error = pygame.transform.scale(load_image("error.png"), (Settings.width, Set
 pygame.display.set_icon(icon)
 musicEndEvent = pygame.event.custom_type() + 1
 pygame.mixer.music.set_endevent(musicEndEvent)
-setBackMusic(joinPath(Settings.folder_data, Settings.folder_sounds, "back", "background.mp3"))
+setBackMusic(joinPath(Settings.folder_data, Settings.folder_sounds, "back", "SandWorld.mp3"))
 try:
     Main().start()
 except Exception as x:
