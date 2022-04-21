@@ -118,7 +118,7 @@ Tile("sand3.png", digable=True, tags=["sand"])
 Tile("grass1.png")
 Tile("grass2.png")
 Tile("grass3.png")
-Tile("stone.png")
+Tile("stone.png", tags=["stone"])
 
 Tile("water_deep.png", solid=True, tags=["water-deep", "low"])
 Tile("water_low.png", speed=0.8, tags=["water"])
@@ -135,10 +135,10 @@ Tile("W.png", digable=True)
 Tile("AttackB.png", digable=True)
 Tile("DigB.png", digable=True)
 
-Tile("lava.png")
-Tile("lava2.png", solid=True, tags=["lava", "low"])
-Tile("lavaAct.png", damage=1)
-TileAnimated("lavaAnim.png", animSpeed=200) \
+Tile("lava.png", tags=["stone"])
+Tile("lava2.png", solid=True, tags=["lava", "low"]) 
+Tile("lavaAct.png", damage=1, tags=["stone"])
+TileAnimated("lavaAnim.png", tags=["stone"], animSpeed=200) \
     .s_dmgL([4, 5, 6], 1) \
     .s_del(-50, 0) \
     .s_spdD({0: 4000, 5: 2000})

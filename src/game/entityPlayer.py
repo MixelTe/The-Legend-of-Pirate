@@ -47,6 +47,8 @@ animatorData = AnimatorData("pirate", [
 # sound_walk = load_sound("walk.wav")
 sound_hit = load_sound("attack_shovel.mp3")
 sound_hit.set_volume(1.2)
+sound_walk_stone = load_sound("walk4.mp3", "walk")
+sound_walk_stone.set_volume(0.7)
 sound_walk_sand = load_sound("walk3.mp3", "walk")
 sound_walk = load_sound("walk2.wav", "walk")
 sound_walk.set_volume(0.7)
@@ -226,6 +228,8 @@ class EntityPlayer(EntityAlive):
                         sound_swim.play()
                     elif ("sand" in tile.tags):
                         sound_walk_sand.play()
+                    elif ("stone" in tile.tags):
+                        sound_walk_stone.play()
                     else:
                         sound_walk.play()
             self.walkSoundCounter += 1000 / Settings.fps
@@ -251,6 +255,7 @@ class EntityPlayer(EntityAlive):
             self.walkSoundCounter = 250
             sound_walk.stop()
             sound_walk_sand.stop()
+            sound_walk_stone.stop()
 
     def attack(self, d=None):
         if (self.state != "normal" and self.state != "swim"):
