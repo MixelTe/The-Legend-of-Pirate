@@ -279,6 +279,7 @@ class EntityPlayer(EntityAlive):
             return
         tileA, _ = self.get_tile(-1, pos=(0.5, 0.7))
         tileD, _ = self.get_tile(1, pos=(0.2, 0.7))
+        tile = tileD
         if (self.direction == "A" and tileA and tileA.digable):
             tile = tileA
         elif (self.direction != "A" and tileD and tileD.digable):

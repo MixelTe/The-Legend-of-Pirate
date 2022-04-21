@@ -83,11 +83,11 @@ def errorMessage():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return
-            if event.type == pygame.KEYUP:
+            if event.type == pygame.KEYDOWN:
                 return
-            if event.type == pygame.MOUSEBUTTONUP:
+            if event.type == pygame.MOUSEBUTTONDOWN:
                 return
-            if event.type == pygame.JOYBUTTONUP:
+            if event.type == pygame.JOYBUTTONDOWN:
                 return
 
 
