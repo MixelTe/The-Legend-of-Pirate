@@ -1,5 +1,5 @@
 import sys
-from os.path import join
+from os.path import join, expanduser
 
 
 class Settings:
@@ -9,7 +9,7 @@ class Settings:
     fps = 60
     overlay_height = 184
     folder_data = "data"
-    folder_saves = "saves"
+    folder_saves = "The Legend of Pirate - Saves"
     folder_images = "images"
     folder_entities = "entities"
     folder_decor = "decor"
@@ -43,3 +43,15 @@ except Exception:
 Settings.tileSize = Settings.width // Settings.screen_width
 Settings.overlay_height = Settings.height - Settings.screen_height * Settings.tileSize
 Settings.path_font = join(Settings.folder_data, "fonts", "Fifaks10Dev1.ttf")
+
+
+try:
+    import ctypes.wintypes
+    CSIDL_PERSONAL = 5
+    SHGFP_TYPE_CURRENT = 0
+    buf = ctypes.create_unicode_buffer(ctypes.wintypes.MAX_PATH)
+    ctypes.windll.shell32.SHGetFolderPathW(0, CSIDL_PERSONAL, 0, SHGFP_TYPE_CURRENT, buf)
+    path = join(buf.value, Settings.folder_saves)
+    Settings.folder_saves = path
+except:
+    Settings.folder_saves = join(expanduser('~'), "Documents", Settings.folder_saves)
