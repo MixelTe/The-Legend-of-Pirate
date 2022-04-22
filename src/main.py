@@ -1,8 +1,9 @@
 import pygame
 from backMusic import onMusicEnd, setBackMusic
 from fpsGraph import FpsGraph
-from functions import joinPath, load_image
+from functions import joinPath, load_image, saveErrorFile
 from settings import Settings
+import traceback
 
 pygame.init()
 screen = pygame.display.set_mode((Settings.width, Settings.height), pygame.FULLSCREEN if Settings.fullscreen else 0)
@@ -102,6 +103,7 @@ setBackMusic(joinPath(Settings.folder_data, Settings.folder_sounds, "back", "San
 try:
     Main().start()
 except Exception as x:
+    # saveErrorFile(x, traceback.format_exc())
     errorMessage()
 pygame.mixer.quit()
 pygame.quit()

@@ -1,3 +1,4 @@
+from datetime import datetime
 import math
 from typing import Literal, Union
 import pygame
@@ -361,3 +362,12 @@ def setWorldBackMusic(world):
         filename = "ForestWorld.mp3"
     path = joinPath(Settings.folder_data, Settings.folder_sounds, "back", filename)
     setBackMusic(path)
+
+
+def saveErrorFile(*messages):
+    path = joinPath(Settings.folder_saves, f"error-{datetime.now():%Y-%m-%d_%H-%M-%S}.txt")
+    if (not os.path.isdir(Settings.folder_saves)):
+        os.makedirs(Settings.folder_saves)
+    with open(path, "w", encoding="utf-8") as f:
+        for message in messages:
+            f.write(f"{message}\n")
