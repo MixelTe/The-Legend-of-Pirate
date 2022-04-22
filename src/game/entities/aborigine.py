@@ -27,10 +27,10 @@ animatorData = AnimatorData("aborigine", [
     ("attackS.png", 200, (15, 18), (-0.241, -0.6, 1.2, 1.46)),
     ("attackA.png", 200, (16, 16), (-0.68, -0.6, 1.3, 1.3)),
     ("attackD.png", 200, (16, 16), (-0.241, -0.6, 1.3, 1.3)),
-    ("sitW.png", 3000, (15, 16), (-0.591, -0.6, 1.2, 1.3)),
-    ("sitS.png", 3000, (15, 16), (-0.241, -0.6, 1.2, 1.3)),
-    ("sitA.png", 3000, (15, 16), (-0.591, -0.6, 1.2, 1.3)),
-    ("sitD.png", 3000, (15, 16), (-0.241, -0.6, 1.2, 1.3)),
+    ("sitW.png", 1500, (15, 16), (-0.591, -0.6, 1.2, 1.3)),
+    ("sitS.png", 1500, (15, 16), (-0.241, -0.6, 1.2, 1.3)),
+    ("sitA.png", 1500, (15, 16), (-0.591, -0.6, 1.2, 1.3)),
+    ("sitD.png", 1500, (15, 16), (-0.241, -0.6, 1.2, 1.3)),
 ])
 LOOKR = 4
 SPEED_PATROL = 0.05
@@ -55,8 +55,8 @@ class EntityAborigine(EntityAlive):
         self.group = EntityGroups.enemy
         self.speed = SPEED_PATROL
         self.strength = 0
-        self.healthMax = 2
-        self.health = 2
+        self.healthMax = 3
+        self.health = 3
         self.width = 0.32
         self.height = 0.7
         self.state = "stay"
@@ -76,7 +76,8 @@ class EntityAborigine(EntityAlive):
         self.searchCounter = 0
         self.spear = None
         self.pastState = "stay"
-        self.guardCounter = 0
+        self.aX = 0
+        self.aY = 0
         self.setSightDir()
 
     def applyData(self, dataSetter: Callable[[str, Any, str, Callable[[Any], Any]], None], data: dict):
@@ -147,25 +148,33 @@ class EntityAborigine(EntityAlive):
                     pos[1] > 0 and self.direction == "W" or
                         pos[1] < 0 and self.direction == "S"):
                     # if (self.state != "guard" and self.state != "sit"):
-                    state = self.state
-                    if (self.state != "guard"):
+                    if (self.state != "guard" and self.state != "sit"):
                         self.startAttackAsLeader()
                         self.pastState = self.state
                         self.state = "guard"
-                        self.guardCounter += 1
-                        self.guardCounter %= 4
-                        if (state == "sit"):
-                            self.guardCounter = 3
-                    # if (self.state != "sit"):
-                    #     return False
-                    return False
+                        speed = 0.2
+                        a = 0.01
+                        if (self.direction == "D"):
+                            self.speedX = -speed
+                            self.aX = a
+                        if (self.direction == "A"):
+                            self.speedX = speed
+                            self.aX = -a
+                        if (self.direction == "W"):
+                            self.speedY = speed
+                            self.aY = -a
+                        if (self.direction == "S"):
+                            self.speedY = -speed
+                            self.aY = a
+                    if (self.state != "sit"):
+                        return False
                 if (pos[0] < 0 and self.direction == "A" or
                     pos[0] > 0 and self.direction == "D" or
                     pos[1] > 0 and self.direction == "S" or
                         pos[1] < 0 and self.direction == "W"):
-                    damage += 1
+                    damage += 2
             super().takeDamage(damage, attacker)
-            if (attacker.id == "shovel" and self.health > 0):
+            if (attacker.id == "shovel" and self.health > 0 and self.state != "sit"):
                 self.startAttackAsLeader()
         else:
             return super().takeDamage(damage, attacker)
@@ -174,6 +183,10 @@ class EntityAborigine(EntityAlive):
         collisions = super().update()
         if (not self.alive or Settings.disableAI):
             return
+
+        if (self.spear and self.state != "hit"):
+            self.spear.remove()
+            self.spear = None
 
         if (self.state == "stay"):
             self.sightZoneVisible = True
@@ -326,14 +339,17 @@ class EntityAborigine(EntityAlive):
             if (self.checkPlayer() or (abs(pdx) < ALERTZONE_NORMAL[0] and abs(pdy) < ALERTZONE_NORMAL[1])):
                 self.startAttackAsLeader()
         elif (self.state == "guard"):
-            self.speedX = 0
-            self.speedY = 0
+            self.speedX += self.aX
+            self.speedY += self.aY
+            if (self.aX * self.speedX >= 0):
+                self.speedX = 0
+                self.aX = 0
+            if (self.aY * self.speedY >= 0):
+                self.speedY = 0
+                self.aY = 0
             self.animator.setAnimation("guard" + self.direction)
             if (self.animator.lastState[1]):
-                if (self.guardCounter == 3):
-                    self.state = "sit"
-                else:
-                    self.state = self.pastState
+                self.state = "sit"
         elif (self.state == "sit"):
             self.speedX = 0
             self.speedY = 0
