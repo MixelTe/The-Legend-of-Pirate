@@ -13,21 +13,23 @@ sound_btn2 = load_sound("btn2.wav", "btn")
 
 
 class GameDialog_exit(GameDialog):
-    multRectInner = getRectMult(*multPos((0.35, 0.5)))
+    multRectInner = getRectMult(*multPos((0.35, 0.55)))
     btnSize = multPosFull((2.13, 1.28), Settings.tileSize)
     btnSize = (int(btnSize[0]), int(btnSize[1]))
     yes_img = pygame.transform.scale(load_image("yes.png"), btnSize)
     no_img = pygame.transform.scale(load_image("no.png"), btnSize)
     yes_img_a = pygame.transform.scale(load_image("yes_active.png"), btnSize)
     no_img_a = pygame.transform.scale(load_image("no_active.png"), btnSize)
-    yes_rect = multRectInner((0.12, 0.6, 0.36, 0.3))
-    no_rect = multRectInner((0.59, 0.6, 0.36, 0.3))
+    yes_rect = multRectInner((0.12, 0.65, 0.36, 0.3))
+    no_rect = multRectInner((0.59, 0.65, 0.36, 0.3))
 
     def __init__(self, onClose: Callable):
-        super().__init__(onClose, *multPos((0.35, 0.5)))
+        super().__init__(onClose, *multPos((0.35, 0.55)))
         font = pygame.font.Font(Settings.path_font, int(Settings.tileSize * 0.77) + 1)
+        font2 = pygame.font.Font(Settings.path_font, int(Settings.tileSize * 0.5) + 1)
         self.text1 = font.render("Вы уверены, что", True, pygame.Color(81, 44, 40))
         self.text2 = font.render("хотите выйти?", True, pygame.Color(81, 44, 40))
+        self.text3 = font2.render("Прогресс будет сохранён", True, pygame.Color(81, 44, 40))
         self.selected = 1
 
     def draw(self) -> pygame.Surface:
@@ -37,6 +39,7 @@ class GameDialog_exit(GameDialog):
         self.surface.blit(self.no_img_a if self.selected == 1 else self.no_img, self.no_rect.topleft)
         self.surface.blit(self.text1, multPos((0.028, 0.08)))
         self.surface.blit(self.text2, multPos((0.05, 0.18)))
+        self.surface.blit(self.text3, multPos((0.025, 0.28)))
         return self.surface
 
     def action(self):
