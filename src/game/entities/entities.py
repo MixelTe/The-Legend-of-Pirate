@@ -111,6 +111,9 @@ class EntityDigPlace(Entity):
         self.imagePos = (random() * 0.5 + 0.2, random() * 0.5 + 0.2)
         self.digged = False
 
+    def update(self):
+        pass
+
     def applyData(self, dataSetter: Callable[[str, Any, str, Callable[[Any], Any]], None], data: dict):
         super().applyData(dataSetter, data)
         dataSetter("content", self.content)
@@ -309,7 +312,7 @@ class EntityArrow(EntityAlive):
 Entity.registerEntity("arrow", EntityArrow)
 
 
-class EntityLavaPath(EntityAlive):
+class EntityLavaPath(Entity):
     animatorData = AnimatorData("lavaPath", [
         ("stay.png", 600, (16, 16), (0, 0, 1, 1)),
     ])
@@ -318,12 +321,10 @@ class EntityLavaPath(EntityAlive):
         super().__init__(screen, data)
         self.tags.append("low")
         self.animator = Animator(EntityLavaPath.animatorData, "stay")
-        self.group = EntityGroups.enemy
         self.hidden = True
         self.ghostT = True
         self.ghostE = True
         self.drawPriority = 0
-        self.strength = 1
         self.width = 1
         self.height = 1
         self.imagePos = (0, 0)
@@ -341,7 +342,6 @@ class EntityLavaPath(EntityAlive):
         self.draw_dev(surface)
 
     def update(self):
-        super().update()
         if (self.animator.lastState[1]):
             self.remove()
         if (self.animator.lastState[0]):
@@ -351,6 +351,8 @@ class EntityLavaPath(EntityAlive):
             self.x += v / 2
             self.y += v / 2
             self.imagePos = (self.imagePos[0] - v / 2, self.imagePos[1] - v / 2)
+        if (self.screen.player.is_inRect(self.get_rect())):
+            self.screen.player.takeDamage(1, self)
 
 
 Entity.registerEntity("lavaPath", EntityLavaPath)
@@ -448,6 +450,9 @@ class EntityDigPlaceHidden(Entity):
             self.screen.player.saveData.tags.append("heart-collected")
             self.screen.player.healthMax = 8
             self.screen.player.health = 8
+
+    def update(self):
+        pass
 
 
 Entity.registerEntity("dig_place_hidden", EntityDigPlaceHidden)

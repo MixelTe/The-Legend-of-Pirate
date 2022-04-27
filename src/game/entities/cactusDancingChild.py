@@ -23,8 +23,8 @@ for i in range(1, 5):
 animatorData = AnimatorData("cactusDancingChild", animations)
 musicPath = joinPath(Settings.folder_data, Settings.folder_sounds, "back", "background2.mp3")
 TEXTS = {
-    0: "Спасибо за игру!",
-    1: "Хехе, у тебя полулось",
+    0: "Удачи в приключении!",
+    1: "Хехе, у тебя получилось!",
     2: "Серьёзно, так быстро?",
     3: "Не думал, что такой внимательный",
     4: "Уги-вуги!",

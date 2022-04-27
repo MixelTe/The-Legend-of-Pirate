@@ -78,6 +78,7 @@ class EntityMarket(Entity):
             self.screen.player.action = self.buy
             if (self.trader and self.speech is not None):
                 self.trader.setSpeech(self.speech)
+                self.screen.player.messageIsLong = True
 
     def buy(self):
         if (self.screen.saveData.coins >= self.price):
@@ -91,7 +92,9 @@ class EntityMarket(Entity):
             if (self.itemId == "coin"):
                 self.screen.saveData.coins += 1
             elif (self.itemId == "heart"):
-                self.screen.player.heal(1)
+                self.screen.player.heal(2)
+                heart = Entity.createById("heart", self.screen)
+                self.screen.player.takeItem(heart)
             if (not self.infinite):
                 self.item = None
 
