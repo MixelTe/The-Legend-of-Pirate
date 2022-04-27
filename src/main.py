@@ -12,6 +12,9 @@ if (len(desktop_sizes) == 0):
     exit()
 setSizes(desktop_sizes[0])
 screen = pygame.display.set_mode((Settings.width, Settings.height), pygame.FULLSCREEN if Settings.fullscreen else 0)
+img_loading = pygame.transform.scale(load_image("loading.png"), (Settings.width, Settings.height))
+screen.blit(img_loading, (0, 0))
+pygame.display.flip()
 pygame.mixer.init()
 
 from window import Window

@@ -3,7 +3,7 @@ from os.path import join, expanduser
 
 
 class Settings:
-    version = "v2.0.0 (beta.2)"
+    version = "v2.0.0 (beta.5)"
     width = 720  # 1920
     height = 405  # 1080
     fps = 60
