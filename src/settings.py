@@ -61,7 +61,6 @@ def setSizes(desktop_size):
     if (Settings.height > desktop_size[1]):
         Settings.height = desktop_size[1]
         Settings.width = Settings.height / 9 * 16
-        Settings.drawGrid = True
 
-    Settings.tileSize = Settings.width / Settings.screen_width
+    Settings.tileSize = Settings.width // Settings.screen_width
     Settings.overlay_height = Settings.height - Settings.screen_height * Settings.tileSize

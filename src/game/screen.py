@@ -73,7 +73,7 @@ class Screen:
         return self.goToVar
 
     def draw(self, drawPlayer=True) -> pygame.Surface:
-        self.surface.fill("red")
+        self.surface.fill("black")
 
         for (tile, x, y) in self.getTiles():
             tile.draw(self.surface, x, y)

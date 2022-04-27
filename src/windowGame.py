@@ -139,7 +139,8 @@ class WindowGame(Window):
             screenImg = self.screen.draw()
         overlay = self.overlay.draw()
         screen.blit(overlay, (0, 0))
-        screen.blit(screenImg, (0, Settings.overlay_height))
+        dx = (Settings.width - Settings.tileSize * Settings.screen_width) // 2
+        screen.blit(screenImg, (dx, Settings.overlay_height))
         if (self.dialog is not None):
             screen.blit(self.dialog.draw(), self.dialog.rect.topleft)
 
