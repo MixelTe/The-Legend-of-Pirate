@@ -11,7 +11,7 @@ desktop_sizes = pygame.display.get_desktop_sizes()
 if (len(desktop_sizes) == 0):
     exit()
 setSizes(desktop_sizes[0])
-screen = pygame.display.set_mode((Settings.width, Settings.height), pygame.FULLSCREEN if Settings.fullscreen else 0)
+screen = pygame.display.set_mode(desktop_sizes[0], pygame.FULLSCREEN if Settings.fullscreen else 0)
 img_loading = pygame.transform.scale(load_image("loading.png"), (Settings.width, Settings.height))
 screen.blit(img_loading, (0, 0))
 pygame.display.flip()
@@ -27,6 +27,8 @@ class Main:
     def __init__(self):
         # self.window: Window = WindowStart()
         self.window: Window = WindowGame(0)
+        self.surface = pygame.Surface((Settings.width, Settings.height))
+        self.surfacePos = ((desktop_sizes[0][0] - Settings.width) / 2, (desktop_sizes[0][1] - Settings.height) / 2)
         # self.window: Window = WindowAnimationTest()
         self.fpsGraph = FpsGraph()
         font = pygame.font.Font(Settings.path_font, int(Settings.tileSize * 0.5))
@@ -70,7 +72,9 @@ class Main:
                 self.window = result
 
             screen.fill((0, 0, 0))
-            self.window.draw(screen)
+            self.surface.fill((0, 0, 0))
+            self.window.draw(self.surface)
+            screen.blit(self.surface, self.surfacePos)
             if (self.fpsGraph.enabled):
                 self.fpsGraph.draw(screen)
             if (Settings.disableAI):
