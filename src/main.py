@@ -2,10 +2,15 @@ import pygame
 from backMusic import onMusicEnd, setBackMusic
 from fpsGraph import FpsGraph
 from functions import joinPath, load_image, saveErrorFile
-from settings import Settings
+from settings import Settings, setSizes
 import traceback
+from sys import exit
 
 pygame.init()
+desktop_sizes = pygame.display.get_desktop_sizes()
+if (len(desktop_sizes) == 0):
+    exit()
+setSizes(desktop_sizes[0])
 screen = pygame.display.set_mode((Settings.width, Settings.height), pygame.FULLSCREEN if Settings.fullscreen else 0)
 pygame.mixer.init()
 
@@ -61,7 +66,7 @@ class Main:
             if (isinstance(result, Window)):
                 self.window = result
 
-            screen.fill((133, 133, 133))
+            screen.fill((0, 0, 0))
             self.window.draw(screen)
             if (self.fpsGraph.enabled):
                 self.fpsGraph.draw(screen)
@@ -77,7 +82,7 @@ class Main:
 
 
 def errorMessage():
-    screen.fill((133, 133, 133))
+    screen.fill((0, 0, 0))
     screen.blit(img_error, (0, 0))
     pygame.display.flip()
     while True:

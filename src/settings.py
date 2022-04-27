@@ -40,8 +40,6 @@ try:
 except Exception:
     pass
 
-Settings.tileSize = Settings.width // Settings.screen_width
-Settings.overlay_height = Settings.height - Settings.screen_height * Settings.tileSize
 Settings.path_font = join(Settings.folder_data, "fonts", "Fifaks10Dev1.ttf")
 
 
@@ -55,3 +53,15 @@ try:
     Settings.folder_saves = path
 except:
     Settings.folder_saves = join(expanduser('~'), "Documents", Settings.folder_saves)
+
+
+def setSizes(desktop_size):
+    Settings.width = desktop_size[0]
+    Settings.height = Settings.width / 16 * 9
+    if (Settings.height > desktop_size[1]):
+        Settings.height = desktop_size[1]
+        Settings.width = Settings.height / 9 * 16
+        Settings.drawGrid = True
+
+    Settings.tileSize = Settings.width / Settings.screen_width
+    Settings.overlay_height = Settings.height - Settings.screen_height * Settings.tileSize
