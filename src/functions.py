@@ -96,7 +96,7 @@ def createButton(imgName: str, scale: int, group: pygame.sprite.Group, x=0, y=0)
     img = pygame.transform.scale(img, (w, h))
     img_a = pygame.transform.scale(img_a, (w, h))
     sprite = Button(group, img, img_a)
-    sprite.rect = pygame.Rect(x * Settings.width, y * Settings.height, w,  h)
+    sprite.rect = pygame.Rect(x * Settings.width, y * Settings.height, w, h)
     return sprite
 
 
@@ -158,17 +158,18 @@ def renderText(font: pygame.font.Font, lineHeight: int, size: tuple[int, int], t
 def renderText_split(font: pygame.font.Font, size: tuple[int, int], text: str):
     lines = []
     line = ""
-    for word in text.split():
-        newLine = line + " " + word
-        if (font.size(newLine)[0] <= size[0]):
-            line = newLine
-        else:
-            lines.append(line)
-            line = word
-    if (line != ""):
+    for textLine in text.split("\n"):
+        for word in textLine.split():
+            newLine = line + " " + word
+            if (font.size(newLine)[0] <= size[0]):
+                line = newLine
+            else:
+                line = line.strip()
+                lines.append(line)
+                line = word
+        line = line.strip()
         lines.append(line)
-    if (len(lines) >= 1):
-        lines[0] = lines[0][1:]
+        line = ""
     return lines
 
 
@@ -371,6 +372,7 @@ def saveErrorFile(*messages):
     with open(path, "w", encoding="utf-8") as f:
         for message in messages:
             f.write(f"{message}\n")
+
 
 def getGameProgress(tags: list[str]):
     progress = 0
