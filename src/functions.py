@@ -371,3 +371,19 @@ def saveErrorFile(*messages):
     with open(path, "w", encoding="utf-8") as f:
         for message in messages:
             f.write(f"{message}\n")
+
+def getGameProgress(tags: list[str]):
+    progress = 0
+    if ("octopus-defeated" in tags):
+        progress += 30
+    if ("quest-cactus-ended" in tags):
+        progress += 20
+    if ("quest-pirate-ended" in tags):
+        progress += 20
+    if ("heart-collected" in tags):
+        progress += 20
+    if ("coinbag-1" in tags):
+        progress += 5
+    if ("coinbag-2" in tags):
+        progress += 5
+    return progress

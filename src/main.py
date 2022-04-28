@@ -122,7 +122,7 @@ setBackMusic(joinPath(Settings.folder_data, Settings.folder_sounds, "back", "San
 try:
     Main().start()
 except Exception as x:
-    # saveErrorFile(x, traceback.format_exc())
+    saveErrorFile(x, traceback.format_exc())
     errorMessage()
 pygame.mixer.quit()
 pygame.quit()

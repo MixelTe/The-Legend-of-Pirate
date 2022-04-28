@@ -2,8 +2,13 @@ import pygame
 from game.saveData import SaveData
 from settings import Settings
 from window import WindowWithButtons
-from functions import createButton
+from functions import Button, createButton, getGameProgress, load_image
 from windowGame import WindowGame
+
+heartSize = int(Settings.tileSize * 0.9)
+img_heart = pygame.transform.scale(load_image("hpA.png"), (heartSize, heartSize))
+img_coin = pygame.transform.scale(load_image("coin.png"), (int(Settings.tileSize * 0.6), int(Settings.tileSize * 0.72)))
+font = pygame.font.Font(Settings.path_font, int(Settings.tileSize * 1) + 1)
 
 
 class WindowSaveSelection(WindowWithButtons):
@@ -11,11 +16,14 @@ class WindowSaveSelection(WindowWithButtons):
         super().__init__()
         self.all_sprites = pygame.sprite.Group()
         self.dialog = None
-        scale = 0.4
+        self.toStartWindow = False
+        scale = 0.38
 
-        createButton("save1", scale, self.all_sprites, 0.3, 0.05)
-        createButton("save2", scale, self.all_sprites, 0.3, 0.37)
-        createButton("save3", scale, self.all_sprites, 0.3, 0.7)
+        self.btns = {
+            0: createSaveButton(1, scale, self.all_sprites, 0.3, 0.03),
+            1: createSaveButton(2, scale, self.all_sprites, 0.3, 0.36),
+            2: createSaveButton(3, scale, self.all_sprites, 0.3, 0.68),
+        }
 
         scale = 0.4 / 25 * 9
         self.btn_delete = {0: None, 1: None, 2: None}
@@ -25,6 +33,8 @@ class WindowSaveSelection(WindowWithButtons):
             self.btn_delete[1] = createButton("cross", scale, self.all_sprites, 0.72, 0.37)
         if (SaveData.exist(3)):
             self.btn_delete[2] = createButton("cross", scale, self.all_sprites, 0.72, 0.7)
+
+        self.btn_back = createButton("back", 0.1, self.all_sprites, 0.03, 0.78)
 
         self.startSave = None
 
@@ -39,6 +49,9 @@ class WindowSaveSelection(WindowWithButtons):
                 self.selected = 1
             elif (btn == self.btn_delete[2]):
                 self.selected = 2
+            elif (btn == self.btn_back):
+                self.toStartWindow = True
+                return
             else:
                 return
             super().update()
@@ -51,6 +64,9 @@ class WindowSaveSelection(WindowWithButtons):
                 btn = self.btn_delete[self.dialog.save]
                 self.btn_delete[self.dialog.save] = None
                 self.all_sprites.remove(btn)
+                btnS = self.btns[self.dialog.save]
+                btnS.img = btnS.img_new
+                btnS.img_a = btnS.img_new_a
         self.dialog = None
 
     def draw(self, screen: pygame.Surface):
@@ -65,6 +81,9 @@ class WindowSaveSelection(WindowWithButtons):
             super().on_event(event)
 
     def update(self):
+        if (self.toStartWindow):
+            from windowStart import WindowStart
+            return WindowStart()
         if (self.dialog):
             self.dialog.update()
         else:
@@ -107,3 +126,44 @@ class DialogDelete(WindowWithButtons):
         screen.blit(self.back, (self.rect[0], self.rect[1]))
         screen.blit(self.text, self.textPos)
         self.all_sprites.draw(screen)
+
+
+def createSaveButton(save, scale, group, x, y):
+    exist = SaveData.exist(save)
+    img_new = load_image(f"save_new{save}.png")
+    img_new_a = load_image(f"save_new{save}_active.png")
+    if (exist):
+        img = load_image(f"save{save}.png")
+        img_a = load_image(f"save{save}_active.png")
+    else:
+        img = img_new
+        img_a = img_new_a
+    scale = Settings.width * scale / img.get_width()
+    w, h = int(img.get_width() * scale), int(img.get_height() * scale)
+    img = pygame.transform.scale(img, (w, h))
+    img_a = pygame.transform.scale(img_a, (w, h))
+    wn, hn = int(img_new.get_width() * scale), int(img_new.get_height() * scale)
+    img_new = pygame.transform.scale(img_new, (wn, hn))
+    img_new_a = pygame.transform.scale(img_new_a, (wn, hn))
+    if (exist):
+        saveData = SaveData(save).load()
+        coins = font.render(F"{saveData.coins}", True, pygame.Color(81, 44, 40))
+        coinPos = (int(w * 0.07), int(h * 0.68))
+        coinsPos = (int(w * 0.17), int(h * 0.65))
+        img.blit(img_coin, coinPos)
+        img.blit(coins, coinsPos)
+        img_a.blit(img_coin, coinPos)
+        img_a.blit(coins, coinsPos)
+        progress = font.render(F"{getGameProgress(saveData.tags)}%", True, "#FFD700")
+        progressPos = ((w - progress.get_width()) - int(w * 0.05), int(h * 0.65))
+        img.blit(progress, progressPos)
+        img_a.blit(progress, progressPos)
+        if ("heart-collected" in saveData.tags):
+            heartPos = (int(w * 0.5), int(h * 0.65))
+            img.blit(img_heart, heartPos)
+            img_a.blit(img_heart, heartPos)
+    sprite = Button(group, img, img_a)
+    sprite.img_new = img_new
+    sprite.img_new_a = img_new_a
+    sprite.rect = pygame.Rect(x * Settings.width, y * Settings.height, w,  h)
+    return sprite
