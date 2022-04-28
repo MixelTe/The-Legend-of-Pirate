@@ -21,7 +21,7 @@ class WindowAbout(WindowWithButtons):
         font_text = pygame.font.Font(Settings.path_font, int(Settings.width * 0.04) + 1)
         self.text_authors = renderText(font_text, int(Settings.width * 0.04) + 1, (Settings.width * 0.86, Settings.height * 0.7),
                                        """Авторы:
-                                        Програмист и звукорежиссёр -
+                                        Программист и звукорежиссёр - 
                                         Геймдизайнер и художник -
 
                                         Спасибо за участие в тестировании игры:
@@ -32,7 +32,7 @@ class WindowAbout(WindowWithButtons):
         self.textPos_authors = (int(Settings.width * 0.075), int(Settings.height * 0.17))
 
         createButton("back", 0.1, self.all_sprites, 0.055, 0.765)
-        createLink("Mixel Te", font_text, self.all_sprites, 0.68, 0.24)
+        createLink("Mixel Te", font_text, self.all_sprites, 0.7, 0.24)
         createLink("Липатов Андрей", font_text, self.all_sprites, 0.617, 0.314)
         createLink("Github", font_text, self.all_sprites, 0.366, 0.67)
 
