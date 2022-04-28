@@ -24,13 +24,16 @@ from window import Window
 from windowStart import WindowStart
 from windowGame import WindowGame
 from windowAnimationTest import WindowAnimationTest
+from windowEndGame import WindowEndGame
+from game.saveData import SaveData
 
 
 class Main:
     def __init__(self):
-        self.window: Window = WindowStart()
+        # self.window: Window = WindowStart()
         # self.window: Window = WindowGame(0)
         # self.window: Window = WindowAnimationTest()
+        self.window: Window = WindowEndGame(SaveData(1).load())
         self.surface = pygame.Surface((Settings.width, Settings.height))
         self.surfacePos = ((desktop_size[0] - Settings.width) // 2, (desktop_size[1] - Settings.height) // 2)
         self.fpsGraph = FpsGraph()

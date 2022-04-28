@@ -2,7 +2,7 @@ import pygame
 from game.saveData import SaveData
 from settings import Settings
 from window import WindowWithButtons
-from functions import createButton, getGameProgress, load_image, renderText
+from functions import createButton, getGameProgress, load_image, renderText, wordWithNum
 
 
 class WindowEndGame(WindowWithButtons):
@@ -21,14 +21,13 @@ class WindowEndGame(WindowWithButtons):
         self.textPos_title = ((Settings.width - self.text_title.get_width()) // 2, int(Settings.height * 0.09))
 
         progress = getGameProgress(saveData.tags)
+        time = secondsToTime(saveData.time)
         text = "Спасибо за прохождение игры!" + "\n\n"
-        text += f"Вы прошли игру на {progress}%" + "\n"
+        text += f"Вы прошли игру на {progress}% за {time}" + "\n"
         if (progress == 100):
             text += "Поздравляем! Вы преодалели все испытания" + "\n"
         else:
             text += "Что-то интересное ещё осталось на острове!" + "\n"
-        text += "\n"
-        text += "Вы можете продолжить игру" + "\n"
 
         font_text = pygame.font.Font(Settings.path_font, int(Settings.width * 0.05) + 1)
         self.text_authors = renderText(font_text, int(Settings.width * 0.044) + 1,
@@ -58,3 +57,14 @@ class WindowEndGame(WindowWithButtons):
         screen.blit(self.text_title, self.textPos_title)
         screen.blit(self.text_authors, self.textPos_authors)
         self.all_sprites.draw(screen)
+
+def secondsToTime(seconds: int):
+    hours = seconds // 3600
+    minutes = seconds // 60 % 60
+    text = ""
+    if (hours > 0):
+        word = wordWithNum(hours, "час", "часа", "часов")
+        text += f"{hours} {word} и "
+    word = wordWithNum(minutes, "минуту", "минуты", "минут")
+    text += f"{minutes} {word}"
+    return text

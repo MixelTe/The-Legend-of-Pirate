@@ -389,3 +389,12 @@ def getGameProgress(tags: list[str]):
     if ("coinbag-2" in tags):
         progress += 5
     return progress
+
+def wordWithNum(num, one, two, five):
+    first = str(num)[0]
+    last = str(num)[-1]
+    if last == "1" and first != "1" or num == 1:
+        return one
+    elif last in ["2", "3", "4"] and first != "1":
+        return two
+    return five
