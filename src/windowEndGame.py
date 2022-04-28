@@ -3,6 +3,9 @@ from game.saveData import SaveData
 from settings import Settings
 from window import WindowWithButtons
 from functions import createButton, getGameProgress, load_image, renderText, wordWithNum
+from game.entities.cactusDancing import animatorData
+from game.entities.cactusDancingChild import animatorData as animatorData_child
+from game.animator import Animator
 
 
 class WindowEndGame(WindowWithButtons):
@@ -13,6 +16,8 @@ class WindowEndGame(WindowWithButtons):
         self.back = False
         self.restart = False
         self.all_sprites = pygame.sprite.Group()
+        self.cactuses = [Animator(animatorData, "dancing")] + \
+            [Animator(animatorData_child, "dancing") for _ in range(4)]
         self.saveData = saveData
         # self.text_title = renderText(font_title, int(Settings.width * 0.05) + 1, (Settings.width * 0.8, Settings.height * 0.38), "The Legend of Pirate", "#733E39", True, True)
 
@@ -34,6 +39,8 @@ class WindowEndGame(WindowWithButtons):
                                        (Settings.width * 0.86, Settings.height * 0.7), text, "#733E39")
         self.textPos_authors = (int(Settings.width * 0.075), int(Settings.height * 0.19))
 
+        self.cactusPos = (int(Settings.width * 0.445), int(Settings.height * 0.63))
+
         createButton("back", 0.1, self.all_sprites, 0.055, 0.765)
         createButton("continue", 0.53, self.all_sprites, 0.415, 0.765)
 
@@ -45,6 +52,8 @@ class WindowEndGame(WindowWithButtons):
 
     def update(self):
         super().update()
+        for cactus in self.cactuses:
+            cactus.update()
         if (self.back):
             from windowStart import WindowStart
             return WindowStart()
@@ -57,6 +66,12 @@ class WindowEndGame(WindowWithButtons):
         screen.blit(self.text_title, self.textPos_title)
         screen.blit(self.text_authors, self.textPos_authors)
         self.all_sprites.draw(screen)
+
+        for i, cactus in enumerate(self.cactuses):
+            img_cactus = cactus.getImage()[0]
+            pos = (self.cactusPos[0] + i * Settings.width * 0.1, self.cactusPos[1])
+            screen.blit(img_cactus, pos)
+
 
 def secondsToTime(seconds: int):
     hours = seconds // 3600
