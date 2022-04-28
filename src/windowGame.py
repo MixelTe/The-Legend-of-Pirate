@@ -1,6 +1,7 @@
 import pygame
 from backMusic import endBattleMusic
 from functions import calcPlayerCoinsAfterDeath, load_sound, setWorldBackMusic
+from game.dialogs.end import GameDialog_end
 from game.dialogs.start import GameDialog_start
 from game.entityPlayer import EntityPlayer
 from game.gameDialog import GameDialog
@@ -82,8 +83,12 @@ class WindowGame(Window):
             if (r):
                 if (self.dialog.exitFromGame):
                     self.saveAll()
-                    from windowStart import WindowStart
-                    return WindowStart()
+                    if (isinstance(self.dialog, GameDialog_end)):
+                        from windowEndGame import WindowEndGame
+                        return WindowEndGame(self.saveData)
+                    else:
+                        from windowStart import WindowStart
+                        return WindowStart()
                 self.dialog = None
             return
         if (self.screenAnim):
