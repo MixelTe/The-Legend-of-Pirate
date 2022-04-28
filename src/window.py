@@ -39,7 +39,8 @@ class WindowWithButtons(Window):
     def on_event(self, event: pygame.event.Event):
         if event.type == pygame.MOUSEBUTTONUP:
             self.action()
-            sound_btn.play()
+            if (self.selected != -1):
+                sound_btn.play()
         elif (event.type == pygame.MOUSEMOTION):
             selected = self.selected
             self.selected = -1
@@ -74,5 +75,5 @@ class WindowWithButtons(Window):
                 sound_btn.play()
 
     def draw(self, screen: pygame.Surface):
-        screen.blit(WindowWithButtons.background, (0, 0))
+        screen.blit(self.background, (0, 0))
         self.all_sprites.draw(screen)

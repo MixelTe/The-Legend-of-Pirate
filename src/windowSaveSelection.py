@@ -20,9 +20,9 @@ class WindowSaveSelection(WindowWithButtons):
         scale = 0.38
 
         self.btns = {
-            0: createSaveButton(1, scale, self.all_sprites, 0.3, 0.03),
-            1: createSaveButton(2, scale, self.all_sprites, 0.3, 0.36),
-            2: createSaveButton(3, scale, self.all_sprites, 0.3, 0.68),
+            0: createSaveButton(1, scale, self.all_sprites, 0.31, 0.03),
+            1: createSaveButton(2, scale, self.all_sprites, 0.31, 0.36),
+            2: createSaveButton(3, scale, self.all_sprites, 0.31, 0.68),
         }
 
         scale = 0.4 / 25 * 9
