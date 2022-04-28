@@ -6,6 +6,7 @@ class Settings:
     version = "v2.0.0 (beta.5)"
     width = 720  # 1920
     height = 405  # 1080
+    windowed = True
     fps = 60
     overlay_height = 184
     folder_data = "data"
@@ -41,6 +42,8 @@ except Exception:
     pass
 
 Settings.path_font = join(Settings.folder_data, "fonts", "Fifaks10Dev1.ttf")
+if (Settings.windowed):
+    Settings.fullscreen = False
 
 
 try:
@@ -56,11 +59,12 @@ except:
 
 
 def setSizes(desktop_size):
-    Settings.width = desktop_size[0]
-    Settings.height = Settings.width / 16 * 9
-    if (Settings.height > desktop_size[1]):
-        Settings.height = desktop_size[1]
-        Settings.width = Settings.height / 9 * 16
+    if (not Settings.windowed):
+        Settings.width = desktop_size[0]
+        Settings.height = Settings.width / 16 * 9
+        if (Settings.height > desktop_size[1]):
+            Settings.height = desktop_size[1]
+            Settings.width = Settings.height / 9 * 16
 
     Settings.tileSize = Settings.width // Settings.screen_width
     Settings.overlay_height = Settings.height - Settings.screen_height * Settings.tileSize

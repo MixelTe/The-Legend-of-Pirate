@@ -10,10 +10,13 @@ pygame.init()
 desktop_sizes = pygame.display.get_desktop_sizes()
 if (len(desktop_sizes) == 0):
     exit()
-setSizes(desktop_sizes[0])
-screen = pygame.display.set_mode(desktop_sizes[0], pygame.FULLSCREEN if Settings.fullscreen else 0)
+desktop_size = desktop_sizes[0]
+setSizes(desktop_size)
+if (Settings.windowed):
+    desktop_size = (Settings.width, Settings.height)
+screen = pygame.display.set_mode(desktop_size, pygame.FULLSCREEN if Settings.fullscreen else 0)
 img_loading = pygame.transform.scale(load_image("loading.png"), (Settings.width, Settings.height))
-screen.blit(img_loading, ((desktop_sizes[0][0] - Settings.width) // 2, (desktop_sizes[0][1] - Settings.height) // 2))
+screen.blit(img_loading, ((desktop_size[0] - Settings.width) // 2, (desktop_size[1] - Settings.height) // 2))
 pygame.display.flip()
 pygame.mixer.init()
 
@@ -25,10 +28,10 @@ from windowAnimationTest import WindowAnimationTest
 
 class Main:
     def __init__(self):
-        # self.window: Window = WindowStart()
-        self.window: Window = WindowGame(0)
+        self.window: Window = WindowStart()
+        # self.window: Window = WindowGame(0)
         self.surface = pygame.Surface((Settings.width, Settings.height))
-        self.surfacePos = ((desktop_sizes[0][0] - Settings.width) // 2, (desktop_sizes[0][1] - Settings.height) // 2)
+        self.surfacePos = ((desktop_size[0] - Settings.width) // 2, (desktop_size[1] - Settings.height) // 2)
         # self.window: Window = WindowAnimationTest()
         self.fpsGraph = FpsGraph()
         font = pygame.font.Font(Settings.path_font, int(Settings.tileSize * 0.5))
