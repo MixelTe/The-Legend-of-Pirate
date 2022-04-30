@@ -4,7 +4,7 @@
 block_cipher = None
 
 
-a = Analysis(['main.py'],
+a = Analysis(['exceptionFreeLauncher.py'],
              pathex=['D:\\Users\\Lux\\Desktop\\python\\projects\\The Legend of Pirate\\src'],
              binaries=[],
              datas=[("data", "data")],

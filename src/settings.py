@@ -3,10 +3,10 @@ from os.path import join, expanduser
 
 
 class Settings:
-    version = "v2.0.0 (beta.5)"
+    version = "v2.0.0"
     width = 720  # 1920
     height = 405  # 1080
-    windowed = True
+    windowed = False
     fps = 60
     overlay_height = 184
     folder_data = "data"
@@ -22,16 +22,16 @@ class Settings:
     screen_height = 9
     damageDelay = 400
     damageDelayPlayer = 1600
-    fullscreen = False
+    fullscreen = True
     tileSize = 1
-    DEVMode = True
+    DEVMode = False
     drawHitboxes = False  # F1
     disableAI = False  # F4
-    ghostmode = True  # F5
+    ghostmode = False  # F5
     drawGrid = False  # F6
     deathMouse = False  # F7
     drawNoneImgs = False
-    moveScreenOnNumpad = True
+    moveScreenOnNumpad = False
 
 
 try:
