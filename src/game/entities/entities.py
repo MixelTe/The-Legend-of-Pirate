@@ -342,6 +342,7 @@ class EntityLavaPath(Entity):
         self.draw_dev(surface)
 
     def update(self):
+        self.animator.update()
         if (self.animator.lastState[1]):
             self.remove()
         if (self.animator.lastState[0]):
