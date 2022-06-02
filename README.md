@@ -5,6 +5,8 @@
 
 [Скачать игру](https://mixelte.github.io/The-Legend-of-Pirate/)
 
+[Редактор миров](https://mixelte.github.io/The-Legend-of-Pirate/worldEditor/)
+
 ### Капитан оказывается на берегу моря
 ![](docs/imgs/island.png)
 
@@ -13,3 +15,6 @@
 
 ### С собой у пирата оказалась только лопата
 ![](docs/imgs/dig.png)
+
+### Приключения ждут!
+![](docs/sketches/worlds.png)
