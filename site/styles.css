@@ -43,6 +43,9 @@ p {
 	padding: 0.3em 0.5em;
 	margin: 1.5em 0.5em;
 }
+p.small {
+	font-size: clamp(1.5rem, 4vw, 2.5rem);
+}
 .parchment::before, p::before {
 	content: "";
 	left: 0;
@@ -251,4 +254,41 @@ p {
 	top: -0.1em;
 	width: calc(100% - 0.8em);
 	height: calc(100% - 0.3em);
+}
+
+
+.navbar2 {
+	margin-bottom: 4em;
+	margin-top: 0em;
+}
+.navbar2 a {
+	padding: 0.3em 0.8em;
+	margin: 0.25em 0.3em;
+}
+.navbar2 a::before {
+	left: 0;
+	top: -0.1em;
+	width: calc(100% - 0.8em);
+	height: calc(100% - 0.3em);
+}
+
+.img {
+	position: relative;
+	display: flex;
+	margin: 2em 1em;
+	padding: 0.5em;
+}
+.img::before {
+	z-index: 2;
+	width: calc(100% - 0.5em);
+	height: calc(100% - 0.5em);
+	background-color: transparent;
+	box-shadow: 2px 3px 20px black;
+	/* box-shadow: 2px 3px 20px black, 0 0 125px #8f5922 inset; */
+	box-shadow: 2px 3px 20px black, 0 0 5px 5px #793e0d inset, 0 0 10px 15px #8f5922 inset;
+	/* border: 1em solid #793e0d; */
+
+}
+.img img {
+	width: 100%;
 }
